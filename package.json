@@ -1,0 +1,19 @@
+{
+  "name": "invest-west-front-end",
+  "version": "1.0.0",
+  "description": "",
+  "main": "App.test.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Invest-West/invest-west-front-end.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Invest-West/invest-west-front-end/issues"
+  },
+  "homepage": "https://github.com/Invest-West/invest-west-front-end#readme"
+}
