@@ -1,16 +1,16 @@
-import React, {Component} from "react";
-import {connect} from "react-redux";
-import {AppState} from "../../redux-store/reducers";
-import {ThunkDispatch} from "redux-thunk";
-import {AnyAction} from "redux";
-import {Box, Button, TextField, Typography} from "@material-ui/core";
-import {Redirect, RouteComponentProps} from "react-router-dom";
-import {RouteParams} from "../../router/router";
-import {Col, Row} from "react-bootstrap";
-import {css} from "aphrodite";
+import React, { Component } from "react";
+import { connect } from "react-redux";
+import { AppState } from "../../redux-store/reducers";
+import { ThunkDispatch } from "redux-thunk";
+import { AnyAction } from "redux";
+import { Box, Button, TextField, Typography } from "@material-ui/core";
+import { Redirect, RouteComponentProps } from "react-router-dom";
+import { RouteParams } from "../../router/router";
+import { Col, Row } from "react-bootstrap";
+import { css } from "aphrodite";
 import sharedStyles from "../../shared-js-css-styles/SharedStyles";
 import queryString from "query-string";
-import {confirmPasswordReset, onTextChanged, verifyCode} from "./ResetPasswordActions";
+import { confirmPasswordReset, onTextChanged, verifyCode } from "./ResetPasswordActions";
 import {
     hasErrorResettingPassword,
     hasErrorVerifyingCode,
@@ -19,10 +19,10 @@ import {
     ResetPasswordState,
     successfullyResettingPassword
 } from "./ResetPasswordReducer";
-import {HashLoader} from "react-spinners";
-import {getGroupRouteTheme, ManageGroupUrlState} from "../../redux-store/reducers/manageGroupUrlReducer";
+import { HashLoader } from "react-spinners";
+import { getGroupRouteTheme, ManageGroupUrlState } from "../../redux-store/reducers/manageGroupUrlReducer";
 import Routes from "../../router/routes";
-import {MediaQueryState} from "../../redux-store/reducers/mediaQueryReducer";
+import { MediaQueryState } from "../../redux-store/reducers/mediaQueryReducer";
 
 interface ResetPasswordProps {
     ManageGroupUrlState: ManageGroupUrlState;
@@ -92,11 +92,7 @@ class ResetPassword extends Component<ResetPasswordProps & Readonly<RouteCompone
 
         // password has been successfully updated
         if (successfullyResettingPassword(ResetPasswordLocalState)) {
-            return <Box display="flex"
-                justifyContent="center"
-                alignItems="center"
-                marginTop="50px"
-            >
+            return <Box display="flex" justifyContent="center" alignItems="center" marginTop="50px">
                 <Typography
                     variant="h5"
                     color="primary"
@@ -117,8 +113,8 @@ class ResetPassword extends Component<ResetPasswordProps & Readonly<RouteCompone
                 <Col
                     xs={12}
                     sm={12}
-                    md={{span: 6, offset: 3}}
-                    lg={{span: 4, offset: 4}}
+                    md={{ span: 6, offset: 3 }}
+                    lg={{ span: 4, offset: 4 }}
                 >
                     <Box>
                         <Typography

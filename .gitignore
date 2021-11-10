@@ -10,7 +10,7 @@
 
 # production
 # build
-/build
+/build/resources/keltie
 /public/resources/keltie
 
 # misc
