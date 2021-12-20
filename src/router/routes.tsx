@@ -54,8 +54,8 @@ export default class Routes {
     static nonGroupContactUs: string = "/contact-us";
     static groupContactUs: string = `${Routes.baseGroup}/contact-us`;
 
-    static nonGroupContactUs2: string = "/contact-us";
-    static groupContactUs2: string = `${Routes.baseGroup}/contact-us`;
+    static nonGroupContactUs2: string = "/contact-us-2";
+    static groupContactUs2: string = `${Routes.baseGroup}/contact-us-2`;
 
     static groupHelp: string = `${Routes.baseGroup}/help`;
 
@@ -83,6 +83,8 @@ export default class Routes {
             && route !== Routes.groupSignUp
             && route !== Routes.nonGroupContactUs
             && route !== Routes.groupContactUs
+            && route !== Routes.nonGroupContactUs2
+            && route !== Routes.groupContactUs2
             && route !== Routes.nonGroupPrivacyPolicy
             && route !== Routes.nonGroupTermsOfUse
             && route !== Routes.nonGroupRiskWarning
@@ -537,6 +539,9 @@ export const VIEW_GROUP_DETAILS_INVEST_WEST_SUPER = "/view-group-details/:groupI
 
 export const CONTACT_US = `${GROUP_PATH}/contact-us`;
 export const CONTACT_US_INVEST_WEST_SUPER = "/contact-us";
+
+export const CONTACT_US_2 = `${GROUP_PATH}/contact-us-2`;
+export const CONTACT_US_INVEST_WEST_SUPER_2 = "/contact-us-2";
 
 export const HELP = `${GROUP_PATH}/help`;
 export const HELP_INVEST_WEST_SUPER = "/help";

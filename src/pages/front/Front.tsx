@@ -58,9 +58,11 @@ class Front extends Component<FrontProps & Readonly<RouteComponentProps<RoutePar
                                 <Typography variant="body1">Contact us</Typography>
                             }/>
 
+                        <Box width="35px"/>
+
                         <CustomLink url={Routes.constructContactUsRoute2(this.props.match.params)} color="black" activeColor={getGroupRouteTheme(ManageGroupUrlState).palette.primary.main} activeUnderline={false} component="nav-link" 
                                                 childComponent={
-                                                        <Typography variant="body1">Contact us2</Typography>
+                                                        <Typography variant="body1">Contact us 2</Typography>
                                                     }/>
 
                         <Box width="35px"/>
