@@ -54,6 +54,9 @@ export default class Routes {
     static nonGroupContactUs: string = "/contact-us";
     static groupContactUs: string = `${Routes.baseGroup}/contact-us`;
 
+    static nonGroupContactUs2: string = "/contact-us";
+    static groupContactUs2: string = `${Routes.baseGroup}/contact-us`;
+
     static groupHelp: string = `${Routes.baseGroup}/help`;
 
     static nonGroupTermsOfUse: string = "/terms-of-use";
@@ -298,6 +301,19 @@ export default class Routes {
             return Routes.groupContactUs.replace(":groupUserName", routeParams.groupUserName);
         } else {
             return Routes.nonGroupContactUs;
+        }
+    }
+
+     /**
+     * Construct sign in route (navigate to Sign in page)
+     *
+     * @param routeParams
+     */
+      public static constructContactUsRoute2 = (routeParams: any) => {
+        if (routeParams.groupUserName) {
+            return Routes.groupContactUs2.replace(":groupUserName", routeParams.groupUserName);
+        } else {
+            return Routes.nonGroupContactUs2;
         }
     }
 
