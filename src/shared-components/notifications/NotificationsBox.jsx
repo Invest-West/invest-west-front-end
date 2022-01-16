@@ -125,12 +125,30 @@ class NotificationsBox extends Component {
                         boundariesElement: 'scrollParent'
                     }
                 }}
-                style={{ zIndex: 100 }}>
+                style={{
+                    // this zIndex is to ensure the notification box is on top of all other UI elements
+                    zIndex: 100
+                }}
+            >
                 {({TransitionProps}) => (
-                    <Fade {...TransitionProps} timeout={350}>
-                        <Paper elevation={4} square>
-                            <Container fluid style={{ padding: 0, maxWidth: 600}}>
-                                <Row noGutters>
+                    <Fade
+                        {...TransitionProps}
+                        timeout={350}
+                    >
+                        <Paper
+                            elevation={4}
+                            square
+                        >
+                            <Container
+                                fluid
+                                style={{
+                                    padding: 0,
+                                    maxWidth: 600
+                                }}
+                            >
+                                <Row
+                                    noGutters
+                                >
                                     <Col
                                         xs={12}
                                         sm={12}
