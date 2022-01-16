@@ -281,13 +281,8 @@ class ContactUs2 extends Component {
 
         if (!groupPropertiesLoaded) {
             return (
-                <FlexView
-                    marginTop={30}
-                    hAlignContent="center"
-                >
-                    <HashLoader
-                        color={colors.primaryColor}
-                    />
+                <FlexView marginTop={30} hAlignContent="center">
+                    <HashLoader color={colors.primaryColor}/>
                 </FlexView>
             );
         }

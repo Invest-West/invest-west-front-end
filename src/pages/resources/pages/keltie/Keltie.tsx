@@ -138,32 +138,8 @@ class Keltie extends Component<KeltieProps, any> {
                                     <Col
                                         xs={12}
                                         sm={12}
-                                        md={5}
-                                        lg={4}
-                                        xl={3}
-                                    >
-                                        <Box
-                                            display="flex"
-                                            justifyContent="center"
-                                            alignItems="center"
-                                            width="100%"
-                                            height="100%"
-                                        >
-                                            <ReactPlayer
-                                                url={keltieVideos[0].url}
-                                                height="100%"
-                                                width="100%"
-                                                playing={false}
-                                                controls={true}
-                                            />
-                                        </Box>
-                                    </Col>
-                                    <Col
-                                        xs={12}
-                                        sm={12}
-                                        md={7}
-                                        lg={8}
-                                        xl={9}
+                                        md={12}
+                                        lg={12}
                                     >
                                         <Box
                                             display="flex"
@@ -191,6 +167,28 @@ class Keltie extends Component<KeltieProps, any> {
                                                 Intellectual Property issues. This content is kindly provided by our
                                                 friends at Keltie LLP.
                                             </Typography>
+                                        </Box>
+                                    </Col>
+                                    <Col
+                                        xs={12}
+                                        sm={12}
+                                        md={12}
+                                        lg={12}
+                                    >
+                                        <Box
+                                            display="flex"
+                                            justifyContent="center"
+                                            alignItems="center"
+                                            width="100%"
+                                            height="50vh"
+                                        >
+                                            <ReactPlayer
+                                                url={keltieVideos[0].url}
+                                                height="100%"
+                                                width="100%"
+                                                playing={false}
+                                                controls={true}
+                                            />
                                         </Box>
                                     </Col>
                                 </Row>

@@ -161,12 +161,8 @@ class OffersTable extends Component<OffersTableProps, any> {
         const currentAdmin: Admin | null = isAdmin(currentUser);
         const tableAdmin: Admin | null = isAdmin(tableUser);
 
-        return <TableContainer
-            component={Paper}
-        >
-            <Table
-                color="black"
-            >
+        return <TableContainer component={Paper}>
+            <Table color="black">
                 {/** Table header */}
                 <TableHead>
                     {/** Export csv button (only available for admin */}
@@ -174,21 +170,11 @@ class OffersTable extends Component<OffersTableProps, any> {
                         !(currentAdmin && tableAdmin && currentAdmin.id === tableAdmin.id)
                             ? null
                             : <TableRow>
-                                <TableCell
-                                    colSpan={5}
-                                >
+                                <TableCell colSpan={5}>
                                     <Box>
-                                        <Button
-                                            variant="outlined"
-                                            className={css(sharedStyles.no_text_transform)}
-                                            onClick={() => exportCsv()}
-                                        >
-                                            <ImportExportOutlined
-                                                fontSize="small"
-                                            />
-                                            <Box
-                                                width="10px"
-                                            />
+                                        <Button variant="outlined" className={css(sharedStyles.no_text_transform)} onClick={() => exportCsv()}>
+                                            <ImportExportOutlined fontSize="small"/>
+                                            <Box width="10px"/>
                                             {
                                                 isExportingCsv(OffersTableLocalState)
                                                     ? "Exporting ..."
@@ -199,15 +185,8 @@ class OffersTable extends Component<OffersTableProps, any> {
                                         {
                                             !hasErrorExportingCsv(OffersTableLocalState)
                                                 ? null
-                                                : <Box
-                                                    marginTop="12px"
-                                                >
-                                                    <Typography
-                                                        variant="body2"
-                                                        color="error"
-                                                    >
-                                                        {`${OffersTableLocalState.errorExportingCsv?.detail}. Please retry.`}
-                                                    </Typography>
+                                                : <Box marginTop="12px">
+                                                    <Typography variant="body2" color="error"> {`${OffersTableLocalState.errorExportingCsv?.detail}. Please retry.`}</Typography>
                                                 </Box>
                                         }
                                     </Box>
@@ -220,9 +199,7 @@ class OffersTable extends Component<OffersTableProps, any> {
                         isInvestor(currentUser) || (currentAdmin && currentAdmin.superAdmin)
                             ? null
                             : <TableRow>
-                                <TableCell
-                                    colSpan={5}
-                                >
+                                <TableCell colSpan={5}>
                                     <CustomLink
                                         url={
                                             isIssuer(currentUser) || (currentAdmin && tableAdmin && currentAdmin.id === tableAdmin.id)
@@ -243,17 +220,9 @@ class OffersTable extends Component<OffersTableProps, any> {
                                         activeUnderline={false}
                                         component="a"
                                         childComponent={
-                                            <Button
-                                                variant="contained"
-                                                color="primary"
-                                                className={css(sharedStyles.no_text_transform)}
-                                            >
-                                                <CreateOutlined
-                                                    fontSize="small"
-                                                />
-                                                <Box
-                                                    width="10px"
-                                                />
+                                            <Button variant="contained" color="primary" className={css(sharedStyles.no_text_transform)}>
+                                                <CreateOutlined fontSize="small"/>
+                                                <Box width="10px"/>
                                                 Create new offer
                                             </Button>
                                         }
@@ -264,17 +233,10 @@ class OffersTable extends Component<OffersTableProps, any> {
 
                     {/** Search offer by name + refresh button */}
                     <TableRow>
-                        <TableCell
-                            colSpan={5}
-                        >
+                        <TableCell colSpan={5}>
                             <Row>
                                 {/** Search by name field */}
-                                <Col
-                                    xs={11}
-                                    sm={11}
-                                    md={8}
-                                    lg={6}
-                                >
+                                <Col xs={11} sm={11} md={8} lg={6}>
                                     <Box
                                         display="flex"
                                         height="100%"
@@ -284,8 +246,7 @@ class OffersTable extends Component<OffersTableProps, any> {
                                                 ? colors.grey["200"]
                                                 : toRGBWithOpacity(getGroupRouteTheme(ManageGroupUrlState).palette.primary.main, 0.18)
                                         }
-                                        borderRadius="10px"
-                                    >
+                                        borderRadius="10px">
                                         <InputBase
                                             fullWidth
                                             name="nameFilter"
@@ -294,13 +255,8 @@ class OffersTable extends Component<OffersTableProps, any> {
                                             onChange={filterChanged}
                                             disabled={!successfullyFetchedOffers(OffersTableLocalState)}
                                             startAdornment={
-                                                <InputAdornment
-                                                    position="start"
-                                                >
-                                                    <IconButton
-                                                        onClick={() => filterOffersByName()}
-                                                        disabled={!successfullyFetchedOffers(OffersTableLocalState)}
-                                                    >
+                                                <InputAdornment position="start">
+                                                    <IconButton onClick={() => filterOffersByName()} disabled={!successfullyFetchedOffers(OffersTableLocalState)}>
                                                         <Search fontSize="small"/>
                                                     </IconButton>
                                                 </InputAdornment>
@@ -308,12 +264,8 @@ class OffersTable extends Component<OffersTableProps, any> {
                                             endAdornment={
                                                 !isFilteringOffersByName(OffersTableLocalState)
                                                     ? null
-                                                    : <InputAdornment
-                                                        position="end"
-                                                    >
-                                                        <IconButton
-                                                            onClick={() => cancelFilteringOffersByName()}
-                                                        >
+                                                    : <InputAdornment position="end">
+                                                        <IconButton onClick={() => cancelFilteringOffersByName()}>
                                                             <Close fontSize="small"/>
                                                         </IconButton>
                                                     </InputAdornment>
@@ -323,22 +275,9 @@ class OffersTable extends Component<OffersTableProps, any> {
                                 </Col>
 
                                 {/** Refresh button */}
-                                <Col
-                                    xs={1}
-                                    sm={1}
-                                    md={4}
-                                    lg={6}
-                                >
-                                    <Box
-                                        display="flex"
-                                        height="100%"
-                                        justifyContent="flex-end"
-                                        alignItems="center"
-                                    >
-                                        <IconButton
-                                            onClick={() => fetchOffers()}
-                                            disabled={!successfullyFetchedOffers(OffersTableLocalState)}
-                                        >
+                                <Col xs={1} sm={1} md={4} lg={6}>
+                                    <Box display="flex" height="100%" justifyContent="flex-end" alignItems="center">
+                                        <IconButton onClick={() => fetchOffers()} disabled={!successfullyFetchedOffers(OffersTableLocalState)}>
                                             <Refresh/>
                                         </IconButton>
                                     </Box>
@@ -349,28 +288,13 @@ class OffersTable extends Component<OffersTableProps, any> {
 
                     {/** Filters */}
                     <TableRow>
-                        <TableCell
-                            colSpan={5}
-                        >
+                        <TableCell colSpan={5}>
                             <Row>
                                 {/** Visibility filter */}
-                                <Col
-                                    xs={12}
-                                    sm={12}
-                                    md={6}
-                                    lg={4}
-                                >
-                                    <Box
-                                        paddingY="4px"
-                                    >
-                                        <Typography
-                                            variant="body2"
-                                        >
-                                            Visibility:
-                                        </Typography>
-                                        <Box
-                                            height="8px"
-                                        />
+                                <Col xs={12} sm={12} md={6} lg={4}>
+                                    <Box paddingY="4px">
+                                        <Typography variant="body2">Visibility:</Typography>
+                                        <Box height="8px"/>
                                         <Select
                                             fullWidth
                                             name="visibilityFilter"
@@ -381,52 +305,19 @@ class OffersTable extends Component<OffersTableProps, any> {
                                             onChange={filterChanged}
                                             disabled={!successfullyFetchedOffers(OffersTableLocalState)}
                                         >
-                                            <MenuItem
-                                                key="all"
-                                                value="all"
-                                            >
-                                                All
-                                            </MenuItem>
-                                            <MenuItem
-                                                key={PROJECT_VISIBILITY_PUBLIC}
-                                                value={PROJECT_VISIBILITY_PUBLIC}
-                                            >
-                                                Public
-                                            </MenuItem>
-                                            <MenuItem
-                                                key={PROJECT_VISIBILITY_RESTRICTED}
-                                                value={PROJECT_VISIBILITY_RESTRICTED}
-                                            >
-                                                Restricted
-                                            </MenuItem>
-                                            <MenuItem
-                                                key={PROJECT_VISIBILITY_PRIVATE}
-                                                value={PROJECT_VISIBILITY_PRIVATE}
-                                            >
-                                                Private
-                                            </MenuItem>
+                                            <MenuItem key="all" value="all">All</MenuItem>
+                                            <MenuItem key={PROJECT_VISIBILITY_PUBLIC} value={PROJECT_VISIBILITY_PUBLIC}>Public</MenuItem>
+                                            <MenuItem key={PROJECT_VISIBILITY_RESTRICTED} value={PROJECT_VISIBILITY_RESTRICTED}>Restricted</MenuItem>
+                                            <MenuItem key={PROJECT_VISIBILITY_PRIVATE} value={PROJECT_VISIBILITY_PRIVATE} >Private</MenuItem>
                                         </Select>
                                     </Box>
                                 </Col>
 
                                 {/** Group filter */}
-                                <Col
-                                    xs={12}
-                                    sm={12}
-                                    md={6}
-                                    lg={4}
-                                >
-                                    <Box
-                                        paddingY="4px"
-                                    >
-                                        <Typography
-                                            variant="body2"
-                                        >
-                                            Group:
-                                        </Typography>
-                                        <Box
-                                            height="8px"
-                                        />
+                                <Col xs={12} sm={12} md={6} lg={4}>
+                                    <Box paddingY="4px">
+                                        <Typography variant="body2">Group:</Typography>
+                                        <Box height="8px"/>
                                         <Select
                                             fullWidth
                                             name="groupFilter"
@@ -437,23 +328,13 @@ class OffersTable extends Component<OffersTableProps, any> {
                                             onChange={filterChanged}
                                             disabled={!successfullyFetchedOffers(OffersTableLocalState)}
                                         >
-                                            <MenuItem
-                                                key="all"
-                                                value="all"
-                                            >
-                                                All
-                                            </MenuItem>
+                                            <MenuItem key="all" value="all">All</MenuItem>
                                             {
                                                 !hasGroupsSelect(OffersTableLocalState)
                                                 || !OffersTableLocalState.groupsSelect
                                                     ? null
                                                     : OffersTableLocalState.groupsSelect.map(group =>
-                                                        <MenuItem
-                                                            key={group.anid}
-                                                            value={group.anid}
-                                                        >
-                                                            {group.displayName}
-                                                        </MenuItem>
+                                                        <MenuItem key={group.anid} value={group.anid}>{group.displayName}</MenuItem>
                                                     )
                                             }
                                         </Select>
@@ -461,23 +342,10 @@ class OffersTable extends Component<OffersTableProps, any> {
                                 </Col>
 
                                 {/** Phase (status) filter */}
-                                <Col
-                                    xs={12}
-                                    sm={12}
-                                    md={6}
-                                    lg={4}
-                                >
-                                    <Box
-                                        paddingY="4px"
-                                    >
-                                        <Typography
-                                            variant="body2"
-                                        >
-                                            Status:
-                                        </Typography>
-                                        <Box
-                                            height="8px"
-                                        />
+                                <Col xs={12} sm={12} md={6} lg={4}>
+                                    <Box paddingY="4px">
+                                        <Typography variant="body2">Status:</Typography>
+                                        <Box height="8px"/>
                                         <Select
                                             fullWidth
                                             name="phaseFilter"
@@ -488,42 +356,12 @@ class OffersTable extends Component<OffersTableProps, any> {
                                             onChange={filterChanged}
                                             disabled={!successfullyFetchedOffers(OffersTableLocalState)}
                                         >
-                                            <MenuItem
-                                                key="all"
-                                                value="all"
-                                            >
-                                                All
-                                            </MenuItem>
-                                            <MenuItem
-                                                key={FetchProjectsPhaseOptions.LivePitch}
-                                                value={FetchProjectsPhaseOptions.LivePitch}
-                                            >
-                                                Live
-                                            </MenuItem>
-                                            <MenuItem
-                                                key={PROJECT_STATUS_BEING_CHECKED}
-                                                value={PROJECT_STATUS_BEING_CHECKED}
-                                            >
-                                                Submitted - awaiting review
-                                            </MenuItem>
-                                            <MenuItem
-                                                key={FetchProjectsPhaseOptions.TemporarilyClosed}
-                                                value={FetchProjectsPhaseOptions.TemporarilyClosed}
-                                            >
-                                                Temporarily closed
-                                            </MenuItem>
-                                            <MenuItem
-                                                key={FetchProjectsPhaseOptions.ExpiredPitch}
-                                                value={FetchProjectsPhaseOptions.ExpiredPitch}
-                                            >
-                                                Expired
-                                            </MenuItem>
-                                            <MenuItem
-                                                key={PROJECT_STATUS_DRAFT}
-                                                value={PROJECT_STATUS_DRAFT}
-                                            >
-                                                Draft
-                                            </MenuItem>
+                                            <MenuItem key="all" value="all">All</MenuItem>
+                                            <MenuItem key={FetchProjectsPhaseOptions.LivePitch} value={FetchProjectsPhaseOptions.LivePitch}>Live</MenuItem>
+                                            <MenuItem key={PROJECT_STATUS_BEING_CHECKED} value={PROJECT_STATUS_BEING_CHECKED}>Submitted - awaiting review</MenuItem>
+                                            <MenuItem key={FetchProjectsPhaseOptions.TemporarilyClosed} value={FetchProjectsPhaseOptions.TemporarilyClosed}>Temporarily closed</MenuItem>
+                                            <MenuItem key={FetchProjectsPhaseOptions.ExpiredPitch} value={FetchProjectsPhaseOptions.ExpiredPitch}>Expired</MenuItem>
+                                            <MenuItem key={PROJECT_STATUS_DRAFT} value={PROJECT_STATUS_DRAFT}>Draft</MenuItem>
                                         </Select>
                                     </Box>
                                 </Col>
@@ -533,45 +371,17 @@ class OffersTable extends Component<OffersTableProps, any> {
 
                     {/** Column headers */}
                     <TableRow>
-                        <TableCell
-                            colSpan={2}
-                        >
-                            <Typography
-                                variant="body2"
-                                color="primary"
-                            >
-                                Project
-                            </Typography>
+                        <TableCell colSpan={2}>
+                            <Typography variant="body2" color="primary">Project</Typography>
                         </TableCell>
-                        <TableCell
-                            colSpan={1}
-                        >
-                            <Typography
-                                variant="body2"
-                                color="primary"
-                            >
-                                Goal
-                            </Typography>
+                        <TableCell colSpan={1}>
+                            <Typography variant="body2" color="primary">Goal</Typography>
                         </TableCell>
-                        <TableCell
-                            colSpan={1}
-                        >
-                            <Typography
-                                variant="body2"
-                                color="primary"
-                            >
-                                Posted / expiry dates
-                            </Typography>
+                        <TableCell colSpan={1}>
+                            <Typography variant="body2" color="primary">Posted / expiry dates</Typography>
                         </TableCell>
-                        <TableCell
-                            colSpan={1}
-                        >
-                            <Typography
-                                variant="body2"
-                                color="primary"
-                            >
-                                Status
-                            </Typography>
+                        <TableCell colSpan={1}>
+                            <Typography variant="body2" color="primary">Status</Typography>
                         </TableCell>
                     </TableRow>
                 </TableHead>
@@ -582,40 +392,18 @@ class OffersTable extends Component<OffersTableProps, any> {
                         // Fetching offers
                         isFetchingOffers(OffersTableLocalState)
                             ? <TableRow>
-                                <TableCell
-                                    colSpan={5}
-                                >
-                                    <Box
-                                        display="flex"
-                                        justifyContent="center"
-                                        alignItems="center"
-                                        height="120px"
-                                    >
-                                        <BeatLoader
-                                            color={getGroupRouteTheme(ManageGroupUrlState).palette.primary.main}
-                                        />
+                                <TableCell colSpan={5}>
+                                    <Box display="flex" justifyContent="center" alignItems="center" height="120px">
+                                        <BeatLoader color={getGroupRouteTheme(ManageGroupUrlState).palette.primary.main}/>
                                     </Box>
                                 </TableCell>
                             </TableRow>
                             // Error setting table user / fetching offers
                             : hasErrorFetchingOffers(OffersTableLocalState)
                             ? <TableRow>
-                                <TableCell
-                                    colSpan={5}
-                                >
-                                    <Box
-                                        display="flex"
-                                        justifyContent="center"
-                                        alignItems="center"
-                                        height="120px"
-                                    >
-                                        <Typography
-                                            variant="h6"
-                                            align="center"
-                                            color="error"
-                                        >
-                                            Error. Please retry.
-                                        </Typography>
+                                <TableCell colSpan={5}>
+                                    <Box display="flex" justifyContent="center" alignItems="center" height="120px">
+                                        <Typography variant="h6" align="center" color="error">Error. Please retry.</Typography>
                                     </Box>
                                 </TableCell>
                             </TableRow>
@@ -625,22 +413,9 @@ class OffersTable extends Component<OffersTableProps, any> {
                                 // No offers available for current filters
                                 : !hasOffersForCurrentFilters(OffersTableLocalState)
                                     ? <TableRow>
-                                        <TableCell
-                                            colSpan={5}
-                                        >
-                                            <Box
-                                                display="flex"
-                                                justifyContent="center"
-                                                alignItems="center"
-                                                height="120px"
-                                            >
-                                                <Typography
-                                                    variant="h6"
-                                                    align="center"
-                                                >
-                                                    There are no offers available using your current
-                                                    filter criteria.
-                                                </Typography>
+                                        <TableCell colSpan={5}>
+                                            <Box display="flex" justifyContent="center" alignItems="center" height="120px">
+                                                <Typography variant="h6" align="center">There are no offers available using your current filter criteria.</Typography>
                                             </Box>
                                         </TableCell>
                                     </TableRow>
@@ -648,24 +423,12 @@ class OffersTable extends Component<OffersTableProps, any> {
                                     : OffersTableLocalState.offerInstancesFilteredByName
                                         .slice(OffersTableLocalState.currentPage * OffersTableLocalState.rowsPerPage, OffersTableLocalState.currentPage * OffersTableLocalState.rowsPerPage + OffersTableLocalState.rowsPerPage)
                                         .map(
-                                            offerInstance => <TableRow
-                                                key={offerInstance.projectDetail.id}
-                                                hover
-                                            >
+                                            offerInstance => <TableRow key={offerInstance.projectDetail.id} hover>
                                                 {/** Offer name */}
-                                                <TableCell
-                                                    colSpan={2}
-                                                >
-                                                    <Box
-                                                        display="flex"
-                                                        flexDirection="column"
-                                                        justifyContent="center"
-                                                    >
+                                                <TableCell colSpan={2}>
+                                                    <Box display="flex" flexDirection="column" justifyContent="center">
                                                         {/** Visibility + Name */}
-                                                        <Box
-                                                            display="flex"
-                                                            flexDirection="row"
-                                                        >
+                                                        <Box display="flex" flexDirection="row">
                                                             {
                                                                 isProjectPublic(offerInstance.projectDetail)
                                                                     ? <PublicIcon fontSize="small"/>
@@ -673,9 +436,7 @@ class OffersTable extends Component<OffersTableProps, any> {
                                                                     ? <RestrictedIcon fontSize="small"/>
                                                                     : <PrivateIcon fontSize="small"/>
                                                             }
-                                                            <Box
-                                                                width="15px"
-                                                            />
+                                                            <Box width="15px"/>
                                                             <CustomLink
                                                                 url={
                                                                     isDraftProject(offerInstance.projectDetail)
@@ -692,12 +453,7 @@ class OffersTable extends Component<OffersTableProps, any> {
                                                                 activeUnderline={false}
                                                                 component="nav-link"
                                                                 childComponent={
-                                                                    <Typography
-                                                                        variant="body2"
-                                                                        align="left"
-                                                                    >
-                                                                        {offerInstance.projectDetail.projectName ?? ""}
-                                                                    </Typography>
+                                                                    <Typography variant="body2" align="left" > {offerInstance.projectDetail.projectName ?? ""}</Typography>
                                                                 }
                                                             />
                                                         </Box>
@@ -708,14 +464,8 @@ class OffersTable extends Component<OffersTableProps, any> {
                                                             && OffersTableLocalState.tableUser !== undefined
                                                             && currentUser.id === OffersTableLocalState.tableUser.id
                                                                 ? null
-                                                                : <Box
-                                                                    marginTop="10px"
-                                                                >
-                                                                    <Typography
-                                                                        variant="body2"
-                                                                        align="left"
-                                                                        color="textSecondary"
-                                                                    >
+                                                                : <Box marginTop="10px">
+                                                                    <Typography variant="body2" align="left" color="textSecondary">
                                                                         <i>
                                                                             {
                                                                                 offerInstance.projectDetail.createdByGroupAdmin
@@ -733,9 +483,7 @@ class OffersTable extends Component<OffersTableProps, any> {
                                                                 ? null
                                                                 : !isDraftProject(offerInstance.projectDetail)
                                                                 ? null
-                                                                : <Box
-                                                                    marginTop="18px"
-                                                                >
+                                                                : <Box marginTop="18px">
                                                                     <CustomLink
                                                                         url={
                                                                             Routes.constructCreateProjectRoute(ManageGroupUrlState.groupNameFromUrl ?? null, {edit: offerInstance.projectDetail.id})
@@ -746,18 +494,9 @@ class OffersTable extends Component<OffersTableProps, any> {
                                                                         activeUnderline={false}
                                                                         component="nav-link"
                                                                         childComponent={
-                                                                            <Button
-                                                                                variant="outlined"
-                                                                                size="small"
-                                                                                className={css(sharedStyles.no_text_transform)}
-                                                                            >
-                                                                                <CreateOutlined
-                                                                                    fontSize="small"
-                                                                                />
-                                                                                <Box
-                                                                                    width="8px"
-                                                                                />
-                                                                                Edit
+                                                                            <Button variant="outlined" size="small" className={css(sharedStyles.no_text_transform)}>
+                                                                                <CreateOutlined fontSize="small"/>
+                                                                                <Box width="8px"/>Edit
                                                                             </Button>
                                                                         }
                                                                     />
@@ -767,13 +506,8 @@ class OffersTable extends Component<OffersTableProps, any> {
                                                 </TableCell>
 
                                                 {/** Goal */}
-                                                <TableCell
-                                                    colSpan={1}
-                                                >
-                                                    <Typography
-                                                        variant="body2"
-                                                        align="left"
-                                                    >
+                                                <TableCell colSpan={1}>
+                                                    <Typography variant="body2" align="left">
                                                         {
                                                             !offerInstance.projectDetail.Pitch.fundRequired
                                                                 ? ""
@@ -783,26 +517,13 @@ class OffersTable extends Component<OffersTableProps, any> {
                                                 </TableCell>
 
                                                 {/** Posted / expiry dates */}
-                                                <TableCell
-                                                    colSpan={1}
-                                                >
-                                                    <Box
-                                                        display="flex"
-                                                        flexDirection="column"
-                                                    >
-                                                        <Typography
-                                                            variant="body2"
-                                                            align="left"
-                                                        >
+                                                <TableCell colSpan={1}>
+                                                    <Box display="flex" flexDirection="column">
+                                                        <Typography variant="body2" align="left">
                                                             {`Posted date: ${dateInReadableFormat(offerInstance.projectDetail.Pitch.postedDate)}`}
                                                         </Typography>
-                                                        <Box
-                                                            height="12px"
-                                                        />
-                                                        <Typography
-                                                            variant="body2"
-                                                            align="left"
-                                                        >
+                                                        <Box height="12px"/>
+                                                        <Typography variant="body2" align="left">
                                                             {
                                                                 !offerInstance.projectDetail.Pitch.expiredDate
                                                                     ? "Expiry date: unknown"
@@ -813,13 +534,8 @@ class OffersTable extends Component<OffersTableProps, any> {
                                                 </TableCell>
 
                                                 {/** Status */}
-                                                <TableCell
-                                                    colSpan={1}
-                                                >
-                                                    <Typography
-                                                        variant="body2"
-                                                        align="left"
-                                                    >
+                                                <TableCell colSpan={1}>
+                                                    <Typography variant="body2" align="left">
                                                         {
                                                             isDraftProject(offerInstance.projectDetail)
                                                                 ? "Draft"
