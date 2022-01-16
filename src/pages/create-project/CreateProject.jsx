@@ -3525,21 +3525,6 @@ class CreateProject extends Component {
                                     </FlexView>
                                 </FlexView>
 
-                                <FlexView marginTop={60}>
-                                        <FormControl component="fieldset" required fullWidth
-                                            error={
-                                                createProjectState.pitchPublishCheck === PITCH_PUBLISH_FALSE_MISSING_FIELDS_IN_GENERAL_INFORMATION
-                                                && createProjectState.hasRaisedMoneyBefore.trim().length === 0
-                                            }>
-                                            <FormLabel> Have you received SEIS advanced assurance from HMRC? / Have you received EIS advanced assurance from HMRC
-                                            </FormLabel>
-                                            <RadioGroup row name="hasRaisedMoneyBefore" value={createProjectState.hasRaisedMoneyBefore} onChange={this.onInputChanged}>
-                                                <FormControlLabel control={<Radio color="primary"/>} label="Yes" labelPlacement="start"/>
-                                                <FormControlLabel control={<Radio color="secondary"/>} label="No" labelPlacement="start"/>
-                                            </RadioGroup>
-                                        </FormControl>
-                                </FlexView>
-
                                 <Divider style={{marginTop: 60}}/>
                             </Col>
                             :

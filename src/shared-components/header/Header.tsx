@@ -123,9 +123,7 @@ class Header extends Component<HeaderProps, {}> {
                                     url={dashboardUrl}
                                     component="nav-link"
                                     childComponent={
-                                        <Typography
-                                            variant="body1"
-                                        >
+                                        <Typography variant="body1" >
                                             Dashboard
                                         </Typography>
                                     }

@@ -23,12 +23,7 @@ export default class LetterAvatar extends Component<LetterAvatarProps, any> {
 
         return (
             <Avatar
-                style={{
-                    color: appColors.white,
-                    backgroundColor: this.getBackgroundColor(),
-                    width: width,
-                    height: height
-                }}
+                style={{ color: appColors.white, backgroundColor: this.getBackgroundColor(), width: width, height: height }}
             >
                 <Typography
                     variant={textVariant}

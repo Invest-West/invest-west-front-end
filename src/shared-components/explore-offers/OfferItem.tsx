@@ -16,7 +16,6 @@ import {
     shouldHideProjectInformationFromUser
 } from "../../models/project";
 import CustomLink from "../../shared-js-css-styles/CustomLink";
-import '../../shared-js-css-styles/shared.scss';
 import Routes from "../../router/routes";
 import {Box, colors, Divider, Typography} from "@material-ui/core";
 import {Col, Container, Image, OverlayTrigger, Row, Tooltip} from "react-bootstrap";
@@ -68,10 +67,26 @@ class OfferItem extends Component<OfferItemProps, any> {
                 <Box
                     border={`1px solid ${colors.grey["300"]}`}
                 >
-                    <Container  fluid style={{ padding: 0}}>
-                        <Row noGutters>
-                            <Col xs={12} sm={12} md={12} lg={12}>
-                                <Box height={`${CoverMaxHeight}px`} width="100%" bgcolor={appColors.dark_green_last_lightness_94_hue_angle_minus_17_color_saturation_100}>
+                    <Container
+                        fluid
+                        style={{
+                            padding: 0
+                        }}
+                    >
+                        <Row
+                            noGutters
+                        >
+                            <Col
+                                xs={12}
+                                sm={12}
+                                md={12}
+                                lg={12}
+                            >
+                                <Box
+                                    height={`${CoverMaxHeight}px`}
+                                    width="100%"
+                                    bgcolor={appColors.dark_green_last_lightness_94_hue_angle_minus_17_color_saturation_100}
+                                >
                                     {
                                         shouldHideProjectInformationFromUser(AuthenticationState.currentUser, AuthenticationState.groupsOfMembership, offerInstance.projectDetail)
                                             ? <Box
@@ -133,12 +148,20 @@ class OfferItem extends Component<OfferItemProps, any> {
 
                                 <Divider/>
 
-                                <Box padding="14px">
+                                <Box
+                                    padding="14px"
+                                >
                                     {/** Project basic information */}
                                     <Box>
                                         {/** Project title */}
-                                        <Box marginY="6px">
-                                            <Typography noWrap variant="h6" align="left">
+                                        <Box
+                                            marginY="6px"
+                                        >
+                                            <Typography
+                                                noWrap
+                                                variant="h6"
+                                                align="left"
+                                            >
                                                 {
                                                     shouldHideProjectInformationFromUser(AuthenticationState.currentUser, AuthenticationState.groupsOfMembership, offerInstance.projectDetail)
                                                         ? "Members only offer"
@@ -148,14 +171,20 @@ class OfferItem extends Component<OfferItemProps, any> {
                                         </Box>
 
                                         {/** Sector / Description */}
-                                        <Box color={colors.grey["700"]}>
-                                            <p className="projectInfo">
+                                        <Box
+                                            color={colors.grey["700"]}
+                                        >
+                                            <Typography
+                                                noWrap
+                                                variant="body2"
+                                                align="left"
+                                            >
                                                 {
                                                     shouldHideProjectInformationFromUser(AuthenticationState.currentUser, AuthenticationState.groupsOfMembership, offerInstance.projectDetail)
                                                         ? `in ${offerInstance.projectDetail.sector} sector`
                                                         : offerInstance.projectDetail.description
                                                 }
-                                            </p>
+                                            </Typography>
                                         </Box>
 
                                         {/** By issuer */}
