@@ -174,21 +174,11 @@ class OffersTable extends Component<OffersTableProps, any> {
                         !(currentAdmin && tableAdmin && currentAdmin.id === tableAdmin.id)
                             ? null
                             : <TableRow>
-                                <TableCell
-                                    colSpan={5}
-                                >
+                                <TableCell colSpan={5} >
                                     <Box>
-                                        <Button
-                                            variant="outlined"
-                                            className={css(sharedStyles.no_text_transform)}
-                                            onClick={() => exportCsv()}
-                                        >
-                                            <ImportExportOutlined
-                                                fontSize="small"
-                                            />
-                                            <Box
-                                                width="10px"
-                                            />
+                                        <Button variant="outlined" className={css(sharedStyles.no_text_transform)} onClick={() => exportCsv()} >
+                                            <ImportExportOutlined fontSize="small" />
+                                            <Box width="10px" />
                                             {
                                                 isExportingCsv(OffersTableLocalState)
                                                     ? "Exporting ..."
@@ -199,13 +189,8 @@ class OffersTable extends Component<OffersTableProps, any> {
                                         {
                                             !hasErrorExportingCsv(OffersTableLocalState)
                                                 ? null
-                                                : <Box
-                                                    marginTop="12px"
-                                                >
-                                                    <Typography
-                                                        variant="body2"
-                                                        color="error"
-                                                    >
+                                                : <Box marginTop="12px" >
+                                                    <Typography variant="body2" color="error" >
                                                         {`${OffersTableLocalState.errorExportingCsv?.detail}. Please retry.`}
                                                     </Typography>
                                                 </Box>
@@ -243,18 +228,9 @@ class OffersTable extends Component<OffersTableProps, any> {
                                         activeUnderline={false}
                                         component="a"
                                         childComponent={
-                                            <Button
-                                                variant="contained"
-                                                color="primary"
-                                                className={css(sharedStyles.no_text_transform)}
-                                            >
-                                                <CreateOutlined
-                                                    fontSize="small"
-                                                />
-                                                <Box
-                                                    width="10px"
-                                                />
-                                                Create new offer
+                                            <Button variant="contained" color="primary" className={css(sharedStyles.no_text_transform)} >
+                                                <CreateOutlined fontSize="small" />
+                                                <Box width="10px" /> Create new offer
                                             </Button>
                                         }
                                     />
@@ -264,17 +240,10 @@ class OffersTable extends Component<OffersTableProps, any> {
 
                     {/** Search offer by name + refresh button */}
                     <TableRow>
-                        <TableCell
-                            colSpan={5}
-                        >
+                        <TableCell colSpan={5} >
                             <Row>
                                 {/** Search by name field */}
-                                <Col
-                                    xs={11}
-                                    sm={11}
-                                    md={8}
-                                    lg={6}
-                                >
+                                <Col xs={11} sm={11} md={8} lg={6} >
                                     <Box
                                         display="flex"
                                         height="100%"

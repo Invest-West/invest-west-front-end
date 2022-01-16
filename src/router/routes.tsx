@@ -16,7 +16,7 @@ export default class Routes {
     static nonGroupFront: string = "/";
     static groupFront: string = `${Routes.baseGroup}`;
 
-    static nonGroupSignIn: string = "/signin";
+    static nonGroupSignIn: string = "/groups/invest-west/signin";
     static groupSignIn: string = `${Routes.baseGroup}/signin`;
     static superAdminSignIn: string = "/signin/super-admin";
 

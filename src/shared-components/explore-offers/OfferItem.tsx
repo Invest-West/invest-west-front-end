@@ -16,6 +16,7 @@ import {
     shouldHideProjectInformationFromUser
 } from "../../models/project";
 import CustomLink from "../../shared-js-css-styles/CustomLink";
+import '../../shared-js-css-styles/sharedStyles.scss';
 import Routes from "../../router/routes";
 import {Box, colors, Divider, Typography} from "@material-ui/core";
 import {Col, Container, Image, OverlayTrigger, Row, Tooltip} from "react-bootstrap";
@@ -174,17 +175,13 @@ class OfferItem extends Component<OfferItemProps, any> {
                                         <Box
                                             color={colors.grey["700"]}
                                         >
-                                            <Typography
-                                                noWrap
-                                                variant="body2"
-                                                align="left"
-                                            >
+                                            <title className="projectInfo">
                                                 {
                                                     shouldHideProjectInformationFromUser(AuthenticationState.currentUser, AuthenticationState.groupsOfMembership, offerInstance.projectDetail)
                                                         ? `in ${offerInstance.projectDetail.sector} sector`
                                                         : offerInstance.projectDetail.description
                                                 }
-                                            </Typography>
+                                            </title>
                                         </Box>
 
                                         {/** By issuer */}

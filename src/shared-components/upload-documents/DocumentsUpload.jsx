@@ -42,46 +42,16 @@ export default class LegalDocuments extends Component {
         }
 
         return (
-            <FlexView
-                column
-                marginTop={20}
-            >
+            <FlexView column marginTop={20}>
                 <List>
                     {
                         documents.map((document, index) => (
-                            <FlexView
-                                key={index}
-                                vAlignContent="center"
-                            >
-                                <ListItem
-                                    button
-                                    style={{
-                                        padding: 7
-                                    }}
-                                >
-                                    <img
-                                        alt="Document"
-                                        className={css(styles.preview_icon)}
-                                        src={require("../../img/document_icon.png").default}
-                                    />
-                                    <FlexView
-                                        column
-                                        hAlignContent="left"
-                                    >
-                                        <Typography
-                                            variant="body2"
-                                            className={css(styles.black_text)}
-                                            align="left"
-                                        >
-                                            {document.file.name}
-                                        </Typography>
-                                        <Typography
-                                            variant="body2"
-                                            color="textSecondary"
-                                            align="left"
-                                        >
-                                            {document.file.sizeReadable}
-                                        </Typography>
+                            <FlexView key={index} vAlignContent="center">
+                                <ListItem button style={{ padding: 7 }} >
+                                    <img alt="Document" className={css(styles.preview_icon)} src={require("../../img/document_icon.png").default} />
+                                    <FlexView column hAlignContent="left" >
+                                        <Typography variant="body2" className={css(styles.black_text)} align="left" >{document.file.name}</Typography>
+                                        <Typography variant="body2" color="textSecondary" align="left">{document.file.sizeReadable}</Typography>
                                     </FlexView>
                                 </ListItem>
 
@@ -90,22 +60,10 @@ export default class LegalDocuments extends Component {
                                     flip
                                     placement="bottom"
                                     overlay={
-                                        <Tooltip
-                                            id={`tooltip-bottom`}
-                                        >
-                                            Remove
-                                        </Tooltip>
+                                        <Tooltip id={`tooltip-bottom`} > Remove </Tooltip>
                                     }>
-                                    <IconButton
-                                        style={{
-                                            width: 44,
-                                            height: 44
-                                        }}
-                                        onClick={() => this.onDeleteDocument(index)}
-                                    >
-                                        <CloseIcon
-                                            fontSize="small"
-                                        />
+                                    <IconButton style={{ width: 44, height: 44 }} onClick={() => this.onDeleteDocument(index)}>
+                                        <CloseIcon fontSize="small"/>
                                     </IconButton>
                                 </OverlayTrigger>
                             </FlexView>

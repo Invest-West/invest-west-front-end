@@ -107,18 +107,8 @@ class UploadingDialog extends Component {
                 </DialogTitle>
                 <DialogContent>
                     <FlexView column>
-                        <ProgressBar
-                            variant="success"
-                            striped
-                            now={progress}
-                            label={`${progress}%`}
-                        />
-                        <Typography
-                            variant="body2"
-                            style={{
-                                marginTop: 10
-                            }}
-                        >
+                        <ProgressBar variant="success" striped now={progress} label={`${progress}%`} />
+                        <Typography variant="body2" style={{ marginTop: 10 }} >
                             {
                                 mode !== UPLOAD_DONE_MODE
                                     ?
@@ -130,18 +120,7 @@ class UploadingDialog extends Component {
                     </FlexView>
                 </DialogContent>
                 <DialogActions>
-                    <Button
-                        variant="outlined"
-                        color="primary"
-                        size="small"
-                        disabled={mode !== UPLOAD_DONE_MODE && mode !== UPLOAD_ERROR}
-                        onClick={dismiss}
-                        style={{
-                            margin: 8
-                        }}
-                    >
-                        Close
-                    </Button>
+                    <Button variant="outlined" color="primary" size="small" disabled={mode !== UPLOAD_DONE_MODE && mode !== UPLOAD_ERROR} onClick={dismiss} style={{ margin: 8 }}>Close</Button>
                 </DialogActions>
             </Dialog>
         );

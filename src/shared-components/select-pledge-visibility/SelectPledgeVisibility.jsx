@@ -41,15 +41,8 @@ class SelectPledgeVisibility extends Component {
         }
 
         return (
-            <FormControl
-                fullWidth
-            >
-                <FormHelperText
-                    className={css(sharedStyles.black_text)}
-                    style={{
-                        marginBottom: 6
-                    }}
-                >
+            <FormControl fullWidth >
+                <FormHelperText className={css(sharedStyles.black_text)} style={{ marginBottom: 6 }} >
                     Select pledge visibility
                 </FormHelperText>
                 <Select
@@ -72,15 +65,10 @@ class SelectPledgeVisibility extends Component {
                     margin="dense"
                     onChange={handleProjectVisibilityChanged}
                     input={
-                        <OutlinedInput
-                            labelWidth={0}
-                            name="projectVisibilitySetting"
-                        />
+                        <OutlinedInput labelWidth={0} name="projectVisibilitySetting" />
                     }
                 >
-                    <MenuItem
-                        value={DB_CONST.PROJECT_VISIBILITY_PUBLIC}
-                    >
+                    <MenuItem value={DB_CONST.PROJECT_VISIBILITY_PUBLIC} >
                         {`Public (
                         ${
                             groupProperties
@@ -99,9 +87,7 @@ class SelectPledgeVisibility extends Component {
                         }
                         The full pledge will be visible to all Invest West users)`}
                     </MenuItem>
-                    <MenuItem
-                        value={DB_CONST.PROJECT_VISIBILITY_RESTRICTED}
-                    >
+                    <MenuItem value={DB_CONST.PROJECT_VISIBILITY_RESTRICTED} >
                         {`Restricted (
                         ${
                             groupProperties
@@ -120,9 +106,7 @@ class SelectPledgeVisibility extends Component {
                         }
                         Restricted information from this pledge will be visible to all Invest West users. Only members of your group will see the full pledge)`}
                     </MenuItem>
-                    <MenuItem
-                        value={DB_CONST.PROJECT_VISIBILITY_PRIVATE}
-                    >
+                    <MenuItem value={DB_CONST.PROJECT_VISIBILITY_PRIVATE} >
                         {`Private (
                         ${
                             groupProperties
