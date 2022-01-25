@@ -59,46 +59,12 @@ class ChangePasswordPage extends Component {
         } = this.props;
 
         return (
-            <Container
-                fluid
-                style={{
-                    padding: 0
-                }}
-            >
-                <Row
-                    noGutters
-                >
-                    <Col
-                        xs={12}
-                        sm={12}
-                        md={12}
-                        lg={12}
-                        style={{
-                            padding: 24
-                        }}
-                    >
-                        <FlexView
-                            column
-                        >
-                            <Typography
-                                align="left"
-                                variant="h6"
-                                color="primary"
-                            >
-                                Update your password
-                            </Typography>
-                            <Typography
-                                align="left"
-                                variant="body2"
-                                color="textSecondary"
-                                style={{
-                                    marginTop: 10,
-                                    marginBottom: 18
-                                }}
-                            >
-                                Update your password regularly to protect your account better. Password must contain at
-                                least 8 characters.
-                            </Typography>
+            <Container fluid style={{ padding: 0 }} >
+                <Row noGutters >
+                    <Col xs={12} sm={12} md={12} lg={12} style={{ padding: 24 }} >
+                        <FlexView column >
+                            <Typography align="left" variant="h6" color="primary">Update your password</Typography>
+                            <Typography align="left" variant="body2" color="textSecondary" style={{ marginTop: 10, marginBottom: 18 }}>Update your password regularly to protect your account better. Password must contain at least 8 characters.</Typography>
                             <TextField
                                 label="Current password"
                                 name="currentPassword"
@@ -135,45 +101,17 @@ class ChangePasswordPage extends Component {
                                 onChange={handleTextChanged}
                             />
 
-                            <Row
-                                noGutters
-                            >
-                                <Col
-                                    xs={12}
-                                    sm={12}
-                                    md={6}
-                                    lg={8}
-                                    style={{
-                                        marginTop: 20
-                                    }}
-                                >
+                            <Row noGutters >
+                                <Col xs={12} sm={12} md={6} lg={8} style={{ marginTop: 20 }} >
                                     <PasswordUpdate
                                         responseCode={passwordChangeResponseCode}
                                         onCloseMessage={reset}
                                     />
                                 </Col>
-                                <Col
-                                    xs={12}
-                                    sm={12}
-                                    md={6}
-                                    lg={4}
-                                    style={{
-                                        marginTop: 20
-                                    }}
-                                >
-                                    <FlexView
-                                        hAlignContent="right"
-                                        width="100%"
-                                    >
-                                        <FlexView
-                                            marginRight={20}
-                                        >
-                                            <Button
-                                                variant="outlined"
-                                                color="primary"
-                                                onClick={reset}>
-                                                Cancel
-                                            </Button>
+                                <Col xs={12} sm={12} md={6} lg={4} style={{ marginTop: 20 }} >
+                                    <FlexView hAlignContent="right" width="100%" >
+                                        <FlexView marginRight={20} >
+                                            <Button variant="outlined" color="primary" onClick={reset}>Cancel</Button>
                                         </FlexView>
                                         <FlexView>
                                             <Button
@@ -249,43 +187,20 @@ class PasswordUpdate extends Component {
                 ?
                 null
                 :
-                <FlexView
-                    grow={1}
-                    style={{
-                        backgroundColor: this.renderMessage().color
-                    }}
-                    vAlignContent="center"
-                >
+                <FlexView grow={1} style={{ backgroundColor: this.renderMessage().color }} vAlignContent="center" >
 
-                    <FlexView
-                        className={css(styles.changing_password_text_background)}
-                    >
-                        <Typography
-                            align="left"
-                            variant="subtitle1"
-                            color="inherit"
-                        >
-                            {this.renderMessage().message}
-                        </Typography>
+                    <FlexView className={css(styles.changing_password_text_background)} >
+                        <Typography align="left" variant="subtitle1" color="inherit" >{this.renderMessage().message}</Typography>
                     </FlexView>
 
                     <FlexView
                         grow
                         vAlignContent="center"
                         hAlignContent="right"
-                        style={{
-                            padding: 4
-                        }}
+                        style={{ padding: 4 }}
                     >
-                        <IconButton
-                            onClick={this.onCloseMessage}
-                        >
-                            <CloseIcon
-                                fontSize="small"
-                                style={{
-                                    color: colors.white
-                                }}
-                            />
+                        <IconButton onClick={this.onCloseMessage} >
+                            <CloseIcon fontSize="small" style={{ color: colors.white }} />
                         </IconButton>
                     </FlexView>
                 </FlexView>

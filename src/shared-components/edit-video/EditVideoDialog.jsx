@@ -112,24 +112,11 @@ class EditVideoDialog extends Component {
                 onClose={onClose}
                 {...other}
             >
-                <DialogContent
-                    style={{
-                        padding: 0
-                    }}
-                >
-                    <Container
-                        fluid
-                        style={{
-                            padding: 0
-                        }}
-                    >
+                <DialogContent style={{ padding: 0 }} >
+                    <Container fluid style={{ padding: 0 }} >
                         <Row noGutters>
 
-                            <Col
-                                xs={12}
-                                sm={12}
-                                md={12}
-                                lg={12}
+                            <Col xs={12} sm={12} md={12} lg={12}
                                 style={{
                                     backgroundColor: colors.kick_starter_background_color_1,
                                     paddingTop: 6,
@@ -139,62 +126,25 @@ class EditVideoDialog extends Component {
                                 }}
                             >
                                 <FlexView vAlignContent="center">
-                                    <FlexView
-                                        grow={8}
-                                    >
-                                        <Typography
-                                            variant="body1"
-                                        >
-                                            Upload introduction video
-                                        </Typography>
+                                    <FlexView grow={8} >
+                                        <Typography variant="body1">Upload introduction video</Typography>
                                     </FlexView>
 
-                                    <FlexView
-                                        grow={1}
-                                        hAlignContent="right"
-                                    >
-                                        <IconButton
-                                            onClick={onClose}
-                                        >
+                                    <FlexView grow={1} hAlignContent="right" >
+                                        <IconButton onClick={onClose} >
                                             <CloseIcon fontSize="small" />
                                         </IconButton>
                                     </FlexView>
                                 </FlexView>
                             </Col>
 
-                            <Col
-                                xs={12}
-                                sm={12}
-                                md={12}
-                                lg={12}
-                            >
+                            <Col xs={12} sm={12} md={12} lg={12} >
                                 <Divider />
                             </Col>
 
-                            <Col
-                                xs={12}
-                                sm={12}
-                                md={12}
-                                lg={12}
-                                style={{
-                                    padding: 18
-                                }}
-                            >
-                                <FlexView
-                                    column
-                                    width="100%"
-                                    hAlignContent="center"
-                                >
-                                    <Typography
-                                        variant="body2"
-                                        color="textSecondary"
-                                        align="center"
-                                        style={{
-                                            marginBottom: 25
-                                        }}
-                                    >
-                                        Upload a new video or choose from your previous videos
-                                    </Typography>
+                            <Col xs={12} sm={12} md={12} lg={12} style={{ padding: 18 }} >
+                                <FlexView column width="100%" hAlignContent="center" >
+                                    <Typography variant="body2" color="textSecondary" align="center" style={{ marginBottom: 25 }} >Upload a new video or choose from your previous videos</Typography>
 
                                     {
                                         allowVideoUpload
@@ -235,9 +185,7 @@ class EditVideoDialog extends Component {
                                                                 VIDEO_UPLOAD_URL_SELECTED
                                                         )
                                                     }
-                                                    style={{
-                                                        marginLeft: 20
-                                                    }}
+                                                    style={{ marginLeft: 20 }}
                                                 >
                                                     {
                                                         videoTypeSelected === VIDEO_UPLOAD_URL_SELECTED
@@ -273,10 +221,7 @@ class EditVideoDialog extends Component {
                                             :
                                             videoTypeSelected === VIDEO_UPLOAD_FILE_SELECTED
                                                 ?
-                                                <FlexView
-                                                    column
-                                                    marginTop={20}
-                                                >
+                                                <FlexView column marginTop={20} >
                                                     <Files
                                                         className={css(styles.video_drop_zone)}
                                                         onChange={handleVideoFileChanged}
@@ -288,16 +233,8 @@ class EditVideoDialog extends Component {
                                                         clickable
                                                         onClick={closeFeedbackSnackbar}
                                                     >
-                                                        <FlexView
-                                                            vAlignContent="center"
-                                                            hAlignContent="center"
-                                                        >
-                                                            <AddIcon
-                                                                fontSize="small"
-                                                                style={{
-                                                                    marginRight: 8
-                                                                }}
-                                                            />
+                                                        <FlexView vAlignContent="center" hAlignContent="center" >
+                                                            <AddIcon fontSize="small" style={{ marginRight: 8 }} />
                                                             Upload video
                                                         </FlexView>
                                                     </Files>
@@ -332,13 +269,7 @@ class EditVideoDialog extends Component {
                                             ?
                                             null
                                             :
-                                            <FlexView
-                                                marginTop={20}
-                                                hAlignContent="center"
-                                                style={{
-                                                    width: "100%"
-                                                }}
-                                            >
+                                            <FlexView marginTop={20} hAlignContent="center" style={{ width: "100%" }} >
                                                 <ReactPlayer
                                                     url={
                                                         typeof(videoChosen) === "string"
@@ -366,21 +297,15 @@ class EditVideoDialog extends Component {
                                             ?
                                             null
                                             :
-                                            <FlexView
-                                                marginTop={20}
-                                                hAlignContent="right"
-                                            >
+                                            <FlexView marginTop={20} hAlignContent="right" >
                                                 <Button
                                                     size="medium"
                                                     className={css(sharedStyles.no_text_transform)}
                                                     variant="outlined"
                                                     color="primary"
                                                     onClick={() => cancelEditingCurrentVideo()}
-                                                    style={{
-                                                        marginRight: 8
-                                                    }}
-                                                >
-                                                    Cancel
+                                                    style={{ marginRight: 8 }}
+                                                >Cancel
                                                 </Button>
                                                 <Button
                                                     size="medium"
@@ -392,8 +317,7 @@ class EditVideoDialog extends Component {
                                                     style={{
                                                         marginLeft: 8
                                                     }}
-                                                >
-                                                    Save
+                                                >Save
                                                 </Button>
                                             </FlexView>
                                     }
@@ -401,17 +325,8 @@ class EditVideoDialog extends Component {
                             </Col>
 
                             {/** Divider */}
-                            <Col
-                                xs={12}
-                                sm={12}
-                                md={12}
-                                lg={12}
-                            >
-                                <Divider
-                                    style={{
-                                        marginTop: 8
-                                    }}
-                                />
+                            <Col xs={12} sm={12} md={12} lg={12} >
+                                <Divider style={{ marginTop: 8 }} />
                             </Col>
 
                             {/** Previous videos */}
@@ -421,28 +336,10 @@ class EditVideoDialog extends Component {
                                     ?
                                     null
                                     :
-                                    <Col
-                                        xs={12}
-                                        sm={12}
-                                        md={12}
-                                        lg={12}
-                                        style={{
-                                            padding: 15
-                                        }}
-                                    >
-                                        <Typography
-                                            variant="body1"
-                                            color="textSecondary"
-                                        >
-                                            Your videos
-                                        </Typography>
+                                    <Col xs={12} sm={12} md={12} lg={12} style={{ padding: 15 }} >
+                                        <Typography variant="body1" color="textSecondary">Your videos</Typography>
 
-                                        <Row
-                                            noGutters
-                                            style={{
-                                                padding: 12
-                                            }}
-                                        >
+                                        <Row noGutters style={{ padding: 12 }} >
                                             {
                                                 previousVideos
                                                     .sort((video1, video2) => video2.dateUploaded - video1.dateUploaded)
@@ -455,14 +352,7 @@ class EditVideoDialog extends Component {
                                                             lg={4}
                                                             onClick={() => handlePreviousVideoItemClick(index)}
                                                         >
-                                                            <FlexView
-                                                                hAlignContent="center"
-                                                                vAlignContent="center"
-                                                                style={{
-                                                                    width: "100%",
-                                                                    padding: 10
-                                                                }}
-                                                            >
+                                                            <FlexView hAlignContent="center" vAlignContent="center" style={{ width: "100%", padding: 10 }} >
                                                                 <ReactPlayer
                                                                     url={previousVideo.url}
                                                                     playing={false}
@@ -514,16 +404,7 @@ class EditVideoDialog extends Component {
         }
 
         return (
-            <Typography
-                align="center"
-                variant="body2"
-                color="textSecondary"
-                style={{
-                    marginTop: 12
-                }}
-            >
-                {msg}
-            </Typography>
+            <Typography align="center" variant="body2" color="textSecondary" style={{ marginTop: 12 }}>{msg}</Typography>
         );
     }
 }

@@ -101,23 +101,9 @@ class DocumentsDownload extends Component<DocumentsDownloadProps, any> {
                                     width={48}
                                     height={48}
                                 />
-                                <Box
-                                    display="flex"
-                                    flexDirection="row"
-                                >
-                                    <Typography
-                                        variant="body2"
-                                        align="left"
-                                    >
-                                        {document.fileName}
-                                    </Typography>
-                                    <Typography
-                                        variant="body2"
-                                        color="textSecondary"
-                                        align="left"
-                                    >
-                                        {document.readableSize}
-                                    </Typography>
+                                <Box display="flex" flexDirection="row" >
+                                    <Typography variant="body2" align="left">{document.fileName}</Typography>
+                                    <Typography variant="body2" color="textSecondary" align="left">{document.readableSize}</Typography>
                                 </Box>
                             </ListItem>
                     ))
@@ -128,18 +114,10 @@ class DocumentsDownload extends Component<DocumentsDownloadProps, any> {
                 open={DocumentsDownloadLocalState.openRiskWarningDialog}
                 onClose={() => onCancelRiskWarningClick()}
             >
-                <DialogTitle>
-                    Accept Risk Warning
-                </DialogTitle>
+                <DialogTitle>Accept Risk Warning</DialogTitle>
                 <DialogContent>
-                    <Box
-                        marginTop="18px"
-                        whiteSpace="pre-line"
-                    >
-                        <Typography
-                            variant="body1"
-                            align="justify"
-                        >
+                    <Box marginTop="18px" whiteSpace="pre-line" >
+                        <Typography variant="body1" align="justify" >
                             {riskWarningTextSplits[0]}
                             <CustomLink
                                 url={Routes.nonGroupRiskWarning}
@@ -157,29 +135,18 @@ class DocumentsDownload extends Component<DocumentsDownloadProps, any> {
                     </Box>
                 </DialogContent>
                 <DialogActions>
-                    <Box
-                        display="flex"
-                        flexDirection="row"
-                        marginRight="4px"
-                        marginBottom="4px"
-                    >
+                    <Box display="flex" flexDirection="row" marginRight="4px" marginBottom="4px" >
                         <Button
                             className={css(sharedStyles.no_text_transform)}
                             onClick={() => onCancelRiskWarningClick()}
-                        >
-                            Cancel
-                        </Button>
-                        <Box
-                            width="14px"
-                        />
+                        >Cancel</Button>
+                        <Box width="14px" />
                         <Button
                             color="primary"
                             variant="contained"
                             className={css(sharedStyles.no_text_transform)}
                             onClick={() => onAcceptRiskWarningClick()}
-                        >
-                            Accept
-                        </Button>
+                        >Accept</Button>
                     </Box>
                 </DialogActions>
             </Dialog>

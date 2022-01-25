@@ -110,23 +110,10 @@ class ExploreOffers extends Component<ExploreOffersProps, {}> {
         >
             <Row>
                 {/** Visibility filter */}
-                <Col
-                    xs={12}
-                    sm={12}
-                    md={6}
-                    lg={4}
-                >
-                    <Box
-                        paddingY="6px"
-                    >
-                        <Typography
-                            variant="body1"
-                        >
-                            Visibility:
-                        </Typography>
-                        <Box
-                            height="8px"
-                        />
+                <Col xs={12} sm={12} md={6} lg={4} >
+                    <Box paddingY="6px" >
+                        <Typography variant="body1">Visibility:</Typography>
+                        <Box height="8px" />
                         <Paper>
                             <Select
                                 fullWidth
@@ -137,12 +124,7 @@ class ExploreOffers extends Component<ExploreOffersProps, {}> {
                                 disabled={!successfullyFetchedOffers(ExploreOffersLocalState)}
                                 input={<OutlinedInput/>}
                             >
-                                <MenuItem
-                                    key="all"
-                                    value="all"
-                                >
-                                    All offers
-                                </MenuItem>
+                                <MenuItem key="all" value="all">All offers</MenuItem>
 
                                 {
                                     !AuthenticationState.currentUser
@@ -160,42 +142,19 @@ class ExploreOffers extends Component<ExploreOffersProps, {}> {
                                             ))
                                 }
 
-                                <MenuItem
-                                    key={PROJECT_VISIBILITY_PUBLIC}
-                                    value={PROJECT_VISIBILITY_PUBLIC}
-                                >
-                                    Public offers
-                                </MenuItem>
+                                <MenuItem key={PROJECT_VISIBILITY_PUBLIC} value={PROJECT_VISIBILITY_PUBLIC}>Public offers</MenuItem>
 
-                                <MenuItem
-                                    key={PROJECT_VISIBILITY_RESTRICTED}
-                                    value={PROJECT_VISIBILITY_RESTRICTED}
-                                >
-                                    Restricted offers
-                                </MenuItem>
+                                <MenuItem key={PROJECT_VISIBILITY_RESTRICTED} value={PROJECT_VISIBILITY_RESTRICTED}>Restricted offers</MenuItem>
                             </Select>
                         </Paper>
                     </Box>
                 </Col>
 
                 {/** Sector filter */}
-                <Col
-                    xs={12}
-                    sm={12}
-                    md={6}
-                    lg={4}
-                >
-                    <Box
-                        paddingY="6px"
-                    >
-                        <Typography
-                            variant="body1"
-                        >
-                            Sector:
-                        </Typography>
-                        <Box
-                            height="8px"
-                        />
+                <Col xs={12} sm={12} md={6} lg={4} >
+                    <Box paddingY="6px" >
+                        <Typography variant="body1">Sector:</Typography>
+                        <Box height="8px" />
                         <Paper>
                             <Select
                                 fullWidth
@@ -206,23 +165,13 @@ class ExploreOffers extends Component<ExploreOffersProps, {}> {
                                 disabled={!successfullyFetchedOffers(ExploreOffersLocalState)}
                                 input={<OutlinedInput/>}
                             >
-                                <MenuItem
-                                    key="all"
-                                    value="all"
-                                >
-                                    All sectors
-                                </MenuItem>
+                                <MenuItem key="all" value="all">All sectors</MenuItem>
 
                                 {
                                     !ManageSystemAttributesState.systemAttributes
                                         ? null
                                         : ManageSystemAttributesState.systemAttributes.Sectors.map((sector, index) => (
-                                            <MenuItem
-                                                key={index}
-                                                value={sector}
-                                            >
-                                                {sector}
-                                            </MenuItem>
+                                            <MenuItem key={index} value={sector}>{sector}</MenuItem>
                                         ))
                                 }
                             </Select>
@@ -231,23 +180,10 @@ class ExploreOffers extends Component<ExploreOffersProps, {}> {
                 </Col>
 
                 {/** Phase filter */}
-                <Col
-                    xs={12}
-                    sm={12}
-                    md={6}
-                    lg={4}
-                >
-                    <Box
-                        paddingY="6px"
-                    >
-                        <Typography
-                            variant="body1"
-                        >
-                            Status:
-                        </Typography>
-                        <Box
-                            height="8px"
-                        />
+                <Col xs={12} sm={12} md={6} lg={4} >
+                    <Box paddingY="6px" >
+                        <Typography variant="body1">Status:</Typography>
+                        <Box height="8px" />
                         <Paper>
                             <Select
                                 fullWidth
@@ -258,19 +194,9 @@ class ExploreOffers extends Component<ExploreOffersProps, {}> {
                                 disabled={!successfullyFetchedOffers(ExploreOffersLocalState)}
                                 input={<OutlinedInput/>}
                             >
-                                <MenuItem
-                                    key={FetchProjectsPhaseOptions.LivePitch}
-                                    value={FetchProjectsPhaseOptions.LivePitch}
-                                >
-                                    Live
-                                </MenuItem>
+                                <MenuItem key={FetchProjectsPhaseOptions.LivePitch} value={FetchProjectsPhaseOptions.LivePitch}>Live</MenuItem>
 
-                                <MenuItem
-                                    key={FetchProjectsPhaseOptions.ExpiredPitch}
-                                    value={FetchProjectsPhaseOptions.ExpiredPitch}
-                                >
-                                    Expired
-                                </MenuItem>
+                                <MenuItem key={FetchProjectsPhaseOptions.ExpiredPitch} value={FetchProjectsPhaseOptions.ExpiredPitch}>Expired</MenuItem>
                             </Select>
                         </Paper>
                     </Box>
@@ -278,17 +204,8 @@ class ExploreOffers extends Component<ExploreOffersProps, {}> {
             </Row>
 
             {/** Search bar */}
-            <Row
-                style={{
-                    marginTop: 40
-                }}
-            >
-                <Col
-                    xs={12}
-                    sm={12}
-                    md={8}
-                    lg={4}
-                >
+            <Row style={{ marginTop: 40 }} >
+                <Col xs={12} sm={12} md={8} lg={4} >
                     <Box
                         width="100%"
                         height="100%"
@@ -299,9 +216,7 @@ class ExploreOffers extends Component<ExploreOffersProps, {}> {
                         paddingX="5px"
                         paddingY="8px"
                     >
-                        <form
-                            onSubmit={onSearchEnter}
-                        >
+                        <form onSubmit={onSearchEnter} >
                             <InputBase
                                 fullWidth
                                 name="searchFilter"
@@ -310,9 +225,7 @@ class ExploreOffers extends Component<ExploreOffersProps, {}> {
                                 onChange={filterChanged}
                                 disabled={!successfullyFetchedOffers(ExploreOffersLocalState)}
                                 startAdornment={
-                                    <InputAdornment
-                                        position="start"
-                                    >
+                                    <InputAdornment position="start" >
                                         <IconButton
                                             type="submit"
                                             onClick={() => fetchOffers(FetchProjectsOrderByOptions.Phase)}
@@ -325,12 +238,8 @@ class ExploreOffers extends Component<ExploreOffersProps, {}> {
                                 endAdornment={
                                     !isSearchFilterActive(ExploreOffersLocalState)
                                         ? null
-                                        : <InputAdornment
-                                            position="end"
-                                        >
-                                            <IconButton
-                                                onClick={() => clearSearchFilter()}
-                                            >
+                                        : <InputAdornment position="end" >
+                                            <IconButton onClick={() => clearSearchFilter()} >
                                                 <Close fontSize="small"/>
                                             </IconButton>
                                         </InputAdornment>
@@ -345,23 +254,10 @@ class ExploreOffers extends Component<ExploreOffersProps, {}> {
             {
                 !isFetchingOffers(ExploreOffersLocalState)
                     ? null
-                    : <Row
-                        noGutters
-                    >
-                        <Col
-                            xs={12}
-                            sm={12}
-                            md={12}
-                            lg={12}
-                        >
-                            <Box
-                                display="flex"
-                                marginY="50px"
-                                justifyContent="center"
-                            >
-                                <BeatLoader
-                                    color={getGroupRouteTheme(ManageGroupUrlState).palette.primary.main}
-                                />
+                    : <Row noGutters >
+                        <Col xs={12} sm={12} md={12} lg={12} >
+                            <Box display="flex" marginY="50px" justifyContent="center" >
+                                <BeatLoader color={getGroupRouteTheme(ManageGroupUrlState).palette.primary.main} />
                             </Box>
                         </Col>
                     </Row>
@@ -371,26 +267,12 @@ class ExploreOffers extends Component<ExploreOffersProps, {}> {
             {
                 !successfullyFetchedOffers(ExploreOffersLocalState)
                     ? null
-                    : <Row
-                        noGutters
-                    >
-                        <Col
-                            xs={12}
-                            sm={12}
-                            md={12}
-                            lg={12}
-                        >
+                    : <Row noGutters >
+                        <Col xs={12} sm={12} md={12} lg={12} >
                             {
                                 !hasOffersForCurrentFilters(ExploreOffersLocalState)
-                                    ? <Box
-                                        marginY="80px"
-                                    >
-                                        <Typography
-                                            align="center"
-                                            variant="h5"
-                                        >
-                                            There are no offers available using your current filter criteria
-                                        </Typography>
+                                    ? <Box marginY="80px" >
+                                        <Typography align="center" variant="h5" >There are no offers available using your current filter criteria</Typography>
                                     </Box>
                                     : <Box>
                                         {/** Explore n offers + refresh button */}
@@ -401,24 +283,10 @@ class ExploreOffers extends Component<ExploreOffersProps, {}> {
                                             marginTop="50px"
                                             marginBottom="25px"
                                         >
-                                            <Typography
-                                                variant="h6"
-                                            >
-                                                Explore
-                                            </Typography>
-                                            <Typography
-                                                variant="h6"
-                                                color="primary"
-                                            >
-                                                &nbsp;<b>{ExploreOffersLocalState.offerInstances.length} offers</b>
-                                            </Typography>
-
-                                            <Box
-                                                marginLeft="8px"
-                                            >
-                                                <IconButton
-                                                    onClick={() => fetchOffers(FetchProjectsOrderByOptions.Phase)}
-                                                >
+                                            <Typography variant="h6">Explore</Typography>
+                                            <Typography variant="h6" color="primary">&nbsp;<b>{ExploreOffersLocalState.offerInstances.length} offers</b></Typography>
+                                            <Box marginLeft="8px" >
+                                                <IconButton onClick={() => fetchOffers(FetchProjectsOrderByOptions.Phase)} >
                                                     <RefreshIcon/>
                                                 </IconButton>
                                             </Box>
@@ -430,9 +298,7 @@ class ExploreOffers extends Component<ExploreOffersProps, {}> {
                                                 ? null
                                                 : !isIssuer(AuthenticationState.currentUser)
                                                 ? null
-                                                : <Box
-                                                    marginBottom="40px"
-                                                >
+                                                : <Box marginBottom="40px" >
                                                     <CustomLink
                                                         url={Routes.constructCreateProjectRoute(ManageGroupUrlState.groupNameFromUrl ?? null)}
                                                         target="_blank"
@@ -441,20 +307,10 @@ class ExploreOffers extends Component<ExploreOffersProps, {}> {
                                                         activeUnderline={false}
                                                         component="a"
                                                         childComponent={
-                                                            <Button
-                                                                size="medium"
-                                                                variant="contained"
-                                                                color="primary"
-                                                                className={css(sharedStyles.no_text_transform)}
-                                                            >
-                                                                <Box
-                                                                    marginRight="8px"
-                                                                >
-                                                                    <CreateIcon
-                                                                        fontSize="small"
-                                                                    />
-                                                                </Box>
-                                                                Create new offer
+                                                            <Button size="medium" variant="contained" color="primary" className={css(sharedStyles.no_text_transform)} >
+                                                                <Box marginRight="8px" >
+                                                                    <CreateIcon fontSize="small" />
+                                                                </Box>Create new offer
                                                             </Button>
                                                         }
                                                     />
@@ -467,19 +323,9 @@ class ExploreOffers extends Component<ExploreOffersProps, {}> {
                                                 ExploreOffersLocalState.offerInstances
                                                     .slice(paginationIndices.startIndex, paginationIndices.endIndex + 1)
                                                     .map(offerInstance => (
-                                                        <Col
-                                                            key={offerInstance.projectDetail.id}
-                                                            xs={12}
-                                                            sm={12}
-                                                            md={6}
-                                                            lg={3}
-                                                        >
-                                                            <Box
-                                                                margin="16px"
-                                                            >
-                                                                <OfferItem
-                                                                    offerInstance={offerInstance}
-                                                                />
+                                                        <Col key={offerInstance.projectDetail.id} xs={12} sm={12} md={6} lg={3} >
+                                                            <Box margin="16px" >
+                                                                <OfferItem offerInstance={offerInstance} />
                                                             </Box>
                                                         </Col>
                                                     ))
@@ -497,44 +343,19 @@ class ExploreOffers extends Component<ExploreOffersProps, {}> {
                     ? null
                     : paginationPages === 1
                     ? null
-                    : <Row
-                        noGutters
-                    >
-                        <Col
-                            xs={12}
-                            sm={12}
-                            md={12}
-                            lg={12}
-                        >
-                            <Box
-                                display="flex"
-                                justifyContent="center"
-                                marginTop="55px"
-                            >
-                                <Pagination
-                                    count={paginationPages}
-                                    page={ExploreOffersLocalState.currentPage}
-                                    color="primary"
-                                    onChange={paginationChanged}
-                                />
+                    : <Row noGutters >
+                        <Col xs={12} sm={12} md={12} lg={12} >
+                            <Box display="flex" justifyContent="center" marginTop="55px" >
+                                <Pagination count={paginationPages} page={ExploreOffersLocalState.currentPage} color="primary" onChange={paginationChanged} />
                             </Box>
                         </Col>
                     </Row>
             }
 
             {/** Risk warning */}
-            <Row
-                noGutters
-            >
-                <Col
-                    xs={12}
-                    sm={12}
-                    md={12}
-                    lg={12}
-                >
-                    <Box
-                        marginTop="100px"
-                    >
+            <Row noGutters >
+                <Col xs={12} sm={12} md={12} lg={12} >
+                    <Box marginTop="100px" >
                         <RiskWarning/>
                     </Box>
                 </Col>

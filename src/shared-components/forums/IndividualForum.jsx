@@ -110,14 +110,8 @@ class IndividualForum extends Component {
         if (!forumThreadsLoaded) {
             return (
                 <TableRow>
-                    <TableCell
-                        colSpan={4}
-                    >
-                        <FlexView
-                            hAlignContent="center"
-                            marginTop={20}
-                            marginBottom={20}
-                        >
+                    <TableCell colSpan={4} >
+                        <FlexView hAlignContent="center" marginTop={20} marginBottom={20} >
                             <HashLoader
                                 color={
                                     !groupProperties
@@ -161,19 +155,8 @@ class IndividualForum extends Component {
         if (sortedThreads.length === 0) {
             return (
                 <TableRow>
-                    <TableCell
-                        colSpan={4}
-                    >
-                        <Typography
-                            variant="body1"
-                            align="center"
-                            style={{
-                                marginTop: 20,
-                                marginBottom: 20
-                            }}
-                        >
-                            No threads created.
-                        </Typography>
+                    <TableCell colSpan={4} >
+                        <Typography variant="body1" align="center" style={{ marginTop: 20, marginBottom: 20 }}>No threads created.</Typography>
                     </TableCell>
                 </TableRow>
             );
@@ -188,33 +171,12 @@ class IndividualForum extends Component {
                             hover
                         >
                             <TableCell>
-                                <Typography
-                                    align="left"
-                                    variant="body2"
-                                >
-                                    {utils.dateTimeInReadableFormat(thread.dateCreated)}
-                                </Typography>
+                                <Typography align="left" variant="body2" >{utils.dateTimeInReadableFormat(thread.dateCreated)}</Typography>
                             </TableCell>
-                            <TableCell
-                                style={{
-                                    maxWidth: 400
-                                }}
-                            >
-                                <FlexView
-                                    column
-                                    hAlignContent="left"
-                                >
-                                    <ButtonBase
-                                        onClick={() => clickOnAParticularThread(thread)}
-                                    >
-                                        <Typography
-                                            align="left"
-                                            variant="body2"
-                                            color="primary"
-                                            noWrap
-                                        >
-                                            {thread.name}
-                                        </Typography>
+                            <TableCell style={{ maxWidth: 400 }} >
+                                <FlexView column hAlignContent="left" >
+                                    <ButtonBase onClick={() => clickOnAParticularThread(thread)} >
+                                        <Typography align="left" variant="body2" color="primary" noWrap>{thread.name}</Typography>
                                     </ButtonBase>
                                     {
                                         currentUser.type === DB_CONST.TYPE_ADMIN
@@ -227,26 +189,16 @@ class IndividualForum extends Component {
                                             )
                                         )
                                             ?
-                                            <FlexView
-                                                marginTop={12}
-                                            >
+                                            <FlexView marginTop={12} >
                                                 <Button
                                                     variant="outlined"
                                                     className={css(sharedStyles.no_text_transform)}
                                                     size="small"
                                                     color="secondary"
                                                     onClick={() => deleteThread(thread.id)}
-                                                    style={{
-                                                        marginRight: 10
-                                                    }}
-                                                >
-                                                    Delete
-                                                    <DeleteIcon
-                                                        fontSize="small"
-                                                        style={{
-                                                            marginLeft: 6
-                                                        }}
-                                                    />
+                                                    style={{ marginRight: 10 }}
+                                                >Delete
+                                                    <DeleteIcon fontSize="small" style={{ marginLeft: 6 }}/>
                                                 </Button>
                                                 <Button
                                                     variant="outlined"
@@ -254,14 +206,8 @@ class IndividualForum extends Component {
                                                     size="small"
                                                     color="primary"
                                                     onClick={() => toggleCreateNewThread(true, JSON.parse(JSON.stringify(thread)))}
-                                                >
-                                                    Edit
-                                                    <EditIcon
-                                                        fontSize="small"
-                                                        style={{
-                                                            marginLeft: 6
-                                                        }}
-                                                    />
+                                                > Edit
+                                                    <EditIcon fontSize="small" style={{ marginLeft: 6 }} />
                                                 </Button>
                                             </FlexView>
                                             :
@@ -269,29 +215,11 @@ class IndividualForum extends Component {
                                     }
                                 </FlexView>
                             </TableCell>
-                            <TableCell
-                                style={{
-                                    maxWidth: 400
-                                }}
-                            >
-                                <Typography
-                                    align="left"
-                                    variant="body2"
-                                    noWrap
-                                >
-                                    {thread.description}
-                                </Typography>
+                            <TableCell style={{ maxWidth: 400 }} >
+                                <Typography align="left" variant="body2" noWrap>{thread.description}</Typography>
                             </TableCell>
-                            <TableCell
-                                style={{
-                                    maxWidth: 200
-                                }}
-                            >
-                                <Typography
-                                    align="left"
-                                    variant="body2"
-                                    noWrap
-                                >
+                            <TableCell style={{ maxWidth: 200 }} >
+                                <Typography align="left" variant="body2" noWrap >
                                     {
                                         thread.author.type !== DB_CONST.TYPE_ADMIN
                                             ?
@@ -344,39 +272,18 @@ class IndividualForum extends Component {
         }
 
         return (
-            <FlexView
-                column
-            >
-                <FlexView
-                    vAlignContent="center"
-                >
-                    <IconButton
-                        color="primary"
-                        aria-label="Back"
-                        onClick={goBackToForumsList}
-                    >
+            <FlexView column >
+                <FlexView vAlignContent="center" >
+                    <IconButton color="primary" aria-label="Back" onClick={goBackToForumsList} >
                         <ArrowBackIcon/>
                     </IconButton>
-                    <FlexView
-                        marginLeft={8}
-                    >
-                        <Typography
-                            color="primary"
-                            variant="h6"
-                        >
-                            {`Forum: ${forumSelected.name}`}
-                        </Typography>
+                    <FlexView marginLeft={8} >
+                        <Typography color="primary" variant="h6">{`Forum: ${forumSelected.name}`}</Typography>
                     </FlexView>
                 </FlexView>
 
-                <FlexView
-                    marginTop={12}
-                    marginBottom={24}
-                >
-                    <Typography
-                        variant="body2"
-                        align="left"
-                    >
+                <FlexView marginTop={12} marginBottom={24} >
+                    <Typography variant="body2" align="left" >
                         {
                             !forumSelected.hasOwnProperty('lastEdited')
                                 ?
@@ -387,108 +294,45 @@ class IndividualForum extends Component {
                     </Typography>
                 </FlexView>
 
-                <Typography
-                    variant="body1"
-                    align="left"
-                >
-                    <b><u>Description:</u></b>
-                </Typography>
+                <Typography variant="body1" align="left"><b><u>Description:</u></b></Typography>
 
-                <Typography
-                    variant="body1"
-                    align="left"
-                    style={{
-                        whiteSpace: "pre-line",
-                        marginTop: 6
-                    }}
-                >
-                    {forumSelected.description}
-                </Typography>
+                <Typography variant="body1" align="left" style={{ whiteSpace: "pre-line", marginTop: 6 }}>{forumSelected.description}</Typography>
 
-                <Divider
-                    style={{
-                        height: 2,
-                        marginTop: 35,
-                        marginBottom: 35,
-                        backgroundColor: colors.blue_gray_100
-                    }}
-                />
+                <Divider style={{ height: 2, marginTop: 35, marginBottom: 35, backgroundColor: colors.blue_gray_100 }} />
 
-                <FlexView
-                    marginBottom={35}
-                >
+                <FlexView marginBottom={35} >
                     <Button
                         variant="outlined"
                         color="primary"
                         className={css(sharedStyles.no_text_transform)}
                         onClick={() => toggleCreateNewThread(true, null)}
                     >
-                        <AddIcon
-                            fontSize="small"
-                            style={{
-                                marginRight: 10
-                            }}
-                        />
-                        Create thread
+                        <AddIcon fontSize="small" style={{ marginRight: 10 }}/>Create thread
                     </Button>
                 </FlexView>
 
                 {/** Filters */}
-                <Container
-                    fluid
-                    style={{
-                        padding: 0,
-                        marginBottom: 40
-                    }}
-                >
+                <Container fluid style={{ padding: 0, marginBottom: 40 }} >
                     <Row>
                         {
                             currentUser.type === DB_CONST.TYPE_ADMIN
                             && currentUser.superAdmin
                                 ?
-                                <Col
-                                    xs={12}
-                                    sm={12}
-                                    md={4}
-                                    lg={2}
-                                >
-                                    <FlexView
-                                        column
-                                    >
-                                        <Typography
-                                            variant="body2"
-                                            align="left"
-                                            style={{
-                                                marginBottom: 4
-                                            }}
-                                        >
-                                            Mode
-                                        </Typography>
+                                <Col xs={12} sm={12} md={4} lg={2} >
+                                    <FlexView column >
+                                        <Typography variant="body2" align="left" style={{ marginBottom: 4 }}>Mode</Typography>
                                         <Paper>
-                                            <FormControl
-                                                fullWidth
-                                            >
+                                            <FormControl fullWidth >
                                                 <Select
                                                     value={threadsLoadMode}
                                                     onChange={handleForumsInputChanged}
                                                     margin="dense"
                                                     input={
-                                                        <OutlinedInput
-                                                            labelWidth={0}
-                                                            name="threadsLoadMode"
-                                                        />
+                                                        <OutlinedInput labelWidth={0} name="threadsLoadMode" />
                                                     }
                                                 >
-                                                    <MenuItem
-                                                        value={realtimeDBUtils.LOAD_LIVE_THREADS}
-                                                    >
-                                                        Live threads
-                                                    </MenuItem>
-                                                    <MenuItem
-                                                        value={realtimeDBUtils.LOAD_DELETED_THREADS}
-                                                    >
-                                                        Deleted threads
-                                                    </MenuItem>
+                                                    <MenuItem value={realtimeDBUtils.LOAD_LIVE_THREADS}>Live threads</MenuItem>
+                                                    <MenuItem value={realtimeDBUtils.LOAD_DELETED_THREADS}>Deleted threads</MenuItem>
                                                 </Select>
                                             </FormControl>
                                         </Paper>
@@ -497,54 +341,22 @@ class IndividualForum extends Component {
                                 :
                                 null
                         }
-                        <Col
-                            xs={12}
-                            sm={12}
-                            md={4}
-                            lg={2}
-                        >
-                            <FlexView
-                                column
-                            >
-                                <Typography
-                                    variant="body2"
-                                    align="left"
-                                    style={{
-                                        marginBottom: 4
-                                    }}
-                                >
-                                    Sort by
-                                </Typography>
+                        <Col xs={12} sm={12} md={4} lg={2} >
+                            <FlexView column >
+                                <Typography variant="body2" align="left" style={{ marginBottom: 4 }}>Sort by</Typography>
                                 <Paper>
-                                    <FormControl
-                                        fullWidth
-                                    >
+                                    <FormControl fullWidth >
                                         <Select
                                             value={threadsSortedMode}
                                             onChange={handleForumsInputChanged}
                                             margin="dense"
                                             input={
-                                                <OutlinedInput
-                                                    labelWidth={0}
-                                                    name="threadsSortedMode"
-                                                />
+                                                <OutlinedInput labelWidth={0} name="threadsSortedMode" />
                                             }
                                         >
-                                            <MenuItem
-                                                value={SORT_BY_LAST}
-                                            >
-                                                Newest
-                                            </MenuItem>
-                                            <MenuItem
-                                                value={SORT_BY_CURRENT_USER}
-                                            >
-                                                Mine
-                                            </MenuItem>
-                                            <MenuItem
-                                                value={SORT_BY_OLDEST}
-                                            >
-                                                Oldest
-                                            </MenuItem>
+                                            <MenuItem value={SORT_BY_LAST}>Newest</MenuItem>
+                                            <MenuItem value={SORT_BY_CURRENT_USER}>Mine</MenuItem>
+                                            <MenuItem value={SORT_BY_OLDEST}>Oldest</MenuItem>
                                         </Select>
                                     </FormControl>
                                 </Paper>
@@ -554,11 +366,7 @@ class IndividualForum extends Component {
                 </Container>
 
                 {/** Threads table */}
-                <Paper
-                    style={{
-                        overflowX: "auto"
-                    }}
-                >
+                <Paper style={{ overflowX: "auto" }}>
                     <Table>
                         <TableHead>
                             <TableRow>
@@ -572,13 +380,7 @@ class IndividualForum extends Component {
                                             groupProperties.settings.primaryColor
                                     }
                                     component={
-                                        <Typography
-                                            align="left"
-                                            variant="body2"
-                                            className={css(sharedStyles.white_text)}
-                                        >
-                                            <b>Date</b>
-                                        </Typography>
+                                        <Typography align="left" variant="body2" className={css(sharedStyles.white_text)}><b>Date</b></Typography>
                                     }
                                 />
                                 <StyledTableCell
@@ -591,13 +393,7 @@ class IndividualForum extends Component {
                                             groupProperties.settings.primaryColor
                                     }
                                     component={
-                                        <Typography
-                                            align="left"
-                                            variant="body2"
-                                            className={css(sharedStyles.white_text)}
-                                        >
-                                            <b>Thread</b>
-                                        </Typography>
+                                        <Typography align="left" variant="body2" className={css(sharedStyles.white_text)}><b>Thread</b></Typography>
                                     }
                                 />
                                 <StyledTableCell
@@ -610,13 +406,7 @@ class IndividualForum extends Component {
                                             groupProperties.settings.primaryColor
                                     }
                                     component={
-                                        <Typography
-                                            align="left"
-                                            variant="body2"
-                                            className={css(sharedStyles.white_text)}
-                                        >
-                                            <b>Description</b>
-                                        </Typography>
+                                        <Typography align="left" variant="body2" className={css(sharedStyles.white_text)}><b>Description</b></Typography>
                                     }
                                 />
                                 <StyledTableCell
@@ -629,13 +419,7 @@ class IndividualForum extends Component {
                                             groupProperties.settings.primaryColor
                                     }
                                     component={
-                                        <Typography
-                                            align="left"
-                                            variant="body2"
-                                            className={css(sharedStyles.white_text)}
-                                        >
-                                            <b>Author</b>
-                                        </Typography>
+                                        <Typography align="left" variant="body2" className={css(sharedStyles.white_text)}><b>Author</b></Typography>
                                     }
                                 />
                             </TableRow>

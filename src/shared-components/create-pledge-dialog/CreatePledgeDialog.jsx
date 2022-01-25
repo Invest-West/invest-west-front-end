@@ -88,46 +88,21 @@ class CreatePledgeDialog extends Component {
                 {...other}
             >
                 <DialogTitle>
-                    <AppBar
-                        elevation={0}
-                    >
+                    <AppBar elevation={0} >
                         <Toolbar>
-                            <IconButton
-                                color="inherit"
-                                onClick={toggleCreatePledgeDialog}
-                                aria-label="Close"
-                            >
+                            <IconButton color="inherit" onClick={toggleCreatePledgeDialog} aria-label="Close" >
                                 <CloseIcon/>
                             </IconButton>
-                            <FlexView
-                                marginLeft={10}
-                            >
-                                <Typography
-                                    variant="h6"
-                                    color="inherit"
-                                >
-                                    Create pledge
-                                </Typography>
+                            <FlexView marginLeft={10} >
+                                <Typography variant="h6" color="inherit">Create pledge</Typography>
                             </FlexView>
                         </Toolbar>
                     </AppBar>
                 </DialogTitle>
                 <DialogContent>
-                    <Container
-                        fluid
-                        style={{
-                            marginTop: 40
-                        }}
-                    >
-                        <Row
-                            noGutters
-                        >
-                            <Col
-                                xs={12}
-                                sm={12}
-                                md={{span: 8, offset: 2}}
-                                lg={{span: 6, offset: 3}}
-                            >
+                    <Container fluid style={{ marginTop: 40 }} >
+                        <Row noGutters >
+                            <Col xs={12} sm={12} md={{span: 8, offset: 2}} lg={{span: 6, offset: 3}} >
 
                                 {/** Get the project name from the pitch and put here */}
                                 <TextField
@@ -190,10 +165,7 @@ class CreatePledgeDialog extends Component {
                                     onChange={handleInputChanged}
                                 />
 
-                                <FlexView
-                                    marginTop={15}
-                                    width="100%"
-                                >
+                                <FlexView marginTop={15} width="100%" >
                                     <KeyboardDatePicker
                                         autoOk
                                         variant="dialog"
@@ -224,50 +196,25 @@ class CreatePledgeDialog extends Component {
                                     ?
                                     null
                                     :
-                                    <Col
-                                        xs={12}
-                                        sm={12}
-                                        md={{span: 8, offset: 2}}
-                                        lg={{span: 6, offset: 3}}
-                                        style={{
-                                            marginTop: 10
-                                        }}
-                                    >
+                                    <Col xs={12} sm={12} md={{span: 8, offset: 2}} lg={{span: 6, offset: 3}} style={{ marginTop: 10 }} >
                                         <SelectPledgeVisibility/>
                                     </Col>
                             }
 
-                            <Col
-                                xs={12}
-                                sm={12}
-                                md={{span: 8, offset: 2}}
-                                lg={{span: 6, offset: 3}}
-                                style={{
-                                    marginTop: 40,
-                                    marginBottom: 50
-                                }}
-                            >
-                                <FlexView
-                                    hAlignContent="center"
-                                    marginBottom={30}
-                                >
+                            <Col xs={12} sm={12} md={{span: 8, offset: 2}} lg={{span: 6, offset: 3}} style={{ marginTop: 40, marginBottom: 50 }} >
+                                <FlexView hAlignContent="center" marginBottom={30} >
                                     {
                                         this.renderCreatePledgeError()
                                     }
                                 </FlexView>
-                                <FlexView
-                                    width="100%"
-                                    hAlignContent="center"
-                                >
+                                <FlexView width="100%" hAlignContent="center" >
                                     <Button
                                         size="large"
                                         className={css(sharedStyles.no_text_transform)}
                                         variant="outlined"
                                         color="primary"
                                         onClick={createPledge}
-                                    >
-                                        Create pledge
-                                    </Button>
+                                    >Create pledge</Button>
                                 </FlexView>
                             </Col>
                         </Row>
@@ -308,13 +255,7 @@ class CreatePledgeDialog extends Component {
         }
 
         return (
-            <Typography
-                align="center"
-                variant="subtitle1"
-                color="error"
-            >
-                {msg}
-            </Typography>
+            <Typography align="center" variant="subtitle1" color="error">{msg}</Typography>
         );
     }
 }

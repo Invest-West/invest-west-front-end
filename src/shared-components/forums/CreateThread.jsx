@@ -54,23 +54,10 @@ class CreateThread extends Component {
         } = this.props;
 
         return (
-            <Row
-                noGutters
-            >
-                <Col
-                    xs={12}
-                    sm={12}
-                    md={12}
-                    lg={12}
-                >
-                    <FlexView
-                        column
-                    >
-                        <Typography
-                            paragraph
-                            variant="h6"
-                            color="primary"
-                        >
+            <Row noGutters >
+                <Col xs={12} sm={12} md={12} lg={12} >
+                    <FlexView column >
+                        <Typography paragraph variant="h6" color="primary" >
                             {
                                 threadEdited
                                     ?
@@ -84,28 +71,10 @@ class CreateThread extends Component {
                                 ?
                                 null
                                 :
-                                <Typography
-                                    paragraph
-                                    variant="body1"
-                                    color="textSecondary"
-                                    align="left"
-                                >
-                                    A thread is a series of posts
-                                    related to the same subject. Threads provide an organisational structure within a
-                                    forum for
-                                    users to share posts on similar topics. Creating a thread posts the first
-                                    message.
-                                </Typography>
+                                <Typography paragraph variant="body1" color="textSecondary" align="left">A thread is a series of posts related to the same subject. Threads provide an organisational structure within a forum for users to share posts on similar topics. Creating a thread posts the first message.</Typography>
                         }
-                        <FlexView
-                            column
-                            marginTop={10}
-                        >
-                            <Typography
-                                variant="body1"
-                            >
-                                Thread information
-                            </Typography>
+                        <FlexView column marginTop={10} >
+                            <Typography variant="body1">Thread information</Typography>
 
                             <TextField
                                 name="createThreadName"
@@ -129,16 +98,8 @@ class CreateThread extends Component {
                                 onChange={handleForumsInputChanged}
                             />
 
-                            <FlexView
-                                column
-                                marginTop={40}
-                            >
-                                <Typography
-                                    paragraph
-                                    variant="body1"
-                                >
-                                    Thread message
-                                </Typography>
+                            <FlexView column marginTop={40} >
+                                <Typography paragraph variant="body1">Thread message</Typography>
                                 <ReactQuill
                                     placeholder="Write your thread message here. Add images for visual effects."
                                     theme="snow"
@@ -150,74 +111,35 @@ class CreateThread extends Component {
                         </FlexView>
                     </FlexView>
                 </Col>
-                <Col
-                    xs={12}
-                    sm={12}
-                    md={12}
-                    lg={12}
-                >
-                    <Row
-                        noGutters
-                    >
-                        <Col
-                            xs={12}
-                            sm={12}
-                            md={6}
-                            lg={8}
-                            style={{
-                                marginTop: 30
-                            }}
-                        >
+                <Col xs={12} sm={12} md={12} lg={12} >
+                    <Row noGutters >
+                        <Col xs={12} sm={12} md={6} lg={8} style={{ marginTop: 30 }}>
                             <FlexView>
                                 {
                                     !createThreadError
                                         ?
                                         null
                                         :
-                                        <Typography
-                                            variant="body1"
-                                            align="left"
-                                            color="error"
-                                        >
-                                            Please fill in the required fields.
-                                        </Typography>
+                                        <Typography variant="body1" align="left" color="error">Please fill in the required fields.</Typography>
                                 }
                             </FlexView>
                         </Col>
-                        <Col
-                            xs={12}
-                            sm={12}
-                            md={6}
-                            lg={4}
-                            style={{
-                                marginTop: 30
-                            }}
-                        >
-                            <FlexView
-                                hAlignContent="right"
-                            >
-                                <FlexView
-                                    marginRight={5}
-                                >
+                        <Col xs={12} sm={12} md={6} lg={4} style={{ marginTop: 30 }}>
+                            <FlexView hAlignContent="right">
+                                <FlexView marginRight={5}>
                                     <Button
                                         variant="outlined"
                                         onClick={() => toggleCreateNewThread(false, null)}
                                         className={css(sharedStyles.no_text_transform)}
-                                    >
-                                        Cancel
-                                    </Button>
+                                    >Cancel</Button>
                                 </FlexView>
-                                <FlexView
-                                    marginLeft={5}
-                                >
+                                <FlexView marginLeft={5} >
                                     <Button
                                         variant="contained"
                                         color="primary"
                                         onClick={createNewThread}
                                         className={css(sharedStyles.no_text_transform)}
-                                    >
-                                        Submit
-                                    </Button>
+                                    >Submit</Button>
                                 </FlexView>
                             </FlexView>
                         </Col>

@@ -96,21 +96,13 @@ class FeedbackSnackbar extends Component {
                                     ?
                                     null
                                     :
-                                    <CheckCircleIcon
-                                        style={{
-                                            marginRight: 8
-                                        }}
-                                    />
+                                    <CheckCircleIcon style={{ marginRight: 8 }}/>
                             }
                             {message}
                         </span>
                     }
                     action={[
-                        <IconButton
-                            key="close"
-                            color="inherit"
-                            onClick={closeFeedbackSnackbar}
-                        >
+                        <IconButton key="close" color="inherit" onClick={closeFeedbackSnackbar}>
                             <CloseIcon/>
                         </IconButton>
                     ]}

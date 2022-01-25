@@ -51,31 +51,15 @@ class HeaderWithoutDesc extends Component {
         } = this.props;
 
         return (
-            <Container
-                fluid
-                style={{
-                    padding: 0,
-                    backgroundColor: colors.white
-                }}
-            >
-                <Row
-                    noGutters
-                >
-                    <Col
-                        xs={{span: 12, order: 2}}
-                        md={{span: 4, order: 1}}
-                        lg={{span: 4, order: 1}}
-                    >
+            <Container fluid style={{ padding: 0, backgroundColor: colors.white }} >
+                <Row noGutters >
+                    <Col xs={{span: 12, order: 2}} md={{span: 4, order: 1}} lg={{span: 4, order: 1}} >
                         {
                             !groupProperties
                                 ?
                                 null
                                 :
-                                <FlexView
-                                    vAlignContent="center"
-                                    height="100%"
-                                    marginLeft={10}
-                                >
+                                <FlexView vAlignContent="center" height="100%" marginLeft={10} >
                                     {
                                         !user || authStatus !== AUTH_SUCCESS
                                             ?
@@ -83,16 +67,8 @@ class HeaderWithoutDesc extends Component {
                                                 to={groupUserName ? ROUTES.FRONT.replace(":groupUserName", groupUserName) : ROUTES.FRONT_INVEST_WEST_SUPER}
                                                 className={css(sharedStyles.nav_link_hover_without_changing_text_color)}
                                             >
-                                                <Typography
-                                                    variant="body1"
-                                                    className={css(styles.navigation_text)}
-                                                >
-                                                    <HomeIcon
-                                                        style={{
-                                                            marginBottom: 6,
-                                                            marginRight: 5
-                                                        }}
-                                                    />
+                                                <Typography variant="body1" className={css(styles.navigation_text)} >
+                                                    <HomeIcon style={{ marginBottom: 6, marginRight: 5 }} />
                                                     Home
                                                 </Typography>
                                             </NavLink>
@@ -112,16 +88,8 @@ class HeaderWithoutDesc extends Component {
                                                                 `${groupUserName ? ROUTES.DASHBOARD_INVESTOR.replace(":groupUserName", groupUserName) : ROUTES.DASHBOARD_INVESTOR_INVEST_WEST_SUPER}?tab=Home`
                                                         )
                                                 }>
-                                                <Typography
-                                                    variant="body1"
-                                                    className={css(styles.navigation_text)}
-                                                >
-                                                    <HomeIcon
-                                                        style={{
-                                                            marginBottom: 6,
-                                                            marginRight: 5
-                                                        }}
-                                                    />
+                                                <Typography variant="body1" className={css(styles.navigation_text)} >
+                                                    <HomeIcon style={{ marginBottom: 6, marginRight: 5 }} />
                                                     My dashboard
                                                 </Typography>
                                             </NavLink>
@@ -129,33 +97,13 @@ class HeaderWithoutDesc extends Component {
                                 </FlexView>
                         }
                     </Col>
-                    <Col
-                        xs={{span: 12, order: 1}}
-                        md={{span: 4, order: 2}}
-                        lg={{span: 4, order: 1}}
-                    >
-                        <FlexView
-                            style={{
-                                padding: 8
-                            }}
-                            column
-                            height="100%"
-                            widht="100%"
-                            hAlignContent="center"
-                            vAlignContent="center"
-                        >
+                    <Col xs={{span: 12, order: 1}} md={{span: 4, order: 2}} lg={{span: 4, order: 1}} >
+                        <FlexView style={{ padding: 8 }} column height="100%" widht="100%" hAlignContent="center" vAlignContent="center" >
                             {
                                 !groupProperties
                                     ?
-                                    <a
-                                        href={ROUTES.ORIGINAL_WEB_URL}
-                                        className={css(sharedStyles.nav_link_hover_without_changing_text_color)}
-                                    >
-                                        <FlexView
-                                            hAlignContent="center"
-                                            column
-                                            className={css(styles.logo_field)}
-                                        >
+                                    <a href={ROUTES.ORIGINAL_WEB_URL} className={css(sharedStyles.nav_link_hover_without_changing_text_color)} >
+                                        <FlexView hAlignContent="center" column className={css(styles.logo_field)} >
                                             <img
                                                 className={css(styles.logo)}
                                                 alt="logo"
@@ -167,10 +115,7 @@ class HeaderWithoutDesc extends Component {
                                                         utils.getLogoFromGroup(utils.GET_PLAIN_LOGO, groupProperties)
                                                 }
                                             />
-                                            <Typography
-                                                variant="body1"
-                                                color="primary"
-                                            >
+                                            <Typography variant="body1" color="primary" >
                                                 {
                                                     !groupProperties
                                                         ?
@@ -192,11 +137,7 @@ class HeaderWithoutDesc extends Component {
                                                 ROUTES.FRONT_INVEST_WEST_SUPER
                                         }
                                     >
-                                        <FlexView
-                                            hAlignContent="center"
-                                            column
-                                            className={css(styles.logo_field)}
-                                        >
+                                        <FlexView hAlignContent="center" column className={css(styles.logo_field)} >
                                             <img
                                                 className={css(styles.logo)}
                                                 alt="logo"
@@ -208,10 +149,7 @@ class HeaderWithoutDesc extends Component {
                                                         utils.getLogoFromGroup(utils.GET_PLAIN_LOGO, groupProperties)
                                                 }
                                             />
-                                            <Typography
-                                                variant="body1"
-                                                color="primary"
-                                            >
+                                            <Typography variant="body1" color="primary" >
                                                 {
                                                     !groupProperties
                                                         ?
@@ -227,17 +165,8 @@ class HeaderWithoutDesc extends Component {
                     </Col>
 
                     {/** Divider */}
-                    <Col
-                        xs={{span: 12, order: 3}}
-                        md={{span: 12, order: 3}}
-                        lg={{span: 12, order: 3}}
-                    >
-                        <FlexView
-                            height={1}
-                            style={{
-                                backgroundColor: colors.gray_300
-                            }}
-                        />
+                    <Col xs={{span: 12, order: 3}} md={{span: 12, order: 3}} lg={{span: 12, order: 3}} >
+                        <FlexView height={1} style={{ backgroundColor: colors.gray_300 }} />
                     </Col>
                 </Row>
             </Container>

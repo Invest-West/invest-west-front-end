@@ -102,29 +102,16 @@ class MerixStudio extends Component<MerixStudioProps, any> {
             paddingX={MediaQueryState.isMobile ? "15px" : "56px"}
             paddingY={MediaQueryState.isMobile ? "15px" : "40px"}
         >
-            <Row
-                noGutters
-            >
-                <Col
-                    xs={12}
-                    sm={12}
-                    md={{span: 10, offset: 1}}
-                    lg={{span: 8, offset: 2}}
-                    xl={{span: 6, offset: 3}}
-                >
+            <Row noGutters>
+                <Col xs={12} sm={12} md={{span: 10, offset: 1}} lg={{span: 8, offset: 2}} xl={{span: 6, offset: 3}}>
                     <Paper>
                         <Box padding="20px">
                             {/** Header */}
                             <Box display="flex" flexDirection="column" width="100%">
-                                <Typography variant="h4" align="left">
-                                    Merixstudio
-                                </Typography>
+                                <Typography variant="h4" align="left">Merixstudio</Typography>
                             </Box>
                             <Box>
-                                <Typography align="left" variant="body1">
-                                    Merixstudio’s key expertise is the delivery of high-quality and performant web applications and cross-platform mobile apps. Based on the needs of our clients, we can support them in end-to-end product development or seamlessly extend their in-house team of engineers.
-
-                                </Typography>
+                                <Typography align="left" variant="body1">Merixstudio’s key expertise is the delivery of high-quality and performant web applications and cross-platform mobile apps. Based on the needs of our clients, we can support them in end-to-end product development or seamlessly extend their in-house team of engineers.</Typography>
                                 <CustomLink
                                     url="https://www.merixstudio.com/contact/"
                                     target="_blank"
@@ -134,9 +121,7 @@ class MerixStudio extends Component<MerixStudioProps, any> {
                                     component="a"
                                     childComponent={
                                         <Box bgcolor="#31C2DE" color="white" marginY="20px" clone>
-                                            <Button variant="contained" className={css(sharedStyles.no_text_transform)}>
-                                                Contact Us
-                                            </Button>
+                                            <Button variant="contained" className={css(sharedStyles.no_text_transform)}>Contact Us</Button>
                                         </Box>
                                     }
                                 />
@@ -148,50 +133,27 @@ class MerixStudio extends Component<MerixStudioProps, any> {
                             </Box>
                             <Box display="flex" flexDirection="column">
                                 <Box marginY="30px">
-                                    <Typography variant="h6" align="left">
-                                        The right solution for your product launch
-                                    </Typography>
+                                    <Typography variant="h6" align="left">The right solution for your product launch</Typography>
                                 </Box>
-                                    <Typography variant="body1" align="center">
-                                        THE ULTIMATE GUIDE TO COMPOSING
-                                    </Typography>
-                                    <Typography variant="body1" align="center">
-                                        THE RIGHT SOLUTION FOR YOUR PRODUCT LAUNCH
-                                    </Typography>
+                                    <Typography variant="body1" align="center">THE ULTIMATE GUIDE TO COMPOSING</Typography>
+                                    <Typography variant="body1" align="center">THE RIGHT SOLUTION FOR YOUR PRODUCT LAUNCH</Typography>
                                 <Box marginY="30px">
-                                    <Typography variant="body1" align="left">
-                                    Although similar at first glance, the three concepts differ considerably - especially in terms of the purpose each of them serves. The choice of which one to start with depends on many factors, including your current state of knowledge or the budget you can spend on a given project.
-                                    </Typography>
+                                    <Typography variant="body1" align="left">Although similar at first glance, the three concepts differ considerably - especially in terms of the purpose each of them serves. The choice of which one to start with depends on many factors, including your current state of knowledge or the budget you can spend on a given project.</Typography>
                                 </Box>
                                     <img width="100%" height="auto" src={MerixSolution} alt="Merix image"/>
                                     <img width="100%" height="auto" src={MerixSolution3} alt="Merix image"/>
                             </Box>
 
                             {/** Divider */}
-                            <Box
-                                marginY="30px"
-                            >
+                            <Box marginY="30px">
                                 <Divider/>
                             </Box>
 
                             {/** Resources */}
-                            <Box
-                                display="flex"
-                                flexDirection="column"
-                            >
-                                <Typography
-                                    variant="h6"
-                                    align="left"
-                                >
-                                    Resources
-                                </Typography>
-                                <Box
-                                    height="20px"
-                                />
-                                <Box
-                                    display="flex"
-                                    flexDirection="column"
-                                >
+                            <Box display="flex" flexDirection="column">
+                                <Typography variant="h6" align="left">Resources</Typography>
+                                <Box height="20px"/>
+                                <Box display="flex" flexDirection="column">
                                     {
                                         MerixStudioResources.map((resource: any) => (
                                             <CustomLink
@@ -203,22 +165,10 @@ class MerixStudio extends Component<MerixStudioProps, any> {
                                                 activeUnderline={true}
                                                 component="a"
                                                 childComponent={
-                                                    <Box
-                                                        display="flex"
-                                                        flexDirection="row"
-                                                        alignItems="center"
-                                                        marginBottom="12px"
-                                                    >
+                                                    <Box display="flex" flexDirection="row" alignItems="center" marginBottom="12px">
                                                         <AttachFile fontSize="small"/>
-                                                        <Box
-                                                            width="10px"
-                                                        />
-                                                        <Typography
-                                                            variant="body1"
-                                                            align="left"
-                                                        >
-                                                            {resource.name}
-                                                        </Typography>
+                                                        <Box width="10px"/>
+                                                        <Typography variant="body1" align="left">{resource.name}</Typography>
                                                     </Box>
                                                 }
                                             />
@@ -228,73 +178,36 @@ class MerixStudio extends Component<MerixStudioProps, any> {
                             </Box>
 
                             {/** Divider */}
-                            <Box
-                                marginY="30px"
-                            >
+                            <Box marginY="30px">
                                 <Divider/>
                             </Box>
 
                             {/** About us */}
-                            <Box
-                                display="flex"
-                                flexDirection="column"
-                            >
-                                <Typography
-                                    variant="h6"
-                                    align="left"
-                                >
-                                    About us
-                                </Typography>
-                                <Typography
-                                    variant="body1"
-                                    align="justify"
-                                >
+                            <Box display="flex" flexDirection="column">
+                                <Typography variant="h6" align="left">About us</Typography>
+                                <Typography variant="body1" align="justify">
                                     <br/><br/>
                                     Merixstudio’s key expertise is the delivery of high-quality and performant web applications
                                     and cross-platform mobile apps. Based on the needs of our clients, we can support them in
                                     end-to-end product development or seamlessly extend their in-house team of engineers.
                                     <br/><br/>
                                     <ul>
-                                        <li>
-                                            200+ engineers
-                                        </li>
-                                        <li>
-                                            250 clients supported
-                                        </li>
+                                        <li>200+ engineers</li>
+                                        <li>250 clients supported</li>
                                     </ul>
                                 </Typography>
 
-                                <Typography
-                                    align="left"
-                                    variant="body1"
-                                >
+                                <Typography align="left" variant="body1">
                                     <b>Get in touch!</b>
                                     <br/>
                                 </Typography>
 
-                                <Box
-                                    display="flex"
-                                    justifyContent="center"
-                                    alignItems="center"
-                                    marginTop="25px"
-                                >
-                                    <Box
-                                        bgcolor="#8DC341"
-                                        color="white"
-                                        clone
-                                    >
-                                        <Button
-                                            variant="contained"
-                                            className={css(sharedStyles.no_text_transform)}
-                                            onClick={() => toggleContactResourceDialog()}
-                                        >
-                                            Contact us
-                                        </Button>
+                                <Box display="flex" justifyContent="center" alignItems="center" marginTop="25px">
+                                    <Box bgcolor="#8DC341" color="white" clone>
+                                        <Button variant="contained" className={css(sharedStyles.no_text_transform)} onClick={() => toggleContactResourceDialog()}>Contact us</Button>
                                     </Box>
                                 </Box>
-                                <Box
-                                    height="20px"
-                                />
+                                <Box height="20px"/>
                             </Box>
                         </Box>
                     </Paper>

@@ -41,17 +41,8 @@ class SelectPitchVisibility extends Component {
         }
 
         return (
-            <FormControl
-                fullWidth
-            >
-                <FormHelperText
-                    className={css(sharedStyles.black_text)}
-                    style={{
-                        marginBottom: 6
-                    }}
-                >
-                    Select pitch visibility
-                </FormHelperText>
+            <FormControl fullWidth >
+                <FormHelperText className={css(sharedStyles.black_text)} style={{ marginBottom: 6 }}>Select pitch visibility</FormHelperText>
                 <Select
                     value={
                         projectVisibilitySetting === -1
@@ -72,15 +63,10 @@ class SelectPitchVisibility extends Component {
                     margin="dense"
                     onChange={handleProjectVisibilityChanged}
                     input={
-                        <OutlinedInput
-                            labelWidth={0}
-                            name="projectVisibilitySetting"
-                        />
+                        <OutlinedInput labelWidth={0} name="projectVisibilitySetting"/>
                     }
                 >
-                    <MenuItem
-                        value={DB_CONST.PROJECT_VISIBILITY_PUBLIC}
-                    >
+                    <MenuItem value={DB_CONST.PROJECT_VISIBILITY_PUBLIC}>
                         {`Public (
                         ${
                             successfullyValidatedGroupUrl(ManageGroupUrlState)

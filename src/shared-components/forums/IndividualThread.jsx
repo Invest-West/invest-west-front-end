@@ -71,36 +71,19 @@ class IndividualThread extends Component {
         });
 
         return forumThreadReplies.map(reply => (
-            <Paper
-                key={reply.id}
-                className={css(styles.thread_reply_style)}
-            >
+            <Paper key={reply.id} className={css(styles.thread_reply_style)} >
                 {
                     reply.hasOwnProperty('deleted')
                     && reply.deleted === true
                         ?
                         <FlexView>
-                            <Typography
-                                variant="body1"
-                                align="left"
-                            >
-                                <i>This reply has been removed.</i>
-                            </Typography>
+                            <Typography variant="body1" align="left"><i>This reply has been removed.</i></Typography>
                         </FlexView>
                         :
-                        <FlexView
-                            column
-                            width="100%"
-                        >
-                            <FlexView
-                                vAlignContent="center"
-                                marginBottom={10}
-                                width="100%"
-                            >
+                        <FlexView column width="100%" >
+                            <FlexView vAlignContent="center" marginBottom={10} width="100%" >
                                 {/** Author's avatar */}
-                                <FlexView
-                                    hAlignContent="left"
-                                >
+                                <FlexView hAlignContent="left" >
                                     {
                                         reply.author.type === DB_CONST.TYPE_ADMIN
                                             ?
@@ -111,34 +94,16 @@ class IndividualThread extends Component {
                                                     width={AVATAR_MAX_HEIGHT}
                                                     height={AVATAR_MAX_HEIGHT}
                                                 >
-                                                    <Image
-                                                        roundedCircle
-                                                        thumbnail
-                                                        src={require('../../img/admin_logo.png').default}
-                                                        style={{
-                                                            width: "100%",
-                                                            maxHeight: AVATAR_MAX_HEIGHT,
-                                                            objectFit: "contain"
-                                                        }}
-                                                    />
+                                                    <Image roundedCircle thumbnail src={require('../../img/admin_logo.png').default} style={{ width: "100%", maxHeight: AVATAR_MAX_HEIGHT, objectFit: "contain" }} />
                                                 </FlexView>
                                                 :
                                                 // group admins
-                                                <FlexView
-                                                    width={AVATAR_MAX_HEIGHT}
-                                                    height={AVATAR_MAX_HEIGHT}
-                                                >
+                                                <FlexView width={AVATAR_MAX_HEIGHT} height={AVATAR_MAX_HEIGHT} >
                                                     <Image
                                                         roundedCircle
                                                         thumbnail
-                                                        src={
-                                                            utils.getLogoFromGroup(utils.GET_PLAIN_LOGO, reply.author.groupDetails)
-                                                        }
-                                                        style={{
-                                                            width: "100%",
-                                                            maxHeight: AVATAR_MAX_HEIGHT,
-                                                            objectFit: "contain"
-                                                        }}
+                                                        src={ utils.getLogoFromGroup(utils.GET_PLAIN_LOGO, reply.author.groupDetails) }
+                                                        style={{ width: "100%", maxHeight: AVATAR_MAX_HEIGHT, objectFit: "contain" }}
                                                     />
                                                 </FlexView>
                                             :
@@ -166,11 +131,7 @@ class IndividualThread extends Component {
                                                             src={
                                                                 reply.author.profilePicture[reply.author.profilePicture.findIndex(pictureItem => !pictureItem.hasOwnProperty('removed'))].url
                                                             }
-                                                            style={{
-                                                                width: "100%",
-                                                                maxHeight: AVATAR_MAX_HEIGHT,
-                                                                objectFit: "contain"
-                                                            }}
+                                                            style={{ width: "100%", maxHeight: AVATAR_MAX_HEIGHT, objectFit: "contain" }}
                                                         />
                                                     </FlexView>
                                             )
@@ -178,15 +139,8 @@ class IndividualThread extends Component {
                                 </FlexView>
 
                                 {/** Author name and dates */}
-                                <FlexView
-                                    column
-                                    marginLeft={15}
-                                    hAlignContent="left"
-                                >
-                                    <Typography
-                                        variant="body1"
-                                        align="left"
-                                    >
+                                <FlexView column marginLeft={15} hAlignContent="left" >
+                                    <Typography variant="body1" align="left" >
                                         <b>
                                             {
                                                 reply.author.type !== DB_CONST.TYPE_ADMIN
@@ -205,10 +159,7 @@ class IndividualThread extends Component {
                                         </b>
                                     </Typography>
 
-                                    <Typography
-                                        variant="subtitle2"
-                                        align="left"
-                                    >
+                                    <Typography variant="subtitle2" align="left" >
                                         {
                                             !reply.hasOwnProperty('lastEdited')
                                                 ?
@@ -225,28 +176,15 @@ class IndividualThread extends Component {
                                         && currentUser.superAdmin
                                     ) || currentUser.id === reply.author.id
                                         ?
-                                        <FlexView
-                                            hAlignContent="left"
-                                            vAlignContent="center"
-                                            marginLeft={60}
-                                        >
+                                        <FlexView hAlignContent="left" vAlignContent="center" marginLeft={60} >
                                             <Button
                                                 variant="outlined"
                                                 className={css(sharedStyles.no_text_transform)}
                                                 size="small"
                                                 color="secondary"
                                                 onClick={() => deleteThreadReply(reply.id)}
-                                                style={{
-                                                    marginRight: 10
-                                                }}
-                                            >
-                                                Delete
-                                                <DeleteIcon
-                                                    fontSize="small"
-                                                    style={{
-                                                        marginLeft: 6
-                                                    }}
-                                                />
+                                                style={{ marginRight: 10 }}
+                                            >Delete<DeleteIcon fontSize="small" style={{ marginLeft: 6 }} />
                                             </Button>
                                             <Button
                                                 variant="outlined"
@@ -254,14 +192,7 @@ class IndividualThread extends Component {
                                                 size="small"
                                                 color="primary"
                                                 onClick={() => toggleThreadReply(true, JSON.parse(JSON.stringify(reply)))}
-                                            >
-                                                Edit
-                                                <EditIcon
-                                                    fontSize="small"
-                                                    style={{
-                                                        marginLeft: 6
-                                                    }}
-                                                />
+                                            >Edit<EditIcon fontSize="small" style={{ marginLeft: 6 }} />
                                             </Button>
                                         </FlexView>
                                         :
@@ -274,11 +205,7 @@ class IndividualThread extends Component {
                                     ?
                                     null
                                     :
-                                    <FlexView
-                                        column
-                                        marginTop={15}
-                                        dangerouslySetInnerHTML={{__html: utils.convertQuillDeltaToHTML(reply.message.ops)}}
-                                    />
+                                    <FlexView column marginTop={15} dangerouslySetInnerHTML={{__html: utils.convertQuillDeltaToHTML(reply.message.ops)}} />
                             }
 
                             {
@@ -312,9 +239,7 @@ class IndividualThread extends Component {
 
         if (!forumThreadRepliesLoaded) {
             return (
-                <FlexView
-                    hAlignContent="center"
-                >
+                <FlexView hAlignContent="center" >
                     <HashLoader
                         color={
                             !groupProperties
@@ -329,61 +254,31 @@ class IndividualThread extends Component {
         }
 
         return (
-            <FlexView
-                column
-            >
-                <FlexView
-                    vAlignContent="center"
-                    marginBottom={24}
-                >
-                    <IconButton
-                        color="primary"
-                        aria-label="Back"
-                        onClick={goBackToThreadsList}
-                    >
+            <FlexView column >
+                <FlexView vAlignContent="center" marginBottom={24} >
+                    <IconButton color="primary" aria-label="Back" onClick={goBackToThreadsList} >
                         <ArrowBackIcon/>
                     </IconButton>
-                    <FlexView
-                        marginLeft={8}
-                    >
-                        <Typography
-                            color="primary"
-                            variant="h6"
-                        >
-                            {`Thread: ${forumThreadSelected.name}`}
-                        </Typography>
+                    <FlexView marginLeft={8} >
+                        <Typography color="primary" variant="h6">{`Thread: ${forumThreadSelected.name}`}</Typography>
                     </FlexView>
                 </FlexView>
 
-                <Paper
-                    className={css(styles.thread_reply_style)}
-                >
-                    <FlexView
-                        column
-                    >
-                        <FlexView
-                            vAlignContent="center"
-                            marginBottom={10}
-                        >
+                <Paper className={css(styles.thread_reply_style)} >
+                    <FlexView column >
+                        <FlexView vAlignContent="center" marginBottom={10} >
                             {
                                 forumThreadSelected.author.type === DB_CONST.TYPE_ADMIN
                                     ?
                                     forumThreadSelected.author.superAdmin
                                         ?
                                         // super admins
-                                        <FlexView
-                                            width={AVATAR_MAX_HEIGHT}
-                                            height={AVATAR_MAX_HEIGHT}
-                                        >
+                                        <FlexView width={AVATAR_MAX_HEIGHT} height={AVATAR_MAX_HEIGHT} >
                                             <Image
                                                 roundedCircle
                                                 thumbnail
                                                 src={require('../../img/admin_logo.png').default}
-                                                style={{
-                                                    width: "100%",
-                                                    maxHeight: AVATAR_MAX_HEIGHT,
-                                                    objectFit: "contain"
-                                                }}
+                                                style={{ width: "100%", maxHeight: AVATAR_MAX_HEIGHT, objectFit: "contain" }}
                                             />
                                         </FlexView>
                                         :
@@ -398,11 +293,7 @@ class IndividualThread extends Component {
                                                 src={
                                                     utils.getLogoFromGroup(utils.GET_PLAIN_LOGO, forumThreadSelected.author.groupDetails)
                                                 }
-                                                style={{
-                                                    width: "100%",
-                                                    maxHeight: AVATAR_MAX_HEIGHT,
-                                                    objectFit: "contain"
-                                                }}
+                                                style={{ width: "100%", maxHeight: AVATAR_MAX_HEIGHT, objectFit: "contain" }}
                                             />
                                         </FlexView>
                                     :
@@ -420,33 +311,20 @@ class IndividualThread extends Component {
                                             />
                                             :
                                             // normal users with profile picture
-                                            <FlexView
-                                                width={AVATAR_MAX_HEIGHT}
-                                                height={AVATAR_MAX_HEIGHT}
-                                            >
+                                            <FlexView width={AVATAR_MAX_HEIGHT} height={AVATAR_MAX_HEIGHT} >
                                                 <Image
                                                     roundedCircle
                                                     thumbnail
                                                     src={
                                                         forumThreadSelected.author.profilePicture[forumThreadSelected.author.profilePicture.findIndex(pictureItem => !pictureItem.hasOwnProperty('removed'))].url
                                                     }
-                                                    style={{
-                                                        width: "100%",
-                                                        maxHeight: AVATAR_MAX_HEIGHT,
-                                                        objectFit: "contain"
-                                                    }}
+                                                    style={{ width: "100%", maxHeight: AVATAR_MAX_HEIGHT, objectFit: "contain" }}
                                                 />
                                             </FlexView>
                                     )
                             }
-                            <FlexView
-                                column
-                                marginLeft={15}
-                                marginBottom={10}
-                            >
-                                <Typography
-                                    variant="body1"
-                                >
+                            <FlexView column marginLeft={15} marginBottom={10} >
+                                <Typography variant="body1" >
                                     <b>
                                         {
                                             forumThreadSelected.author.type !== DB_CONST.TYPE_ADMIN
@@ -465,10 +343,7 @@ class IndividualThread extends Component {
                                     </b>
                                 </Typography>
 
-                                <Typography
-                                    variant="subtitle2"
-                                    align="left"
-                                >
+                                <Typography variant="subtitle2" align="left" >
                                     {
                                         !forumThreadSelected.hasOwnProperty('lastEdited')
                                             ?
@@ -479,23 +354,8 @@ class IndividualThread extends Component {
                                 </Typography>
                             </FlexView>
                         </FlexView>
-                        <Typography
-                            variant="body1"
-                            align="left"
-                        >
-                            <b><u>Description:</u></b>
-                        </Typography>
-                        <Typography
-                            variant="body1"
-                            align="left"
-                            style={{
-                                whiteSpace: "pre-line",
-                                marginTop: 6,
-                                marginBottom: 15
-                            }}
-                        >
-                            {forumThreadSelected.description}
-                        </Typography>
+                        <Typography variant="body1" align="left"><b><u>Description:</u></b></Typography>
+                        <Typography variant="body1" align="left" style={{ whiteSpace: "pre-line", marginTop: 6, marginBottom: 15 }}>{forumThreadSelected.description}</Typography>
                         {
                             !forumThreadSelected.message
                                 ?
@@ -512,18 +372,13 @@ class IndividualThread extends Component {
                                 ?
                                 null
                                 :
-                                <FlexView
-                                    marginTop={25}
-                                    marginBottom={8}
-                                >
+                                <FlexView marginTop={25} marginBottom={8} >
                                     <Button
                                         className={css(sharedStyles.no_text_transform)}
                                         variant="outlined"
                                         color="primary"
                                         onClick={() => toggleThreadReply(true, null)}
-                                    >
-                                        Reply
-                                    </Button>
+                                    >Reply</Button>
                                 </FlexView>
                         }
                     </FlexView>
@@ -539,10 +394,7 @@ class IndividualThread extends Component {
                             :
                             <CreateReply/>
                 }
-                <FlexView
-                    column
-                    marginTop={20}
-                >
+                <FlexView column marginTop={20} >
                     {
                         this.renderReplies()
                     }

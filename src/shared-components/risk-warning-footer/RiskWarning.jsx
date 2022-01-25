@@ -30,40 +30,11 @@ class RiskWarning extends Component {
         }
 
         return (
-            <Container
-                fluid
-                style={{
-                    width: "auto",
-                    padding: 0,
-                    backgroundColor: colors.crowdcube_risk_warning_background
-                }}
-            >
-                <Row
-                    noGutters
-                >
-                    <Col
-                        xs={12}
-                        sm={12}
-                        md={12}
-                        lg={12}
-                        style={{
-                            paddingTop: 45,
-                            paddingBottom: 45,
-                            paddingLeft: 28,
-                            paddingRight: 28
-                        }}
-                    >
-                        <FlexView
-                            column
-                        >
-                            <Typography
-                                variant="body1"
-                                align="left"
-                                className={css(sharedStyles.white_text)}
-                            >
-                                <b>Risk warning</b>
-                            </Typography>
-
+            <Container fluid style={{ width: "auto", padding: 0, backgroundColor: colors.crowdcube_risk_warning_background }} >
+                <Row noGutters >
+                    <Col xs={12} sm={12} md={12} lg={12} style={{ paddingTop: 45, paddingBottom: 45, paddingLeft: 28, paddingRight: 28 }} >
+                        <FlexView column >
+                            <Typography variant="body1" align="left" className={css(sharedStyles.white_text)} > <b>Risk warning</b> </Typography>
                             {
                                 this.reformattedRiskWarningFooter()
                             }
@@ -103,23 +74,9 @@ class RiskWarning extends Component {
         const urlText = splits[1];
 
         return (
-            <Typography
-                variant="body2"
-                align="justify"
-                className={css(sharedStyles.white_text)}
-                style={{
-                    whiteSpace: "pre-line",
-                    marginTop: 18
-                }}
-            >
+            <Typography variant="body2" align="justify" className={css(sharedStyles.white_text)} style={{ whiteSpace: "pre-line", marginTop: 18 }} >
                 {splits[0]}
-                <NavLink
-                    to={ROUTES.RISK_WARNING}
-                    target="_blank"
-                    className={css(styles.hyper_link)}
-                >
-                    {urlText}
-                </NavLink>
+                    <NavLink to={ROUTES.RISK_WARNING} target="_blank" className={css(styles.hyper_link)} > {urlText} </NavLink>
                 {splits[2]}
             </Typography>
         );

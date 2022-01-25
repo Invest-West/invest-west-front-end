@@ -51,15 +51,8 @@ class CreateReply extends Component {
         } = this.props;
 
         return (
-            <Paper
-                style={{
-                    marginTop: 20
-                }}
-                className={css(styles.thread_reply_style)}
-            >
-                <FlexView
-                    column
-                >
+            <Paper style={{ marginTop: 20 }} className={css(styles.thread_reply_style)} >
+                <FlexView column >
                     <TextField
                         name="threadReplySubject"
                         label="Subject"
@@ -71,16 +64,8 @@ class CreateReply extends Component {
                         onChange={handleForumsInputChanged}
                     />
 
-                    <FlexView
-                        column
-                        marginTop={30}
-                    >
-                        <Typography
-                            paragraph
-                            variant="body1"
-                        >
-                            Message *
-                        </Typography>
+                    <FlexView column marginTop={30} >
+                        <Typography paragraph variant="body1" >Message *</Typography>
                         <ReactQuill
                             placeholder="Write your reply here. Add images for visual effects."
                             value={threadReplyMessage}
@@ -90,68 +75,34 @@ class CreateReply extends Component {
                         />
                     </FlexView>
 
-                    <Row
-                        noGutters
-                    >
-                        <Col
-                            xs={12}
-                            sm={12}
-                            md={6}
-                            lg={8}
-                            style={{
-                                marginTop: 30
-                            }}
-                        >
+                    <Row noGutters >
+                        <Col xs={12} sm={12} md={6} lg={8} style={{ marginTop: 30 }}>
                             <FlexView>
                                 {
                                     !createThreadReplyError
                                         ?
                                         null
                                         :
-                                        <Typography
-                                            variant="body1"
-                                            align="left"
-                                            color="error"
-                                        >
-                                            Please fill in the required fields.
-                                        </Typography>
+                                        <Typography variant="body1" align="left" color="error" > Please fill in the required fields. </Typography>
                                 }
                             </FlexView>
                         </Col>
-                        <Col
-                            xs={12}
-                            sm={12}
-                            md={6}
-                            lg={4}
-                            style={{
-                                marginTop: 30
-                            }}
-                        >
-                            <FlexView
-                                hAlignContent="right"
-                            >
-                                <FlexView
-                                    marginRight={5}
-                                >
+                        <Col xs={12} sm={12} md={6} lg={4} style={{ marginTop: 30 }} >
+                            <FlexView hAlignContent="right" >
+                                <FlexView marginRight={5} >
                                     <Button
                                         variant="outlined"
                                         onClick={() => toggleThreadReply(false, null)}
                                         className={css(sharedStyles.no_text_transform)}
-                                    >
-                                        Cancel
-                                    </Button>
+                                    >Cancel</Button>
                                 </FlexView>
-                                <FlexView
-                                    marginLeft={5}
-                                >
+                                <FlexView marginLeft={5}>
                                     <Button
                                         variant="contained"
                                         color="primary"
                                         onClick={submitThreadReply}
                                         className={css(sharedStyles.no_text_transform)}
-                                    >
-                                        Submit
-                                    </Button>
+                                    >Submit</Button>
                                 </FlexView>
                             </FlexView>
                         </Col>

@@ -111,26 +111,11 @@ class EditImageDialog extends Component {
                 onClose={onClose}
                 {...other}
             >
-                <DialogContent
-                    style={{
-                        padding: 0
-                    }}
-                >
-                    <Container
-                        fluid
-                        style={{
-                            padding: 0
-                        }}
-                    >
-                        <Row
-                            noGutters
-                        >
+                <DialogContent style={{ padding: 0 }} >
+                    <Container fluid style={{ padding: 0 }} >
+                        <Row noGutters >
 
-                            <Col
-                                xs={12}
-                                sm={12}
-                                md={12}
-                                lg={12}
+                            <Col xs={12} sm={12} md={12} lg={12}
                                 style={{
                                     backgroundColor: colors.kick_starter_background_color_1,
                                     paddingTop: 6,
@@ -139,15 +124,9 @@ class EditImageDialog extends Component {
                                     paddingRight: 15
                                 }}
                             >
-                                <FlexView
-                                    vAlignContent="center"
-                                >
-                                    <FlexView
-                                        grow={8}
-                                    >
-                                        <Typography
-                                            variant="body1"
-                                        >
+                                <FlexView vAlignContent="center" >
+                                    <FlexView grow={8} >
+                                        <Typography variant="body1" >
                                             {
                                                 mode === UPLOAD_PROFILE_PICTURE_MODE
                                                     ?
@@ -158,55 +137,21 @@ class EditImageDialog extends Component {
                                         </Typography>
                                     </FlexView>
 
-                                    <FlexView
-                                        grow={1}
-                                        hAlignContent="right"
-                                    >
-                                        <IconButton
-                                            onClick={onClose}
-                                        >
-                                            <CloseIcon
-                                                fontSize="small"
-                                            />
+                                    <FlexView grow={1} hAlignContent="right" >
+                                        <IconButton onClick={onClose} >
+                                            <CloseIcon fontSize="small" />
                                         </IconButton>
                                     </FlexView>
                                 </FlexView>
                             </Col>
 
-                            <Col
-                                xs={12}
-                                sm={12}
-                                md={12}
-                                lg={12}
-                            >
+                            <Col xs={12} sm={12} md={12} lg={12} >
                                 <Divider/>
                             </Col>
 
-                            <Col
-                                xs={12}
-                                sm={12}
-                                md={12}
-                                lg={12}
-                                style={{
-                                    padding: 18
-                                }}
-                            >
-                                <FlexView
-                                    column
-                                    width="100%"
-                                    hAlignContent="center"
-                                >
-                                    <Typography
-                                        variant="body2"
-                                        color="textSecondary"
-                                        align="center"
-                                        style={{
-                                            marginBottom: 25
-                                        }}
-                                    >
-                                        Upload a new photo or choose from your previous photos
-                                    </Typography>
-
+                            <Col xs={12} sm={12} md={12} lg={12} style={{ padding: 18 }} >
+                                <FlexView column width="100%" hAlignContent="center" >
+                                    <Typography variant="body2" color="textSecondary" align="center" style={{ marginBottom: 25 }} >Upload a new photo or choose from your previous photos</Typography>
                                     <Files
                                         className={css(styles.img_drop_zone)}
                                         onChange={handleImageFilesChanged}
@@ -218,29 +163,13 @@ class EditImageDialog extends Component {
                                         clickable
                                         onClick={closeFeedbackSnackbar}
                                     >
-                                        <FlexView
-                                            vAlignContent="center"
-                                            hAlignContent="center"
-                                        >
-                                            <AddIcon
-                                                fontSize="small"
-                                                style={{
-                                                    marginRight: 8
-                                                }}
-                                            />
+                                        <FlexView vAlignContent="center" hAlignContent="center" >
+                                            <AddIcon fontSize="small" style={{ marginRight: 8 }} />
                                             Upload photo
                                         </FlexView>
                                     </Files>
 
-                                    <FlexView
-                                        marginTop={22}
-                                        hAlignContent="center"
-                                        style={{
-                                            position: 'relative',
-                                            width: "100%",
-                                            height: 325
-                                        }}
-                                    >
+                                    <FlexView marginTop={22} hAlignContent="center" style={{ position: 'relative', width: "100%", height: 325 }} >
                                         <AvatarEditor
                                             ref={setEditorReference}
                                             image={imgPreEdited}
@@ -264,17 +193,9 @@ class EditImageDialog extends Component {
                                                 <FlexView
                                                     hAlignContent="center"
                                                     vAlignContent="center"
-                                                    style={{
-                                                        position: 'absolute',
-                                                        width: "100%",
-                                                        height: "100%",
-                                                        top: 0,
-                                                        zIndex: 1
-                                                    }}
+                                                    style={{ position: 'absolute', width: "100%", height: "100%", top: 0, zIndex: 1 }}
                                                 >
-                                                    <CircularProgress
-                                                        color="primary"
-                                                    />
+                                                    <CircularProgress color="primary" />
                                                 </FlexView>
                                         }
                                     </FlexView>
@@ -283,11 +204,7 @@ class EditImageDialog extends Component {
                                         this.renderSelectedPreviousPhotoStatus()
                                     }
 
-                                    <FlexView
-                                        width={310}
-                                        marginTop={15}
-                                        vAlignContent="center"
-                                    >
+                                    <FlexView width={310} marginTop={15} vAlignContent="center" >
                                         <ImageIcon fontSize="small"/>
                                         <Slider
                                             min={1}
@@ -295,27 +212,19 @@ class EditImageDialog extends Component {
                                             step={0.001}
                                             value={imgZoom}
                                             onChange={handleSliderChanged}
-                                            style={{
-                                                marginLeft: 11,
-                                                marginRight: 11
-                                            }}
+                                            style={{ marginLeft: 11, marginRight: 11 }}
                                         />
                                         <ImageIcon fontSize="large"/>
                                     </FlexView>
 
-                                    <FlexView
-                                        marginTop={15}
-                                        hAlignContent="right"
-                                    >
+                                    <FlexView marginTop={15} hAlignContent="right" >
                                         <Button
                                             size="medium"
                                             className={css(sharedStyles.no_text_transform)}
                                             variant="outlined"
                                             color="primary"
                                             onClick={() => cancelEditingCurrentImage()}
-                                        >
-                                            Cancel
-                                        </Button>
+                                        >Cancel</Button>
                                         <Button
                                             size="medium"
                                             className={css(sharedStyles.no_text_transform)}
@@ -323,13 +232,7 @@ class EditImageDialog extends Component {
                                             color="secondary"
                                             disabled={!imgPreEdited}
                                             onClick={() => viewEditedImagePreview()}
-                                            style={{
-                                                marginLeft: 16,
-                                                marginRight: 16
-                                            }}
-                                        >
-                                            Preview
-                                        </Button>
+                                            style={{ marginLeft: 16, marginRight: 16 }} >Preview</Button>
                                         <Button
                                             size="medium"
                                             className={css(sharedStyles.no_text_transform)}
@@ -337,9 +240,7 @@ class EditImageDialog extends Component {
                                             color="primary"
                                             disabled={!imgPreEdited}
                                             onClick={() => saveEditedImage()}
-                                        >
-                                            Save
-                                        </Button>
+                                        >Save</Button>
                                     </FlexView>
 
                                     {
@@ -348,20 +249,12 @@ class EditImageDialog extends Component {
                                             null
                                             :
                                             (
-                                                <FlexView
-                                                    marginTop={20}
-                                                    width={270}
-                                                    height={270}
-                                                >
+                                                <FlexView marginTop={20} width={270} height={270} >
                                                     <Image
                                                         src={window.URL.createObjectURL(imgEdited)}
                                                         roundedCircle
                                                         thumbnail
-                                                        style={{
-                                                            width: "100%",
-                                                            height: "auto",
-                                                            objectFit: "scale-down"
-                                                        }}
+                                                        style={{ width: "100%", height: "auto", objectFit: "scale-down" }}
                                                     />
                                                 </FlexView>
                                             )
@@ -370,12 +263,7 @@ class EditImageDialog extends Component {
                                 </FlexView>
                             </Col>
 
-                            <Col
-                                xs={12}
-                                sm={12}
-                                md={12}
-                                lg={12}
-                            >
+                            <Col xs={12} sm={12} md={12} lg={12} >
                                 <Divider/>
                             </Col>
 
@@ -385,28 +273,10 @@ class EditImageDialog extends Component {
                                     ?
                                     null
                                     :
-                                    <Col
-                                        xs={12}
-                                        sm={12}
-                                        md={12}
-                                        lg={12}
-                                        style={{
-                                            padding: 15
-                                        }}
-                                    >
-                                        <Typography
-                                            variant="body1"
-                                            color="textSecondary"
-                                        >
-                                            Your photos
-                                        </Typography>
+                                    <Col xs={12} sm={12} md={12} lg={12} style={{ padding: 15 }} >
+                                        <Typography variant="body1" color="textSecondary" >Your photos</Typography>
 
-                                        <Row
-                                            noGutters
-                                            style={{
-                                                padding: 12
-                                            }}
-                                        >
+                                        <Row noGutters style={{ padding: 12 }} >
                                             {
                                                 previousPhotos
                                                     .sort((photo1, photo2) => photo2.storageID - photo1.storageID)
@@ -419,14 +289,7 @@ class EditImageDialog extends Component {
                                                             lg={3}
                                                             onClick={() => onPreviousImageItemClick(index)}
                                                         >
-                                                            <FlexView
-                                                                hAlignContent="center"
-                                                                vAlignContent="center"
-                                                                style={{
-                                                                    width: "100%",
-                                                                    padding: 5
-                                                                }}
-                                                            >
+                                                            <FlexView hAlignContent="center" vAlignContent="center" style={{ width: "100%", padding: 5 }} >
                                                                 <Image
                                                                     key={index}
                                                                     src={previousPhoto.url}
@@ -503,16 +366,7 @@ class EditImageDialog extends Component {
         }
 
         return (
-            <Typography
-                align="center"
-                variant="body2"
-                color="textSecondary"
-                style={{
-                    marginTop: 12
-                }}
-            >
-                {msg}
-            </Typography>
+            <Typography align="center" variant="body2" color="textSecondary" style={{ marginTop: 12 }}>{msg}</Typography>
         );
     }
 }

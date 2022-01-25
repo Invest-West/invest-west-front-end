@@ -131,88 +131,28 @@ class NotificationsBox extends Component {
                 }}
             >
                 {({TransitionProps}) => (
-                    <Fade
-                        {...TransitionProps}
-                        timeout={350}
-                    >
-                        <Paper
-                            elevation={4}
-                            square
-                        >
-                            <Container
-                                fluid
-                                style={{
-                                    padding: 0,
-                                    maxWidth: 600
-                                }}
-                            >
-                                <Row
-                                    noGutters
-                                >
-                                    <Col
-                                        xs={12}
-                                        sm={12}
-                                        md={12}
-                                        lg={12}
-                                        style={{
-                                            paddingLeft: 15,
-                                            paddingRight: 15,
-                                            paddingTop: 6,
-                                            paddingBottom: 6,
-                                            backgroundColor: colors.kick_starter_background_color_1
-                                        }}
-                                    >
-                                        <Row
-                                            noGutters
-                                        >
-                                            <Col
-                                                xs={10}
-                                                sm={10}
-                                                md={10}
-                                                lg={10}
-                                            >
-                                                <FlexView
-                                                    height="100%"
-                                                    vAlignContent="center"
-                                                >
-                                                    <Typography
-                                                        variant="body1"
-                                                    >
-                                                        Notifications
-                                                    </Typography>
+                    <Fade {...TransitionProps} timeout={350} >
+                        <Paper elevation={4} square >
+                            <Container fluid style={{ padding: 0, maxWidth: 600 }} >
+                                <Row noGutters >
+                                    <Col xs={12} sm={12} md={12} lg={12} style={{ paddingLeft: 15, paddingRight: 15, paddingTop: 6, paddingBottom: 6, backgroundColor: colors.kick_starter_background_color_1 }} >
+                                        <Row noGutters >
+                                            <Col xs={10} sm={10} md={10} lg={10} >
+                                                <FlexView height="100%" vAlignContent="center" >
+                                                    <Typography variant="body1">Notifications</Typography>
                                                 </FlexView>
                                             </Col>
-                                            <Col
-                                                xs={2}
-                                                sm={2}
-                                                md={2}
-                                                lg={2}
-                                            >
-                                                <FlexView
-                                                    hAlignContent="right"
-                                                >
-                                                    <IconButton
-                                                        style={{
-                                                            width: 44,
-                                                            height: 44
-                                                        }}
-                                                        onClick={toggleNotifications}
-                                                    >
-                                                        <CloseIcon
-                                                            fontSize="small"
-                                                        />
+                                            <Col xs={2} sm={2} md={2} lg={2} >
+                                                <FlexView hAlignContent="right" >
+                                                    <IconButton style={{ width: 44, height: 44 }} onClick={toggleNotifications} >
+                                                        <CloseIcon fontSize="small" />
                                                     </IconButton>
                                                 </FlexView>
                                             </Col>
                                         </Row>
                                     </Col>
 
-                                    <Col
-                                        xs={12}
-                                        sm={12}
-                                        md={12}
-                                        lg={12}
-                                    >
+                                    <Col xs={12} sm={12} md={12} lg={12} >
                                         <Divider/>
                                     </Col>
 
@@ -221,31 +161,10 @@ class NotificationsBox extends Component {
                                             ?
                                             null
                                             :
-                                            <Col
-                                                xs={12}
-                                                sm={12}
-                                                md={12}
-                                                lg={12}
-                                                style={{
-                                                    paddingTop: 5,
-                                                    paddingBottom: 5,
-                                                    paddingRight: 18
-                                                }}
-                                            >
-                                                <FlexView
-                                                    hAlignContent="right"
-                                                >
-                                                    <Button
-                                                        variant="text"
-                                                        className={css(sharedStyles.no_text_transform, styles.clear_all_text)}
-                                                        size="medium"
-                                                        onClick={deleteAllNotifications}
-                                                    >
-                                                        <ClearAllIcon
-                                                            style={{
-                                                                marginRight: 6
-                                                            }}
-                                                        />
+                                            <Col xs={12} sm={12} md={12} lg={12} style={{ paddingTop: 5, paddingBottom: 5, paddingRight: 18 }} >
+                                                <FlexView hAlignContent="right" >
+                                                    <Button variant="text" className={css(sharedStyles.no_text_transform, styles.clear_all_text)} size="medium" onClick={deleteAllNotifications} >
+                                                        <ClearAllIcon style={{ marginRight: 6 }} />
                                                         Clear all
                                                     </Button>
                                                 </FlexView>
@@ -257,36 +176,16 @@ class NotificationsBox extends Component {
                                             ?
                                             null
                                             :
-                                            <Col
-                                                xs={12}
-                                                sm={12}
-                                                md={12}
-                                                lg={12}
-                                            >
+                                            <Col xs={12} sm={12} md={12} lg={12} >
                                                 <Divider/>
                                             </Col>
                                     }
 
-                                    <Col
-                                        xs={12}
-                                        sm={12}
-                                        md={12}
-                                        lg={12}
-                                        style={{
-                                            minHeight: notifications.length === 0 ? 300 : "None",
-                                            maxHeight: 500,
-                                            overflowY: "auto"
-                                        }}
-                                    >
+                                    <Col xs={12} sm={12} md={12} lg={12} style={{ minHeight: notifications.length === 0 ? 300 : "None", maxHeight: 500, overflowY: "auto" }} >
                                         {
                                             !notificationsLoaded
                                                 ?
-                                                <FlexView
-                                                    column
-                                                    height="100%"
-                                                    vAlignContent="center"
-                                                    hAlignContent="center"
-                                                >
+                                                <FlexView column height="100%" vAlignContent="center" hAlignContent="center" >
                                                     <HashLoader
                                                         color={
                                                             !groupProperties
@@ -300,28 +199,12 @@ class NotificationsBox extends Component {
                                                 :
                                                 notifications.length === 0
                                                     ?
-                                                    <FlexView
-                                                        column
-                                                        height="100%"
-                                                        vAlignContent="center"
-                                                        hAlignContent="center"
-                                                    >
-                                                        <NotificationsIcon
-                                                            className={css(styles.notifications_placeholder_icon)}
-                                                        />
-                                                        <Typography
-                                                            variant="body1"
-                                                        >
-                                                            Your notifications live here
-                                                        </Typography>
+                                                    <FlexView column height="100%" vAlignContent="center" hAlignContent="center" >
+                                                        <NotificationsIcon className={css(styles.notifications_placeholder_icon)} />
+                                                        <Typography variant="body1">Your notifications live here</Typography>
                                                     </FlexView>
                                                     :
-                                                    <List
-                                                        component="ul"
-                                                        style={{
-                                                            padding: 0
-                                                        }}
-                                                    >
+                                                    <List component="ul" style={{ padding: 0 }} >
                                                         {
                                                             notifications
                                                                 .sort((notification1, notification2) => {
@@ -334,23 +217,8 @@ class NotificationsBox extends Component {
                                                                         divider
                                                                         className={css(styles.notification_item)}
                                                                     >
-                                                                        <Row
-                                                                            noGutters
-                                                                            style={{
-                                                                                width: "100%",
-                                                                                paddingTop: 13,
-                                                                                paddingBottom: 13
-                                                                            }}
-                                                                        >
-                                                                            <Col
-                                                                                xs={10}
-                                                                                sm={10}
-                                                                                md={11}
-                                                                                lg={11}
-                                                                                style={{
-                                                                                    paddingRight: 10
-                                                                                }}
-                                                                            >
+                                                                        <Row noGutters style={{ width: "100%", paddingTop: 13, paddingBottom: 13 }} >
+                                                                            <Col xs={10} sm={10} md={11} lg={11} style={{ paddingRight: 10 }} >
                                                                                 <NavLink
                                                                                     to={
                                                                                         groupUserName
@@ -362,64 +230,20 @@ class NotificationsBox extends Component {
                                                                                     className={css(sharedStyles.nav_link_hover_without_changing_text_color)}
                                                                                     onClick={() => deleteANotification(notification)}
                                                                                 >
-                                                                                    <FlexView
-                                                                                        vAlignContent="center"
-                                                                                    >
-                                                                                        <NotificationsIcon
-                                                                                            className={css(styles.notification_item_icon)}
-                                                                                        />
-                                                                                        <FlexView
-                                                                                            column
-                                                                                            marginLeft={14}
-                                                                                        >
-                                                                                            <Typography
-                                                                                                variant="body1"
-                                                                                                className={css(styles.black_text)}
-                                                                                            >
-                                                                                                {notification.title}
-                                                                                            </Typography>
-                                                                                            <Typography
-                                                                                                variant="body2"
-                                                                                                color="textSecondary"
-                                                                                                style={{
-                                                                                                    marginTop: 4
-                                                                                                }}
-                                                                                            >
-                                                                                                {notification.message}
-                                                                                            </Typography>
-                                                                                            <Typography
-                                                                                                variant="body2"
-                                                                                                color="textSecondary"
-                                                                                                style={{marginTop: 10}}
-                                                                                            >
-                                                                                                <u>Sent: {utils.dateTimeInReadableFormat(notification.date)}</u>
-                                                                                            </Typography>
+                                                                                    <FlexView vAlignContent="center" >
+                                                                                        <NotificationsIcon className={css(styles.notification_item_icon)} />
+                                                                                        <FlexView column marginLeft={14} >
+                                                                                            <Typography variant="body1" className={css(styles.black_text)}>{notification.title}</Typography>
+                                                                                            <Typography variant="body2" color="textSecondary" style={{ marginTop: 4 }}>{notification.message}</Typography>
+                                                                                            <Typography variant="body2" color="textSecondary" style={{marginTop: 10}}><u>Sent:{utils.dateTimeInReadableFormat(notification.date)}</u> </Typography>
                                                                                         </FlexView>
                                                                                     </FlexView>
                                                                                 </NavLink>
                                                                             </Col>
-                                                                            <Col
-                                                                                xs={2}
-                                                                                sm={2}
-                                                                                md={1}
-                                                                                lg={1}
-                                                                                style={{
-                                                                                    paddingLeft: 8,
-                                                                                    paddingRight: 8
-                                                                                }}
-                                                                            >
-                                                                                <FlexView
-                                                                                    width="100%"
-                                                                                    height="100%"
-                                                                                    vAlignContent="center"
-                                                                                    hAlignContent="center"
-                                                                                >
-                                                                                    <IconButton
-                                                                                        onClick={() => deleteANotification(notification)}
-                                                                                    >
-                                                                                        <DeleteIcon
-                                                                                            fontSize="small"
-                                                                                        />
+                                                                            <Col xs={2} sm={2} md={1} lg={1} style={{ paddingLeft: 8, paddingRight: 8 }} >
+                                                                                <FlexView width="100%" height="100%" vAlignContent="center" hAlignContent="center" >
+                                                                                    <IconButton onClick={() => deleteANotification(notification)} >
+                                                                                        <DeleteIcon fontSize="small" />
                                                                                     </IconButton>
                                                                                 </FlexView>
                                                                             </Col>

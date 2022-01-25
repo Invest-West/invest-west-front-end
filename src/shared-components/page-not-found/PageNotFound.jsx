@@ -9,28 +9,10 @@ import * as colors from "../../values/colors";
 export default class PageNotFound extends Component {
     render() {
         return (
-            <FlexView
-                column
-                hAlignContent="center"
-                marginTop={50}
-                marginLeft="10%"
-                marginRight="10%"
-            >
-                <Typography
-                    className={css(styles.error_text)}
-                >
-                    404 Error
-                </Typography>
-                <Typography
-                    className={css(styles.page_not_found_text)}
-                >
-                    Page not found
-                </Typography>
-                <Typography
-                    className={css(styles.explain_text)}
-                >
-                    We are sorry, the page you requested could not be found.
-                </Typography>
+            <FlexView column hAlignContent="center" marginTop={50} marginLeft="10%" marginRight="10%" >
+                <Typography className={css(styles.error_text)} >404 Error</Typography>
+                <Typography className={css(styles.page_not_found_text)} >Page not found</Typography>
+                <Typography className={css(styles.explain_text)} >We are sorry, the page you requested could not be found.</Typography>
             </FlexView>
         );
     }

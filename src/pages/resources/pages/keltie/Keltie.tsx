@@ -109,134 +109,41 @@ class Keltie extends Component<KeltieProps, any> {
             paddingX={MediaQueryState.isMobile ? "15px" : "56px"}
             paddingY={MediaQueryState.isMobile ? "15px" : "40px"}
         >
-            <Row
-                noGutters
-            >
-                <Col
-                    xs={12}
-                    sm={12}
-                    md={{span: 10, offset: 1}}
-                    lg={{span: 8, offset: 2}}
-                    xl={{span: 6, offset: 3}}
-                >
+            <Row noGutters>
+                <Col xs={12} sm={12} md={{span: 10, offset: 1}} lg={{span: 8, offset: 2}} xl={{span: 6, offset: 3}}>
                     <Paper>
-                        <Box
-                            padding="20px"
-                        >
+                        <Box padding="20px">
                             {/** Header */}
-                            <Box
-                                display="flex"
-                                flexDirection="column"
-                                width="100%"
-                            >
-                                <Row
-                                    noGutters
-                                    style={{
-                                        width: "100%"
-                                    }}
-                                >
-                                    <Col
-                                        xs={12}
-                                        sm={12}
-                                        md={5}
-                                        lg={4}
-                                        xl={3}
-                                    >
-                                        <Box
-                                            display="flex"
-                                            justifyContent="center"
-                                            alignItems="center"
-                                            width="100%"
-                                            height="100%"
-                                        >
-                                            <ReactPlayer
-                                                url={keltieVideos[0].url}
-                                                height="100%"
-                                                width="100%"
-                                                playing={false}
-                                                controls={true}
-                                            />
+                            <Box display="flex" flexDirection="column" width="100%">
+                                <Row noGutters style={{ width: "100%" }}>
+                                    <Col xs={12} sm={12} md={5} lg={4} xl={3}>
+                                        <Box display="flex" justifyContent="center" alignItems="center" width="100%" height="100%">
+                                            <ReactPlayer url={keltieVideos[0].url} height="100%" width="100%" playing={false} controls={true}/>
                                         </Box>
                                     </Col>
-                                    <Col
-                                        xs={12}
-                                        sm={12}
-                                        md={7}
-                                        lg={8}
-                                        xl={9}
-                                    >
-                                        <Box
-                                            display="flex"
-                                            flexDirection="column"
-                                            justifyContent="center"
-                                            alignItems="center"
-                                            height="100%"
-                                            paddingX="25px"
-                                        >
-                                            <Box
-                                                marginY="30px"
-                                            >
-                                                <Typography
-                                                    variant="h3"
-                                                    align="center"
-                                                >
-                                                    Intellectual Property
-                                                </Typography>
+                                    <Col xs={12} sm={12} md={7} lg={8} xl={9}>
+                                        <Box display="flex" flexDirection="column" justifyContent="center" alignItems="center" height="100%" paddingX="25px">
+                                            <Box marginY="30px">
+                                                <Typography variant="h3" align="center">Intellectual Property</Typography>
                                             </Box>
-                                            <Typography
-                                                variant="h6"
-                                                align="center"
-                                            >
-                                                A collection of resources to help entrepreneurs better understand
-                                                Intellectual Property issues. This content is kindly provided by our
-                                                friends at Keltie LLP.
-                                            </Typography>
+                                            <Typography variant="h6" align="center">A collection of resources to help entrepreneurs better understand Intellectual Property issues. This content is kindly provided by our friends at Keltie LLP.</Typography>
                                         </Box>
                                     </Col>
                                 </Row>
 
-                                <Box
-                                    height="30px"
-                                />
+                                <Box height="30px"/>
 
-                                <Row
-                                    noGutters
-                                    style={{
-                                        width: "100%"
-                                    }}
-                                >
-                                    <Col
-                                        xs={12}
-                                        sm={12}
-                                        md={12}
-                                        lg={12}
-                                        xl={12}
-                                    >
+                                <Row noGutters style={{ width: "100%"}}>
+                                    <Col xs={12} sm={12} md={12} lg={12} xl={12}>
                                         <Divider/>
                                     </Col>
                                 </Row>
 
-                                <Box
-                                    height="30px"
-                                />
+                                <Box height="30px"/>
 
-                                <Row
-                                    noGutters
-                                    style={{
-                                        width: "100%"
-                                    }}
-                                >
-                                    <Col
-                                        xs={12}
-                                        sm={12}
-                                        md={12}
-                                        lg={12}
-                                        xl={12}
-                                    >
-                                        <Typography
-                                            variant="body1"
-                                            align="center"
-                                        >
+                                <Row noGutters style={{ width: "100%" }}>
+                                    <Col xs={12} sm={12} md={12} lg={12} xl={12}>
+                                        <Typography variant="body1" align="center">
                                             Intellectual property comprises the intangible business assets that are the
                                             result of creativity. In a technology business, much or even most of the
                                             value of the business may lie in the intellectual property that it owns or
@@ -252,31 +159,15 @@ class Keltie extends Component<KeltieProps, any> {
                             </Box>
 
                             {/** Divider */}
-                            <Box
-                                marginY="30px"
-                            >
+                            <Box marginY="30px">
                                 <Divider/>
                             </Box>
 
                             {/** Tips */}
-                            <Box
-                                display="flex"
-                                flexDirection="column"
-                            >
-                                <Typography
-                                    variant="h6"
-                                    align="left"
-                                >
-                                    Top 5 Things You Need to Know
-                                </Typography>
-                                <Box
-                                    height="20px"
-                                />
-                                <Typography
-                                    variant="body1"
-                                    align="left"
-                                    component="span"
-                                >
+                            <Box display="flex" flexDirection="column">
+                                <Typography variant="h6" align="left">Top 5 Things You Need to Know</Typography>
+                                <Box height="20px"/>
+                                <Typography variant="body1" align="left" component="span">
                                     <ol>
                                         <li>
                                             There are four main forms of IP Protection
@@ -338,56 +229,30 @@ class Keltie extends Component<KeltieProps, any> {
                                             IP rights are jurisdictional
                                             <br/>
                                             <ul>
-                                                <li>
-                                                    IP rights are only enforceable in the country or region they have
-                                                    been granted.
-                                                </li>
+                                                <li> IP rights are only enforceable in the country or region they have been granted.</li>
                                             </ul>
                                         </li>
                                     </ol>
                                 </Typography>
                                 <br/>
-                                <Typography
-                                    variant="body1"
-                                    align="left"
-                                >
+                                <Typography variant="body1" align="left">
                                     The UK IPO (Intellectual Property Office) provide funding for IP audits and support
                                     for start-ups. <b>For more information on accessing IP audit funding in the South West,
                                     follow this link</b>&nbsp;
-                                    <a
-                                        href="https://www.businesswest.co.uk/about/partners-programmes/innovate2succeed"
-                                        target="_blank"
-                                    >
-                                        Innovate UK EDGE | Business West
-                                    </a>.
+                                    <a href="https://www.businesswest.co.uk/about/partners-programmes/innovate2succeed" target="_blank">Innovate UK EDGE | Business West</a>.
                                 </Typography>
                             </Box>
 
                             {/** Divider */}
-                            <Box
-                                marginY="30px"
-                            >
+                            <Box marginY="30px">
                                 <Divider/>
                             </Box>
 
                             {/** Resources */}
-                            <Box
-                                display="flex"
-                                flexDirection="column"
-                            >
-                                <Typography
-                                    variant="h6"
-                                    align="left"
-                                >
-                                    Resources
-                                </Typography>
-                                <Box
-                                    height="20px"
-                                />
-                                <Box
-                                    display="flex"
-                                    flexDirection="column"
-                                >
+                            <Box display="flex" flexDirection="column">
+                                <Typography variant="h6" align="left">Resources</Typography>
+                                <Box height="20px"/>
+                                <Box display="flex" flexDirection="column">
                                     {
                                         keltieDocuments.map((document: any) => (
                                             <CustomLink
@@ -399,22 +264,10 @@ class Keltie extends Component<KeltieProps, any> {
                                                 activeUnderline={true}
                                                 component="a"
                                                 childComponent={
-                                                    <Box
-                                                        display="flex"
-                                                        flexDirection="row"
-                                                        alignItems="center"
-                                                        marginBottom="12px"
-                                                    >
+                                                    <Box display="flex" flexDirection="row" alignItems="center" marginBottom="12px">
                                                         <AttachFile fontSize="small"/>
-                                                        <Box
-                                                            width="10px"
-                                                        />
-                                                        <Typography
-                                                            variant="body1"
-                                                            align="left"
-                                                        >
-                                                            {document.name}
-                                                        </Typography>
+                                                        <Box width="10px"/>
+                                                        <Typography variant="body1" align="left">{document.name}</Typography>
                                                     </Box>
                                                 }
                                             />
@@ -424,67 +277,24 @@ class Keltie extends Component<KeltieProps, any> {
                             </Box>
 
                             {/** Divider */}
-                            <Box
-                                marginY="30px"
-                            >
+                            <Box marginY="30px">
                                 <Divider/>
                             </Box>
 
                             {/** Training (videos) */}
-                            <Box
-                                display="flex"
-                                flexDirection="column"
-                            >
-                                <Typography
-                                    variant="h6"
-                                    align="left"
-                                >
-                                    Training
-                                </Typography>
-                                <Box
-                                    height="30px"
-                                />
-                                <Box
-                                    display="flex"
-                                    flexDirection="column"
-                                >
+                            <Box display="flex" flexDirection="column">
+                                <Typography variant="h6" align="left">Training</Typography>
+                                <Box height="30px"/>
+                                <Box display="flex" flexDirection="column">
                                     {
                                         keltieVideos.map((video: any, index: number) =>
-                                            <Box
-                                                key={index}
-                                                marginBottom="20px"
-                                            >
-                                                <Row
-                                                    style={{
-                                                        width: "100%"
-                                                    }}
-                                                >
-                                                    <Col
-                                                        xs={12}
-                                                        sm={12}
-                                                        md={4}
-                                                        lg={3}
-                                                    >
-                                                        <ReactPlayer
-                                                            url={video.url}
-                                                            height="auto"
-                                                            width="100%"
-                                                            playing={false}
-                                                            controls={true}
-                                                        />
+                                            <Box key={index} marginBottom="20px">
+                                                <Row style={{ width: "100%" }}>
+                                                    <Col xs={12} sm={12} md={4} lg={3}>
+                                                        <ReactPlayer url={video.url} height="auto" width="100%" playing={false} controls={true}/>
                                                     </Col>
-                                                    <Col
-                                                        xs={12}
-                                                        sm={12}
-                                                        md={8}
-                                                        lg={9}
-                                                    >
-                                                        <Typography
-                                                            variant="subtitle1"
-                                                            align="left"
-                                                        >
-                                                            <b>{video.name}</b>
-                                                        </Typography>
+                                                    <Col xs={12} sm={12} md={8} lg={9}>
+                                                        <Typography variant="subtitle1" align="left"><b>{video.name}</b></Typography>
                                                     </Col>
                                                 </Row>
                                             </Box>
@@ -494,30 +304,15 @@ class Keltie extends Component<KeltieProps, any> {
                             </Box>
 
                             {/** Divider */}
-                            <Box
-                                marginY="30px"
-                            >
+                            <Box marginY="30px">
                                 <Divider/>
                             </Box>
 
                             {/** About us */}
-                            <Box
-                                display="flex"
-                                flexDirection="column"
-                            >
-                                <Typography
-                                    variant="h6"
-                                    align="left"
-                                >
-                                    About us
-                                </Typography>
-                                <Box
-                                    height="15px"
-                                />
-                                <Typography
-                                    variant="body1"
-                                    align="justify"
-                                >
+                            <Box display="flex" flexDirection="column" >
+                                <Typography variant="h6" align="left">About us</Typography>
+                                <Box height="15px" />
+                                <Typography variant="body1" align="justify" >
                                     Keltie is an intellectual property firm with a unique personality. A firm that’s
                                     renowned for its excellence, earned by putting talented, energetic and principled
                                     people at its heart.
@@ -530,14 +325,8 @@ class Keltie extends Component<KeltieProps, any> {
                                     Sullivan Fountain and Richard Lawrence at the Keltie Cotswolds office serve the
                                     South West region and would be delighted to discuss your IP challenges further.
                                 </Typography>
-                                <Box
-                                    height="40px"
-                                />
-                                <Box
-                                    display="flex"
-                                    flexDirection="row"
-                                    justifyContent="center"
-                                >
+                                <Box height="40px" />
+                                <Box display="flex" flexDirection="row" justifyContent="center" >
                                     <CustomLink
                                         url="https://www.keltie.com"
                                         target="_blank"
@@ -551,15 +340,11 @@ class Keltie extends Component<KeltieProps, any> {
                                                 alt="Keltie logo"
                                                 width={MediaQueryState.isMobile ? 100 : 145}
                                                 height={MediaQueryState.isMobile ? 100 : 145}
-                                                style={{
-                                                    objectFit: "cover"
-                                                }}
+                                                style={{ objectFit: "cover" }}
                                             />
                                         }
                                     />
-                                    <Box
-                                        width="25px"
-                                    />
+                                    <Box width="25px" />
                                     <CustomLink
                                         url="https://www.keltie.com/staff/sullivan-fountain.html"
                                         target="_blank"
@@ -573,15 +358,11 @@ class Keltie extends Component<KeltieProps, any> {
                                                 alt="Sullivan Fountain"
                                                 width={MediaQueryState.isMobile ? 100 : 145}
                                                 height={MediaQueryState.isMobile ? 100 : 145}
-                                                style={{
-                                                    objectFit: "cover"
-                                                }}
+                                                style={{ objectFit: "cover" }}
                                             />
                                         }
                                     />
-                                    <Box
-                                        width="25px"
-                                    />
+                                    <Box width="25px" />
                                     <CustomLink
                                         url="https://www.keltie.com/staff/richard-lawrence.html"
                                         target="_blank"
@@ -590,43 +371,17 @@ class Keltie extends Component<KeltieProps, any> {
                                         activeUnderline={false}
                                         component="a"
                                         childComponent={
-                                            <Image
-                                                src={richardLawrenceImg}
-                                                alt="Richard Lawrence"
-                                                width={MediaQueryState.isMobile ? 100 : 145}
-                                                height={MediaQueryState.isMobile ? 100 : 145}
-                                                style={{
-                                                    objectFit: "cover"
-                                                }}
-                                            />
+                                            <Image src={richardLawrenceImg} alt="Richard Lawrence" width={MediaQueryState.isMobile ? 100 : 145} height={MediaQueryState.isMobile ? 100 : 145} style={{ objectFit: "cover" }} />
                                         }
                                     />
                                 </Box>
-                                <Box
-                                    height="60px"
-                                />
-                                <Box
-                                    display="flex"
-                                    justifyContent="center"
-                                    alignItems="center"
-                                >
-                                    <Box
-                                        bgcolor="#52155A"
-                                        color="white"
-                                        clone
-                                    >
-                                        <Button
-                                            variant="contained"
-                                            className={css(sharedStyles.no_text_transform)}
-                                            onClick={() => toggleContactResourceDialog()}
-                                        >
-                                            Contact us
-                                        </Button>
+                                <Box height="60px" />
+                                <Box display="flex" justifyContent="center" alignItems="center" >
+                                    <Box bgcolor="#52155A" color="white" clone >
+                                        <Button variant="contained" className={css(sharedStyles.no_text_transform)} onClick={() => toggleContactResourceDialog()} > Contact us </Button>
                                     </Box>
                                 </Box>
-                                <Box
-                                    height="20px"
-                                />
+                                <Box height="20px" />
                             </Box>
                         </Box>
                     </Paper>

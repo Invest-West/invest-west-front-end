@@ -152,12 +152,7 @@ class ActivitiesTable extends Component {
 
         return (
             <div>
-                <Paper
-                    elevation={1}
-                    style={{
-                        overflowX: "auto"
-                    }}
-                >
+                <Paper elevation={1} style={{ overflowX: "auto" }} >
                     <Table>
                         <TableHead>
                             <TableRow>
@@ -171,13 +166,7 @@ class ActivitiesTable extends Component {
                                             groupProperties.settings.primaryColor
                                     }
                                     component={
-                                        <Typography
-                                            variant="body2"
-                                            align="left"
-                                            className={css(sharedStyles.white_text)}
-                                        >
-                                            Event
-                                        </Typography>
+                                        <Typography variant="body2" align="left" className={css(sharedStyles.white_text)}>Event</Typography>
                                     }
                                 />
                                 <StyledTableCell
@@ -190,13 +179,7 @@ class ActivitiesTable extends Component {
                                             groupProperties.settings.primaryColor
                                     }
                                     component={
-                                        <Typography
-                                            variant="body2"
-                                            align="left"
-                                            className={css(sharedStyles.white_text)}
-                                        >
-                                            Time
-                                        </Typography>
+                                        <Typography variant="body2" align="left" className={css(sharedStyles.white_text)}>Time</Typography>
                                     }
                                 />
                             </TableRow>
@@ -256,25 +239,12 @@ class ActivitiesTable extends Component {
         if (activities.length === 0) {
             return (
                 <TableRow>
-                    <TableCell
-                        colSpan={3}
-                    >
-                        <FlexView
-                            hAlignContent="center"
-                            vAlignContent="center"
-                            style={{
-                                margin: 20
-                            }}
-                        >
+                    <TableCell colSpan={3} >
+                        <FlexView hAlignContent="center" vAlignContent="center" style={{ margin: 20 }} >
                             {
                                 activitiesLoaded
                                     ?
-                                    <Typography
-                                        variant="body1"
-                                        align="center"
-                                    >
-                                        No activities.
-                                    </Typography>
+                                    <Typography variant="body1" align="center">No activities.</Typography>
                                     :
                                     <HashLoader
                                         color={
@@ -294,22 +264,13 @@ class ActivitiesTable extends Component {
 
         return (
             activities.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map(activity => (
-                    <TableRow
-                        key={activity.id}
-                    >
-                        <TableCell
-                            colSpan={2}
-                        >
+                    <TableRow key={activity.id} >
+                        <TableCell colSpan={2} >
                             {
                                 activity.hasOwnProperty('action')
                                     ?
-                                    <FlexView
-                                        column
-                                    >
-                                        <Typography
-                                            variant="body2"
-                                            align="left"
-                                        >
+                                    <FlexView column >
+                                        <Typography variant="body2" align="left" >
                                             <NavLink
                                                 to={
                                                     groupUserName
@@ -328,12 +289,7 @@ class ActivitiesTable extends Component {
                                                             groupProperties.settings.primaryColor
                                                 }}
                                             >
-                                                <LinkIcon
-                                                    fontSize="small"
-                                                    style={{
-                                                        marginRight: 6
-                                                    }}
-                                                />
+                                                <LinkIcon fontSize="small" style={{ marginRight: 6 }} />
                                                 {activity.activitySummary}
                                             </NavLink>
                                         </Typography>
@@ -365,9 +321,7 @@ class ActivitiesTable extends Component {
                                                         ?
                                                         null
                                                         :
-                                                        <FlexView
-                                                            marginTop={10}
-                                                        >
+                                                        <FlexView marginTop={10} >
                                                             <Button
                                                                 variant="outlined"
                                                                 color="primary"
@@ -388,30 +342,16 @@ class ActivitiesTable extends Component {
                                                                             activity.value
                                                                     )
                                                                 }
-                                                            >
-                                                                View changes
-                                                            </Button>
+                                                            >View changes</Button>
                                                         </FlexView>
                                         }
                                     </FlexView>
                                     :
-                                    <Typography
-                                        variant="body2"
-                                        align="left"
-                                    >
-                                        {activity.activitySummary}
-                                    </Typography>
+                                    <Typography variant="body2" align="left">{activity.activitySummary}</Typography>
                             }
                         </TableCell>
-                        <TableCell
-                            colSpan={1}
-                        >
-                            <Typography
-                                variant="body2"
-                                align="left"
-                            >
-                                {utils.dateTimeInReadableFormat(activity.time)}
-                            </Typography>
+                        <TableCell colSpan={1} >
+                            <Typography variant="body2" align="left">{utils.dateTimeInReadableFormat(activity.time)}</Typography>
                         </TableCell>
                     </TableRow>
                 )

@@ -48,21 +48,9 @@ class RiskWarning extends Component<RiskWarningProps, any> {
             padding="24px"
             bgcolor={colors.grey["100"]}
         >
-            <Typography
-                variant="body1"
-                align="left"
-            >
-                <u>Risk warning</u>
-            </Typography>
-
-            <Box
-                marginTop="18px"
-                whiteSpace="pre-line"
-            >
-                <Typography
-                    variant="body1"
-                    align="justify"
-                >
+            <Typography variant="body1" align="left" ><u>Risk warning</u></Typography>
+            <Box marginTop="18px" whiteSpace="pre-line" >
+                <Typography variant="body1" align="justify" >
                     {splits[0]}
                     <CustomLink
                         url={Routes.nonGroupRiskWarning}
@@ -71,9 +59,7 @@ class RiskWarning extends Component<RiskWarningProps, any> {
                         activeColor="none"
                         activeUnderline={true}
                         component="nav-link"
-                        childComponent={
-                            urlText
-                        }
+                        childComponent={ urlText }
                     />
                     {splits[2]}
                 </Typography>

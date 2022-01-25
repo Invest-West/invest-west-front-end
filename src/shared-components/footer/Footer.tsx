@@ -42,11 +42,7 @@ class Footer extends Component<FooterProps, any> {
                 bottom: position === undefined ? 0 : "none"
             }}
         >
-            <Box
-                display="flex"
-                flexDirection="row"
-                justifyContent="center"
-            >
+            <Box display="flex" flexDirection="row" justifyContent="center" >
                 <CustomLink
                     color="black"
                     target="_blank"
@@ -55,17 +51,11 @@ class Footer extends Component<FooterProps, any> {
                     url={Routes.constructPublicRoute("termsOfUse")}
                     component="nav-link"
                     childComponent={
-                        <Typography
-                            variant="body1"
-                        >
-                            Terms of Use
-                        </Typography>
+                        <Typography variant="body1">Terms of Use</Typography>
                     }
                 />
 
-                <Box
-                    width={25}
-                />
+                <Box width={25} />
 
                 <CustomLink
                     color="black"
@@ -75,48 +65,23 @@ class Footer extends Component<FooterProps, any> {
                     url={Routes.constructPublicRoute("privacyPolicy")}
                     component="nav-link"
                     childComponent={
-                        <Typography
-                            variant="body1"
-                        >
-                            Privacy Policy
-                        </Typography>
+                        <Typography variant="body1">Privacy Policy</Typography>
                     }
                 />
             </Box>
 
-            <Box
-                marginY="20px"
-                width={MediaQueryState.isMobile ? "100%" : "500px"}
-            >
+            <Box marginY="20px" width={MediaQueryState.isMobile ? "100%" : "500px"}>
                 <Divider/>
             </Box>
 
-            <Box
-                display="flex"
-                flexDirection="row"
-                alignItems="center"
-                justifyContent="center"
-            >
+            <Box display="flex" flexDirection="row" alignItems="center" justifyContent="center" >
                 <Image
                     alt="Invest West logo"
                     src={require("../../img/logo.png").default}
-                    style={{
-                        width: "auto",
-                        height: 34,
-                        objectFit: "contain"
-                    }}
+                    style={{ width: "auto", height: 34, objectFit: "contain" }}
                 />
-                <Box
-                    width="20px"
-                />
-                <Typography
-                    align="left"
-                    variant="body1"
-                >
-                    Powered by Invest West.
-                    <br/>
-                    Copyright © 2021 Invest West Ltd - All Rights Reserved.
-                </Typography>
+                <Box width="20px" />
+                <Typography align="left" variant="body1">Powered by Invest West. <br/> Copyright © 2021 Invest West Ltd - All Rights Reserved.</Typography>
             </Box>
         </Box>;
     }

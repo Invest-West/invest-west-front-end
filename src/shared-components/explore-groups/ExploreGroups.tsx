@@ -100,22 +100,10 @@ class ExploreGroups extends Component<ExploreGroupsProps, any> {
         const paginationPages = calculatePaginationPages(ExploreGroupsLocalState);
         const paginationIndices = calculatePaginationIndices(ExploreGroupsLocalState);
 
-        return <Box
-            paddingX={MediaQueryState.isMobile ? "20px" : "56px"}
-            paddingY={MediaQueryState.isMobile ? "15px" : "40px"}
-        >
-            <Row
-                noGutters
-            >
-                <Col
-                    xs={12}
-                    sm={12}
-                    md={{span: 8, offset: 2}}
-                    lg={{span: 4, offset: 4}}
-                >
-                    <Card
-                        elevation={0}
-                    >
+        return <Box paddingX={MediaQueryState.isMobile ? "20px" : "56px"} paddingY={MediaQueryState.isMobile ? "15px" : "40px"} >
+            <Row noGutters >
+                <Col xs={12} sm={12} md={{span: 8, offset: 2}} lg={{span: 4, offset: 4}} >
+                    <Card elevation={0} >
                         <Box
                             display="flex"
                             flexDirection="column"
@@ -124,23 +112,11 @@ class ExploreGroups extends Component<ExploreGroupsProps, any> {
                             color="white"
                             paddingY="28px"
                         >
-                            <Typography
-                                variant="h6"
-                                align="center"
-                            >
-                                Groups on Invest West network
-                            </Typography>
+                            <Typography variant="h6" align="center">Groups on Invest West network</Typography>
 
-                            <Box
-                                height="28px"
-                            />
+                            <Box height="28px" />
 
-                            <Box
-                                width="85%"
-                                height="100%"
-                                bgcolor="white"
-                                borderRadius="50px"
-                            >
+                            <Box width="85%" height="100%" bgcolor="white" borderRadius="50px" >
                                 <InputBase
                                     fullWidth
                                     name="nameFilter"
@@ -149,9 +125,7 @@ class ExploreGroups extends Component<ExploreGroupsProps, any> {
                                     onChange={filterChanged}
                                     disabled={!successfullyFetchedGroups(ExploreGroupsLocalState)}
                                     startAdornment={
-                                        <InputAdornment
-                                            position="start"
-                                        >
+                                        <InputAdornment position="start" >
                                             <IconButton
                                                 onClick={() => filterGroupsByName()}
                                                 disabled={!successfullyFetchedGroups(ExploreGroupsLocalState)}
@@ -163,12 +137,8 @@ class ExploreGroups extends Component<ExploreGroupsProps, any> {
                                     endAdornment={
                                         !isFilteringGroupsByName(ExploreGroupsLocalState)
                                             ? null
-                                            : <InputAdornment
-                                                position="end"
-                                            >
-                                                <IconButton
-                                                    onClick={() => cancelFilteringGroupsByName()}
-                                                >
+                                            : <InputAdornment position="end" >
+                                                <IconButton onClick={() => cancelFilteringGroupsByName()} >
                                                     <Close fontSize="small"/>
                                                 </IconButton>
                                             </InputAdornment>
@@ -184,20 +154,9 @@ class ExploreGroups extends Component<ExploreGroupsProps, any> {
             {
                 isAdmin(AuthenticationState.currentUser)
                     ? null
-                    : <Row
-                        noGutters
-                    >
-                        <Col
-                            xs={8}
-                            sm={8}
-                            md={3}
-                            lg={2}
-                        >
-                            <Box
-                                display="flex"
-                                flexDirection="row"
-                                marginTop="48px"
-                            >
+                    : <Row noGutters >
+                        <Col xs={8} sm={8} md={3} lg={2} >
+                            <Box display="flex" flexDirection="row" marginTop="48px" >
                                 <Select
                                     fullWidth
                                     name="groupFilter"
@@ -208,33 +167,14 @@ class ExploreGroups extends Component<ExploreGroupsProps, any> {
                                     onChange={filterChanged}
                                     disabled={!successfullyFetchedGroups(ExploreGroupsLocalState)}
                                 >
-                                    <MenuItem
-                                        key="all"
-                                        value="all"
-                                    >
-                                        All groups
-                                    </MenuItem>
-                                    <MenuItem
-                                        key="groupsOfMembership"
-                                        value="groupsOfMembership"
-                                    >
-                                        My groups
-                                    </MenuItem>
-                                    <MenuItem
-                                        key="groupsOfPendingRequest"
-                                        value="groupsOfPendingRequest"
-                                    >
-                                        Pending requests
-                                    </MenuItem>
+                                    <MenuItem key="all" value="all">All groups</MenuItem>
+                                    <MenuItem key="groupsOfMembership" value="groupsOfMembership">My groups</MenuItem>
+                                    <MenuItem key="groupsOfPendingRequest" value="groupsOfPendingRequest">Pending requests</MenuItem>
                                 </Select>
 
-                                <Box
-                                    width="15px"
-                                />
+                                <Box width="15px" />
 
-                                <IconButton
-                                    onClick={() => fetchGroups()}
-                                >
+                                <IconButton onClick={() => fetchGroups()} >
                                     <Refresh/>
                                 </IconButton>
                             </Box>
@@ -246,23 +186,10 @@ class ExploreGroups extends Component<ExploreGroupsProps, any> {
             {
                 !isFetchingGroups(ExploreGroupsLocalState)
                     ? null
-                    : <Row
-                        noGutters
-                    >
-                        <Col
-                            xs={12}
-                            sm={12}
-                            md={12}
-                            lg={12}
-                        >
-                            <Box
-                                display="flex"
-                                marginY="80px"
-                                justifyContent="center"
-                            >
-                                <BeatLoader
-                                    color={getGroupRouteTheme(ManageGroupUrlState).palette.primary.main}
-                                />
+                    : <Row noGutters >
+                        <Col xs={12} sm={12} md={12} lg={12} >
+                            <Box display="flex" marginY="80px" justifyContent="center" >
+                                <BeatLoader color={getGroupRouteTheme(ManageGroupUrlState).palette.primary.main} />
                             </Box>
                         </Col>
                     </Row>
@@ -273,44 +200,19 @@ class ExploreGroups extends Component<ExploreGroupsProps, any> {
                 !successfullyFetchedGroups(ExploreGroupsLocalState)
                     ? null
                     : !hasGroupsForCurrentFilters(ExploreGroupsLocalState)
-                    ? <Box
-                        marginY="80px"
-                    >
-                        <Typography
-                            align="center"
-                            variant="h5"
-                        >
-                            There are no groups available using your current filter criteria
-                        </Typography>
+                    ? <Box marginY="80px" >
+                        <Typography align="center" variant="h5" > There are no groups available using your current filter criteria </Typography>
                     </Box>
-                    : <Box
-                        marginTop="30px"
-                    >
-                        <Row
-                            noGutters
-                        >
-                            <Col
-                                xs={12}
-                                sm={12}
-                                md={12}
-                                lg={12}
-                            >
+                    : <Box marginTop="30px" >
+                        <Row noGutters >
+                            <Col xs={12} sm={12} md={12} lg={12} >
                                 <Row>
                                     {
                                         ExploreGroupsLocalState.groupsFiltered
                                             .slice(paginationIndices.startIndex, paginationIndices.endIndex + 1)
                                             .map(group =>
-                                                <Col
-                                                    key={group.anid}
-                                                    xs={12}
-                                                    sm={12}
-                                                    md={4}
-                                                    lg={3}
-                                                    xl={2}
-                                                >
-                                                    <GroupItem
-                                                        group={group}
-                                                    />
+                                                <Col key={group.anid} xs={12} sm={12} md={4} lg={3} xl={2} >
+                                                    <GroupItem group={group} />
                                                 </Col>
                                             )
                                     }
@@ -326,26 +228,10 @@ class ExploreGroups extends Component<ExploreGroupsProps, any> {
                     ? null
                     : paginationPages === 1
                     ? null
-                    : <Row
-                        noGutters
-                    >
-                        <Col
-                            xs={12}
-                            sm={12}
-                            md={12}
-                            lg={12}
-                        >
-                            <Box
-                                display="flex"
-                                justifyContent="center"
-                                marginTop="55px"
-                            >
-                                <Pagination
-                                    count={paginationPages}
-                                    page={ExploreGroupsLocalState.currentPage}
-                                    color="primary"
-                                    onChange={paginationChanged}
-                                />
+                    : <Row noGutters >
+                        <Col xs={12} sm={12} md={12} lg={12} >
+                            <Box display="flex" justifyContent="center" marginTop="55px" >
+                                <Pagination count={paginationPages} page={ExploreGroupsLocalState.currentPage} color="primary" onChange={paginationChanged} />
                             </Box>
                         </Col>
                     </Row>

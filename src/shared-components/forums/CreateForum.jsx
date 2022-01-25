@@ -40,14 +40,8 @@ class CreateForum extends Component {
         } = this.props;
 
         return (
-            <FlexView
-                column
-            >
-                <Typography
-                    paragraph
-                    variant="h6"
-                    color="primary"
-                >
+            <FlexView column >
+                <Typography paragraph variant="h6" color="primary" >
                     {
                         forumEdited
                             ?
@@ -61,26 +55,10 @@ class CreateForum extends Component {
                         ?
                         null
                         :
-                        <Typography
-                            paragraph
-                            variant="body1"
-                            color="textSecondary"
-                            align="left"
-                        >
-                            Forums are made up of individual discussion
-                            threads that can be organised around a particular subject. Create forums to organise
-                            discussions.
-                        </Typography>
+                        <Typography paragraph variant="body1" color="textSecondary" align="left">Forums are made up of individual discussion threads that can be organised around a particular subject. Create forums to organise discussions.</Typography>
                 }
-                <FlexView
-                    column
-                    marginTop={10}
-                >
-                    <Typography
-                        variant="subtitle1"
-                    >
-                        Forum information
-                    </Typography>
+                <FlexView column marginTop={10} >
+                    <Typography variant="subtitle1">Forum information</Typography>
                     <TextField
                         name="createForumName"
                         label="Name"
@@ -103,68 +81,29 @@ class CreateForum extends Component {
                         value={createForumDesc}
                         onChange={handleForumsInputChanged}
                     />
-                    <Row
-                        noGutters
-                    >
-                        <Col
-                            xs={12}
-                            sm={12}
-                            md={6}
-                            lg={8}
-                            style={{
-                                marginTop: 30
-                            }}
-                        >
+                    <Row noGutters >
+                        <Col xs={12} sm={12} md={6} lg={8} style={{ marginTop: 30 }} >
                             <FlexView>
                                 {
                                     !createForumError
                                         ?
                                         null
                                         :
-                                        <Typography
-                                            variant="body1"
-                                            align="left"
-                                            color="error"
-                                        >
-                                            Please enter forum name.
-                                        </Typography>
+                                        <Typography variant="body1" align="left" color="error">Please enter forum name.</Typography>
                                 }
                             </FlexView>
                         </Col>
-                        <Col
-                            xs={12}
-                            sm={12}
-                            md={6}
-                            lg={4}
-                            style={{
-                                marginTop: 30
-                            }}
-                        >
-                            <FlexView
-                                hAlignContent="right"
-                            >
-                                <FlexView
-                                    marginRight={5}
-                                >
+                        <Col xs={12} sm={12} md={6} lg={4} style={{ marginTop: 30 }}>
+                            <FlexView hAlignContent="right" >
+                                <FlexView marginRight={5} >
                                     <Button
                                         variant="outlined"
                                         onClick={() => toggleCreateNewForum(false, null)}
                                         className={css(sharedStyles.no_text_transform)}
-                                    >
-                                        Cancel
-                                    </Button>
+                                    >Cancel</Button>
                                 </FlexView>
-                                <FlexView
-                                    marginLeft={5}
-                                >
-                                    <Button
-                                        variant="contained"
-                                        color="primary"
-                                        onClick={createNewForum}
-                                        className={css(sharedStyles.no_text_transform)}
-                                    >
-                                        Submit
-                                    </Button>
+                                <FlexView marginLeft={5} >
+                                    <Button variant="contained" color="primary" onClick={createNewForum} className={css(sharedStyles.no_text_transform)}>Submit</Button>
                                 </FlexView>
                             </FlexView>
                         </Col>
