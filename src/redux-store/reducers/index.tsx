@@ -37,7 +37,7 @@ import signInReducer, {SignInState} from "../../pages/signin/SignInReducer";
 import authenticationReducer, {AuthenticationState} from "./authenticationReducer";
 import manageSystemAttributesReducer, {ManageSystemAttributesState} from "./manageSystemAttributesReducer";
 import exploreOffersReducer, {ExploreOffersState} from "../../shared-components/explore-offers/ExploreOffersReducer";
-import offersTableReducer, {OffersTableState} from "../../shared-components/offers-table/OffersTableReducer";
+import offersTableReducer, {OffersTableStates} from "../../shared-components/offers-table/OffersTableReducer";
 import {ExploreGroupsState} from "../../shared-components/explore-groups/ExploreGroupsReducer";
 import newExploreGroupsReducer from "../../shared-components/explore-groups/ExploreGroupsReducer";
 import groupDetailsReducer, {GroupDetailsState} from "../../pages/group-details/GroupDetailsReducer";
@@ -61,7 +61,7 @@ export interface AppState {
     SignInLocalState: SignInState;
     SignUpLocalState: SignUpState;
     ExploreOffersLocalState: ExploreOffersState;
-    OffersTableLocalState: OffersTableState;
+    OffersTableLocalState: OffersTableStates;
     ExploreGroupsLocalState: ExploreGroupsState;
     GroupDetailsLocalState: GroupDetailsState;
     ResetPasswordLocalState: ResetPasswordState;

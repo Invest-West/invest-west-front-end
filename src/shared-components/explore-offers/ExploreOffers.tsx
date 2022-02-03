@@ -24,7 +24,8 @@ import {
     hasOffersForCurrentFilters,
     isFetchingOffers,
     isSearchFilterActive,
-    successfullyFetchedOffers
+    successfullyFetchedOffers,
+    successfullyFetchedOffers2
 } from "./ExploreOffersReducer";
 import {MediaQueryState} from "../../redux-store/reducers/mediaQueryReducer";
 import {getGroupRouteTheme, ManageGroupUrlState} from "../../redux-store/reducers/manageGroupUrlReducer";
@@ -36,7 +37,7 @@ import {BeatLoader} from "react-spinners";
 import OfferItem from "./OfferItem";
 import {Pagination} from "@material-ui/lab";
 import RiskWarning from "../risk-warning/RiskWarning";
-import {isIssuer} from "../../models/user";
+import User, {isIssuer} from "../../models/user";
 import CustomLink from "../../shared-js-css-styles/CustomLink";
 import Routes from "../../router/routes";
 import CreateIcon from "@material-ui/icons/CreateOutlined";
@@ -45,6 +46,15 @@ import {css} from "aphrodite";
 import sharedStyles from "../../shared-js-css-styles/SharedStyles";
 import {FetchProjectsOrderByOptions, FetchProjectsPhaseOptions} from "../../api/repositories/OfferRepository";
 import {Close, Search} from "@material-ui/icons";
+import {
+    hasErrorExportingCsv,
+    hasErrorFetchingOffers,
+    hasGroupsSelect,
+    isExportingCsv,
+    isFilteringOffersByName,
+    OffersTableStates,
+} from "../offers-table/OffersTableReducer";
+import Admin from "../../models/admin";
 
 interface ExploreOffersProps {
     MediaQueryState: MediaQueryState;
@@ -57,6 +67,7 @@ interface ExploreOffersProps {
     filterChanged: (event: any) => any;
     clearSearchFilter: () => any;
     paginationChanged: (event: React.ChangeEvent<unknown>, page: number) => any;
+    OffersTableLocalState: OffersTableStates;
 }
 
 const mapStateToProps = (state: AppState) => {
@@ -65,7 +76,8 @@ const mapStateToProps = (state: AppState) => {
         ManageSystemAttributesState: state.ManageSystemAttributesState,
         ManageGroupUrlState: state.ManageGroupUrlState,
         AuthenticationState: state.AuthenticationState,
-        ExploreOffersLocalState: state.ExploreOffersLocalState
+        ExploreOffersLocalState: state.ExploreOffersLocalState,
+        OffersTableLocalState: state.OffersTableLocalState
     }
 }
 
@@ -98,7 +110,8 @@ class ExploreOffers extends Component<ExploreOffersProps, {}> {
             filterChanged,
             clearSearchFilter,
             paginationChanged,
-            onSearchEnter
+            onSearchEnter,
+            OffersTableLocalState
         } = this.props;
 
         const paginationPages = calculatePaginationPages(ExploreOffersLocalState);
@@ -109,46 +122,40 @@ class ExploreOffers extends Component<ExploreOffersProps, {}> {
             paddingY={MediaQueryState.isMobile ? "15px" : "40px"}
         >
             <Row>
-                {/** Visibility filter */}
+                {/** Group filter */}
                 <Col xs={12} sm={12} md={6} lg={4} >
                     <Box paddingY="6px" >
-                        <Typography variant="body1">Visibility:</Typography>
+                        <Typography variant="body1">Group:</Typography>
                         <Box height="8px" />
                         <Paper>
                             <Select
                                 fullWidth
                                 variant="outlined"
-                                name="visibilityFilter"
-                                value={ExploreOffersLocalState.visibilityFilter}
+                                name="groupFilter"
+                                value={OffersTableLocalState.groupFilter}
                                 onChange={filterChanged}
-                                disabled={!successfullyFetchedOffers(ExploreOffersLocalState)}
                                 input={<OutlinedInput/>}
+                                disabled={!successfullyFetchedOffers2(OffersTableLocalState)}
                             >
-                                <MenuItem key="all" value="all">All offers</MenuItem>
-
+                                <MenuItem key="all" value="all" >All</MenuItem>
                                 {
-                                    !AuthenticationState.currentUser
+                                    !hasGroupsSelect(OffersTableLocalState)
+                                    || !OffersTableLocalState.groupsSelect
                                         ? null
-                                        : AuthenticationState.groupsOfMembership.length === 0
-                                        ? null
-                                        : AuthenticationState.groupsOfMembership
-                                            .map(groupOfMembership => (
-                                                <MenuItem
-                                                    key={groupOfMembership.group.anid}
-                                                    value={groupOfMembership.group.anid}
-                                                >
-                                                    Offers from {groupOfMembership.group.displayName}
-                                                </MenuItem>
-                                            ))
+                                        : OffersTableLocalState.groupsSelect.map(group =>
+                                            <MenuItem
+                                                key={group.anid}
+                                                value={group.anid}
+                                            >
+                                                {group.displayName}
+                                            </MenuItem>
+                                        )
                                 }
-
-                                <MenuItem key={PROJECT_VISIBILITY_PUBLIC} value={PROJECT_VISIBILITY_PUBLIC}>Public offers</MenuItem>
-
-                                <MenuItem key={PROJECT_VISIBILITY_RESTRICTED} value={PROJECT_VISIBILITY_RESTRICTED}>Restricted offers</MenuItem>
                             </Select>
                         </Paper>
                     </Box>
                 </Col>
+
 
                 {/** Sector filter */}
                 <Col xs={12} sm={12} md={6} lg={4} >

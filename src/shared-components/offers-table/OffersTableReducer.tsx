@@ -17,7 +17,7 @@ import GroupOfMembership from "../../models/group_of_membership";
 import GroupProperties from "../../models/group_properties";
 import {AuthenticationEvents} from "../../redux-store/actions/authenticationActions";
 
-export interface OffersTableState {
+export interface OffersTableStates {
     offerInstances: ProjectInstance[];
     offerInstancesFilteredByName: ProjectInstance[];
     fetchingOffers: boolean;
@@ -42,7 +42,7 @@ export interface OffersTableState {
     error?: Error
 }
 
-const initialState: OffersTableState = {
+const initialState: OffersTableStates = {
     offerInstances: [],
     offerInstancesFilteredByName: [],
     fetchingOffers: false,
@@ -60,35 +60,35 @@ const initialState: OffersTableState = {
     exportingCsv: false
 }
 
-export const isFetchingOffers = (state: OffersTableState) => {
+export const isFetchingOffers = (state: OffersTableStates) => {
     return !state.offersFetched && state.fetchingOffers;
 }
 
-export const successfullyFetchedOffers = (state: OffersTableState) => {
+export const successfullyFetchedOffers = (state: OffersTableStates) => {
     return state.offersFetched && !state.fetchingOffers && state.error === undefined;
 }
 
-export const hasOffersForCurrentFilters = (state: OffersTableState) => {
+export const hasOffersForCurrentFilters = (state: OffersTableStates) => {
     return successfullyFetchedOffers(state) && state.offerInstancesFilteredByName.length > 0;
 }
 
-export const isFilteringOffersByName = (state: OffersTableState) => {
+export const isFilteringOffersByName = (state: OffersTableStates) => {
     return state.filteringOffersByName;
 }
 
-export const hasErrorFetchingOffers = (state: OffersTableState) => {
+export const hasErrorFetchingOffers = (state: OffersTableStates) => {
     return state.error !== undefined;
 }
 
-export const isExportingCsv = (state: OffersTableState) => {
+export const isExportingCsv = (state: OffersTableStates) => {
     return state.exportingCsv;
 }
 
-export const hasErrorExportingCsv = (state: OffersTableState) => {
+export const hasErrorExportingCsv = (state: OffersTableStates) => {
     return state.errorExportingCsv !== undefined;
 }
 
-export const hasGroupsSelect = (state: OffersTableState) => {
+export const hasGroupsSelect = (state: OffersTableStates) => {
     return state.groupsSelect !== undefined && state.groupsSelect.length > 0;
 }
 

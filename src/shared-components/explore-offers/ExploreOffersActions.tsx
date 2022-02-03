@@ -47,7 +47,8 @@ export const fetchOffers: ActionCreator<any> = (orderBy?: FetchProjectsOrderByOp
             searchFilter,
             visibilityFilter,
             sectorFilter,
-            phaseFilter
+            phaseFilter,
+            groupFilter
         } = getState().ExploreOffersLocalState;
 
         const fetchOffersOptions: FetchProjectsOptions = orderBy === undefined ? {
@@ -55,9 +56,7 @@ export const fetchOffers: ActionCreator<any> = (orderBy?: FetchProjectsOrderByOp
             visibility: visibilityFilter === "all" || visibilityFilter === PROJECT_VISIBILITY_PUBLIC
             || visibilityFilter === PROJECT_VISIBILITY_RESTRICTED
                 ? visibilityFilter : undefined,
-            group: visibilityFilter === "all" || visibilityFilter === PROJECT_VISIBILITY_PUBLIC
-            || visibilityFilter === PROJECT_VISIBILITY_RESTRICTED
-                ? undefined : visibilityFilter.toString(),
+            group: groupFilter,
             sector: sectorFilter,
             phase: phaseFilter
         } : {
@@ -65,9 +64,7 @@ export const fetchOffers: ActionCreator<any> = (orderBy?: FetchProjectsOrderByOp
             visibility: visibilityFilter === "all" || visibilityFilter === PROJECT_VISIBILITY_PUBLIC
             || visibilityFilter === PROJECT_VISIBILITY_RESTRICTED
                 ? visibilityFilter : undefined,
-            group: visibilityFilter === "all" || visibilityFilter === PROJECT_VISIBILITY_PUBLIC
-            || visibilityFilter === PROJECT_VISIBILITY_RESTRICTED
-                ? undefined : visibilityFilter.toString(),
+            group: groupFilter,
             sector: sectorFilter,
             phase: phaseFilter,
             orderBy: orderBy
@@ -114,9 +111,11 @@ export const filterChanged: ActionCreator<any> = (event: React.ChangeEvent<HTMLI
                 }
                 return dispatch(fetchOffers(FetchProjectsOrderByOptions.Group));
             case "sectorFilter":
-                return dispatch(fetchOffers(FetchProjectsOrderByOptions.Sector));
+                return  dispatch(fetchOffers(FetchProjectsOrderByOptions.Sector));
             case "phaseFilter":
                 return dispatch(fetchOffers(FetchProjectsOrderByOptions.Phase));
+            case "groupFilter":
+                return dispatch(fetchOffers(FetchProjectsOrderByOptions.Group))
             default:
                 return;
         }

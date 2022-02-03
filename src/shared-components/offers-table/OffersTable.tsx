@@ -35,7 +35,7 @@ import {
     isExportingCsv,
     isFetchingOffers,
     isFilteringOffersByName,
-    OffersTableState,
+    OffersTableStates,
     successfullyFetchedOffers
 } from "./OffersTableReducer";
 import User, {isInvestor, isIssuer} from "../../models/user";
@@ -88,7 +88,7 @@ interface OffersTableProps {
     ManageSystemAttributesState: ManageSystemAttributesState;
     ManageGroupUrlState: ManageGroupUrlState;
     AuthenticationState: AuthenticationState;
-    OffersTableLocalState: OffersTableState;
+    OffersTableLocalState: OffersTableStates;
     setUser: (user?: User | Admin) => any;
     fetchOffers: () => any;
     filterChanged: (event: any) => any;
