@@ -122,7 +122,7 @@ class ExploreOffers extends Component<ExploreOffersProps, {}> {
             paddingY={MediaQueryState.isMobile ? "15px" : "40px"}
         >
             <Row>
-                {/** Group filter */}
+                {/** Group filter for Explore offers */}
                 <Col xs={12} sm={12} md={6} lg={4} >
                     <Box paddingY="6px" >
                         <Typography variant="body1">Group:</Typography>
