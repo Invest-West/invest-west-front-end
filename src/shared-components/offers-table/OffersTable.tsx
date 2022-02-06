@@ -222,8 +222,7 @@ class OffersTable extends Component<OffersTableProps, any> {
                                                 })
                                                 : ""
                                         }
-                                        target="_blank"
-                                        color="none"
+                                        target="_blank" color="none"
                                         activeColor="none"
                                         activeUnderline={false}
                                         component="a"
