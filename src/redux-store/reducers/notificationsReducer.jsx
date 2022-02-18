@@ -3,6 +3,7 @@ import * as authActions from '../actions/authActions';
 
 const initState = {
     notificationsAnchorEl: null,
+    notificationsClickedOutside: false,
 
     notifications: [],
     loadingNotifications: false,
@@ -16,8 +17,15 @@ const notificationsReducer = (state = initState, action) => {
         case notificationsActions.TOGGLE_NOTIFICATIONS:
             return {
                 ...state,
-                notificationsAnchorEl: action.notificationsAnchorEl
+                notificationsAnchorEl: action.notificationsAnchorEl,
+                notificationsClickedOutsideActivated: action.notificationsClickedOutsideActivated
             };
+        case notificationsActions.CLOSED_NOTIFICATIONS:
+            return {
+                ...state,
+                notificationsAnchorEl: action.notificationsAnchorEl,
+                notificationsClickedOutside: action.notificationsClickedOutside
+            }
         case notificationsActions.LOADING_NOTIFICATIONS:
             return {
                 ...state,

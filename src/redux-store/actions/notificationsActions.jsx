@@ -6,22 +6,95 @@ export const TOGGLE_NOTIFICATIONS = 'TOGGLE_NOTIFICATIONS';
 export const toggleNotifications = event => {
     return (dispatch, getState) => {
         const notificationsAnchorEl = getState().manageNotifications.notificationsAnchorEl;
+        const notificationsClickedOutside = getState().manageNotifications.notificationsClickedOutside;
+        const notificationsClickedOutsideActivated = getState().manageNotifications.notificationsClickedOutsideActivated;
+
+        console.log('Current:');
+        console.log(event.currentTarget);
+        console.log('AnchorElement:');
+        console.log(notificationsAnchorEl);
+        console.log('Click outside:');
+        console.log(notificationsClickedOutside);
+        console.log('Click outside activated:');
+        console.log(notificationsClickedOutsideActivated);
 
         // open notifications
-        if (!notificationsAnchorEl) {
+        // initialises states
+        if (notificationsAnchorEl === null) {
             dispatch({
                 type: TOGGLE_NOTIFICATIONS,
-                notificationsAnchorEl: event.currentTarget
+                notificationsAnchorEl: event.currentTarget,
+                notificationsClickedOutsideActivated: true
             });
+
+            console.log('TOGGLE open 1');
+            console.log('---------------------');
+        }
+        else if (!notificationsAnchorEl && !notificationsClickedOutside) {
+            dispatch({
+                type: TOGGLE_NOTIFICATIONS,
+                notificationsAnchorEl: event.currentTarget,
+                notificationsClickedOutsideActivated: true
+            });
+
+            console.log('TOGGLE open 2');
+            console.log('---------------------');
+        }
+        else if (!notificationsAnchorEl && notificationsClickedOutside) {
+            dispatch({
+                type: TOGGLE_NOTIFICATIONS,
+                notificationsAnchorEl: event.currentTarget,
+                notificationsClickedOutsideActivated: false
+            });
+
+            console.log('TOGGLE open 3');
+            console.log('---------------------');
         }
         else {
             dispatch({
                 type: TOGGLE_NOTIFICATIONS,
-                notificationsAnchorEl: null
+                notificationsAnchorEl: false,
+                notificationsClickedOutsideActivated: false
             });
+
+            console.log('TOGGLE close');
+            console.log('---------------------');
         }
     }
 };
+
+export const CLOSED_NOTIFICATIONS = 'CLOSED_NOTIFICATIONS'
+export const closeNotifications = event => {
+    return (dispatch, getState) => {
+        const notificationsAnchorEl = getState().manageNotifications.notificationsAnchorEl;
+        const notificationsClickedOutside = getState().manageNotifications.notificationsClickedOutside;
+        const notificationsClickedOutsideActivated = getState().manageNotifications.notificationsClickedOutsideActivated;
+
+        console.log('Current:');
+        console.log(event.currentTarget);
+        console.log('AnchorElement:');
+        console.log(notificationsAnchorEl);
+        console.log('Click outside:');
+        console.log(notificationsClickedOutside);
+        console.log('Click outside activated:');
+        console.log(notificationsClickedOutsideActivated);
+
+        if (Boolean(notificationsAnchorEl) && notificationsClickedOutsideActivated) {
+            dispatch({
+                type: CLOSED_NOTIFICATIONS,
+                notificationsAnchorEl: false,
+                notificationsClickedOutside: true
+            });
+
+            console.log('CLOSE');
+            console.log('---------------------');
+        }
+        else {
+            console.log('nothing happened in close.');
+            console.log('---------------------');
+        }
+    }
+}
 
 export const LOADING_NOTIFICATIONS = 'LOADING_NOTIFICATIONS';
 export const FINISHED_LOADING_NOTIFICATIONS = 'FINISHED_LOADING_NOTIFICATIONS';
