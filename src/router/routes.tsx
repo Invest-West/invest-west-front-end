@@ -54,9 +54,6 @@ export default class Routes {
     static nonGroupContactUs: string = "/contact-us";
     static groupContactUs: string = `${Routes.baseGroup}/contact-us`;
 
-    static nonGroupContactUs2: string = "/contact-us-2";
-    static groupContactUs2: string = `${Routes.baseGroup}/contact-us-2`;
-
     static groupHelp: string = `${Routes.baseGroup}/help`;
 
     static nonGroupTermsOfUse: string = "/terms-of-use";
@@ -83,8 +80,6 @@ export default class Routes {
             && route !== Routes.groupSignUp
             && route !== Routes.nonGroupContactUs
             && route !== Routes.groupContactUs
-            && route !== Routes.nonGroupContactUs2
-            && route !== Routes.groupContactUs2
             && route !== Routes.nonGroupPrivacyPolicy
             && route !== Routes.nonGroupTermsOfUse
             && route !== Routes.nonGroupRiskWarning
@@ -306,18 +301,6 @@ export default class Routes {
         }
     }
 
-     /**
-     * Construct sign in route (navigate to Sign in page)
-     *
-     * @param routeParams
-     */
-      public static constructContactUsRoute2 = (routeParams: any) => {
-        if (routeParams.groupUserName) {
-            return Routes.groupContactUs2.replace(":groupUserName", routeParams.groupUserName);
-        } else {
-            return Routes.nonGroupContactUs2;
-        }
-    }
 
     /**
      * Construct dashboard route (navigate to Dashboard page)
