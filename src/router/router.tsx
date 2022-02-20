@@ -11,7 +11,6 @@ import TermsOfUsePage from "../pages/system-public-pages/TermsOfUsePage";
 import RiskWarningPage from "../pages/system-public-pages/RiskWarningPage";
 import CreatePitchTermsAndConditionsPage from "../pages/system-public-pages/CreatePitchTermsAndConditionsPage";
 import ContactUs from "../pages/system-public-pages/ContactUs";
-import ContactUs2 from "../pages/system-public-pages/ContactUs2";
 import HelpPage from "../pages/system-public-pages/HelpPage";
 import GroupDetails from "../pages/group-details/GroupDetails";
 import MarketingPreferencesPage from "../pages/system-public-pages/MarketingPreferencesPage";
@@ -164,14 +163,7 @@ const AppRouter = () => (
                    render={props => <GroupRoute {...props} showHeader={true}
                                                 component={<ContactUs {...props}/>}/>}/>
 
-            <Route path={Routes.nonGroupContactUs2} exact
-                            // @ts-ignore
-                            render={props => <GroupRoute {...props} showHeader={true}
-                                                            component={<ContactUs2 {...props}/>}/>}/>
-            <Route path={Routes.groupContactUs2} exact
-                // @ts-ignore
-                   render={props => <GroupRoute {...props} showHeader={true}
-                                                component={<ContactUs2 {...props}/>}/>}/>
+
 
             <Route path={Routes.nonGroupPrivacyPolicy} exact
                 // @ts-ignore

@@ -121,12 +121,15 @@ class SignInNew extends Component<SignInProps
                                     </Box>
                             }
 
-                            {/** Display error */}
+                            {/** Signin error */}
                             {
                                 !hasAuthenticationError(AuthenticationState)
                                     ? null
                                     : <Box marginBottom="35px" padding="15px" color="white" bgcolor="error.main" >
-                                        <Typography variant="body1" align="left">{AuthenticationState.error?.detail}</Typography>
+                                        <Typography variant="body1" align="left">
+                                       {/** {AuthenticationState.error?.detail} */}
+                                       Error: Username or password not recognised
+                                        </Typography>
                                     </Box>
                             }
 

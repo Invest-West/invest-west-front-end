@@ -9,7 +9,8 @@ import {
     Typography,
     Divider,
     IconButton,
-    Button
+    Button,
+    ClickAwayListener
 } from '@material-ui/core';
 import NotificationsIcon from '@material-ui/icons/Notifications';
 import DeleteIcon from '@material-ui/icons/Delete';
@@ -48,6 +49,7 @@ const mapStateToProps = state => {
 const mapDispatchToProps = dispatch => {
     return {
         toggleNotifications: (event) => dispatch(notificationsActions.toggleNotifications(event)),
+        closeNotifications: (event) => dispatch(notificationsActions.closeNotifications(event)),
         loadNotifications: () => dispatch(notificationsActions.loadNotifications()),
         deleteANotification: (notification) => dispatch(notificationsActions.deleteANotification(notification)),
         deleteAllNotifications: () => dispatch(notificationsActions.deleteAllNotifications()),
@@ -100,6 +102,7 @@ class NotificationsBox extends Component {
             notificationsLoaded,
 
             toggleNotifications,
+            closeNotifications,
             deleteANotification,
             deleteAllNotifications
 
@@ -110,6 +113,7 @@ class NotificationsBox extends Component {
         }
 
         return (
+            <ClickAwayListener onClickAway={closeNotifications} mouseEvent='onMouseUp'>
             <Popper
                 open={Boolean(notificationsAnchorEl)}
                 anchorEl={notificationsAnchorEl}
@@ -260,6 +264,7 @@ class NotificationsBox extends Component {
                     </Fade>
                 )}
             </Popper>
+            </ClickAwayListener>
         );
     }
 }
