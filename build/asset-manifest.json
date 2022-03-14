@@ -1,8 +1,8 @@
 {
   "files": {
     "main.css": "https://invest-west-conversion-to-github.live/static/css/main.aa504753.chunk.css",
-    "main.js": "https://invest-west-conversion-to-github.live/static/js/main.1c83c1f4.chunk.js",
-    "main.js.map": "https://invest-west-conversion-to-github.live/static/js/main.1c83c1f4.chunk.js.map",
+    "main.js": "https://invest-west-conversion-to-github.live/static/js/main.1f22c997.chunk.js",
+    "main.js.map": "https://invest-west-conversion-to-github.live/static/js/main.1f22c997.chunk.js.map",
     "runtime-main.js": "https://invest-west-conversion-to-github.live/static/js/runtime-main.82fc935a.js",
     "runtime-main.js.map": "https://invest-west-conversion-to-github.live/static/js/runtime-main.82fc935a.js.map",
     "static/css/2.3771ce75.chunk.css": "https://invest-west-conversion-to-github.live/static/css/2.3771ce75.chunk.css",
@@ -86,6 +86,6 @@
     "static/css/2.3771ce75.chunk.css",
     "static/js/2.3a3a14f9.chunk.js",
     "static/css/main.aa504753.chunk.css",
-    "static/js/main.1c83c1f4.chunk.js"
+    "static/js/main.1f22c997.chunk.js"
   ]
 }
