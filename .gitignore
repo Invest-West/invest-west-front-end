@@ -10,8 +10,8 @@
 
 # production
 # build
-/build/resources/keltie
-/public/resources/keltie
+# /build/resources/keltie
+# /public/resources/keltie
 
 # misc
 .DS_Store
