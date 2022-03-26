@@ -116,17 +116,18 @@ class Keltie extends Component<KeltieProps, any> {
                             {/** Header */}
                             <Box display="flex" flexDirection="column" width="100%">
                                 <Row noGutters style={{ width: "100%" }}>
-                                    <Col xs={12} sm={12} md={5} lg={4} xl={3}>
-                                        <Box display="flex" justifyContent="center" alignItems="center" width="100%" height="100%">
-                                            <ReactPlayer url={keltieVideos[0].url} height="100%" width="100%" playing={false} controls={true}/>
-                                        </Box>
-                                    </Col>
-                                    <Col xs={12} sm={12} md={7} lg={8} xl={9}>
+        
+                                    <Col sm={12} md={12} lg={12}>
                                         <Box display="flex" flexDirection="column" justifyContent="center" alignItems="center" height="100%" paddingX="25px">
                                             <Box marginY="30px">
                                                 <Typography variant="h3" align="center">Intellectual Property</Typography>
                                             </Box>
                                             <Typography variant="h6" align="center">A collection of resources to help entrepreneurs better understand Intellectual Property issues. This content is kindly provided by our friends at Keltie LLP.</Typography>
+                                        </Box>
+                                    </Col>
+                                    <Col sm={12} md={12} lg={12}>
+                                        <Box display="flex" justifyContent="center" alignItems="center" width="100%" height="100%">
+                                            <ReactPlayer url={keltieVideos[0].url} height="50vh" width="100%" playing={false} controls={true}/>
                                         </Box>
                                     </Col>
                                 </Row>

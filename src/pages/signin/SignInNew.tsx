@@ -174,7 +174,7 @@ class SignInNew extends Component<SignInProps
                                             By clicking Sign In, you agree to our&nbsp;
                                             <CustomLink url={Routes.nonGroupTermsOfUse} target="_blank" color={getGroupRouteTheme(ManageGroupUrlState).palette.primary.main} activeColor="none" activeUnderline component="nav-link" childComponent={ "Terms of use" } />
                                             &nbsp;and&nbsp;
-                                            <CustomLink url={Routes.nonGroupTermsOfUse} target="_blank" color={getGroupRouteTheme(ManageGroupUrlState).palette.primary.main} activeColor="none" activeUnderline component="nav-link" childComponent={ "Privacy policy" } />
+                                            <CustomLink url={Routes.nonGroupPrivacyPolicy} target="_blank" color={getGroupRouteTheme(ManageGroupUrlState).palette.primary.main} activeColor="none" activeUnderline component="nav-link" childComponent={ "Privacy policy" } />
                                             .
                                         </Typography>
                                     </Box>
