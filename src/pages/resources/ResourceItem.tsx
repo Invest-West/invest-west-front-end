@@ -48,35 +48,12 @@ class ResourceItem extends Component<ResourceItemProps, any> {
                     component="nav-link"
                     childComponent={
                         <Box>
-                            <Box
-                                display="flex"
-                                height="220px"
-                                justifyContent="center"
-                                bgcolor={colors.grey["200"]}
-                            >
-                                <Image
-                                    alt={`${resource.name} logo`}
-                                    src={resource.logo}
-                                    height="auto"
-                                    width="100%"
-                                    style={{
-                                        padding: 40,
-                                        objectFit: "scale-down"
-                                    }}
-                                />
+                            <Box display="flex" height="220px" justifyContent="center" bgcolor={colors.grey["200"]}>
+                                <Image alt={`${resource.name} logo`} src={resource.logo} height="auto" width="100%" style={{ padding: 40, objectFit: "scale-down" }} />
                             </Box>
 
-                            <Box
-                                paddingX="18px"
-                                paddingY="20px"
-                            >
-                                <Typography
-                                    variant="subtitle1"
-                                    align="center"
-                                    noWrap
-                                >
-                                    <b>{resource.name}</b>
-                                </Typography>
+                            <Box paddingX="18px" paddingY="20px">
+                                <Typography variant="subtitle1" align="center" noWrap><b>{resource.name}</b></Typography>
                             </Box>
                         </Box>
                     }

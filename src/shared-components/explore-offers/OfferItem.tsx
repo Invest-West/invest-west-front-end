@@ -16,6 +16,7 @@ import {
     shouldHideProjectInformationFromUser
 } from "../../models/project";
 import CustomLink from "../../shared-js-css-styles/CustomLink";
+import '../../shared-js-css-styles/sharedStyles.scss';
 import Routes from "../../router/routes";
 import {Box, colors, Divider, Typography} from "@material-ui/core";
 import {Col, Container, Image, OverlayTrigger, Row, Tooltip} from "react-bootstrap";
@@ -64,24 +65,10 @@ class OfferItem extends Component<OfferItemProps, any> {
             activeUnderline={false}
             component="nav-link"
             childComponent={
-                <Box
-                    border={`1px solid ${colors.grey["300"]}`}
-                >
-                    <Container
-                        fluid
-                        style={{
-                            padding: 0
-                        }}
-                    >
-                        <Row
-                            noGutters
-                        >
-                            <Col
-                                xs={12}
-                                sm={12}
-                                md={12}
-                                lg={12}
-                            >
+                <Box border={`1px solid ${colors.grey["300"]}`} >
+                    <Container fluid style={{ padding: 0 }} >
+                        <Row noGutters >
+                            <Col xs={12} sm={12} md={12} lg={12} >
                                 <Box
                                     height={`${CoverMaxHeight}px`}
                                     width="100%"
@@ -89,41 +76,14 @@ class OfferItem extends Component<OfferItemProps, any> {
                                 >
                                     {
                                         shouldHideProjectInformationFromUser(AuthenticationState.currentUser, AuthenticationState.groupsOfMembership, offerInstance.projectDetail)
-                                            ? <Box
-                                                display="flex"
-                                                width="100%"
-                                                height={CoverMaxHeight}
-                                                justifyContent="center"
-                                            >
-                                                <Image
-                                                    src={getGroupLogo(offerInstance.group) ?? ""}
-                                                    width="auto"
-                                                    height={CoverMaxHeight}
-                                                    style={{
-                                                        padding: 20,
-                                                        objectFit: "scale-down"
-                                                    }}
-                                                />
+                                            ? <Box display="flex" width="100%" height={CoverMaxHeight} justifyContent="center" >
+                                                <Image src={getGroupLogo(offerInstance.group) ?? ""} width="auto" height={CoverMaxHeight} style={{ padding: 20, objectFit: "scale-down" }} />
                                             </Box>
                                             : !pitchCover
                                             ? null
                                             : isImagePitchCover(pitchCover)
-                                                ? <Image
-                                                    src={pitchCover.url}
-                                                    width="100%"
-                                                    height={CoverMaxHeight}
-                                                    style={{
-                                                        objectFit: "contain"
-                                                    }}
-                                                />
-                                                : <ReactPlayer
-                                                    url={pitchCover.url}
-                                                    light={false}
-                                                    width="100%"
-                                                    height={CoverMaxHeight}
-                                                    playing={false}
-                                                    controls={false}
-                                                />
+                                                ? <Image src={pitchCover.url} width="100%" height={CoverMaxHeight} style={{ objectFit: "contain" }} />
+                                                : <ReactPlayer url={pitchCover.url} light={false} width="100%" height={CoverMaxHeight} playing={false} controls={false} />
                                     }
 
                                     {/** Group logo to be displayed at the top-right corner */}
@@ -148,20 +108,12 @@ class OfferItem extends Component<OfferItemProps, any> {
 
                                 <Divider/>
 
-                                <Box
-                                    padding="14px"
-                                >
+                                <Box padding="14px" >
                                     {/** Project basic information */}
                                     <Box>
                                         {/** Project title */}
-                                        <Box
-                                            marginY="6px"
-                                        >
-                                            <Typography
-                                                noWrap
-                                                variant="h6"
-                                                align="left"
-                                            >
+                                        <Box marginY="6px" >
+                                            <Typography noWrap variant="h6" align="left" >
                                                 {
                                                     shouldHideProjectInformationFromUser(AuthenticationState.currentUser, AuthenticationState.groupsOfMembership, offerInstance.projectDetail)
                                                         ? "Members only offer"
@@ -171,31 +123,19 @@ class OfferItem extends Component<OfferItemProps, any> {
                                         </Box>
 
                                         {/** Sector / Description */}
-                                        <Box
-                                            color={colors.grey["700"]}
-                                        >
-                                            <Typography
-                                                noWrap
-                                                variant="body2"
-                                                align="left"
-                                            >
+                                        <Box color={colors.grey["700"]} >
+                                            <title className="projectInfo">
                                                 {
                                                     shouldHideProjectInformationFromUser(AuthenticationState.currentUser, AuthenticationState.groupsOfMembership, offerInstance.projectDetail)
                                                         ? `in ${offerInstance.projectDetail.sector} sector`
                                                         : offerInstance.projectDetail.description
                                                 }
-                                            </Typography>
+                                            </title>
                                         </Box>
 
                                         {/** By issuer */}
-                                        <Box
-                                            color="black"
-                                            marginTop="8px"
-                                        >
-                                            <Typography
-                                                variant="body2"
-                                                noWrap
-                                            >
+                                        <Box color="black" marginTop="8px" >
+                                            <Typography variant="body2" noWrap >
                                                 {
                                                     shouldHideProjectInformationFromUser(AuthenticationState.currentUser, AuthenticationState.groupsOfMembership, offerInstance.projectDetail)
                                                         ? `by ${offerInstance.group.displayName}`
@@ -208,20 +148,11 @@ class OfferItem extends Component<OfferItemProps, any> {
                                     </Box>
 
                                     {/** Divider */}
-                                    <Box
-                                        bgcolor={getGroupRouteTheme(ManageGroupUrlState).palette.primary.main}
-                                        height="3px"
-                                        marginTop="30px"
-                                        marginBottom="15px"
-                                    />
+                                    <Box bgcolor={getGroupRouteTheme(ManageGroupUrlState).palette.primary.main} height="3px" marginTop="30px" marginBottom="15px" />
 
                                     {/** Project phase information */}
                                     <Box>
-                                        <Typography
-                                            variant="body2"
-                                            color="primary"
-                                            align="left"
-                                        >
+                                        <Typography variant="body2" color="primary" align="left" >
                                             {
                                                 offerInstance.projectDetail.Pitch.fundRequired
                                                     ? `£${Number(offerInstance.projectDetail.Pitch.fundRequired.toFixed(2)).toLocaleString()} goal`
@@ -229,14 +160,8 @@ class OfferItem extends Component<OfferItemProps, any> {
                                             }
                                         </Typography>
 
-                                        <Box
-                                            marginTop="20px"
-                                        >
-                                            <Typography
-                                                variant="body2"
-                                                align="left"
-                                                color="textSecondary"
-                                            >
+                                        <Box marginTop="20px" >
+                                            <Typography variant="body2" align="left" color="textSecondary" >
                                                 {
                                                     !isProjectLive(offerInstance.projectDetail)
                                                         ? "Offer expired"
@@ -247,20 +172,13 @@ class OfferItem extends Component<OfferItemProps, any> {
                                     </Box>
 
                                     {/** Project visibility information */}
-                                    <Box
-                                        display="flex"
-                                        marginTop="15px"
-                                        justifyContent="flex-end"
-                                        color={getGroupRouteTheme(ManageGroupUrlState).palette.primary.main}
-                                    >
+                                    <Box display="flex" marginTop="15px" justifyContent="flex-end" color={getGroupRouteTheme(ManageGroupUrlState).palette.primary.main} >
                                         <OverlayTrigger
                                             trigger={["hover", "focus"]}
                                             placement="bottom"
                                             flip
                                             overlay={
-                                                <Tooltip
-                                                    id="tooltip-bottom"
-                                                >
+                                                <Tooltip id="tooltip-bottom" >
                                                     {
                                                         isProjectPublic(offerInstance.projectDetail)
                                                             ? "This is a public offer."

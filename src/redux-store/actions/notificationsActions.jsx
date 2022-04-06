@@ -6,22 +6,44 @@ export const TOGGLE_NOTIFICATIONS = 'TOGGLE_NOTIFICATIONS';
 export const toggleNotifications = event => {
     return (dispatch, getState) => {
         const notificationsAnchorEl = getState().manageNotifications.notificationsAnchorEl;
+        const notificationsClickedOutside = getState().manageNotifications.notificationsClickedOutside;
+        const notificationsClickedOutsideActivated = getState().manageNotifications.notificationsClickedOutsideActivated;
 
         // open notifications
+        // initialises states
         if (!notificationsAnchorEl) {
             dispatch({
                 type: TOGGLE_NOTIFICATIONS,
-                notificationsAnchorEl: event.currentTarget
+                notificationsAnchorEl: event.currentTarget,
+                notificationsClickedOutsideActivated: true
             });
         }
         else {
             dispatch({
                 type: TOGGLE_NOTIFICATIONS,
-                notificationsAnchorEl: null
+                notificationsAnchorEl: null,
+                notificationsClickedOutsideActivated: false
             });
         }
     }
 };
+
+export const CLOSED_NOTIFICATIONS = 'CLOSED_NOTIFICATIONS'
+export const closeNotifications = event => {
+    return (dispatch, getState) => {
+        const notificationsAnchorEl = getState().manageNotifications.notificationsAnchorEl;
+        const notificationsClickedOutside = getState().manageNotifications.notificationsClickedOutside;
+        const notificationsClickedOutsideActivated = getState().manageNotifications.notificationsClickedOutsideActivated;
+
+        if (Boolean(notificationsAnchorEl)) {
+            dispatch({
+                type: CLOSED_NOTIFICATIONS,
+                notificationsAnchorEl: false,
+                notificationsClickedOutside: true
+            });
+        }
+    }
+}
 
 export const LOADING_NOTIFICATIONS = 'LOADING_NOTIFICATIONS';
 export const FINISHED_LOADING_NOTIFICATIONS = 'FINISHED_LOADING_NOTIFICATIONS';

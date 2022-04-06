@@ -567,8 +567,8 @@ class AdminDashboard extends Component {
 
                                 {/** Notification icon */}
                                 <Col xs={2} sm={2} md={1} lg={1} style={{paddingRight: 13}}>
-                                    <FlexView vAlignContent="center" hAlignContent="right" width="100%">
-                                        <IconButton onClick={toggleNotifications}>
+                                    <FlexView vAlignContent="center" hAlignContent="right" width="100%" >
+                                        <IconButton onMouseDown={toggleNotifications} id="notification-button">
                                             <Badge badgeContent={notifications.length} color="secondary" invisible={notifications.length === 0}>
                                                 <NotificationsIcon className={css(sharedStyles.white_text)}/>
                                             </Badge>

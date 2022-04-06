@@ -187,12 +187,7 @@ class EditImageDialog extends Component<EditImageDialogProps, any> {
             justifyContent="center"
             paddingY="40px"
         >
-            <Typography
-                variant="body1"
-                align="center"
-            >
-                Upload a photo. Then, edit it to perfection.
-            </Typography>
+            <Typography variant="body1" align="center">Upload a photo. Then, edit it to perfection.</Typography>
         </Box>;
     }
 
@@ -215,12 +210,7 @@ class EditImageDialog extends Component<EditImageDialogProps, any> {
             paddingY="20px"
         >
             {/** Editor area */}
-            <Box
-                display="flex"
-                flexDirection="column"
-                justifyContent="center"
-                alignItems="center"
-            >
+            <Box display="flex" flexDirection="column" justifyContent="center" alignItems="center">
                 <AvatarEditor
                     ref={setEditor}
                     image={EditImageLocalState.rawImage}
@@ -235,42 +225,16 @@ class EditImageDialog extends Component<EditImageDialogProps, any> {
                     rotate={EditImageLocalState.rotate}
                 />
 
-                <Box
-                    height="12px"
-                />
-
-                <Typography
-                    style={{
-                        color: "white"
-                    }}
-                >
-                    Drag to position photo
-                </Typography>
+                <Box height="12px" />
+                <Typography style={{ color: "white" }}>Drag to position photo</Typography>
             </Box>
 
             {/** Scale and rotate sliders */}
-            <Box
-                marginX="30px"
-                marginTop="60px"
-                marginBottom="15px"
-            >
+            <Box marginX="30px" marginTop="60px" marginBottom="15px">
                 <Row>
-                    <Col
-                        xs={12}
-                        sm={12}
-                        md={6}
-                        lg={6}
-                    >
-                        <Box
-                            display="flex"
-                            flexDirection="column"
-                        >
-                            <Typography
-                                variant="body2"
-                                style={{
-                                    color: "white"
-                                }}
-                            >
+                    <Col xs={12} sm={12} md={6} lg={6}>
+                        <Box display="flex" flexDirection="column">
+                            <Typography variant="body2" style={{ color: "white" }}>
                                 Zoom
                             </Typography>
                             <EditPhotoSlider
@@ -285,24 +249,9 @@ class EditImageDialog extends Component<EditImageDialogProps, any> {
                         </Box>
                     </Col>
 
-                    <Col
-                        xs={12}
-                        sm={12}
-                        md={6}
-                        lg={6}
-                    >
-                        <Box
-                            display="flex"
-                            flexDirection="column"
-                        >
-                            <Typography
-                                variant="body2"
-                                style={{
-                                    color: "white"
-                                }}
-                            >
-                                Rotate
-                            </Typography>
+                    <Col xs={12} sm={12} md={6} lg={6}>
+                        <Box display="flex" flexDirection="column">
+                            <Typography variant="body2" style={{ color: "white" }}>Rotate</Typography>
                             <EditPhotoSlider
                                 min={-180}
                                 max={180}
@@ -334,16 +283,7 @@ class EditImageDialog extends Component<EditImageDialogProps, any> {
             justifyContent="center"
             paddingY="30px"
         >
-            <Image
-                roundedCircle
-                thumbnail
-                src={EditImageLocalState.rawImage as string ?? ""}
-                width={256}
-                height={256}
-                style={{
-                    objectFit: "contain"
-                }}
-            />
+            <Image roundedCircle thumbnail src={EditImageLocalState.rawImage as string ?? ""} width={256} height={256} style={{ objectFit: "contain" }}/>
         </Box>;
     }
 
@@ -361,22 +301,8 @@ class EditImageDialog extends Component<EditImageDialogProps, any> {
             justifyContent="flex-end"
             padding="20px"
         >
-            <Files
-                onChange={handleImageChanged}
-                onError={handleImageError}
-                accepts={["image/png", "image/jpg", "image/jpeg"]}
-                maxFileSize={30000}
-                minFileSize={0}
-                multiple={false}
-                clickable
-            >
-                <Button
-                    className={css(sharedStyles.no_text_transform)}
-                    variant="contained"
-                    color="primary"
-                >
-                    Upload photo
-                </Button>
+            <Files onChange={handleImageChanged} onError={handleImageError} accepts={["image/png", "image/jpg", "image/jpeg"]} maxFileSize={30000} minFileSize={0} multiple={false} clickable >
+                <Button className={css(sharedStyles.no_text_transform)} variant="contained" color="primary">Upload photo</Button>
             </Files>
         </Box>;
     }
@@ -400,33 +326,11 @@ class EditImageDialog extends Component<EditImageDialogProps, any> {
             justifyContent="flex-end"
             padding="20px"
         >
-            <Files
-                onChange={handleImageChanged}
-                onError={handleImageError}
-                accepts={["image/png", "image/jpg", "image/jpeg"]}
-                maxFileSize={30000}
-                minFileSize={0}
-                multiple={false}
-                clickable
-            >
-                <Button
-                    className={css(sharedStyles.no_text_transform)}
-                    variant="outlined"
-                >
-                    Change photo
-                </Button>
+            <Files onChange={handleImageChanged} onError={handleImageError} accepts={["image/png", "image/jpg", "image/jpeg"]} maxFileSize={30000} minFileSize={0} multiple={false} clickable >
+                <Button className={css(sharedStyles.no_text_transform)} variant="outlined">Change photo</Button>
             </Files>
-
-            <Box
-                width="20px"
-            />
-
-            <Button
-                className={css(sharedStyles.no_text_transform)}
-                variant="contained"
-                color="primary"
-                onClick={() => saveImage()}
-            >
+            <Box width="20px" />
+            <Button className={css(sharedStyles.no_text_transform)} variant="contained" color="primary" onClick={() => saveImage()}>
                 {
                     isSavingProfilePicture(EditImageLocalState)
                         ? "Saving photo ..."
@@ -454,32 +358,17 @@ class EditImageDialog extends Component<EditImageDialogProps, any> {
             justifyContent="flex-end"
             padding="20px"
         >
-            <Button
-                className={css(sharedStyles.no_text_transform)}
-                variant="outlined"
-                onClick={() => changeMode(EditImageDialogModes.EditPhoto)}
-            >
+            <Button className={css(sharedStyles.no_text_transform)} variant="outlined" onClick={() => changeMode(EditImageDialogModes.EditPhoto)}>
                 <Edit/>
-                <Box
-                    width="6px"
-                />
+                <Box width="6px"/>
                 Edit
             </Button>
 
-            <Box
-                width="20px"
-            />
+            <Box width="20px"/>
 
-            <Button
-                className={css(sharedStyles.no_text_transform)}
-                variant="contained"
-                color="primary"
-                onClick={() => deleteImage()}
-            >
+            <Button className={css(sharedStyles.no_text_transform)} variant="contained" color="primary" onClick={() => deleteImage()}>
                 <Delete/>
-                <Box
-                    width="6px"
-                />
+                <Box width="6px"/>
                 {
                     isDeletingProfilePicture(EditImageLocalState)
                         ? "Deleting photo ..."

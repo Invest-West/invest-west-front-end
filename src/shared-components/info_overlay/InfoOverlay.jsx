@@ -15,20 +15,9 @@ export default class InfoOverlay extends Component {
                 trigger={['hover', 'focus']}
                 placement={placement}
                 flip
-                overlay={
-                    <Tooltip
-                        id={`tooltip-${placement}`}
-                    >
-                        {message}
-                    </Tooltip>
-                }
+                overlay={ <Tooltip id={`tooltip-${placement}`}>{message}</Tooltip> }
             >
-                <InfoIcon
-                    fontSize="small"
-                    style={{
-                        color: colors.gray_600
-                    }}
-                />
+                <InfoIcon fontSize="small" style={{ color: colors.gray_600 }}/>
             </OverlayTrigger>
         );
     }

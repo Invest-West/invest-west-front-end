@@ -92,11 +92,7 @@ class MarketingPreferences extends Component {
         return (
             !marketingPreferencesLoaded
                 ?
-                <FlexView
-                    width="100%"
-                    hAlignContent="center"
-                    marginBottom={20}
-                >
+                <FlexView width="100%" hAlignContent="center" marginBottom={20} >
                     <HashLoader
                         color={
                             !groupProperties
@@ -108,24 +104,13 @@ class MarketingPreferences extends Component {
                     />
                 </FlexView>
                 :
-                <FlexView
-                    column
-                    width="100%"
-                >
-                    <Typography
-                        variant="body1"
-                        align="left"
-                        paragraph
-                    >
+                <FlexView column width="100%" >
+                    <Typography variant="body1" align="left" paragraph >
                         <b>Total:</b>&nbsp;&nbsp;&nbsp;
                         {marketingPreferences.length} results
                     </Typography>
 
-                    <Typography
-                        variant="body1"
-                        align="left"
-                        component="span"
-                    >
+                    <Typography variant="body1" align="left" component="span" >
                         <b>Total accepted:</b>&nbsp;&nbsp;&nbsp;
                         {acceptedMarketingPreferences.length} with
                         <ul>
@@ -134,12 +119,7 @@ class MarketingPreferences extends Component {
                         </ul>
                     </Typography>
 
-                    <Typography
-                        variant="body1"
-                        align="left"
-                        paragraph
-                        component="span"
-                    >
+                    <Typography variant="body1" align="left" paragraph component="span" >
                         <b>Total rejected:</b>&nbsp;&nbsp;&nbsp;
                         {rejectedMarketingPreferences.length} with
                         <ul>

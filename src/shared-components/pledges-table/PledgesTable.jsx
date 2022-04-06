@@ -189,14 +189,7 @@ class PledgesTable extends Component {
         });
 
         return (
-            <Paper
-                elevation={1}
-                style={{
-                    width: "100%",
-                    overflowX: "auto",
-                    marginTop: 20
-                }}
-            >
+            <Paper elevation={1} style={{ width: "100%", overflowX: "auto", marginTop: 20 }} >
                 <Table>
                     <TableHead>
                         <TableRow>
@@ -217,17 +210,13 @@ class PledgesTable extends Component {
                                                 placeholder="Search investor by name"
                                                 type="text"
                                                 startAdornment={
-                                                    <InputAdornment
-                                                        position="start"
-                                                    >
+                                                    <InputAdornment position="start" >
                                                         <OverlayTrigger
                                                             trigger={['hover', 'focus']}
                                                             flip
                                                             placement="bottom"
                                                             overlay={
-                                                                <Tooltip
-                                                                    id={`tooltip-bottom`}
-                                                                >
+                                                                <Tooltip id={`tooltip-bottom`} >
                                                                     {
                                                                         inSearchMode
                                                                             ?
@@ -259,27 +248,15 @@ class PledgesTable extends Component {
                                 colSpan={5}
                                 cellColor={colors.blue_gray_50}
                                 component={
-                                    <FlexView
-                                        hAlignContent="right"
-                                        vAlignContent="center"
-                                    >
+                                    <FlexView hAlignContent="right" vAlignContent="center" >
                                         <OverlayTrigger
                                             trigger={['hover', 'focus']}
                                             flip
                                             placement="bottom"
                                             overlay={
-                                                <Tooltip
-                                                    id={`tooltip-bottom`}
-                                                >
-                                                    Refresh
-                                                </Tooltip>
+                                                <Tooltip id={`tooltip-bottom`}>Refresh</Tooltip>
                                             }>
-                                            <IconButton
-                                                onClick={loadPledges}
-                                                style={{
-                                                    marginLeft: 10
-                                                }}
-                                            >
+                                            <IconButton onClick={loadPledges} style={{ marginLeft: 10 }}>
                                                 <RefreshIcon/>
                                             </IconButton>
                                         </OverlayTrigger>
@@ -299,13 +276,7 @@ class PledgesTable extends Component {
                                 }
                                 textColor={colors.white}
                                 component={
-                                    <Typography
-                                        variant="body2"
-                                        align="left"
-                                        className={css(sharedStyles.white_text)}
-                                    >
-                                        Name
-                                    </Typography>
+                                    <Typography variant="body2" align="left" className={css(sharedStyles.white_text)}>Name</Typography>
                                 }
                             />
                             <StyledTableCell
@@ -319,13 +290,7 @@ class PledgesTable extends Component {
                                 }
                                 textColor={colors.white}
                                 component={
-                                    <Typography
-                                        variant="body2"
-                                        align="left"
-                                        className={css(sharedStyles.white_text)}
-                                    >
-                                        Email
-                                    </Typography>
+                                    <Typography variant="body2" align="left" className={css(sharedStyles.white_text)}>Email</Typography>
                                 }
                             />
                             <StyledTableCell
@@ -339,13 +304,7 @@ class PledgesTable extends Component {
                                 }
                                 textColor={colors.white}
                                 component={
-                                    <Typography
-                                        variant="body2"
-                                        align="left"
-                                        className={css(sharedStyles.white_text)}
-                                    >
-                                        Pledge amount
-                                    </Typography>
+                                    <Typography variant="body2" align="left" className={css(sharedStyles.white_text)}>Pledge amount</Typography>
                                 }
                             />
                             <StyledTableCell
@@ -359,13 +318,7 @@ class PledgesTable extends Component {
                                 }
                                 textColor={colors.white}
                                 component={
-                                    <Typography
-                                        variant="body2"
-                                        align="left"
-                                        className={css(sharedStyles.white_text)}
-                                    >
-                                        Pledged on
-                                    </Typography>
+                                    <Typography variant="body2" align="left" className={css(sharedStyles.white_text)}>Pledged on</Typography>
                                 }
                             />
                         </TableRow>
@@ -438,20 +391,11 @@ class PledgesTable extends Component {
                     <TableCell
                         colSpan={5}
                     >
-                        <FlexView
-                            style={{
-                                margin: 40
-                            }}
-                            hAlignContent="center"
-                            vAlignContent="center"
-                        >
+                        <FlexView style={{ margin: 40 }} hAlignContent="center" vAlignContent="center">
                             {
                                 pledgesLoaded
                                     ?
-                                    <Typography
-                                        variant="h6"
-                                        align="center"
-                                    >
+                                    <Typography variant="h6" align="center" >
                                         {
                                             inSearchMode
                                                 ?
@@ -479,16 +423,9 @@ class PledgesTable extends Component {
 
         return (
             renderedPledges.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map(pledge => (
-                <TableRow
-                    key={pledge.id}
-                    hover
-                >
-                    <TableCell
-                        colSpan={2}
-                    >
-                        <FlexView
-                            column
-                        >
+                <TableRow key={pledge.id} hover >
+                    <TableCell colSpan={2} >
+                        <FlexView column >
                             {
                                 user.type === DB_CONST.TYPE_ADMIN
                                 || utils.getUserHomeGroup(pledge.groupsInvestorIsIn).groupDetails.settings.makeInvestorsContactDetailsVisibleToIssuers
@@ -503,32 +440,17 @@ class PledgesTable extends Component {
                                         }
                                         className={css(sharedStyles.nav_link_hover)}
                                     >
-                                        <Typography
-                                            align="left"
-                                            variant="body2"
-                                            color="primary"
-                                        >
-                                            {`${pledge.investor.title} ${pledge.investor.firstName} ${pledge.investor.lastName}`}
-                                        </Typography>
+                                        <Typography align="left" variant="body2" color="primary" >{`${pledge.investor.title} ${pledge.investor.firstName} ${pledge.investor.lastName}`}</Typography>
                                     </NavLink>
                                     :
-                                    <Typography
-                                        align="left"
-                                        variant="body2"
-                                        color="primary"
-                                    >
+                                    <Typography align="left" variant="body2" color="primary" >
                                         {`Made anonymous by ${utils.getUserHomeGroup(pledge.groupsInvestorIsIn).groupDetails.displayName}.`}
                                     </Typography>
                             }
                         </FlexView>
                     </TableCell>
-                    <TableCell
-                        colSpan={1}
-                    >
-                        <Typography
-                            align="left"
-                            variant="body2"
-                        >
+                    <TableCell colSpan={1} >
+                        <Typography align="left" variant="body2" >
                             {
                                 user.type === DB_CONST.TYPE_ADMIN
                                 || utils.getUserHomeGroup(pledge.groupsInvestorIsIn).groupDetails.settings.makeInvestorsContactDetailsVisibleToIssuers
@@ -539,25 +461,11 @@ class PledgesTable extends Component {
                             }
                         </Typography>
                     </TableCell>
-                    <TableCell
-                        colSpan={1}
-                    >
-                        <Typography
-                            align="left"
-                            variant="body2"
-                        >
-                            £{Number(pledge.amount.toFixed(2)).toLocaleString()}
-                        </Typography>
+                    <TableCell colSpan={1} >
+                        <Typography align="left" variant="body2" >£{Number(pledge.amount.toFixed(2)).toLocaleString()}</Typography>
                     </TableCell>
-                    <TableCell
-                        colSpan={1}
-                    >
-                        <Typography
-                            align="left"
-                            variant="body2"
-                        >
-                            {utils.dateInReadableFormat(pledge.date)}
-                        </Typography>
+                    <TableCell colSpan={1} >
+                        <Typography align="left" variant="body2" >{utils.dateInReadableFormat(pledge.date)}</Typography>
                     </TableCell>
                 </TableRow>
             ))

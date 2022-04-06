@@ -91,18 +91,9 @@ class BusinessProfile extends Component<BusinessProfileProps, any> {
         >
             {/** Section title */}
             <Box>
-                <Typography
-                    variant="h6"
-                    color="primary"
-                >
-                    Business profile
-                </Typography>
+                <Typography variant="h6" color="primary" > Business profile </Typography>
             </Box>
-
-            <Box
-                height="25px"
-            />
-
+            <Box height="25px" />
             {/** Edit Business profile */}
             {
                 this.renderEditBusinessProfile()
@@ -130,13 +121,8 @@ class BusinessProfile extends Component<BusinessProfileProps, any> {
             flexDirection="column"
         >
             {/** Company name */}
-            <FormControl
-                fullWidth
-                required
-            >
-                <FormLabel>
-                    <b>Company name</b>
-                </FormLabel>
+            <FormControl fullWidth required >
+                <FormLabel><b>Company name</b></FormLabel>
                 <TextField
                     name="companyName"
                     placeholder="Enter company name"
@@ -153,13 +139,8 @@ class BusinessProfile extends Component<BusinessProfileProps, any> {
             </FormControl>
 
             {/** Registration number */}
-            <FormControl
-                fullWidth
-                required
-            >
-                <FormLabel>
-                    <b>Registration number</b>
-                </FormLabel>
+            <FormControl fullWidth required >
+                <FormLabel> <b>Registration number</b> </FormLabel>
                 <TextField
                     name="registrationNo"
                     placeholder="Enter company registration number"
@@ -186,9 +167,7 @@ class BusinessProfile extends Component<BusinessProfileProps, any> {
             }
 
             {/** Directors */}
-            <FormControl
-                required
-            >
+            <FormControl required >
                 <Box>
                     <Button
                         variant="outlined"
@@ -196,20 +175,12 @@ class BusinessProfile extends Component<BusinessProfileProps, any> {
                         className={css(sharedStyles.no_text_transform)}
                         // onClick={this.props.toggleAddNewDirector}
                     >
-                        <AddIcon
-                            fontSize="small"
-                        />
-                        <Box
-                            marginRight="5px"
-                        />
-                        Add director
+                        <AddIcon fontSize="small" />
+                        <Box marginRight="5px" />Add director
                     </Button>
                 </Box>
 
-                <Box
-                    display="flex"
-                    flexDirection="column"
-                >
+                <Box display="flex" flexDirection="column" >
                     <TextField
                         placeholder="Enter director's name"
                         name="newDirectorText"
@@ -220,24 +191,16 @@ class BusinessProfile extends Component<BusinessProfileProps, any> {
                         margin="dense"
                     />
 
-                    <Box
-                        display="flex"
-                        flexDirection="row"
-                        marginTop="8px"
-                        justifyContent="flex-end"
-                    >
+                    <Box display="flex" flexDirection="row" marginTop="8px" justifyContent="flex-end" >
                         <Button
                             variant="outlined"
                             size="small"
                             className={css(sharedStyles.no_text_transform)}
                             // onClick={this.props.toggleAddNewDirector}
-                        >
-                            Cancel
+                        >Cancel
                         </Button>
 
-                        <Box
-                            width="10px"
-                        />
+                        <Box width="10px" />
 
                         <Button
                             variant="contained"
@@ -246,20 +209,15 @@ class BusinessProfile extends Component<BusinessProfileProps, any> {
                             className={css(sharedStyles.no_text_transform)}
                             // onClick={() => this.props.addNewDirectorTemporarily(false)}
                             // disabled={newDirectorText.trim().length === 0}
-                        >
-                            Add
+                        >Add
                         </Button>
                     </Box>
                 </Box>
             </FormControl>
 
             {/** Sector */}
-            <FormControl
-                required
-            >
-                <FormLabel>
-                    <b>Business sector</b>
-                </FormLabel>
+            <FormControl required >
+                <FormLabel> <b>Business sector</b> </FormLabel>
                 <Select
                     name="sector"
                     // value={
@@ -272,34 +230,20 @@ class BusinessProfile extends Component<BusinessProfileProps, any> {
                     // @ts-ignore
                     onChange={this.onInputFieldChanged(InputCategories.BusinessProfile)}
                 >
-                    <MenuItem
-                        key={-1}
-                        value={"none"}
-                    >
-                        Choose business sector
-                    </MenuItem>
+                    <MenuItem key={-1} value={"none"}>Choose business sector</MenuItem>
                     {
                         !ManageSystemAttributesState.systemAttributes
                             ? null
                             : ManageSystemAttributesState.systemAttributes.Sectors.map((sector, index) => (
-                                <MenuItem
-                                    key={index}
-                                    value={sector}
-                                >
-                                    {sector}
-                                </MenuItem>
+                                <MenuItem key={index} value={sector}>{sector}</MenuItem>
                             ))
                     }
                 </Select>
             </FormControl>
 
             {/** Company website */}
-            <FormControl
-                required
-            >
-                <FormLabel>
-                    <b>Company website</b>
-                </FormLabel>
+            <FormControl required >
+                <FormLabel><b>Company website</b></FormLabel>
                 <TextField
                     placeholder="Enter company website"
                     name="companyWebsite"
@@ -316,23 +260,16 @@ class BusinessProfile extends Component<BusinessProfileProps, any> {
                 />
             </FormControl>
 
-            <Box
-                display="flex"
-                flexDirection="row"
-                justifyContent="flex-end"
-            >
+            <Box display="flex" flexDirection="row" justifyContent="flex-end">
                 <Button
                     variant="outlined"
                     size="small"
                     className={css(sharedStyles.no_text_transform)}
                     // onClick={this.props.toggleAddNewDirector}
-                >
-                    Cancel
+                >Cancel
                 </Button>
 
-                <Box
-                    width="10px"
-                />
+                <Box width="10px"/>
 
                 <Button
                     variant="contained"
@@ -401,13 +338,8 @@ class BusinessProfile extends Component<BusinessProfileProps, any> {
                     mode === "tradingAddress"
                     && ProfileLocalState.BusinessProfileState.tradingAddressSameAsRegisteredOffice
                         ? null
-                        : <Box
-                            display="flex"
-                            flexDirection="column"
-                        >
-                            <FormHelperText>
-                                Enter a UK postcode
-                            </FormHelperText>
+                        : <Box display="flex" flexDirection="column" >
+                            <FormHelperText> Enter a UK postcode </FormHelperText>
 
                             {/** Enter postcode to find address automatically */}
                             {
@@ -441,24 +373,15 @@ class BusinessProfile extends Component<BusinessProfileProps, any> {
                                         {
                                             (mode === "registeredOffice" && hasErrorFindingAddressForRegisteredOffice(ProfileLocalState.BusinessProfileState))
                                             || (mode === "tradingAddress" && hasErrorFindingAddressForTradingAddress(ProfileLocalState.BusinessProfileState))
-                                                ? <Typography
-                                                    variant="body2"
-                                                    color="error"
-                                                    align="left"
-                                                >
+                                                ? <Typography variant="body2" color="error" align="left">
                                                     Sorry, we can't find your address, please check the details entered and search
                                                     again.
-                                                </Typography>
+                                                  </Typography>
                                                 : null
                                         }
 
                                         <Box>
-                                            <Button
-                                                className={css(sharedStyles.no_text_transform)}
-                                                variant="contained"
-                                                color="primary"
-                                                onClick={() => findAddress(mode)}
-                                            >
+                                            <Button className={css(sharedStyles.no_text_transform)} variant="contained" color="primary" onClick={() => findAddress(mode)} >
                                                 {
                                                     (mode === "registeredOffice")
                                                     // && ProfileLocalState.BusinessProfileState.addressFindingStateForRegisteredOffice === AddressFindingStates.FindingAddresses)
@@ -467,9 +390,7 @@ class BusinessProfile extends Component<BusinessProfileProps, any> {
                                                         ? "Finding address ..."
                                                         : "Find address"
                                                 }
-                                                <Box
-                                                    width="6px"
-                                                />
+                                                <Box width="6px" />
                                                 <KeyboardArrowRight/>
                                             </Button>
                                         </Box>
@@ -481,20 +402,9 @@ class BusinessProfile extends Component<BusinessProfileProps, any> {
                             {
                                 (mode === "registeredOffice") // && ProfileLocalState.BusinessProfileState.addressFindingStateForRegisteredOffice === AddressFindingStates.DisplayFoundAddresses)
                                 || (mode === "tradingAddress") // && ProfileLocalState.BusinessProfileState.addressFindingStateForTradingAddress === AddressFindingStates.DisplayFoundAddresses)
-                                    ? <Box
-                                        display="flex"
-                                        flexDirection="column"
-                                    >
-                                        <Box
-                                            display="flex"
-                                            flexDirection="row"
-                                        >
-                                            <Typography
-                                                variant="body1"
-                                                align="left"
-                                            >
-                                                Select an address
-                                            </Typography>
+                                    ? <Box display="flex" flexDirection="column" >
+                                        <Box display="flex" flexDirection="row" >
+                                            <Typography variant="body1" align="left" > Select an address </Typography>
                                             <Button
                                                 className={css(sharedStyles.no_text_transform)}
                                                 variant="outlined"
@@ -520,33 +430,18 @@ class BusinessProfile extends Component<BusinessProfileProps, any> {
                                             onChange={this.onInputFieldChanged(mode === "registeredOffice"
                                                 ? InputCategories.RegisteredOffice : InputCategories.TradingAddress)}
                                         >
-                                            <MenuItem
-                                                key={-1}
-                                                value={"none"}
-                                            >
-                                                Addresses found
-                                            </MenuItem>
+                                            <MenuItem key={-1} value={"none"}>Addresses found</MenuItem>
                                             {
                                                 mode === "registeredOffice" && ProfileLocalState.BusinessProfileState.foundAddressesForRegisteredOffice
                                                     ? ProfileLocalState.BusinessProfileState.foundAddressesForRegisteredOffice.map(address => (
-                                                        <MenuItem
-                                                            key={getFormattedAddress(address)}
-                                                            value={getFormattedAddress(address)}
-                                                        >
-                                                            {getFormattedAddress(address)}
-                                                        </MenuItem>
+                                                        <MenuItem key={getFormattedAddress(address)} value={getFormattedAddress(address)}>{getFormattedAddress(address)}</MenuItem>
                                                     ))
                                                     : null
                                             }
                                             {
                                                 mode === "tradingAddress" && ProfileLocalState.BusinessProfileState.foundAddressesForTradingAddress
                                                     ? ProfileLocalState.BusinessProfileState.foundAddressesForTradingAddress.map(address => (
-                                                        <MenuItem
-                                                            key={getFormattedAddress(address)}
-                                                            value={getFormattedAddress(address)}
-                                                        >
-                                                            {getFormattedAddress(address)}
-                                                        </MenuItem>
+                                                        <MenuItem key={getFormattedAddress(address)} value={getFormattedAddress(address)} >{getFormattedAddress(address)}</MenuItem>
                                                     ))
                                                     : null
                                             }

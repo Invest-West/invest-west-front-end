@@ -56,66 +56,28 @@ class JSONCompareChangesDialog extends Component {
                 {...other}
             >
                 <DialogTitle>
-                    <FlexView
-                        vAlignContent="center"
-                    >
-                        <FlexView
-                            grow={4}
-                        >
-                            <Typography
-                                variant="h5"
-                                color="primary"
-                                align="left"
-                            >
-                                Data changes
-                            </Typography>
+                    <FlexView vAlignContent="center" >
+                        <FlexView grow={4} >
+                            <Typography variant="h5" color="primary" align="left">Data changes</Typography>
                         </FlexView>
-                        <FlexView
-                            grow={1}
-                            hAlignContent="right"
-                        >
-                            <IconButton
-                                onClick={resetData}
-                            >
+                        <FlexView grow={1} hAlignContent="right" >
+                            <IconButton onClick={resetData} >
                                 <CloseIcon/>
                             </IconButton>
                         </FlexView>
                     </FlexView>
                 </DialogTitle>
-                <DialogContent
-                    style={{
-                        marginBottom: 25
-                    }}
-                >
+                <DialogContent style={{ marginBottom: 25 }} >
                     <FlexView>
-                        <Container
-                            fluid
-                            style={{
-                                padding: 0
-                            }}
-                        >
+                        <Container fluid style={{ padding: 0 }} >
                             {
                                 JSON.stringify(jsonBefore) === JSON.stringify(jsonAfter)
                                     ?
                                     // no data changes
                                     <Row>
-                                        <Col
-                                            xs={12}
-                                            sm={12}
-                                            md={{span: 10, offset: 1}}
-                                            lg={{span: 8, offset: 2}}
-                                        >
-                                            <FlexView
-                                                column
-                                                width="100%"
-                                            >
-                                                <Typography
-                                                    variant="h6"
-                                                    align="left"
-                                                    paragraph
-                                                >
-                                                    <b>No data changes after this activity</b>
-                                                </Typography>
+                                        <Col xs={12} sm={12} md={{span: 10, offset: 1}} lg={{span: 8, offset: 2}} >
+                                            <FlexView column width="100%" >
+                                                <Typography variant="h6" align="left" paragraph><b>No data changes after this activity</b></Typography>
 
                                                 <ReactJson
                                                     src={jsonBefore}
@@ -136,23 +98,9 @@ class JSONCompareChangesDialog extends Component {
                                     // there are data changes
                                     <Row>
                                         {/** JSON before */}
-                                        <Col
-                                            xs={12}
-                                            sm={12}
-                                            md={6}
-                                            lg={6}
-                                        >
-                                            <FlexView
-                                                column
-                                                width="100%"
-                                            >
-                                                <Typography
-                                                    variant="h6"
-                                                    align="left"
-                                                    paragraph
-                                                >
-                                                    <b>Before</b>
-                                                </Typography>
+                                        <Col xs={12} sm={12} md={6} lg={6} >
+                                            <FlexView column width="100%" >
+                                                <Typography variant="h6" align="left" paragraph><b>Before</b></Typography>
 
                                                 <ReactJson
                                                     src={jsonBefore}
@@ -170,23 +118,9 @@ class JSONCompareChangesDialog extends Component {
                                         </Col>
 
                                         {/** JSON after */}
-                                        <Col
-                                            xs={12}
-                                            sm={12}
-                                            md={6}
-                                            lg={6}
-                                        >
-                                            <FlexView
-                                                column
-                                                width="100%"
-                                            >
-                                                <Typography
-                                                    variant="h6"
-                                                    align="left"
-                                                    paragraph
-                                                >
-                                                    <b>After</b>
-                                                </Typography>
+                                        <Col xs={12} sm={12} md={6} lg={6} >
+                                            <FlexView column width="100%" >
+                                                <Typography variant="h6" align="left" paragraph><b>After</b></Typography>
 
                                                 <ReactJson
                                                     src={jsonAfter}

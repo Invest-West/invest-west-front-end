@@ -333,31 +333,10 @@ class Profile extends Component {
         }
 
         return (
-            <Container
-                fluid
-                style={{
-                    padding: 0
-                }}
-            >
-                <Row
-                    noGutters
-                    style={{
-                        backgroundColor: colors.kick_starter_background_color_1
-                    }}
-                >
-                    <Col
-                        xs={12}
-                        sm={12}
-                        md={12}
-                        lg={12}
-                        style={{
-                            padding: 20
-                        }}
-                    >
-                        <FlexView
-                            hAlignContent="right"
-                            vAlignContent="center"
-                        >
+            <Container fluid style={{ padding: 0 }} >
+                <Row noGutters style={{ backgroundColor: colors.kick_starter_background_color_1 }} >
+                    <Col xs={12} sm={12} md={12} lg={12} style={{ padding: 20 }} >
+                        <FlexView hAlignContent="right" vAlignContent="center" >
                             <NavLink
                                 to={
                                     groupUserName
@@ -369,16 +348,8 @@ class Profile extends Component {
                                 target={currentUser.id === originalUser.id ? "" : "_blank"}
                                 className={css(sharedStyles.nav_link_white_text_hover_without_changing_text_color)}
                             >
-                                <Button
-                                    className={css(sharedStyles.no_text_transform)}
-                                    variant="outlined"
-                                    color="primary"
-                                >
-                                    <PublicIcon
-                                        style={{
-                                            marginRight: 8
-                                        }}
-                                    />
+                                <Button className={css(sharedStyles.no_text_transform)} variant="outlined" color="primary" >
+                                    <PublicIcon style={{ marginRight: 8 }} />
                                     {
                                         currentUser.type === DB_CONST.TYPE_ADMIN
                                             ?
@@ -393,9 +364,7 @@ class Profile extends Component {
                                 placement="bottom"
                                 flip
                                 overlay={
-                                    <Tooltip
-                                        id={`tooltip-bottom`}
-                                    >
+                                    <Tooltip id={`tooltip-bottom`} >
                                         {
                                             currentUser.type === DB_CONST.TYPE_ADMIN
                                                 ?
@@ -405,72 +374,26 @@ class Profile extends Component {
                                         }
                                     </Tooltip>
                                 }>
-                                <InfoIcon
-                                    fontSize="small"
-                                    style={{
-                                        marginLeft: 15,
-                                        color: colors.gray_600
-                                    }}
-                                />
+                                <InfoIcon fontSize="small" style={{ marginLeft: 15, color: colors.gray_600 }} />
                             </OverlayTrigger>
                         </FlexView>
                     </Col>
 
-                    <Col
-                        xs={12}
-                        sm={12}
-                        md={12}
-                        lg={12}
-                    >
+                    <Col xs={12} sm={12} md={12} lg={12} >
                         <Divider/>
                     </Col>
                 </Row>
 
                 {/** Personal details */}
-                <Row
-                    noGutters
-                    style={{
-                        backgroundColor: colors.white
-                    }}
-                >
-                    <Col
-                        xs={12}
-                        md={12}
-                        lg={12}
-                        style={{
-                            padding: 24
-                        }}
-                    >
-                        <FlexView
-                            column
-                        >
-                            <Typography
-                                variant="h6"
-                                color="primary"
-                            >
-                                Personal details
-                            </Typography>
+                <Row noGutters style={{ backgroundColor: colors.white }} >
+                    <Col xs={12} md={12} lg={12} style={{ padding: 24 }} >
+                        <FlexView column >
+                            <Typography variant="h6" color="primary" >Personal details</Typography>
 
-                            <Row
-                                noGutters
-                                style={{
-                                    marginTop: 20
-                                }}
-                            >
+                            <Row noGutters style={{ marginTop: 20 }} >
                                 {/** Profile picture */}
-                                <Col
-                                    xs={12}
-                                    sm={12}
-                                    md={6}
-                                    lg={4}
-                                >
-                                    <FlexView
-                                        column
-                                        hAlignContent="center"
-                                        style={{
-                                            padding: 10
-                                        }}
-                                    >
+                                <Col xs={12} sm={12} md={6} lg={4} >
+                                    <FlexView column hAlignContent="center" style={{ padding: 10 }} >
                                         {
                                             !originalUser.profilePicture
                                             || (
@@ -478,18 +401,9 @@ class Profile extends Component {
                                                 && originalUser.profilePicture.findIndex(profilePicture => !profilePicture.hasOwnProperty('removed')) === -1
                                             )
                                                 ?
-                                                <LetterAvatar
-                                                    firstName={originalUser.firstName}
-                                                    lastName={originalUser.lastName}
-                                                    width={196}
-                                                    height={196}
-                                                    textVariant="h5"
-                                                />
+                                                <LetterAvatar firstName={originalUser.firstName} lastName={originalUser.lastName} width={196} height={196} textVariant="h5" />
                                                 :
-                                                <FlexView
-                                                    width={256}
-                                                    height={256}
-                                                >
+                                                <FlexView width={256} height={256} >
                                                     <Image
                                                         roundedCircle
                                                         thumbnail
@@ -498,11 +412,7 @@ class Profile extends Component {
                                                                 originalUser.profilePicture.findIndex(profilePicture => !profilePicture.hasOwnProperty('removed'))
                                                                 ].url
                                                         }
-                                                        style={{
-                                                            width: "100%",
-                                                            maxHeight: 256,
-                                                            objectFit: "contain"
-                                                        }}
+                                                        style={{ width: "100%", maxHeight: 256, objectFit: "contain" }}
                                                     />
                                                 </FlexView>
                                         }
@@ -511,58 +421,20 @@ class Profile extends Component {
                                                 ?
                                                 null
                                                 :
-                                                <FlexView
-                                                    marginTop={20}
-                                                    marginBottom={20}
-                                                >
-                                                    <Button
-                                                        size="small"
-                                                        className={css(sharedStyles.no_text_transform)}
-                                                        variant="outlined"
-                                                        color="primary"
-                                                        onClick={() => this.props.toggleEditImageDialog(UPLOAD_PROFILE_PICTURE_MODE)}
-                                                        style={{
-                                                            width: 256
-                                                        }}
-                                                    >
-                                                        Update profile picture
-                                                    </Button>
+                                                <FlexView marginTop={20} marginBottom={20} >
+                                                    <Button size="small" className={css(sharedStyles.no_text_transform)} variant="outlined" color="primary" onClick={() => this.props.toggleEditImageDialog(UPLOAD_PROFILE_PICTURE_MODE)} style={{ width: 256 }} >Update profile picture</Button>
                                                 </FlexView>
                                         }
                                     </FlexView>
                                 </Col>
                                 {/** Personal info */}
-                                <Col
-                                    xs={12}
-                                    sm={12}
-                                    md={6}
-                                    lg={8}
-                                >
+                                <Col xs={12} sm={12} md={6} lg={8} >
                                     <Row>
                                         {/** Title */}
-                                        <Col
-                                            xs={12}
-                                            md={12}
-                                            lg={{span: 6, order: 1}}
-                                            style={{
-                                                marginBottom: 20
-                                            }}
-                                        >
-                                            <FormControl
-                                                fullWidth
-                                            >
-                                                <FormLabel>
-                                                    <b>Title</b>
-                                                </FormLabel>
-                                                <Select
-                                                    name="title"
-                                                    value={userEdited.title}
-                                                    onChange={this.handleEditUser(editUserActions.EDIT_PERSONAL_INFORMATION)}
-                                                    input={
-                                                        <OutlinedInput/>
-                                                    }
-                                                    margin="dense"
-                                                >
+                                        <Col xs={12} md={12} lg={{span: 6, order: 1}} style={{ marginBottom: 20 }} >
+                                            <FormControl fullWidth >
+                                                <FormLabel><b>Title</b></FormLabel>
+                                                <Select name="title" value={userEdited.title} onChange={this.handleEditUser(editUserActions.EDIT_PERSONAL_INFORMATION)} input={ <OutlinedInput/> } margin="dense" >
                                                     {
                                                         DB_CONST.USER_TITLES.map((title, index) => (
                                                             <MenuItem key={index} value={title}>{title}</MenuItem>
@@ -573,117 +445,40 @@ class Profile extends Component {
                                         </Col>
 
                                         {/** Empty column to reserve empty space */}
-                                        <Col
-                                            xs={12}
-                                            sm={12}
-                                            md={6}
-                                            lg={{span: 6, order: 2}}
-                                        >
+                                        <Col xs={12} sm={12} md={6} lg={{span: 6, order: 2}} >
                                             {/** Empty column to reserve empty space */}
                                         </Col>
 
                                         {/** Divider */}
-                                        <Col
-                                            xs={12}
-                                            sm={12}
-                                            md={12}
-                                            lg={{span: 12, order: 3}}
-                                        >
-                                            <Divider
-                                                style={{
-                                                    marginTop: 10,
-                                                    marginBottom: 20
-                                                }}
-                                            />
+                                        <Col xs={12} sm={12} md={12} lg={{span: 12, order: 3}} >
+                                            <Divider style={{ marginTop: 10, marginBottom: 20 }} />
                                         </Col>
 
                                         {/** First name */}
-                                        <Col
-                                            xs={12}
-                                            sm={12}
-                                            md={6}
-                                            lg={{span: 6, order: 4}}
-                                            style={{
-                                                marginBottom: 20
-                                            }}
-                                        >
-                                            <FormControl
-                                                fullWidth
-                                            >
-                                                <FormLabel>
-                                                    <b>First name</b>
-                                                </FormLabel>
-                                                <TextField
-                                                    name="firstName"
-                                                    placeholder="Enter first name"
-                                                    value={userEdited.firstName}
-                                                    margin="dense"
-                                                    variant="outlined"
-                                                    onChange={this.handleEditUser(editUserActions.EDIT_PERSONAL_INFORMATION)}
-                                                    error={userEdited.firstName.trim().length === 0}
-                                                />
+                                        <Col xs={12} sm={12} md={6} lg={{span: 6, order: 4}} style={{ marginBottom: 20 }} >
+                                            <FormControl fullWidth >
+                                                <FormLabel><b>First name</b></FormLabel>
+                                                <TextField name="firstName" placeholder="Enter first name" value={userEdited.firstName} margin="dense" variant="outlined" onChange={this.handleEditUser(editUserActions.EDIT_PERSONAL_INFORMATION)} error={userEdited.firstName.trim().length === 0} />
                                             </FormControl>
                                         </Col>
 
                                         {/** Last name */}
-                                        <Col
-                                            xs={12}
-                                            sm={12}
-                                            md={6}
-                                            lg={{span: 6, order: 5}}
-                                            style={{
-                                                marginBottom: 20
-                                            }}
-                                        >
-                                            <FormControl
-                                                fullWidth
-                                            >
-                                                <FormLabel>
-                                                    <b>Last name</b>
-                                                </FormLabel>
-                                                <TextField
-                                                    name="lastName"
-                                                    placeholder="Enter last name"
-                                                    value={userEdited.lastName}
-                                                    margin="dense"
-                                                    variant="outlined"
-                                                    onChange={this.handleEditUser(editUserActions.EDIT_PERSONAL_INFORMATION)}
-                                                    error={userEdited.lastName.trim().length === 0}
-                                                />
+                                        <Col xs={12} sm={12} md={6} lg={{span: 6, order: 5}} style={{ marginBottom: 20 }} >
+                                            <FormControl fullWidth >
+                                                <FormLabel><b>Last name</b></FormLabel>
+                                                <TextField name="lastName" placeholder="Enter last name" value={userEdited.lastName} margin="dense" variant="outlined" onChange={this.handleEditUser(editUserActions.EDIT_PERSONAL_INFORMATION)} error={userEdited.lastName.trim().length === 0} />
                                             </FormControl>
                                         </Col>
 
                                         {/** Divider */}
-                                        <Col
-                                            xs={12}
-                                            sm={12}
-                                            md={12}
-                                            lg={{span: 12, order: 6}}
-                                        >
-                                            <Divider
-                                                style={{
-                                                    marginTop: 10,
-                                                    marginBottom: 20
-                                                }}
-                                            />
+                                        <Col xs={12} sm={12} md={12} lg={{span: 12, order: 6}} >
+                                            <Divider style={{ marginTop: 10, marginBottom: 20 }} />
                                         </Col>
 
                                         {/** Email */}
-                                        <Col
-                                            xs={12}
-                                            sm={12}
-                                            md={12}
-                                            lg={{span: 12, order: 7}}
-                                            style={{
-                                                marginBottom: 20
-                                            }}
-                                        >
-                                            <FormControl
-                                                fullWidth
-                                            >
-                                                <FormLabel>
-                                                    <b>Email</b>
-                                                </FormLabel>
+                                        <Col xs={12} sm={12} md={12} lg={{span: 12, order: 7}} style={{ marginBottom: 20 }} >
+                                            <FormControl fullWidth >
+                                                <FormLabel><b>Email</b></FormLabel>
                                                 <TextField
                                                     name="email"
                                                     placeholder="Enter email"
@@ -698,36 +493,14 @@ class Profile extends Component {
                                         </Col>
 
                                         {/** Divider */}
-                                        <Col
-                                            xs={12}
-                                            sm={12}
-                                            md={12}
-                                            lg={{span: 12, order: 7}}
-                                        >
-                                            <Divider
-                                                style={{
-                                                    marginTop: 10,
-                                                    marginBottom: 20
-                                                }}
-                                            />
+                                        <Col xs={12} sm={12} md={12} lg={{span: 12, order: 7}} >
+                                            <Divider style={{ marginTop: 10, marginBottom: 20 }} />
                                         </Col>
 
                                         {/** LinkedIn */}
-                                        <Col
-                                            xs={12}
-                                            sm={12}
-                                            md={12}
-                                            lg={{span: 12, order: 8}}
-                                            style={{
-                                                marginBottom: 20
-                                            }}
-                                        >
-                                            <FormControl
-                                                fullWidth
-                                            >
-                                                <FormLabel>
-                                                    <b>LinkedIn</b>
-                                                </FormLabel>
+                                        <Col xs={12} sm={12} md={12} lg={{span: 12, order: 8}} style={{ marginBottom: 20 }} >
+                                            <FormControl fullWidth >
+                                                <FormLabel><b>LinkedIn</b></FormLabel>
                                                 <TextField
                                                     name="linkedin"
                                                     placeholder="Enter your LinkedIn profile"
@@ -743,29 +516,14 @@ class Profile extends Component {
                                                     ?
                                                     null
                                                     :
-                                                    <FormHelperText
-                                                        className={css(sharedStyles.error_text)}
-                                                    >
-                                                        Invalid LinkedIn URL
-                                                    </FormHelperText>
+                                                    <FormHelperText className={css(sharedStyles.error_text)} >Invalid LinkedIn URL</FormHelperText>
                                             }
                                         </Col>
                                     </Row>
 
-                                    <FlexView
-                                        hAlignContent="right"
-                                        marginTop={30}
-                                    >
-                                        <FlexView
-                                            marginRight={20}
-                                        >
-                                            <Button
-                                                variant="outlined"
-                                                color="primary"
-                                                onClick={() => this.props.cancelEditingUser(editUserActions.RESET_PERSONAL_INFORMATION)}
-                                            >
-                                                Cancel
-                                            </Button>
+                                    <FlexView hAlignContent="right" marginTop={30} >
+                                        <FlexView marginRight={20} >
+                                            <Button variant="outlined" color="primary" onClick={() => this.props.cancelEditingUser(editUserActions.RESET_PERSONAL_INFORMATION)} >Cancel</Button>
                                         </FlexView>
                                         <FlexView>
                                             <Button
@@ -808,17 +566,7 @@ class Profile extends Component {
                                         && !currentUser.superAdmin
                                         && !allowEditing
                                             ?
-                                            <Typography
-                                                variant="body1"
-                                                color="error"
-                                                align="right"
-                                                style={{
-                                                    marginTop: 25
-                                                }}
-                                            >
-                                                This user is not a home member of your group. So, you cannot edit their
-                                                profile.
-                                            </Typography>
+                                            <Typography variant="body1" color="error" align="right" style={{ marginTop: 25 }} >This user is not a home member of your group. So, you cannot edit their profile.</Typography>
                                             :
                                             null
                                     }
@@ -828,46 +576,21 @@ class Profile extends Component {
                     </Col>
 
                     {/** Divider */}
-                    <Col
-                        xs={12}
-                        sm={12}
-                        md={12}
-                        lg={12}
-                        style={{
-                            marginTop: 20
-                        }}
-                    >
+                    <Col xs={12} sm={12} md={12} lg={12} style={{ marginTop: 20 }} >
                         <Divider/>
                     </Col>
                 </Row>
 
                 {/** Business profile */}
-                <Row
-                    noGutters
-                    style={{
-                        backgroundColor: colors.kick_starter_background_color_1
-                    }}
-                >
-                    <Col
-                        xs={12}
-                        md={12}
-                        lg={12}
-                        style={{
-                            padding: 24
-                        }}
-                    >
+                <Row noGutters style={{ backgroundColor: colors.kick_starter_background_color_1 }} >
+                    <Col xs={12} md={12} lg={12} style={{ padding: 24 }} >
                         {
                             this.renderBusinessProfile()
                         }
                     </Col>
 
                     {/** Divider */}
-                    <Col
-                        xs={12}
-                        sm={12}
-                        md={12}
-                        lg={12}
-                    >
+                    <Col xs={12} sm={12} md={12} lg={12} >
                         <Divider/>
                     </Col>
                 </Row>
@@ -878,35 +601,15 @@ class Profile extends Component {
                         ?
                         null
                         :
-                        <Row
-                            noGutters
-                            style={{
-                                backgroundColor: colors.white
-                            }}
-                        >
-                            <Col
-                                xs={12}
-                                sm={12}
-                                md={12}
-                                lg={12}
-                                style={{
-                                    paddingLeft: 24,
-                                    paddingRight: 24,
-                                    paddingTop: 24,
-                                    paddingBottom: 35
-                                }}
-                            >
+                        <Row noGutters style={{ backgroundColor: colors.white }} >
+                            <Col xs={12} sm={12} md={12} lg={12} style={{ paddingLeft: 24, paddingRight: 24, paddingTop: 24, paddingBottom: 35 }} >
                                 {
                                     this.renderSelfCertificationAgreement()
                                 }
                             </Col>
 
                             {/** Divider */}
-                            <Col
-                                xs={12}
-                                md={12}
-                                lg={12}
-                            >
+                            <Col xs={12} md={12} lg={12} >
                                 <Divider/>
                             </Col>
                         </Row>
@@ -918,42 +621,18 @@ class Profile extends Component {
                         ?
                         null
                         :
-                        <Row
-                            noGutters
-                            style={{
-                                backgroundColor: colors.kick_starter_background_color_1
-                            }}
-                        >
+                        <Row noGutters style={{ backgroundColor: colors.kick_starter_background_color_1 }} >
                             {
                                 originalUser.type !== DB_CONST.TYPE_ISSUER
                                     ?
                                     null
                                     :
-                                    <Col
-                                        xs={12}
-                                        md={12}
-                                        lg={12}
-                                        style={{
-                                            padding: 24
-                                        }}
-                                    >
-                                        <FlexView
-                                            column
-                                        >
-                                            <Typography
-                                                variant="h6"
-                                                color="primary"
-                                            >
-                                                Fundraising summary
-                                            </Typography>
+                                    <Col xs={12} md={12} lg={12} style={{ padding: 24 }} >
+                                        <FlexView column >
+                                            <Typography variant="h6" color="primary" >Fundraising summary</Typography>
 
-                                            <FlexView
-                                                column
-                                                marginTop={20}
-                                            >
-                                                <OffersTable
-                                                    directTableUser={originalUser}
-                                                />
+                                            <FlexView column marginTop={20} >
+                                                <OffersTable directTableUser={originalUser} />
                                             </FlexView>
                                         </FlexView>
                                     </Col>
@@ -964,14 +643,7 @@ class Profile extends Component {
                                     ?
                                     null
                                     :
-                                    <Col
-                                        xs={12}
-                                        md={12}
-                                        lg={12}
-                                        style={{
-                                            marginTop: 20
-                                        }}
-                                    >
+                                    <Col xs={12} md={12} lg={12} style={{ marginTop: 20 }} >
                                         <Divider/>
                                     </Col>
                             }
@@ -1076,53 +748,22 @@ class Profile extends Component {
                         ?
                         null
                         :
-                        <Row
-                            noGutters
-                            style={{
-                                backgroundColor: colors.kick_starter_background_color_1
-                            }}
-                        >
-                            <Col
-                                xs={12}
-                                md={12}
-                                lg={12}
-                                style={{
-                                    padding: 24
-                                }}
-                            >
-                                <FlexView
-                                    column
-                                >
-                                    <Typography
-                                        variant="h6"
-                                        color="primary"
-                                    >
-                                        Activities
-                                    </Typography>
+                        <Row noGutters style={{ backgroundColor: colors.kick_starter_background_color_1 }} >
+                            <Col xs={12} md={12} lg={12} style={{ padding: 24 }} >
+                                <FlexView column >
+                                    <Typography variant="h6" color="primary" >Activities</Typography>
                                 </FlexView>
 
-                                <FlexView
-                                    column
-                                    marginTop={20}
-                                >
+                                <FlexView column marginTop={20} >
                                     <ActivitiesTable/>
                                 </FlexView>
                             </Col>
                         </Row>
                 }
 
-                <Row
-                    noGutters
-                >
-                    <Col
-                        xs={12}
-                        sm={12}
-                        md={12}
-                        lg={12}
-                    >
-                        <Footer
-                            position="relative"
-                        />
+                <Row noGutters >
+                    <Col xs={12} sm={12} md={12} lg={12} >
+                        <Footer position="relative" />
                     </Col>
                 </Row>
             </Container>
@@ -1157,20 +798,10 @@ class Profile extends Component {
 
         if (!investorSelfCertificationAgreementLoaded) {
             return (
-                <FlexView
-                    column
-                >
-                    <Typography
-                        variant="h6"
-                    >
-                        Self-certification agreement
-                    </Typography>
+                <FlexView column >
+                    <Typography variant="h6" >Self-certification agreement</Typography>
 
-                    <FlexView
-                        hAlignContent="center"
-                        marginTop={20}
-                        marginBottom={25}
-                    >
+                    <FlexView hAlignContent="center" marginTop={20} marginBottom={25} >
                         <HashLoader
                             color={
                                 !groupProperties
@@ -1188,25 +819,10 @@ class Profile extends Component {
         // investor has agreed to the terms of self-certification
         if (investorSelfCertificationAgreement) {
             return (
-                <FlexView
-                    column
-                >
-                    <Typography
-                        variant="h6"
-                        color="primary"
-                        align="left"
-                    >
-                        Self-certification agreement
-                    </Typography>
+                <FlexView column >
+                    <Typography variant="h6" color="primary" align="left" >Self-certification agreement</Typography>
 
-                    <Typography
-                        variant="subtitle1"
-                        align="left"
-                        style={{
-                            marginTop: 25,
-                            marginBottom: 35
-                        }}
-                    >
+                    <Typography variant="subtitle1" align="left" style={{ marginTop: 25, marginBottom: 35 }} >
                         {currentUser.type === DB_CONST.TYPE_ADMIN ? "This investor has" : "You have"} agreed to
                         the statement
                         of <b>{investorSelfCertificationAgreement.type === DB_CONST.HIGH_NET_WORTH_INVESTOR_AGREEMENT ? "High net worth investor " : "Self-certified sophisticated investor "}</b>
@@ -1217,23 +833,10 @@ class Profile extends Component {
         }
 
         return (
-            <FlexView
-                column
-            >
-                <Typography
-                    variant="h6"
-                    color="error"
-                    align="left"
-                    paragraph
-                >
-                    Self-certification agreement
-                </Typography>
+            <FlexView column >
+                <Typography variant="h6" color="error" align="left" paragraph >Self-certification agreement</Typography>
 
-                <Typography
-                    variant="body1"
-                    align="left"
-                    paragraph
-                >
+                <Typography variant="body1" align="left" paragraph >
                     {
                         currentUser.type === DB_CONST.TYPE_ADMIN
                             ?
@@ -1251,34 +854,13 @@ class Profile extends Component {
                     input={<OutlinedInput/>}
                     onChange={investorSelfCertificationAgreement_handleStatementTypeChanged}
                 >
-                    <MenuItem
-                        value={DB_CONST.SELF_CERTIFIED_SOPHISTICATED_INVESTOR_AGREEMENT}
-                    >
-                        Self-certified sophisticated investor statement
-                    </MenuItem>
-                    <MenuItem
-                        value={DB_CONST.HIGH_NET_WORTH_INVESTOR_AGREEMENT}
-                    >
-                        High net worth investor statement
-                    </MenuItem>
+                    <MenuItem value={DB_CONST.SELF_CERTIFIED_SOPHISTICATED_INVESTOR_AGREEMENT} >Self-certified sophisticated investor statement</MenuItem>
+                    <MenuItem value={DB_CONST.HIGH_NET_WORTH_INVESTOR_AGREEMENT} >High net worth investor statement</MenuItem>
                 </Select>
 
-                <FlexView
-                    column
-                    marginTop={35}
-                    style={{
-                        maxHeight: 500,
-                        overflowY: "auto",
-                        border: `1px solid ${colors.gray_300}`,
-                        padding: 18
-                    }}
-                >
+                <FlexView column marginTop={35} style={{ maxHeight: 500, overflowY: "auto", border: `1px solid ${colors.gray_300}`, padding: 18 }} >
                     {/** T&Cs title */}
-                    <Typography
-                        variant="h6"
-                        align="left"
-                        paragraph
-                    >
+                    <Typography variant="h6" align="left" paragraph >
                         <b>
                             {
                                 investorSelfCertificationAgreementStatementType === DB_CONST.HIGH_NET_WORTH_INVESTOR_AGREEMENT
@@ -1294,204 +876,94 @@ class Profile extends Component {
                     {
                         investorSelfCertificationAgreementStatementType === DB_CONST.HIGH_NET_WORTH_INVESTOR_AGREEMENT
                             ?
-                            <Typography
-                                variant="body1"
-                                align="left"
-                                component="span"
-                            >
+                            <Typography variant="body1" align="left" component="span" >
                                 I declare that I am a certified high net worth individual for the purposes of the
                                 Financial Services and Markets Act 2000 (Financial Promotion) Order 2005.
                                 <br/><br/>
                                 I understand that this means:
-                                <ol
-                                    type="a"
-                                >
-                                    <li>
-                                        I can receive financial promotions that may not have been approved by a person
-                                        authorised by the Financial Conduct Authority;
-                                    </li>
-                                    <li>
-                                        the content of such financial promotions may not conform to rules issued by the
-                                        Financial Conduct Authority;
-                                    </li>
-                                    <li>
-                                        by signing this statement I may lose significant rights;
-                                    </li>
+                                <ol type="a" >
+                                    <li>I can receive financial promotions that may not have been approved by a person authorised by the Financial Conduct Authority;</li>
+                                    <li>the content of such financial promotions may not conform to rules issued by the Financial Conduct Authority;</li>
+                                    <li>by signing this statement I may lose significant rights;</li>
                                     <li>
                                         I may have no right to complain to either of the following:-
                                         <br/>
-                                        <ol
-                                            type="i"
-                                        >
-                                            <li>
-                                                the Financial Conduct Authority; or
-                                            </li>
-                                            <li>
-                                                the Financial Ombudsman Scheme
-                                            </li>
+                                        <ol type="i" >
+                                            <li>the Financial Conduct Authority; or</li>
+                                            <li>the Financial Ombudsman Scheme</li>
                                         </ol>
                                     </li>
-                                    <li>
-                                        I may have no right to seek compensation from the Financial Services
-                                        Compensation Scheme.
-                                    </li>
+                                    <li>I may have no right to seek compensation from the Financial Services Compensation Scheme.</li>
                                 </ol>
 
                                 I am a certified high net worth individual because <b><u>at least one of the following
                                 applies:</u></b>
 
-                                <ol
-                                    type="a"
-                                >
-                                    <li>
-                                        I had, during the financial year immediately preceding today's date, an
-                                        annual income to the value of £100,000 or more;
-                                    </li>
+                                <ol type="a" >
+                                    <li>I had, during the financial year immediately preceding today's date, an annual income to the value of £100,000 or more;</li>
                                     <li>
                                         I held, throughout the financial year immediately preceding today's date, net
                                         assets to the value of £250,000 or more. Net assets for these purposes do not
                                         include:-
-                                        <ol
-                                            type="i"
-                                        >
-                                            <li>
-                                                the property which is my primary residence or any loan secured on that
-                                                residence;
-                                            </li>
-                                            <li>
-                                                any rights of mine under a qualifying contract of insurance within the
-                                                meaning of the
-                                                Financial Services and Markets Act 2000 (Regulated Activities) Order
-                                                2001; or
-                                            </li>
-                                            <li>
-                                                any benefits (in the form of pensions or otherwise) which are payable on
-                                                the
-                                                termination of my service or on my death or retirement and to which I am
-                                                (or my dependants are), or may be, entitled.
-                                            </li>
+                                        <ol type="i">
+                                            <li>the property which is my primary residence or any loan secured on that residence;</li>
+                                            <li>any rights of mine under a qualifying contract of insurance within the meaning of the Financial Services and Markets Act 2000 (Regulated Activities) Order 2001; or</li>
+                                            <li>any benefits (in the form of pensions or otherwise) which are payable on the termination of my service or on my death or retirement and to which I am (or my dependants are), or may be, entitled.</li>
                                         </ol>
                                     </li>
                                 </ol>
                             </Typography>
                             :
-                            <Typography
-                                variant="body1"
-                                align="left"
-                                component="span"
-                            >
+                            <Typography variant="body1" align="left" component="span" >
                                 I declare that I am a self-certified sophisticated investor for the purposes of the
                                 Financial Services and Markets Act (Financial Promotion) Order 2005.
                                 <br/><br/>
                                 I understand that this means:
-                                <ol
-                                    type="a"
-                                >
-                                    <li>
-                                        I can receive financial promotions that may not have been approved by a person
-                                        authorised by the Financial Conduct Authority;
-                                    </li>
-                                    <li>
-                                        the content of such financial promotions may not conform to rules issued by the
-                                        Financial Conduct Authority;
-                                    </li>
-                                    <li>
-                                        by signing this statement I may lose significant rights;
-                                    </li>
+                                <ol type="a" >
+                                    <li>I can receive financial promotions that may not have been approved by a person authorised by the Financial Conduct Authority;</li>
+                                    <li>the content of such financial promotions may not conform to rules issued by the Financial Conduct Authority;</li>
+                                    <li>by signing this statement I may lose significant rights;</li>
                                     <li>
                                         I may have no right to complain to either of the following:
-                                        <ol
-                                            type="i"
-                                        >
-                                            <li>
-                                                the Financial Conduct Authority; or
-                                            </li>
-                                            <li>
-                                                the Financial Ombudsman Scheme;
-                                            </li>
+                                        <ol type="i" >
+                                            <li>the Financial Conduct Authority; or</li>
+                                            <li>the Financial Ombudsman Scheme;</li>
                                         </ol>
                                     </li>
-                                    <li>
-                                        I may have no right to seek compensation from the Financial Services
-                                        Compensation Scheme.
-                                    </li>
+                                    <li>I may have no right to seek compensation from the Financial Services Compensation Scheme.</li>
                                 </ol>
 
                                 I am a self-certified sophisticated investor because <b><u>at least one of the following
                                 applies:</u></b>
 
-                                <ol
-                                    type="a"
-                                >
-                                    <li>
-                                        I am a member of a network or syndicate of business angels and have been so for
-                                        at
-                                        least the last six months prior to today's date;
-                                    </li>
-                                    <li>
-                                        I have made more than one investment in an unlisted company in the two years
-                                        prior to today's date;
-                                    </li>
-                                    <li>
-                                        I am working, or have worked in the two years prior to today's date, in a
-                                        professional capacity in the private equity sector, or in the provision of
-                                        finance for small and medium enterprises;
-                                    </li>
-                                    <li>
-                                        I am currently, or have been in the two years prior to today's date, a
-                                        director of a company with an annual turnover of at least £1 million.
-                                    </li>
+                                <ol type="a" >
+                                    <li>I am a member of a network or syndicate of business angels and have been so for at least the last six months prior to today's date;</li>
+                                    <li>I have made more than one investment in an unlisted company in the two years prior to today's date;</li>
+                                    <li>I am working, or have worked in the two years prior to today's date, in a professional capacity in the private equity sector, or in the provision of finance for small and medium enterprises;</li>
+                                    <li>I am currently, or have been in the two years prior to today's date, a director of a company with an annual turnover of at least £1 million.</li>
                                 </ol>
                             </Typography>
                     }
                     {/** Divider */}
-                    <Divider
-                        style={{
-                            marginTop: 30,
-                            marginBottom: 18
-                        }}
-                    />
+                    <Divider style={{ marginTop: 30, marginBottom: 18 }} />
 
-                    <FormControl
-                        component="fieldset"
-                        fullWidth
-                    >
-                        <FormGroup
-                            row={true}
-                        >
+                    <FormControl component="fieldset" fullWidth >
+                        <FormGroup row={true} >
                             {/** Checkbox 1 */}
                             <FormControlLabel
-                                style={{
-                                    width: "100%"
-                                }}
+                                style={{ width: "100%" }}
                                 control={
-                                    <Checkbox
-                                        name="checkBox1Ticked"
-                                        color="primary"
-                                        value={investorSelfCertificationAgreementCheckBox1Checked}
-                                        checked={investorSelfCertificationAgreementCheckBox1Checked}
-                                        onChange={investorSelfCertificationAgreement_handleCheckBoxChanged}
-                                    />
+                                    <Checkbox name="checkBox1Ticked" color="primary" value={investorSelfCertificationAgreementCheckBox1Checked} checked={investorSelfCertificationAgreementCheckBox1Checked} onChange={investorSelfCertificationAgreement_handleCheckBoxChanged} />
                                 }
                                 label={
-                                    <Typography
-                                        variant="body1"
-                                        align="left"
-                                    >
-                                        <b>
-                                            I accept that I can lose my property and other assets from making investment
-                                            decisions based on financial promotions.
-                                        </b>
-                                    </Typography>
+                                    <Typography variant="body1" align="left"><b>I accept that I can lose my property and other assets from making investment decisions based on financial promotions.</b></Typography>
                                 }
                                 labelPlacement="end"
                             />
 
                             {/** Checkbox 2 */}
                             <FormControlLabel
-                                style={{
-                                    width: "100%"
-                                }}
+                                style={{ width: "100%" }}
                                 control={
                                     <Checkbox
                                         name="checkBox2Ticked"
@@ -1502,57 +974,24 @@ class Profile extends Component {
                                     />
                                 }
                                 label={
-                                    <Typography
-                                        variant="body1"
-                                        align="left"
-                                    >
-                                        I am aware that it is open to me to seek advice from someone who specialises in
-                                        advising on investments.
-                                    </Typography>
+                                    <Typography variant="body1" align="left" >I am aware that it is open to me to seek advice from someone who specialises in advising on investments.</Typography>
                                 }
                                 labelPlacement="end"
                             />
 
                             {/** Checkbox 3 */}
                             <FormControlLabel
-                                style={{
-                                    width: "100%"
-                                }}
+                                style={{ width: "100%" }}
                                 control={
-                                    <Checkbox
-                                        name="checkBox3Ticked"
-                                        color="primary"
-                                        value={investorSelfCertificationAgreementCheckBox3Checked}
-                                        checked={investorSelfCertificationAgreementCheckBox3Checked}
-                                        onChange={investorSelfCertificationAgreement_handleCheckBoxChanged}
-                                    />
+                                    <Checkbox name="checkBox3Ticked" color="primary" value={investorSelfCertificationAgreementCheckBox3Checked} checked={investorSelfCertificationAgreementCheckBox3Checked} onChange={investorSelfCertificationAgreement_handleCheckBoxChanged} />
                                 }
                                 label={
-                                    <Typography
-                                        variant="body1"
-                                        align="left"
-                                    >
+                                    <Typography variant="body1" align="left" >
                                         <b>
                                             I have read and agree to the&nbsp;
-                                            <CustomLink
-                                                url={Routes.constructPublicRoute("termsOfUse")}
-                                                target="_blank"
-                                                color="none"
-                                                activeColor="none"
-                                                activeUnderline={true}
-                                                component="nav-link"
-                                                childComponent="Terms of Use"
-                                            />
+                                            <CustomLink url={Routes.constructPublicRoute("termsOfUse")} target="_blank" color="none" activeColor="none" activeUnderline={true} component="nav-link" childComponent="Terms of Use" />
                                             &nbsp;and&nbsp;
-                                            <CustomLink
-                                                url={Routes.constructPublicRoute("privacyPolicy")}
-                                                target="_blank"
-                                                color="none"
-                                                activeColor="none"
-                                                activeUnderline={true}
-                                                component="nav-link"
-                                                childComponent="Privacy Policy"
-                                            />
+                                            <CustomLink url={Routes.constructPublicRoute("privacyPolicy")} target="_blank" color="none" activeColor="none" activeUnderline={true} component="nav-link" childComponent="Privacy Policy" />
                                             .
                                         </b>
                                     </Typography>
@@ -1563,13 +1002,7 @@ class Profile extends Component {
                     </FormControl>
                 </FlexView>
 
-                <FlexView
-                    column
-                    grow={1}
-                    hAlignContent="right"
-                    marginTop={40}
-                    marginBottom={20}
-                >
+                <FlexView column grow={1} hAlignContent="right" marginTop={40} marginBottom={20} >
                     <Button
                         variant="contained"
                         color="primary"
@@ -1586,16 +1019,7 @@ class Profile extends Component {
                     {
                         currentUser.type === DB_CONST.TYPE_ADMIN
                             ?
-                            <Typography
-                                variant="body1"
-                                color="error"
-                                align="right"
-                                style={{
-                                    marginTop: 25
-                                }}
-                            >
-                                You cannot do this on behalf of the investor.
-                            </Typography>
+                            <Typography variant="body1" color="error" align="right" style={{ marginTop: 25 }}>You cannot do this on behalf of the investor.</Typography>
                             :
                             null
                     }
@@ -1635,40 +1059,12 @@ class Profile extends Component {
         if (originalUser.BusinessProfile) {
             return (
                 /** Business profile has been uploaded */
-                <FlexView
-                    column
-                >
-                    <Typography
-                        variant="h6"
-                        color="primary"
-                    >
-                        Business profile
-                    </Typography>
-                    <Row
-                        noGutters
-                        style={{
-                            marginTop: 20
-                        }}
-                    >
-                        <Col
-                            xs={12}
-                            sm={12}
-                            md={6}
-                            lg={4}
-                            style={{
-                                padding: 10,
-                                width: "100%"
-                            }}
-                        >
-                            <FlexView
-                                column
-                                hAlignContent="center"
-                            >
-                                <FlexView
-                                    column
-                                    width="100%"
-                                    hAlignContent="center"
-                                >
+                <FlexView column >
+                    <Typography variant="h6" color="primary">Business profile</Typography>
+                    <Row noGutters style={{ marginTop: 20 }} >
+                        <Col xs={12} sm={12} md={6} lg={4} style={{ padding: 10, width: "100%" }} >
+                            <FlexView column hAlignContent="center" >
+                                <FlexView column width="100%" hAlignContent="center" >
                                     {
                                         !originalUser.BusinessProfile.hasOwnProperty('logo')
                                         || (
@@ -1689,21 +1085,14 @@ class Profile extends Component {
                                                 }
                                             </Typography>
                                             :
-                                            <FlexView
-                                                width={256}
-                                                height={256}
-                                            >
+                                            <FlexView width={256} height={256} >
                                                 <Image
                                                     roundedCircle
                                                     thumbnail
                                                     src={
                                                         originalUser.BusinessProfile.logo[originalUser.BusinessProfile.logo.findIndex(logoItem => !logoItem.hasOwnProperty('removed'))].url
                                                     }
-                                                    style={{
-                                                        width: "100%",
-                                                        maxHeight: 256,
-                                                        objectFit: "contain"
-                                                    }}
+                                                    style={{ width: "100%", maxHeight: 256, objectFit: "contain" }}
                                                 />
                                             </FlexView>
                                     }
@@ -1712,9 +1101,7 @@ class Profile extends Component {
                                             ?
                                             null
                                             :
-                                            <FlexView
-                                                marginTop={20}
-                                            >
+                                            <FlexView marginTop={20} >
                                                 <Button
                                                     size="small"
                                                     className={css(sharedStyles.no_text_transform)}
@@ -1722,27 +1109,14 @@ class Profile extends Component {
                                                     color="primary"
                                                     fullWidth
                                                     onClick={() => this.props.toggleEditImageDialog(UPLOAD_LOGO_MODE)}
-                                                    style={{
-                                                        width: 256
-                                                    }}
-                                                >
-                                                    Update logo
+                                                    style={{ width: 256 }}
+                                                >Update logo
                                                 </Button>
                                             </FlexView>
                                     }
                                 </FlexView>
 
-                                <FlexView
-                                    column
-                                    marginTop={80}
-                                    marginBottom={20}
-                                    width="100%"
-                                    hAlignContent="center"
-                                    style={{
-                                        paddingLeft: 25,
-                                        paddingRight: 25
-                                    }}
-                                >
+                                <FlexView column marginTop={80} marginBottom={20} width="100%" hAlignContent="center" style={{ paddingLeft: 25, paddingRight: 25 }} >
                                     {
                                         !originalUser.BusinessProfile.hasOwnProperty('video')
                                         || (
@@ -1788,29 +1162,19 @@ class Profile extends Component {
                                                     className={css(sharedStyles.no_text_transform)}
                                                     color="primary"
                                                     onClick={() => this.props.toggleEditVideoDialog(UPLOAD_VIDEO_MODE)}
-                                                    style={{
-                                                        width: 256
-                                                    }}
-                                                >
-                                                    Update introduction video
+                                                    style={{ width: 256 }}
+                                                >Update introduction video
                                                 </Button>
                                             </FlexView>
                                     }
                                 </FlexView>
                             </FlexView>
                         </Col>
-                        <Col
-                            xs={12}
-                            sm={12}
-                            md={6}
-                            lg={8}
-                        >
+                        <Col xs={12} sm={12} md={6} lg={8} >
                             {/** Company name */}
                             <FlexView column>
                                 <FormControl>
-                                    <FormLabel>
-                                        <b>Company name</b>
-                                    </FormLabel>
+                                    <FormLabel><b>Company name</b></FormLabel>
                                     <TextField
                                         name="companyName"
                                         placeholder="Enter company name"
@@ -1824,21 +1188,12 @@ class Profile extends Component {
                                 </FormControl>
                             </FlexView>
 
-                            <Divider
-                                style={{
-                                    marginTop: 20,
-                                    marginBottom: 20
-                                }}
-                            />
+                            <Divider style={{ marginTop: 20, marginBottom: 20 }} />
 
                             {/** Registration number */}
-                            <FlexView
-                                column
-                            >
+                            <FlexView column >
                                 <FormControl>
-                                    <FormLabel>
-                                        <b>Registration number</b>
-                                    </FormLabel>
+                                    <FormLabel><b>Registration number</b></FormLabel>
                                     <TextField
                                         name="registrationNo"
                                         placeholder="Enter company registration number"
@@ -1852,19 +1207,12 @@ class Profile extends Component {
                                 </FormControl>
                             </FlexView>
 
-                            <Divider
-                                style={{
-                                    marginTop: 20,
-                                    marginBottom: 20
-                                }}
-                            />
+                            <Divider style={{ marginTop: 20, marginBottom: 20 }} />
 
                             {/** Registered office */}
                             <FlexView column>
                                 <FormControl>
-                                    <FormLabel>
-                                        <b>Registered office</b>
-                                    </FormLabel>
+                                    <FormLabel><b>Registered office</b></FormLabel>
                                     <FormGroup>
                                         <FlexView column>
                                             <TextField
@@ -1917,12 +1265,7 @@ class Profile extends Component {
                                                 onChange={this.handleEditUser(editUserActions.EDIT_REGISTERED_OFFICE_BUSINESS_PROFILE)}
                                             />
                                             <Row>
-                                                <Col
-                                                    xs={12}
-                                                    sm={12}
-                                                    md={6}
-                                                    lg={6}
-                                                >
+                                                <Col xs={12} sm={12} md={6} lg={6} >
                                                     <TextField
                                                         name="townCity"
                                                         placeholder="Town/City"
@@ -1943,12 +1286,7 @@ class Profile extends Component {
                                                         }
                                                     />
                                                 </Col>
-                                                <Col
-                                                    xs={12}
-                                                    sm={12}
-                                                    md={6}
-                                                    lg={6}
-                                                >
+                                                <Col xs={12} sm={12} md={6} lg={6} >
                                                     <TextField
                                                         name="postcode"
                                                         placeholder="Postcode"
@@ -1975,19 +1313,12 @@ class Profile extends Component {
                                 </FormControl>
                             </FlexView>
 
-                            <Divider
-                                style={{
-                                    marginTop: 20,
-                                    marginBottom: 20
-                                }}
-                            />
+                            <Divider style={{ marginTop: 20, marginBottom: 20 }} />
 
                             {/** Trading address */}
                             <FlexView column>
                                 <FormControl>
-                                    <FormLabel>
-                                        <b>Trading address</b>
-                                    </FormLabel>
+                                    <FormLabel><b>Trading address</b></FormLabel>
                                     <FormGroup>
                                         <FlexView column>
                                             <TextField
@@ -2040,12 +1371,7 @@ class Profile extends Component {
                                                 onChange={this.handleEditUser(editUserActions.EDIT_TRADING_ADDRESS_BUSINESS_PROFILE)}
                                             />
                                             <Row>
-                                                <Col
-                                                    xs={12}
-                                                    sm={12}
-                                                    md={6}
-                                                    lg={6}
-                                                >
+                                                <Col xs={12} sm={12} md={6} lg={6} >
                                                     <TextField
                                                         name="townCity"
                                                         placeholder="Town/City"
@@ -2066,12 +1392,7 @@ class Profile extends Component {
                                                         }
                                                     />
                                                 </Col>
-                                                <Col
-                                                    xs={12}
-                                                    sm={12}
-                                                    md={6}
-                                                    lg={6}
-                                                >
+                                                <Col xs={12} sm={12} md={6} lg={6} >
                                                     <TextField
                                                         name="postcode"
                                                         placeholder="Postcode"
@@ -2098,12 +1419,7 @@ class Profile extends Component {
                                 </FormControl>
                             </FlexView>
 
-                            <Divider
-                                style={{
-                                    marginTop: 20,
-                                    marginBottom: 20
-                                }}
-                            />
+                            <Divider style={{ marginTop: 20, marginBottom: 20 }} />
 
                             {
                                 !clubAttributes
@@ -2112,12 +1428,8 @@ class Profile extends Component {
                                     :
                                     (
                                         <FlexView>
-                                            <FormControl
-                                                fullWidth
-                                            >
-                                                <FormLabel>
-                                                    <b>Sector</b>
-                                                </FormLabel>
+                                            <FormControl fullWidth >
+                                                <FormLabel><b>Sector</b></FormLabel>
                                                 <Select
                                                     name="sector"
                                                     value={
@@ -2134,12 +1446,7 @@ class Profile extends Component {
 
                                                     {
                                                         clubAttributes.Sectors.map((sector, index) => (
-                                                            <MenuItem
-                                                                key={index}
-                                                                value={sector}
-                                                            >
-                                                                {sector}
-                                                            </MenuItem>
+                                                            <MenuItem key={index} value={sector}>{sector}</MenuItem>
                                                         ))
                                                     }
                                                 </Select>
@@ -2148,12 +1455,7 @@ class Profile extends Component {
                                     )
                             }
 
-                            <Divider
-                                style={{
-                                    marginTop: 20,
-                                    marginBottom: 20
-                                }}
-                            />
+                            <Divider style={{ marginTop: 20, marginBottom: 20 }} />
 
                             {/** Directors */}
                             <FlexView column>
@@ -2168,12 +1470,7 @@ class Profile extends Component {
                                     </FormLabel>
 
                                     <Row noGutters>
-                                        <Col
-                                            xs={12}
-                                            sm={12}
-                                            md={6}
-                                            lg={6}
-                                        >
+                                        <Col xs={12} sm={12} md={6} lg={6} >
                                             {
                                                 !userEdited.BusinessProfile.hasOwnProperty('directors')
                                                     ?
@@ -2189,9 +1486,7 @@ class Profile extends Component {
                                                                         {director}
                                                                     </ListItemText>
                                                                     <ListItemSecondaryAction>
-                                                                        <IconButton
-                                                                            onClick={() => this.props.deleteDirectorTemporarily(index, true)}
-                                                                        >
+                                                                        <IconButton onClick={() => this.props.deleteDirectorTemporarily(index, true)} >
                                                                             <CloseIcon/>
                                                                         </IconButton>
                                                                     </ListItemSecondaryAction>
@@ -2207,50 +1502,23 @@ class Profile extends Component {
                                                     ?
                                                     null
                                                     :
-                                                    <Divider
-                                                        style={{
-                                                            marginTop: 10,
-                                                            marginBottom: 16
-                                                        }}
-                                                    />
+                                                    <Divider style={{ marginTop: 10, marginBottom: 16 }} />
                                             }
                                         </Col>
 
-                                        <Col
-                                            xs={12}
-                                            sm={12}
-                                            md={6}
-                                            lg={6}
-                                        >
+                                        <Col xs={12} sm={12} md={6} lg={6} >
                                         </Col>
 
-                                        <Col
-                                            xs={12}
-                                            sm={12}
-                                            md={6}
-                                            lg={6}
-                                        >
+                                        <Col xs={12} sm={12} md={6} lg={6} >
                                             {
                                                 !addNewDirector
                                                     ?
-                                                    <Button
-                                                        variant="outlined"
-                                                        size="small"
-                                                        className={css(sharedStyles.no_text_transform)}
-                                                        onClick={this.props.toggleAddNewDirector}
-                                                    >
-                                                        <AddIcon
-                                                            fontSize="small"
-                                                            style={{
-                                                                marginRight: 4
-                                                            }}
-                                                        />
+                                                    <Button variant="outlined" size="small" className={css(sharedStyles.no_text_transform)} onClick={this.props.toggleAddNewDirector} >
+                                                        <AddIcon fontSize="small" style={{ marginRight: 4 }} />
                                                         Add director
                                                     </Button>
                                                     :
-                                                    <FlexView
-                                                        column
-                                                    >
+                                                    <FlexView column >
                                                         <TextField
                                                             placeholder="Enter director's name"
                                                             name="newDirectorText"
@@ -2261,21 +1529,8 @@ class Profile extends Component {
                                                             margin="dense"
                                                         />
 
-                                                        <FlexView
-                                                            marginTop={8}
-                                                            hAlignContent="right"
-                                                        >
-                                                            <Button
-                                                                variant="outlined"
-                                                                size="small"
-                                                                className={css(sharedStyles.no_text_transform)}
-                                                                onClick={this.props.toggleAddNewDirector}
-                                                                style={{
-                                                                    marginRight: 8
-                                                                }}
-                                                            >
-                                                                Cancel
-                                                            </Button>
+                                                        <FlexView marginTop={8} hAlignContent="right" >
+                                                            <Button variant="outlined" size="small" className={css(sharedStyles.no_text_transform)} onClick={this.props.toggleAddNewDirector} style={{ marginRight: 8 }} >Cancel</Button>
                                                             <Button
                                                                 variant="contained"
                                                                 size="small"
@@ -2294,13 +1549,7 @@ class Profile extends Component {
                                 </FormControl>
                             </FlexView>
 
-                            <Divider
-                                style={{
-                                    marginTop: 20,
-                                    marginBottom: 20
-                                }}
-                            />
-
+                            <Divider style={{ marginTop: 20, marginBottom: 20 }} />
                             {/** Website */}
                             <FlexView column>
                                 <FormControl>
@@ -2343,30 +1592,13 @@ class Profile extends Component {
                                         ?
                                         null
                                         :
-                                        <Typography
-                                            variant="body2"
-                                            color="error"
-                                            align="left"
-                                        >
-                                            Invalid website URL
-                                        </Typography>
+                                        <Typography variant="body2" color="error" align="left" > Invalid website URL </Typography>
                                 }
                             </FlexView>
 
-                            <FlexView
-                                hAlignContent="right"
-                                marginTop={30}
-                            >
-                                <FlexView
-                                    marginRight={20}
-                                >
-                                    <Button
-                                        variant="outlined"
-                                        color="primary"
-                                        onClick={() => this.props.cancelEditingUser(editUserActions.RESET_BUSINESS_PROFILE)}
-                                    >
-                                        Cancel
-                                    </Button>
+                            <FlexView hAlignContent="right" marginTop={30} >
+                                <FlexView marginRight={20} >
+                                    <Button variant="outlined" color="primary" onClick={() => this.props.cancelEditingUser(editUserActions.RESET_BUSINESS_PROFILE)}>Cancel</Button>
                                 </FlexView>
                                 <FlexView>
                                     <Button
@@ -2404,17 +1636,7 @@ class Profile extends Component {
                                 && !currentUser.superAdmin
                                 && !allowEditing
                                     ?
-                                    <Typography
-                                        variant="body1"
-                                        color="error"
-                                        align="right"
-                                        style={{
-                                            marginTop: 25
-                                        }}
-                                    >
-                                        This user is not a home member of your group. So, you cannot edit their
-                                        profile.
-                                    </Typography>
+                                    <Typography variant="body1" color="error" align="right" style={{ marginTop: 25 }}>This user is not a home member of your group. So, you cannot edit their profile.</Typography>
                                     :
                                     null
                             }
@@ -2429,35 +1651,16 @@ class Profile extends Component {
             if (currentUser.type !== DB_CONST.TYPE_ADMIN) {
                 return (
                     // user has not uploaded Business profile yet
-                    <FlexView
-                        column
-                    >
-                        <FlexView
-                            column
-                        >
-                            <Typography
-                                variant="h6"
-                                color="primary"
-                                style={{
-                                    marginBottom: 4
-                                }}
-                            >
-                                Business profile
-                            </Typography>
+                    <FlexView column >
+                        <FlexView column >
+                            <Typography variant="h6" color="primary" style={{ marginBottom: 4 }} >Business profile</Typography>
                             {
                                 originalUser.type === DB_CONST.TYPE_ISSUER
                                     ?
                                     null
                                     :
-                                    <Row
-                                        noGutters
-                                    >
-                                        <Col
-                                            xs={12}
-                                            sm={12}
-                                            md={{span: 6, offset: 3}}
-                                            lg={{span: 4, offset: 4}}
-                                        >
+                                    <Row noGutters >
+                                        <Col xs={12} sm={12} md={{span: 6, offset: 3}} lg={{span: 4, offset: 4}} >
                                             <Button
                                                 fullWidth
                                                 className={css(sharedStyles.no_text_transform)}
@@ -2469,10 +1672,7 @@ class Profile extends Component {
                                                 variant="outlined"
                                                 size="medium"
                                                 onClick={toggleExpandBusinessProfileFillingForInvestor}
-                                                style={{
-                                                    marginTop: 25,
-                                                    marginBottom: 20
-                                                }}
+                                                style={{ marginTop: 25, marginBottom: 20 }}
                                             >
                                                 {
                                                     !createBusinessProfile.expandBusinessProfileFilling
@@ -2492,17 +1692,10 @@ class Profile extends Component {
                             || createBusinessProfile.expandBusinessProfileFilling
                                 ?
                                 // start filling in Business profile
-                                <FlexView
-                                    column
-                                    marginTop={20}
-                                >
+                                <FlexView column marginTop={20} >
                                     {/** Company name */}
-                                    <FlexView
-                                        column
-                                    >
-                                        <FormControl
-                                            required
-                                        >
+                                    <FlexView column >
+                                        <FormControl required >
                                             <FormLabel>
                                                 <b>Company name</b>
                                             </FormLabel>
@@ -2520,20 +1713,11 @@ class Profile extends Component {
                                         </FormControl>
                                     </FlexView>
 
-                                    <Divider
-                                        style={{
-                                            marginTop: 20,
-                                            marginBottom: 20
-                                        }}
-                                    />
+                                    <Divider style={{ marginTop: 20, marginBottom: 20 }} />
 
                                     {/** Registration number */}
-                                    <FlexView
-                                        column
-                                    >
-                                        <FormControl
-                                            required
-                                        >
+                                    <FlexView column >
+                                        <FormControl required >
                                             <FormLabel>
                                                 <b>Registration number</b>
                                             </FormLabel>
@@ -2551,42 +1735,18 @@ class Profile extends Component {
                                         </FormControl>
                                     </FlexView>
 
-                                    <Divider
-                                        style={{
-                                            marginTop: 20,
-                                            marginBottom: 20
-                                        }}
-                                    />
+                                    <Divider style={{ marginTop: 20, marginBottom: 20 }} />
 
                                     {/** Registered office */}
-                                    <FlexView
-                                        column
-                                    >
-                                        <FormControl
-                                            required
-                                        >
-                                            <Container
-                                                fluid
-                                                style={{
-                                                    padding: 0
-                                                }}
-                                            >
-                                                <Row
-                                                    noGutters
-                                                >
-                                                    <Col
-                                                        xs={12}
-                                                        sm={12}
-                                                        md={6}
-                                                        lg={4}
-                                                    >
+                                    <FlexView column >
+                                        <FormControl required >
+                                            <Container fluid style={{ padding: 0 }} >
+                                                <Row noGutters >
+                                                    <Col xs={12} sm={12} md={6} lg={4} >
                                                         <FormLabel>
                                                             <b>Registered office</b>
                                                         </FormLabel>
-                                                        <FormHelperText>
-                                                            Enter a UK postcode to search for address or click on "Enter
-                                                            address manually" to enter your address manually.
-                                                        </FormHelperText>
+                                                        <FormHelperText>Enter a UK postcode to search for address or click on "Enter address manually" to enter your address manually.</FormHelperText>
                                                         <FormGroup>
                                                             {/** Search postcode field */}
                                                             <FlexView>
@@ -2602,14 +1762,10 @@ class Profile extends Component {
                                                                     }
                                                                     InputProps={{
                                                                         startAdornment:
-                                                                            <InputAdornment
-                                                                                position="start"
-                                                                            >
+                                                                            <InputAdornment position="start" >
                                                                                 <IconButton
                                                                                     disableRipple
-                                                                                    style={{
-                                                                                        width: 48, height: 48
-                                                                                    }}
+                                                                                    style={{ width: 48, height: 48 }}
                                                                                     onClick={() => searchAddress(createBusinessProfileActions.SEARCHING_REGISTERED_OFFICE_ADDRESSES)}
                                                                                 >
                                                                                     <SearchIcon/>
@@ -2624,9 +1780,7 @@ class Profile extends Component {
                                                                     ?
                                                                     null
                                                                     :
-                                                                    <FlexView
-                                                                        column
-                                                                    >
+                                                                    <FlexView column >
                                                                         <TextField
                                                                             placeholder="Address 1:*"
                                                                             name="address1"
@@ -2666,12 +1820,7 @@ class Profile extends Component {
 
                                                                         <Row
                                                                         >
-                                                                            <Col
-                                                                                xs={12}
-                                                                                sm={12}
-                                                                                md={6}
-                                                                                lg={6}
-                                                                            >
+                                                                            <Col xs={12} sm={12} md={6} lg={6} >
                                                                                 <TextField
                                                                                     placeholder="Town/City:*"
                                                                                     name="townCity"
@@ -2685,12 +1834,7 @@ class Profile extends Component {
                                                                                     }
                                                                                 />
                                                                             </Col>
-                                                                            <Col
-                                                                                xs={12}
-                                                                                sm={12}
-                                                                                md={6}
-                                                                                lg={6}
-                                                                            >
+                                                                            <Col xs={12} sm={12} md={6} lg={6} >
                                                                                 <TextField
                                                                                     placeholder="Postcode:*"
                                                                                     name="postcode"
@@ -2714,31 +1858,12 @@ class Profile extends Component {
                                                 <Row
                                                     noGutters
                                                 >
-                                                    <Col
-                                                        xs={12}
-                                                        sm={12}
-                                                        md={6}
-                                                        lg={4}
-                                                    >
+                                                    <Col xs={12} sm={12} md={6} lg={4} >
                                                         {
                                                             createBusinessProfile.registeredOfficeRecommendedAddresses
                                                             && createBusinessProfile.registeredOfficeRecommendedAddresses.error
                                                                 ?
-                                                                <Typography
-                                                                    variant="body2"
-                                                                    color="error"
-                                                                    align="left"
-                                                                    style={{
-                                                                        marginTop: 4,
-                                                                        marginBottom: 4
-                                                                    }}
-                                                                >
-                                                                    Sorry, we can't find your address, please check the
-                                                                    details
-                                                                    entered and search again, alternatively you can
-                                                                    enter your
-                                                                    address manually below.
-                                                                </Typography>
+                                                                <Typography variant="body2" color="error" align="left" style={{ marginTop: 4, marginBottom: 4 }} >Sorry, we can't find your address, please check the details entered and search again, alternatively you can enter your address manually below.</Typography>
                                                                 :
                                                                 null
                                                         }
@@ -2763,9 +1888,7 @@ class Profile extends Component {
                                                                                     key={index}
                                                                                     onClick={() => handleRecommendedAddressSelected(createBusinessProfileActions.SELECT_REGISTERED_OFFICE_RECOMMENDED_ADDRESS, index)}
                                                                                 >
-                                                                                    <ListItemText
-                                                                                        primary={address}
-                                                                                    />
+                                                                                    <ListItemText primary={address} />
                                                                                 </ListItem>
                                                                             ))
                                                                         }
@@ -2793,60 +1916,28 @@ class Profile extends Component {
                                         </FormControl>
                                     </FlexView>
 
-                                    <Divider
-                                        style={{
-                                            marginTop: 20,
-                                            marginBottom: 20
-                                        }}
-                                    />
+                                    <Divider style={{ marginTop: 20, marginBottom: 20 }} />
 
                                     {/** Trading address */}
-                                    <FlexView
-                                        column
-                                    >
-                                        <FormControl
-                                            required
-                                        >
-                                            <Container
-                                                fluid
-                                                style={{
-                                                    padding: 0
-                                                }}
-                                            >
-                                                <Row
-                                                    noGutters
-                                                >
-                                                    <Col
-                                                        xs={12}
-                                                        sm={12}
-                                                        md={6}
-                                                        lg={4}
-                                                    >
+                                    <FlexView column >
+                                        <FormControl required >
+                                            <Container fluid style={{ padding: 0 }} >
+                                                <Row noGutters >
+                                                    <Col xs={12} sm={12} md={6} lg={4} >
                                                         <FormLabel>
                                                             <b>Trading address</b>
                                                         </FormLabel>
                                                     </Col>
                                                 </Row>
 
-                                                <Row
-                                                    noGutters
-                                                >
-                                                    <Col
-                                                        xs={12}
-                                                        sm={12}
-                                                        md={6}
-                                                        lg={4}
-                                                    >
+                                                <Row noGutters >
+                                                    <Col xs={12} sm={12} md={6} lg={4} >
                                                         <FormGroup>
                                                             <FormControlLabel
                                                                 label="Same as registered office address"
                                                                 labelPlacement="end"
                                                                 control={
-                                                                    <Checkbox
-                                                                        checked={createBusinessProfile.tradingAddressSameAsRegisteredOffice}
-                                                                        color="primary"
-                                                                        onChange={this.toggleTradingAddressSameAsRegisteredOffice}
-                                                                    />
+                                                                    <Checkbox checked={createBusinessProfile.tradingAddressSameAsRegisteredOffice} color="primary" onChange={this.toggleTradingAddressSameAsRegisteredOffice} />
                                                                 }
                                                             />
                                                         </FormGroup>
@@ -2858,21 +1949,10 @@ class Profile extends Component {
                                                         ?
                                                         null
                                                         :
-                                                        <Row
-                                                            noGutters
-                                                        >
-                                                            <Col
-                                                                xs={12}
-                                                                sm={12}
-                                                                md={6}
-                                                                lg={4}
-                                                            >
+                                                        <Row noGutters >
+                                                            <Col xs={12} sm={12} md={6} lg={4} >
                                                                 <FormGroup>
-                                                                    <FormHelperText>
-                                                                        Enter a UK postcode to search for address or
-                                                                        click on "Enter address manually" to enter your
-                                                                        address manually.
-                                                                    </FormHelperText>
+                                                                    <FormHelperText>Enter a UK postcode to search for address or click on "Enter address manually" to enter your address manually.</FormHelperText>
                                                                     <FlexView>
                                                                         <TextField
                                                                             placeholder="Enter UK postcode"
@@ -2886,16 +1966,8 @@ class Profile extends Component {
                                                                             }
                                                                             InputProps={{
                                                                                 startAdornment:
-                                                                                    <InputAdornment
-                                                                                        position="start"
-                                                                                    >
-                                                                                        <IconButton
-                                                                                            disableRipple
-                                                                                            style={{
-                                                                                                width: 48, height: 48
-                                                                                            }}
-                                                                                            onClick={() => searchAddress(createBusinessProfileActions.SEARCHING_TRADING_ADDRESSES)}
-                                                                                        >
+                                                                                    <InputAdornment position="start" >
+                                                                                        <IconButton disableRipple style={{ width: 48, height: 48 }} onClick={() => searchAddress(createBusinessProfileActions.SEARCHING_TRADING_ADDRESSES)} >
                                                                                             <SearchIcon/>
                                                                                         </IconButton>
                                                                                     </InputAdornment>
@@ -2908,9 +1980,7 @@ class Profile extends Component {
                                                                             ?
                                                                             null
                                                                             :
-                                                                            <FlexView
-                                                                                column
-                                                                            >
+                                                                            <FlexView column >
                                                                                 <TextField
                                                                                     placeholder="Address 1:*"
                                                                                     name="address1"
@@ -2950,12 +2020,7 @@ class Profile extends Component {
 
                                                                                 <Row
                                                                                 >
-                                                                                    <Col
-                                                                                        xs={12}
-                                                                                        sm={12}
-                                                                                        md={6}
-                                                                                        lg={6}
-                                                                                    >
+                                                                                    <Col xs={12} sm={12} md={6} lg={6} >
                                                                                         <TextField
                                                                                             placeholder="Town/City:*"
                                                                                             name="townCity"
@@ -2969,12 +2034,7 @@ class Profile extends Component {
                                                                                             }
                                                                                         />
                                                                                     </Col>
-                                                                                    <Col
-                                                                                        xs={12}
-                                                                                        sm={12}
-                                                                                        md={6}
-                                                                                        lg={6}
-                                                                                    >
+                                                                                    <Col xs={12} sm={12} md={6} lg={6} >
                                                                                         <TextField
                                                                                             placeholder="Postcode:*"
                                                                                             name="postcode"
@@ -3001,34 +2061,13 @@ class Profile extends Component {
                                                         ?
                                                         null
                                                         :
-                                                        <Row
-                                                            noGutters
-                                                        >
-                                                            <Col
-                                                                xs={12}
-                                                                sm={12}
-                                                                md={6}
-                                                                lg={4}
-                                                            >
+                                                        <Row noGutters >
+                                                            <Col xs={12} sm={12} md={6} lg={4} >
                                                                 {
                                                                     createBusinessProfile.tradingAddressRecommendedAddresses
                                                                     && createBusinessProfile.tradingAddressRecommendedAddresses.error
                                                                         ?
-                                                                        <Typography
-                                                                            variant="body2"
-                                                                            color="error"
-                                                                            align="left"
-                                                                            style={{
-                                                                                marginTop: 4,
-                                                                                marginBottom: 4
-                                                                            }}
-                                                                        >
-                                                                            Sorry, we can't find your address, please
-                                                                            check the
-                                                                            details entered and search again,
-                                                                            alternatively you
-                                                                            can enter your address manually below.
-                                                                        </Typography>
+                                                                        <Typography variant="body2" color="error" align="left" style={{ marginTop: 4, marginBottom: 4 }} >Sorry, we can't find your address, please check the details entered and search again, alternatively you can enter your address manually below.</Typography>
                                                                         :
                                                                         null
                                                                 }
@@ -3067,15 +2106,7 @@ class Profile extends Component {
                                                                         ?
                                                                         null
                                                                         :
-                                                                        <Typography
-                                                                            variant="body2"
-                                                                            color="primary"
-                                                                            align="left"
-                                                                            className={css(styles.enter_address_manually)}
-                                                                            onClick={() => toggleEnterAddressManually(createBusinessProfileActions.TOGGLE_TRADING_ADDRESS_ENTER_ADDRESS_MANUALLY)}
-                                                                        >
-                                                                            Enter address manually.
-                                                                        </Typography>
+                                                                        <Typography variant="body2" color="primary" align="left" className={css(styles.enter_address_manually)} onClick={() => toggleEnterAddressManually(createBusinessProfileActions.TOGGLE_TRADING_ADDRESS_ENTER_ADDRESS_MANUALLY)} >Enter address manually.</Typography>
                                                                 }
                                                             </Col>
                                                         </Row>
@@ -3084,46 +2115,24 @@ class Profile extends Component {
                                         </FormControl>
                                     </FlexView>
 
-                                    <Divider
-                                        style={{
-                                            marginTop: 20,
-                                            marginBottom: 20
-                                        }}
-                                    />
+                                    <Divider style={{ marginTop: 20, marginBottom: 20 }} />
 
                                     {/** Directors */}
-                                    <FlexView
-                                        column
-                                    >
-                                        <FormControl
-                                            required
-                                        >
+                                    <FlexView column >
+                                        <FormControl required >
                                             <FormLabel>
                                                 <b>Company directors</b>
                                             </FormLabel>
 
-                                            <Row
-                                                noGutters
-                                            >
-                                                <Col
-                                                    xs={12}
-                                                    sm={12}
-                                                    md={6}
-                                                    lg={6}
-                                                >
+                                            <Row noGutters >
+                                                <Col xs={12} sm={12} md={6} lg={6} >
                                                     <List>
                                                         {
                                                             createBusinessProfile.BusinessProfile.directors.map((director, index) => (
-                                                                <ListItem
-                                                                    key={index}
-                                                                >
-                                                                    <ListItemText>
-                                                                        {director}
-                                                                    </ListItemText>
+                                                                <ListItem key={index} >
+                                                                    <ListItemText> {director} </ListItemText>
                                                                     <ListItemSecondaryAction>
-                                                                        <IconButton
-                                                                            onClick={() => this.props.deleteDirectorTemporarily(index, false)}
-                                                                        >
+                                                                        <IconButton onClick={() => this.props.deleteDirectorTemporarily(index, false)} >
                                                                             <CloseIcon/>
                                                                         </IconButton>
                                                                     </ListItemSecondaryAction>
@@ -3137,50 +2146,23 @@ class Profile extends Component {
                                                             ?
                                                             null
                                                             :
-                                                            <Divider
-                                                                style={{
-                                                                    marginTop: 10,
-                                                                    marginBottom: 16
-                                                                }}
-                                                            />
+                                                            <Divider style={{ marginTop: 10, marginBottom: 16 }} />
                                                     }
                                                 </Col>
 
-                                                <Col
-                                                    xs={12}
-                                                    sm={12}
-                                                    md={6}
-                                                    lg={6}
-                                                >
+                                                <Col xs={12} sm={12} md={6} lg={6} >
                                                 </Col>
 
-                                                <Col
-                                                    xs={12}
-                                                    sm={12}
-                                                    md={6}
-                                                    lg={6}
-                                                >
+                                                <Col xs={12} sm={12} md={6} lg={6} >
                                                     {
                                                         !addNewDirector
                                                             ?
-                                                            <Button
-                                                                variant="outlined"
-                                                                size="small"
-                                                                className={css(sharedStyles.no_text_transform)}
-                                                                onClick={this.props.toggleAddNewDirector}
-                                                            >
-                                                                <AddIcon
-                                                                    fontSize="small"
-                                                                    style={{
-                                                                        marginRight: 4
-                                                                    }}
-                                                                />
+                                                            <Button variant="outlined" size="small" className={css(sharedStyles.no_text_transform)} onClick={this.props.toggleAddNewDirector} >
+                                                                <AddIcon fontSize="small" style={{ marginRight: 4 }} />
                                                                 Add director
                                                             </Button>
                                                             :
-                                                            <FlexView
-                                                                column
-                                                            >
+                                                            <FlexView column >
                                                                 <TextField
                                                                     placeholder="Enter director's name"
                                                                     name="newDirectorText"
@@ -3191,21 +2173,8 @@ class Profile extends Component {
                                                                     margin="dense"
                                                                 />
 
-                                                                <FlexView
-                                                                    marginTop={8}
-                                                                    hAlignContent="right"
-                                                                >
-                                                                    <Button
-                                                                        variant="outlined"
-                                                                        size="small"
-                                                                        className={css(sharedStyles.no_text_transform)}
-                                                                        onClick={this.props.toggleAddNewDirector}
-                                                                        style={{
-                                                                            marginRight: 8
-                                                                        }}
-                                                                    >
-                                                                        Cancel
-                                                                    </Button>
+                                                                <FlexView marginTop={8} hAlignContent="right" >
+                                                                    <Button variant="outlined" size="small" className={css(sharedStyles.no_text_transform)} onClick={this.props.toggleAddNewDirector} style={{ marginRight: 8 }} >Cancel</Button>
                                                                     <Button
                                                                         variant="contained"
                                                                         size="small"
@@ -3225,19 +2194,12 @@ class Profile extends Component {
                                     </FlexView>
 
                                     <Divider
-                                        style={{
-                                            marginTop: 20,
-                                            marginBottom: 20
-                                        }}
+                                        style={{ marginTop: 20, marginBottom: 20 }}
                                     />
 
                                     {/** Business sector */}
-                                    <FlexView
-                                        column
-                                    >
-                                        <FormControl
-                                            required
-                                        >
+                                    <FlexView column >
+                                        <FormControl required >
                                             <FormLabel>
                                                 <b>Business sector</b>
                                             </FormLabel>
@@ -3246,16 +2208,9 @@ class Profile extends Component {
                                                 value={createBusinessProfile.BusinessProfile.sector}
                                                 input={<OutlinedInput/>}
                                                 margin="dense"
-                                                onChange={
-                                                    this.handleCreateBusinessProfileTextChanged(createBusinessProfileActions.ORDINARY_BUSINESS_PROFILE_FIELDS_CHANGED)
-                                                }
+                                                onChange={ this.handleCreateBusinessProfileTextChanged(createBusinessProfileActions.ORDINARY_BUSINESS_PROFILE_FIELDS_CHANGED) }
                                             >
-                                                <MenuItem
-                                                    key={-1}
-                                                    value={'None'}
-                                                >
-                                                    Choose business sector
-                                                </MenuItem>
+                                                <MenuItem key={-1} value={'None'} >Choose business sector</MenuItem>
                                                 {
                                                     clubAttributes
                                                         ?
@@ -3269,20 +2224,11 @@ class Profile extends Component {
                                         </FormControl>
                                     </FlexView>
 
-                                    <Divider
-                                        style={{
-                                            marginTop: 20,
-                                            marginBottom: 20
-                                        }}
-                                    />
+                                    <Divider style={{ marginTop: 20, marginBottom: 20 }} />
 
                                     {/** Company Website */}
-                                    <FlexView
-                                        column
-                                    >
-                                        <FormControl
-                                            required
-                                        >
+                                    <FlexView column >
+                                        <FormControl required >
                                             <FormLabel>
                                                 <b>Company website</b>
                                             </FormLabel>
@@ -3303,114 +2249,40 @@ class Profile extends Component {
                                                     ?
                                                     null
                                                     :
-                                                    <Typography
-                                                        variant="body2"
-                                                        color="error"
-                                                        align="left"
-                                                    >
-                                                        Invalid website URL
-                                                    </Typography>
+                                                    <Typography variant="body2" color="error" align="left" >Invalid website URL</Typography>
                                             }
                                         </FormControl>
                                     </FlexView>
 
-                                    <Divider
-                                        style={{
-                                            marginTop: 20,
-                                            marginBottom: 20
-                                        }}
-                                    />
+                                    <Divider style={{ marginTop: 20, marginBottom: 20 }} />
 
                                     {/** Upload logo and introduction video */}
-                                    <FlexView
-                                        marginBottom={20}
-                                        width="100%"
-                                        hAlignContent="center"
-                                    >
-                                        <Row
-                                            style={{
-                                                width: "100%"
-                                            }}
-                                        >
+                                    <FlexView marginBottom={20} width="100%" hAlignContent="center" >
+                                        <Row style={{ width: "100%" }} >
                                             {/** Upload logo */}
-                                            <Col
-                                                xs={12}
-                                                sm={12}
-                                                md={6}
-                                                lg={6}
-                                                style={{
-                                                    padding: 15
-                                                }}
-                                            >
-                                                <FlexView
-                                                    column
-                                                    width="100%"
-                                                    hAlignContent="center"
-                                                >
-                                                    <FlexView
-                                                        className={css(styles.upload_files_area_style)}
-                                                        onClick={() => this.props.toggleEditImageDialog(UPLOAD_LOGO_FIRST_TIME_MODE)}
-                                                    >
-                                                        <Typography
-                                                            variant="body2"
-                                                            align="center"
-                                                        >
-                                                            Upload company logo (optional)
-                                                        </Typography>
+                                            <Col xs={12} sm={12} md={6} lg={6} style={{ padding: 15 }} >
+                                                <FlexView column width="100%" hAlignContent="center" >
+                                                    <FlexView className={css(styles.upload_files_area_style)} onClick={() => this.props.toggleEditImageDialog(UPLOAD_LOGO_FIRST_TIME_MODE)} >
+                                                        <Typography variant="body2" align="center" >Upload company logo (optional)</Typography>
                                                     </FlexView>
                                                     {
                                                         !createBusinessProfile.logoToBeUploaded
                                                             ?
                                                             null
                                                             :
-                                                            <FlexView
-                                                                width={270}
-                                                                height={270}
-                                                                marginTop={28}
-                                                            >
-                                                                <Image
-                                                                    src={window.URL.createObjectURL(createBusinessProfile.logoToBeUploaded)}
-                                                                    roundedCircle
-                                                                    thumbnail
-                                                                    style={{
-                                                                        maxHeight: 270,
-                                                                        width: "100%",
-                                                                        objectFit: "scale-down"
-                                                                    }}
-                                                                />
+                                                            <FlexView width={270} height={270} marginTop={28} >
+                                                                <Image src={window.URL.createObjectURL(createBusinessProfile.logoToBeUploaded)} roundedCircle thumbnail style={{ maxHeight: 270, width: "100%", objectFit: "scale-down" }}/>
                                                             </FlexView>
                                                     }
                                                 </FlexView>
                                             </Col>
 
                                             {/** Upload introduction video */}
-                                            <Col
-                                                xs={12}
-                                                sm={12}
-                                                md={6}
-                                                lg={6}
-                                                style={{
-                                                    padding: 15
-                                                }}
-                                            >
-                                                <FlexView
-                                                    column
-                                                    width="100%"
-                                                    hAlignContent="center"
-                                                >
-                                                    <FlexView
-                                                        vAlignContent="center"
-                                                    >
-                                                        <FlexView
-                                                            className={css(styles.upload_files_area_style)}
-                                                            onClick={() => this.props.toggleEditVideoDialog(UPLOAD_VIDEO_FIRST_TIME_MODE)}
-                                                        >
-                                                            <Typography
-                                                                variant="body2"
-                                                                align="center"
-                                                            >
-                                                                Upload introduction video (optional)
-                                                            </Typography>
+                                            <Col xs={12} sm={12} md={6} lg={6} style={{ padding: 15 }} >
+                                                <FlexView column width="100%" hAlignContent="center" >
+                                                    <FlexView vAlignContent="center" >
+                                                        <FlexView className={css(styles.upload_files_area_style)} onClick={() => this.props.toggleEditVideoDialog(UPLOAD_VIDEO_FIRST_TIME_MODE)} >
+                                                            <Typography variant="body2" align="center" >Upload introduction video (optional)</Typography>
                                                         </FlexView>
 
                                                         <OverlayTrigger
@@ -3418,12 +2290,7 @@ class Profile extends Component {
                                                             placement="top"
                                                             flip
                                                             overlay={
-                                                                <Tooltip
-                                                                    id={`tooltip-top`}
-                                                                >
-                                                                    Introduction video helps other members understand
-                                                                    more about your business.
-                                                                </Tooltip>
+                                                                <Tooltip id={`tooltip-top`} >Introduction video helps other members understand more about your business.</Tooltip>
                                                             }>
                                                             <InfoIcon
                                                                 fontSize="default"
@@ -3439,9 +2306,7 @@ class Profile extends Component {
                                                             ?
                                                             null
                                                             :
-                                                            <FlexView
-                                                                marginTop={28}
-                                                            >
+                                                            <FlexView marginTop={28} >
                                                                 <ReactPlayer
                                                                     url={
                                                                         typeof (createBusinessProfile.videoToBeUploaded) === "string"
@@ -3462,32 +2327,12 @@ class Profile extends Component {
                                         </Row>
                                     </FlexView>
 
-                                    <FlexView
-                                        grow={1}
-                                        hAlignContent="right"
-                                        marginTop={30}
-                                        marginBottom={20}
-                                    >
-                                        <FlexView
-                                            marginRight={20}
-                                        >
-                                            <Button
-                                                variant="outlined"
-                                                color="primary"
-                                                onClick={resetCreatingBusinessProfile}
-                                            >
-                                                Cancel
-                                            </Button>
+                                    <FlexView grow={1} hAlignContent="right" marginTop={30} marginBottom={20} >
+                                        <FlexView marginRight={20} >
+                                            <Button variant="outlined" color="primary" onClick={resetCreatingBusinessProfile}>Cancel</Button>
                                         </FlexView>
                                         <FlexView>
-                                            <Button
-                                                variant="contained"
-                                                color="primary"
-                                                onClick={uploadBusinessProfile}
-                                                disabled={this.shouldUploadButtonBeDisabled()}
-                                            >
-                                                Save
-                                            </Button>
+                                            <Button variant="contained" color="primary" onClick={uploadBusinessProfile} disabled={this.shouldUploadButtonBeDisabled()}>Save</Button>
                                         </FlexView>
                                     </FlexView>
                                 </FlexView>
@@ -3498,25 +2343,9 @@ class Profile extends Component {
                 );
             } else {
                 return (
-                    <FlexView
-                        column
-                    >
-                        <Typography
-                            variant="h6"
-                            color="primary"
-                        >
-                            Business profile
-                        </Typography>
-                        <Typography
-                            variant="body1"
-                            color="textSecondary"
-                            align="center"
-                            style={{
-                                marginTop: 15
-                            }}
-                        >
-                            Business profile has not been uploaded.
-                        </Typography>
+                    <FlexView column >
+                        <Typography variant="h6" color="primary" >Business profile</Typography>
+                        <Typography variant="body1" color="textSecondary" align="center" style={{ marginTop: 15 }} >Business profile has not been uploaded.</Typography>
                     </FlexView>
                 );
             }

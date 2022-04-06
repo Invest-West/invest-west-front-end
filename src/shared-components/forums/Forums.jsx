@@ -237,98 +237,47 @@ class Forums extends Component {
                 }
 
                 return (
-                    <FlexView
-                        column
-                    >
-                        <Typography
-                            variant="body2"
-                            color="textSecondary"
-                            align="left"
-                        >
+                    <FlexView column >
+                        <Typography variant="body2" color="textSecondary" align="left" >
                             Forums are made up of individual discussion threads that can be organised around a
                             particular subject.
                             Create forums to organise discussions.
                             <br/>
-                            <u>
-                                Note that all forums are visible across the Invest West network.
-                            </u>
+                            <u>Note that all forums are visible across the Invest West network.</u>
                         </Typography>
-                        <FlexView
-                            marginTop={35}
-                            marginBottom={35}
-                        >
+                        <FlexView marginTop={35} marginBottom={35} >
                             <Button
                                 color="primary"
                                 variant="outlined"
                                 className={css(sharedStyles.no_text_transform)}
                                 onClick={() => toggleCreateNewForum(true, null)}
                             >
-                                <AddIcon
-                                    fontSize="small"
-                                    style={{
-                                        marginRight: 10
-                                    }}
-                                />
+                                <AddIcon fontSize="small" style={{ marginRight: 10 }} />
                                 Create forum
                             </Button>
                         </FlexView>
 
                         {/** Filters */}
-                        <Container
-                            fluid
-                            style={{
-                                padding: 0,
-                                marginBottom: 40
-                            }}
-                        >
+                        <Container fluid style={{ padding: 0, marginBottom: 40 }} >
                             <Row>
                                 {
                                     currentUser.type === DB_CONST.TYPE_ADMIN
                                     && currentUser.superAdmin
                                         ?
-                                        <Col
-                                            xs={12}
-                                            sm={12}
-                                            md={4}
-                                            lg={2}
-                                        >
-                                            <FlexView
-                                                column
-                                            >
-                                                <Typography
-                                                    variant="body2"
-                                                    align="left"
-                                                    style={{
-                                                        marginBottom: 4
-                                                    }}
-                                                >
-                                                    Mode
-                                                </Typography>
+                                        <Col xs={12} sm={12} md={4} lg={2} >
+                                            <FlexView column >
+                                                <Typography variant="body2" align="left" style={{ marginBottom: 4 }}>Mode</Typography>
                                                 <Paper>
-                                                    <FormControl
-                                                        fullWidth
-                                                    >
+                                                    <FormControl fullWidth >
                                                         <Select
                                                             value={forumsLoadMode}
                                                             onChange={handleForumsInputChanged}
                                                             margin="dense"
                                                             input={
-                                                                <OutlinedInput
-                                                                    labelWidth={0}
-                                                                    name="forumsLoadMode"
-                                                                />
-                                                            }
+                                                                <OutlinedInput labelWidth={0} name="forumsLoadMode" /> }
                                                         >
-                                                            <MenuItem
-                                                                value={realtimeDBUtils.LOAD_LIVE_FORUMS}
-                                                            >
-                                                                Live forums
-                                                            </MenuItem>
-                                                            <MenuItem
-                                                                value={realtimeDBUtils.LOAD_DELETED_FORUMS}
-                                                            >
-                                                                Deleted forums
-                                                            </MenuItem>
+                                                            <MenuItem value={realtimeDBUtils.LOAD_LIVE_FORUMS}>Live forums</MenuItem>
+                                                            <MenuItem value={realtimeDBUtils.LOAD_DELETED_FORUMS}>Deleted forums</MenuItem>
                                                         </Select>
                                                     </FormControl>
                                                 </Paper>
@@ -337,54 +286,22 @@ class Forums extends Component {
                                         :
                                         null
                                 }
-                                <Col
-                                    xs={12}
-                                    sm={12}
-                                    md={4}
-                                    lg={2}
-                                >
-                                    <FlexView
-                                        column
-                                    >
-                                        <Typography
-                                            variant="body2"
-                                            align="left"
-                                            style={{
-                                                marginBottom: 4
-                                            }}
-                                        >
-                                            Sort by
-                                        </Typography>
+                                <Col xs={12} sm={12} md={4} lg={2} >
+                                    <FlexView column >
+                                        <Typography variant="body2" align="left" style={{ marginBottom: 4 }}>Sort by</Typography>
                                         <Paper>
-                                            <FormControl
-                                                fullWidth
-                                            >
+                                            <FormControl fullWidth >
                                                 <Select
                                                     value={forumsSortedMode}
                                                     onChange={handleForumsInputChanged}
                                                     margin="dense"
                                                     input={
-                                                        <OutlinedInput
-                                                            labelWidth={0}
-                                                            name="forumsSortedMode"
-                                                        />
+                                                        <OutlinedInput labelWidth={0} name="forumsSortedMode" />
                                                     }
                                                 >
-                                                    <MenuItem
-                                                        value={SORT_BY_LAST}
-                                                    >
-                                                        Newest
-                                                    </MenuItem>
-                                                    <MenuItem
-                                                        value={SORT_BY_CURRENT_USER}
-                                                    >
-                                                        Mine
-                                                    </MenuItem>
-                                                    <MenuItem
-                                                        value={SORT_BY_OLDEST}
-                                                    >
-                                                        Oldest
-                                                    </MenuItem>
+                                                    <MenuItem value={SORT_BY_LAST}>Newest</MenuItem>
+                                                    <MenuItem value={SORT_BY_CURRENT_USER}>Mine</MenuItem>
+                                                    <MenuItem value={SORT_BY_OLDEST}>Oldest</MenuItem>
                                                 </Select>
                                             </FormControl>
                                         </Paper>
@@ -394,11 +311,7 @@ class Forums extends Component {
                         </Container>
 
                         {/** Forums table */}
-                        <Paper
-                            style={{
-                                overflowX: "auto"
-                            }}
-                        >
+                        <Paper style={{ overflowX: "auto" }} >
                             <Table>
                                 <TableHead>
                                     <TableRow>
@@ -412,13 +325,7 @@ class Forums extends Component {
                                                     groupProperties.settings.primaryColor
                                             }
                                             component={
-                                                <Typography
-                                                    align="left"
-                                                    variant="body2"
-                                                    className={css(sharedStyles.white_text)}
-                                                >
-                                                    <b>Date</b>
-                                                </Typography>
+                                                <Typography align="left" variant="body2" className={css(sharedStyles.white_text)}><b>Date</b></Typography>
                                             }
                                         />
                                         <StyledTableCell
@@ -431,13 +338,7 @@ class Forums extends Component {
                                                     groupProperties.settings.primaryColor
                                             }
                                             component={
-                                                <Typography
-                                                    align="left"
-                                                    variant="body2"
-                                                    className={css(sharedStyles.white_text)}
-                                                >
-                                                    <b>Forum</b>
-                                                </Typography>
+                                                <Typography align="left" variant="body2" className={css(sharedStyles.white_text)}><b>Forum</b></Typography>
                                             }
                                         />
                                         <StyledTableCell
@@ -450,13 +351,7 @@ class Forums extends Component {
                                                     groupProperties.settings.primaryColor
                                             }
                                             component={
-                                                <Typography
-                                                    align="left"
-                                                    variant="body2"
-                                                    className={css(sharedStyles.white_text)}
-                                                >
-                                                    <b>Description</b>
-                                                </Typography>
+                                                <Typography align="left" variant="body2" className={css(sharedStyles.white_text)}><b>Description</b></Typography>
                                             }
                                         />
                                         <StyledTableCell
@@ -469,13 +364,7 @@ class Forums extends Component {
                                                     groupProperties.settings.primaryColor
                                             }
                                             component={
-                                                <Typography
-                                                    align="left"
-                                                    variant="body2"
-                                                    className={css(sharedStyles.white_text)}
-                                                >
-                                                    <b>Author</b>
-                                                </Typography>
+                                                <Typography align="left" variant="body2" className={css(sharedStyles.white_text)}><b>Author</b></Typography>
                                             }
                                         />
                                     </TableRow>
@@ -564,14 +453,8 @@ class Forums extends Component {
         if (!forumsLoaded) {
             return (
                 <TableRow>
-                    <TableCell
-                        colSpan={4}
-                    >
-                        <FlexView
-                            hAlignContent="center"
-                            marginTop={20}
-                            marginBottom={20}
-                        >
+                    <TableCell colSpan={4} >
+                        <FlexView hAlignContent="center" marginTop={20} marginBottom={20} >
                             <HashLoader
                                 color={
                                     !groupProperties
@@ -615,19 +498,8 @@ class Forums extends Component {
         if (sortedForums.length === 0) {
             return (
                 <TableRow>
-                    <TableCell
-                        colSpan={4}
-                    >
-                        <Typography
-                            variant="body1"
-                            align="center"
-                            style={{
-                                marginTop: 20,
-                                marginBottom: 20
-                            }}
-                        >
-                            No forums created.
-                        </Typography>
+                    <TableCell colSpan={4} >
+                        <Typography variant="body1" align="center" style={{ marginTop: 20, marginBottom: 20 }}>No forums created.</Typography>
                     </TableCell>
                 </TableRow>
             );
@@ -665,12 +537,7 @@ class Forums extends Component {
         }
 
         return (
-            <Container
-                fluid
-                style={{
-                    padding: 30
-                }}
-            >
+            <Container fluid style={{ padding: 30 }} >
                 {
                     this.renderContent()
                 }
@@ -702,37 +569,13 @@ class ForumRow extends Component {
         } = this.props;
 
         return (
-            <TableRow
-                hover
-            >
-                <TableCell>
-                    <Typography
-                        align="left"
-                        variant="body2"
-                    >
-                        {utils.dateTimeInReadableFormat(forum.dateCreated)}
-                    </Typography>
+            <TableRow hover >
+                <TableCell> <Typography align="left" variant="body2">{utils.dateTimeInReadableFormat(forum.dateCreated)}</Typography>
                 </TableCell>
-                <TableCell
-                    style={{
-                        maxWidth: 400
-                    }}
-                >
-                    <FlexView
-                        column
-                        hAlignContent="left"
-                    >
-                        <ButtonBase
-                            onClick={() => this.onForumClick(forum)}
-                        >
-                            <Typography
-                                align="left"
-                                variant="body2"
-                                color="primary"
-                                noWrap
-                            >
-                                {forum.name}
-                            </Typography>
+                <TableCell style={{ maxWidth: 400 }} >
+                    <FlexView column hAlignContent="left" >
+                        <ButtonBase onClick={() => this.onForumClick(forum)} >
+                            <Typography align="left" variant="body2" color="primary" noWrap>{forum.name}</Typography>
                         </ButtonBase>
                         {
                             currentUser.type === DB_CONST.TYPE_ADMIN
@@ -745,26 +588,16 @@ class ForumRow extends Component {
                                 )
                             )
                                 ?
-                                <FlexView
-                                    marginTop={12}
-                                >
+                                <FlexView marginTop={12} >
                                     <Button
                                         variant="outlined"
                                         className={css(sharedStyles.no_text_transform)}
                                         size="small"
                                         color="secondary"
                                         onClick={() => deleteForum(forum.id)}
-                                        style={{
-                                            marginRight: 10
-                                        }}
-                                    >
-                                        Delete
-                                        <DeleteIcon
-                                            fontSize="small"
-                                            style={{
-                                                marginLeft: 6
-                                            }}
-                                        />
+                                        style={{ marginRight: 10 }}
+                                    >Delete
+                                        <DeleteIcon fontSize="small" style={{ marginLeft: 6 }} />
                                     </Button>
                                     <Button
                                         variant="outlined"
@@ -772,14 +605,8 @@ class ForumRow extends Component {
                                         size="small"
                                         color="primary"
                                         onClick={() => toggleEditForum(true, JSON.parse(JSON.stringify(forum)))}
-                                    >
-                                        Edit
-                                        <EditIcon
-                                            fontSize="small"
-                                            style={{
-                                                marginLeft: 6
-                                            }}
-                                        />
+                                    >Edit
+                                        <EditIcon fontSize="small" style={{ marginLeft: 6 }}/>
                                     </Button>
                                 </FlexView>
                                 :
@@ -787,29 +614,11 @@ class ForumRow extends Component {
                         }
                     </FlexView>
                 </TableCell>
-                <TableCell
-                    style={{
-                        maxWidth: 400
-                    }}
-                >
-                    <Typography
-                        variant="body2"
-                        align="left"
-                        noWrap
-                    >
-                        {forum.description}
-                    </Typography>
+                <TableCell style={{ maxWidth: 400 }}>
+                    <Typography variant="body2" align="left" noWrap>{forum.description}</Typography>
                 </TableCell>
-                <TableCell
-                    style={{
-                        maxWidth: 200
-                    }}
-                >
-                    <Typography
-                        align="left"
-                        variant="body2"
-                        noWrap
-                    >
+                <TableCell style={{ maxWidth: 200 }} >
+                    <Typography align="left" variant="body2" noWrap >
                         {
                             forum.author.type !== DB_CONST.TYPE_ADMIN
                                 ?

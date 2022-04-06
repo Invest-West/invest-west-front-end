@@ -72,32 +72,11 @@ class Resources extends Component<ResourcesProps & Readonly<RouteComponentProps<
             paddingX={MediaQueryState.isMobile ? "20px" : "56px"}
             paddingY={MediaQueryState.isMobile ? "15px" : "40px"}
         >
-            <Row
-                noGutters
-            >
-                <Col
-                    xs={12}
-                    sm={12}
-                    md={{span: 8, offset: 2}}
-                    lg={{span: 4, offset: 4}}
-                >
-                    <Card
-                        elevation={0}
-                    >
-                        <Box
-                            display="flex"
-                            flexDirection="column"
-                            alignItems="center"
-                            bgcolor={getGroupRouteTheme(ManageGroupUrlState).palette.primary.main}
-                            color="white"
-                            paddingY="28px"
-                        >
-                            <Typography
-                                variant="h6"
-                                align="center"
-                            >
-                                Resources on Invest West
-                            </Typography>
+            <Row noGutters>
+                <Col xs={12} sm={12} md={{span: 8, offset: 2}} lg={{span: 4, offset: 4}}>
+                    <Card elevation={0}>
+                        <Box display="flex" flexDirection="column" alignItems="center" bgcolor={getGroupRouteTheme(ManageGroupUrlState).palette.primary.main} color="white" paddingY="28px">
+                            <Typography variant="h6" align="center">Resources on Invest West</Typography>
                         </Box>
                     </Card>
                 </Col>
@@ -130,31 +109,15 @@ class Resources extends Component<ResourcesProps & Readonly<RouteComponentProps<
             {/*}*/}
 
             {/** Resources area */}
-            <Box
-                marginTop="30px"
-            >
-                <Row
-                    noGutters
-                >
-                    <Col
-                        xs={12}
-                        sm={12}
-                        md={12}
-                        lg={12}
-                    >
+            <Box marginTop="30px">
+                <Row noGutters>
+                    <Col xs={12} sm={12} md={12} lg={12}>
                         <Row>
                             {
                                 resources
                                     .map(resource =>
-                                        <Col
-                                            key={resource.name}
-                                            xs={12}
-                                            sm={12}
-                                            md={3}
-                                        >
-                                            <ResourceItem
-                                                resource={resource}
-                                            />
+                                        <Col key={resource.name} xs={12} sm={12} md={3}>
+                                            <ResourceItem resource={resource}/>
                                         </Col>
                                     )
                             }

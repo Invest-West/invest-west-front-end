@@ -46,13 +46,7 @@ class FeedbackSnackbarNew extends Component<FeedbackSnackbarProps, any> {
                 exit: 130
             }}
         >
-            <Alert
-                variant="filled"
-                severity={FeedbackSnackbarLocalState.type}
-                onClose={close}
-            >
-                {FeedbackSnackbarLocalState.message}
-            </Alert>
+            <Alert variant="filled" severity={FeedbackSnackbarLocalState.type} onClose={close}>{FeedbackSnackbarLocalState.message}</Alert>
         </Snackbar>;
     }
 }

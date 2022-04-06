@@ -60,6 +60,8 @@ class Front extends Component<FrontProps & Readonly<RouteComponentProps<RoutePar
 
                         <Box width="35px"/>
 
+                        <Box width="35px"/>
+
                         <CustomLink
                             url={
                                 isAuthenticating(AuthenticationState)

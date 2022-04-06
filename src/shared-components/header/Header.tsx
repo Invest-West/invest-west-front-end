@@ -56,34 +56,11 @@ class Header extends Component<HeaderProps, {}> {
             signInUrl
         } = this.props;
 
-        return <Container
-            fluid
-            style={{
-                padding: 0
-            }}
-        >
-            <Row
-                noGutters
-                style={{
-                    paddingTop: 10,
-                    paddingBottom: 10,
-                    backgroundColor: appColors.white
-                }}
-            >
+        return <Container fluid style={{ padding: 0 }} >
+            <Row noGutters style={{ paddingTop: 10, paddingBottom: 10, backgroundColor: appColors.white }}>
                 {/** Home/Dashboard */}
-                <Col
-                    xs={{span: 6, order: 3}}
-                    sm={{span: 6, order: 3}}
-                    md={{span: 4, order: 1}}
-                    lg={{span: 4, order: 1}}
-                >
-                    <Box
-                        display="flex"
-                        flexDirection="row"
-                        height="100%"
-                        alignItems="center"
-                        marginLeft="30px"
-                    >
+                <Col xs={{span: 6, order: 3}} sm={{span: 6, order: 3}} md={{span: 4, order: 1}} lg={{span: 4, order: 1}} >
+                    <Box display="flex" flexDirection="row" height="100%" alignItems="center" marginLeft="30px" >
                         {
                             successfullyAuthenticated(AuthenticationState)
                                 ? null
@@ -98,11 +75,7 @@ class Header extends Component<HeaderProps, {}> {
                                     url={homUrl}
                                     component="nav-link"
                                     childComponent={
-                                        <Typography
-                                            variant="body1"
-                                        >
-                                            Home
-                                        </Typography>
+                                        <Typography variant="body1">Home</Typography>
                                     }
                                 />
                         }
@@ -123,11 +96,7 @@ class Header extends Component<HeaderProps, {}> {
                                     url={dashboardUrl}
                                     component="nav-link"
                                     childComponent={
-                                        <Typography
-                                            variant="body1"
-                                        >
-                                            Dashboard
-                                        </Typography>
+                                        <Typography variant="body1">Dashboard</Typography>
                                     }
                                 />
                         }
@@ -135,18 +104,8 @@ class Header extends Component<HeaderProps, {}> {
                 </Col>
 
                 {/** Logo */}
-                <Col
-                    xs={{span: 12, order: 1}}
-                    sm={{span: 12, order: 1}}
-                    md={{span: 4, order: 2}}
-                    lg={{span: 4, order: 2}}
-                >
-                    <Box
-                        display="flex"
-                        flexDirection="column"
-                        justifyContent="center"
-                        alignItems="center"
-                    >
+                <Col xs={{span: 12, order: 1}} sm={{span: 12, order: 1}} md={{span: 4, order: 2}} lg={{span: 4, order: 2}}>
+                    <Box display="flex" flexDirection="column" justifyContent="center" alignItems="center">
                         <CustomLink
                             color="none"
                             activeColor="none"
@@ -154,14 +113,7 @@ class Header extends Component<HeaderProps, {}> {
                             url={homUrl}
                             component="nav-link"
                             childComponent={
-                                <Box
-                                    display="flex"
-                                    flexDirection="column"
-                                    width="125px"
-                                    height="100%"
-                                    justifyContent="center"
-                                    alignItems="center"
-                                >
+                                <Box display="flex" flexDirection="column" width="125px" height="100%" justifyContent="center" alignItems="center">
                                     <img
                                         alt="logo"
                                         src={
@@ -175,15 +127,9 @@ class Header extends Component<HeaderProps, {}> {
                                                         ? getGroupLogo(ManageGroupUrlState.group)
                                                         : null
                                         }
-                                        style={{
-                                            width: "auto",
-                                            height: 36,
-                                            objectFit: "contain"
-                                        }}
+                                        style={{ width: "auto", height: 36, objectFit: "contain" }}
                                     />
-                                    <Box
-                                        height="3px"
-                                    />
+                                    <Box height="3px" />
                                     <Box
                                         fontWeight="fontWeightBold"
                                         color={
@@ -192,10 +138,7 @@ class Header extends Component<HeaderProps, {}> {
                                                 : "primary.main"
                                         }
                                     >
-                                        <Typography
-                                            variant="body1"
-                                            noWrap
-                                        >
+                                        <Typography variant="body1" noWrap >
                                             {
                                                 Routes.isErrorRoute(routePath) || Routes.isSystemPublicRoute(routePath)
                                                     ? "Invest West"
@@ -216,39 +159,22 @@ class Header extends Component<HeaderProps, {}> {
                 {
                     !MediaQueryState.isMobile
                         ? null
-                        : <Col
-                            xs={{span: 12, order: 2}}
-                            sm={{span: 12, order: 2}}
-                        >
-                            <Box
-                                marginY="10px"
-                            >
+                        : <Col xs={{span: 12, order: 2}} sm={{span: 12, order: 2}} >
+                            <Box marginY="10px" >
                                 <Divider/>
                             </Box>
                         </Col>
                 }
 
                 {/** Sign in/Avatar */}
-                <Col
-                    xs={{span: 6, order: 4}}
-                    sm={{span: 6, order: 4}}
-                    md={{span: 4, order: 3}}
-                    lg={{span: 4, order: 3}}
-                >
+                <Col xs={{span: 6, order: 4}} sm={{span: 6, order: 4}} md={{span: 4, order: 3}} lg={{span: 4, order: 3}} >
                     {
                         isAuthenticating(AuthenticationState)
                             ? null
                             : !successfullyAuthenticated(AuthenticationState)
                             ? Routes.isSignInRoute(routePath)
                                 ? null
-                                : <Box
-                                    display="flex"
-                                    flexDirection="row"
-                                    height="100%"
-                                    justifyContent="flex-end"
-                                    alignItems="center"
-                                    marginRight="30px"
-                                >
+                                : <Box display="flex" flexDirection="row" height="100%" justifyContent="flex-end" alignItems="center" marginRight="30px" >
                                     <CustomLink
                                         color="none"
                                         activeColor="none"
@@ -257,14 +183,7 @@ class Header extends Component<HeaderProps, {}> {
                                         // TODO: When completely migrate to the new authentication flow, change this component to "nav-link"
                                         component="a"
                                         childComponent={
-                                            <Button
-                                                color="primary"
-                                                className={css(sharedStyles.no_text_transform)}
-                                                variant="contained"
-                                                size="medium"
-                                            >
-                                                Sign in
-                                            </Button>
+                                            <Button color="primary" className={css(sharedStyles.no_text_transform)} variant="contained" size="medium">Sign in</Button>
                                         }
                                     />
                                 </Box>
@@ -274,15 +193,8 @@ class Header extends Component<HeaderProps, {}> {
             </Row>
 
             {/** Divider */}
-            <Row
-                noGutters
-            >
-                <Col
-                    xs={12}
-                    sm={12}
-                    md={12}
-                    lg={12}
-                >
+            <Row noGutters >
+                <Col xs={12} sm={12} md={12} lg={12} >
                     <Divider/>
                 </Col>
             </Row>

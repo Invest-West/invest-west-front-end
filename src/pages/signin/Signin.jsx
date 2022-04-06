@@ -345,10 +345,7 @@ class Signin extends Component {
         } else {
             if (authenticating) {
                 return (
-                    <FlexView
-                        hAlignContent="center"
-                        marginBottom={20}
-                    >
+                    <FlexView hAlignContent="center" marginBottom={20} >
                         <HashLoader
                             color={
                                 !groupProperties
@@ -410,13 +407,8 @@ class Signin extends Component {
 
         if (!groupPropertiesLoaded) {
             return (
-                <FlexView
-                    marginTop={30}
-                    hAlignContent="center"
-                >
-                    <HashLoader
-                        color={colors.primaryColor}
-                    />
+                <FlexView marginTop={30} hAlignContent="center" >
+                    <HashLoader color={colors.primaryColor} />
                 </FlexView>
             );
         }
@@ -426,83 +418,26 @@ class Signin extends Component {
         }
 
         return (
-            <Container
-                fluid
-                style={{
-                    padding: 0,
-                    position: "fixed",
-                    top: 0,
-                    height: "100%",
-                    overflow: "auto",
-                    backgroundColor: colors.gray_200
-                }}
-            >
-                <Row
-                    noGutters
-                >
+            <Container fluid style={{ padding: 0, position: "fixed", top: 0, height: "100%", overflow: "auto", backgroundColor: colors.gray_200 }} >
+                <Row noGutters >
 
                     <HeaderWithoutDesc/>
 
-                    <Col
-                        xs={{span: 12, offset: 0}}
-                        md={{span: 6, offset: 3}}
-                        lg={{span: 6, offset: 3}}
-                        style={{
-                            padding: 20
-                        }}
-                    >
-                        <FlexView
-                            column
-                            marginTop={80}
-                            marginBottom={40}
-                            hAlignContent="center"
-                            vAlignContent="center"
-                        >
+                    <Col xs={{span: 12, offset: 0}} md={{span: 6, offset: 3}} lg={{span: 6, offset: 3}} style={{ padding: 20 }}>
+                        <FlexView column marginTop={80} marginBottom={40} hAlignContent="center" vAlignContent="center">
                             {/** Sign in card */}
-                            <Paper
-                                elevation={0}
-                                square
-                                className={css(sharedStyles.kick_starter_border_box)}
-                                style={{padding: 30}}
-                            >
-                                <form
-                                    onSubmit={this.handleSignin}
-                                >
-                                    <FlexView
-                                        column
-                                    >
-                                        <FlexView
-                                            column
-                                            hAlignContent="center"
-                                            marginBottom={35}
-                                        >
-                                            <Typography
-                                                variant="h4"
-                                                align="center"
-                                                paragraph
-                                                color="primary"
-                                            >
-                                                Sign in to your account
-                                            </Typography>
-                                            <Typography
-                                                variant="body1"
-                                                align="center"
-                                            >
-                                                Connecting businesses and investors across the South West of England
-                                            </Typography>
+                            <Paper elevation={0} square className={css(sharedStyles.kick_starter_border_box)} style={{padding: 30}}>
+                                <form onSubmit={this.handleSignin} >
+                                    <FlexView column >
+                                        <FlexView column hAlignContent="center" marginBottom={35} >
+                                            <Typography variant="h4" align="center" paragraph color="primary">Sign in to your account</Typography>
+                                            <Typography variant="body1" align="center">Connecting businesses and investors across the South West of England</Typography>
                                         </FlexView>
 
                                         {this.renderAuthStatus()}
 
                                         <FormControl>
-                                            <TextField
-                                                label="Email address"
-                                                name="email"
-                                                margin="normal"
-                                                variant="outlined"
-                                                error={this.state.error.email}
-                                                onChange={this.handleTextChanged}
-                                            />
+                                            <TextField label="Email address" name="email" margin="normal" variant="outlined" error={this.state.error.email} onChange={this.handleTextChanged}/>
                                         </FormControl>
 
                                         <FormControl>
@@ -516,14 +451,8 @@ class Signin extends Component {
                                                 onChange={this.handleTextChanged}
                                                 InputProps={{
                                                     endAdornment: (
-                                                        <InputAdornment
-                                                            position="end"
-                                                        >
-                                                            <IconButton
-                                                                edge="end"
-                                                                aria-label="Toggle password visibility"
-                                                                onClick={this.handleClickShowPassword}
-                                                            >
+                                                        <InputAdornment position="end" >
+                                                            <IconButton edge="end" aria-label="Toggle password visibility" onClick={this.handleClickShowPassword} >
                                                                 {
                                                                     !this.state.showPassword
                                                                         ?
@@ -538,77 +467,25 @@ class Signin extends Component {
                                             />
                                         </FormControl>
 
-                                        <FlexView
-                                            marginTop={35}
-                                            marginBottom={45}
-                                        >
-                                            <Typography
-                                                variant="body1"
-                                                align="left"
-                                            >
+                                        <FlexView marginTop={35} marginBottom={45} >
+                                            <Typography variant="body1" align="left" >
                                                 By clicking Sign In, you agree to our
-                                                <NavLink
-                                                    to={ROUTES.TERMS_OF_USE}
-                                                    target="_blank"
-                                                    className={css(sharedStyles.nav_link_hover)}
-                                                    style={{
-                                                        color:
-                                                            !groupProperties
-                                                                ?
-                                                                colors.primaryColor
-                                                                :
-                                                                groupProperties.settings.primaryColor
-                                                    }}
-                                                >
-                                                    <b>
-                                                        &nbsp;Terms of use&nbsp;
-                                                    </b>
+                                                <NavLink to={ROUTES.TERMS_OF_USE} target="_blank" className={css(sharedStyles.nav_link_hover)} style={{ color: !groupProperties ? colors.primaryColor : groupProperties.settings.primaryColor }}>
+                                                    <b> &nbsp;Terms of use&nbsp; </b>
                                                 </NavLink>
                                                 and our
-                                                <NavLink
-                                                    to={ROUTES.PRIVACY_POLICY}
-                                                    target="_blank"
-                                                    className={css(sharedStyles.nav_link_hover)}
-                                                    style={{
-                                                        color:
-                                                            !groupProperties
-                                                                ?
-                                                                colors.primaryColor
-                                                                :
-                                                                groupProperties.settings.primaryColor
-                                                    }}
-                                                >
-                                                    <b>
-                                                        &nbsp;Privacy policy.
-                                                    </b>
+                                                <NavLink to={ROUTES.PRIVACY_POLICY} target="_blank" className={css(sharedStyles.nav_link_hover)} style={{ color: !groupProperties ? colors.primaryColor : groupProperties.settings.primaryColor }} >
+                                                    <b> &nbsp;Privacy policy. </b>
                                                 </NavLink>
                                             </Typography>
                                         </FlexView>
 
                                         <FormControl>
-                                            <Button
-                                                type="submit"
-                                                variant="contained"
-                                                color="primary"
-                                                size="large"
-                                                className={css(sharedStyles.no_text_transform)}
-                                            >
-                                                Sign in
-                                            </Button>
+                                            <Button type="submit" variant="contained" color="primary" size="large" className={css(sharedStyles.no_text_transform)}>Sign in</Button>
                                         </FormControl>
 
-                                        <FlexView
-                                            hAlignContent="center"
-                                            marginTop={25}
-                                            onClick={this.openResetPasswordDialog}
-                                        >
-                                            <Typography
-                                                variant="body1"
-                                                color="primary"
-                                                className={css(sharedStyles.nav_link_hover)}
-                                            >
-                                                Forgot your password?
-                                            </Typography>
+                                        <FlexView hAlignContent="center" marginTop={25} onClick={this.openResetPasswordDialog} >
+                                            <Typography variant="body1" color="primary" className={css(sharedStyles.nav_link_hover)}>Forgot your password?</Typography>
                                         </FlexView>
                                     </FlexView>
                                 </form>
@@ -617,16 +494,7 @@ class Signin extends Component {
                     </Col>
                 </Row>
 
-                <ResetPasswordDialog
-                    groupProperties={groupProperties}
-                    open={this.state.resetPassword.resetPasswordDialogOpen}
-                    onClose={this.handleCloseResetPasswordDialog}
-                    onTextChanged={this.handleTextChanged}
-                    resetEmail={this.state.resetPassword.resetEmail}
-                    onSendEmailClick={this.handleSendResetEmail}
-                    resetChecking={this.state.resetPassword.resetChecking}
-                    resetError={this.state.resetPassword.resetError}
-                />
+                <ResetPasswordDialog groupProperties={groupProperties} open={this.state.resetPassword.resetPasswordDialogOpen} onClose={this.handleCloseResetPasswordDialog} onTextChanged={this.handleTextChanged} resetEmail={this.state.resetPassword.resetEmail} onSendEmailClick={this.handleSendResetEmail} resetChecking={this.state.resetPassword.resetChecking} resetError={this.state.resetPassword.resetError} />
             </Container>
         );
     }
@@ -656,10 +524,7 @@ class ResetPasswordDialog extends Component {
         } = this.props;
         if (resetChecking) {
             return (
-                <FlexView
-                    hAlignContent="center"
-                    marginBottom={30}
-                >
+                <FlexView hAlignContent="center" marginBottom={30} >
                     <HashLoader
                         color={
                             !groupProperties
@@ -674,19 +539,8 @@ class ResetPasswordDialog extends Component {
         } else {
             if (resetError) {
                 return (
-                    <FlexView
-                        style={{
-                            backgroundColor: colors.red_700
-                        }}
-                        vAlignContent="center"
-                        marginBottom={30}
-                    >
-                        <Typography
-                            variant="body1"
-                            className={css(styles.reset_email_error_text)}
-                        >
-                            Unable to send request password email
-                        </Typography>
+                    <FlexView style={{ backgroundColor: colors.red_700 }} vAlignContent="center" marginBottom={30} >
+                        <Typography variant="body1" className={css(styles.reset_email_error_text)}>Unable to send request password email</Typography>
                     </FlexView>
                 );
             } else {
@@ -708,108 +562,31 @@ class ResetPasswordDialog extends Component {
             ...other
         } = this.props;
         return (
-            <Dialog
-                fullWidth
-                maxWidth="sm"
-                onClose={this.handleClose}
-                {...other}
-            >
+            <Dialog fullWidth maxWidth="sm" onClose={this.handleClose} {...other} >
                 <DialogTitle>
-                    <FlexView
-                        hAlignContent="center"
-                        marginTop={20}
-                    >
-                        <Typography
-                            variant="h4"
-                            align="center"
-                            paragraph
-                        >
-                            Reset Your Password
-                        </Typography>
+                    <FlexView hAlignContent="center" marginTop={20} >
+                        <Typography variant="h4" align="center" paragraph>Reset Your Password</Typography>
                     </FlexView>
                 </DialogTitle>
-                <FlexView
-                    column
-                    hAlignContent="center"
-                >
-                    <FlexView
-                        column
-                        marginRight={60}
-                        marginLeft={60}
-                    >
-                        <Typography
-                            variant="body1"
-                            align="center"
-                            paragraph
-                        >
-                            Please provide the email address you used
-                            when you signed up for your Invest West account.
-                        </Typography>
-                        <Typography
-                            variant="body1"
-                            align="center"
-                            paragraph
-                        >
-                            We will send you an email with a link to
-                            reset your password. <b>Please note that this link will only be valid for up to 3 hours.</b>
-                        </Typography>
+                <FlexView column hAlignContent="center" >
+                    <FlexView column marginRight={60} marginLeft={60} >
+                        <Typography variant="body1" align="center" paragraph>Please provide the email address you used when you signed up for your Invest West account.</Typography>
+                        <Typography variant="body1" align="center" paragraph>We will send you an email with a link to reset your password. <b>Please note that this link will only be valid for up to 3 hours.</b></Typography>
                     </FlexView>
-                    <FlexView
-                        column
-                        width="100%"
-                        marginTop={50}
-                        className={css(styles.reset_password_actions_layout)}
-                    >
+                    <FlexView column width="100%" marginTop={50} className={css(styles.reset_password_actions_layout)}>
 
                         {this.renderReset()}
 
-                        <Container
-                            fluid
-                            style={{
-                                padding: 0
-                            }}
-                        >
+                        <Container fluid style={{ padding: 0 }}>
                             <Row>
-                                <Col
-                                    xs={12}
-                                    sm={12}
-                                    md={7}
-                                    lg={9}
-                                >
-                                    <FlexView
-                                        height="100%"
-                                        vAlignContent="center"
-                                    >
-                                        <TextField
-                                            name="resetEmail"
-                                            value={resetEmail}
-                                            label="Email address"
-                                            variant="outlined"
-                                            fullWidth
-                                            onChange={this.onTextChanged}
-                                        />
+                                <Col xs={12} sm={12} md={7} lg={9}>
+                                    <FlexView height="100%" vAlignContent="center">
+                                        <TextField name="resetEmail" value={resetEmail} label="Email address" variant="outlined" fullWidth onChange={this.onTextChanged}/>
                                     </FlexView>
                                 </Col>
-                                <Col
-                                    xs={12}
-                                    sm={12}
-                                    md={5}
-                                    lg={3}
-                                >
-                                    <FlexView
-                                        height="100%"
-                                        vAlignContent="center"
-                                    >
-                                        <Button
-                                            fullWidth
-                                            color="primary"
-                                            variant="contained"
-                                            size="medium"
-                                            onClick={this.onSendEmailClick}
-                                            className={css(sharedStyles.no_text_transform)}
-                                        >
-                                            Send
-                                        </Button>
+                                <Col xs={12} sm={12} md={5} lg={3}>
+                                    <FlexView height="100%" vAlignContent="center">
+                                        <Button fullWidth color="primary" variant="contained" size="medium" onClick={this.onSendEmailClick} className={css(sharedStyles.no_text_transform)}>Send</Button>
                                     </FlexView>
                                 </Col>
                             </Row>

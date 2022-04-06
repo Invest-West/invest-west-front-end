@@ -16,7 +16,7 @@ export default class Routes {
     static nonGroupFront: string = "/";
     static groupFront: string = `${Routes.baseGroup}`;
 
-    static nonGroupSignIn: string = "/signin";
+    static nonGroupSignIn: string = "/groups/invest-west/signin";
     static groupSignIn: string = `${Routes.baseGroup}/signin`;
     static superAdminSignIn: string = "/signin/super-admin";
 
@@ -301,6 +301,7 @@ export default class Routes {
         }
     }
 
+
     /**
      * Construct dashboard route (navigate to Dashboard page)
      *
@@ -521,6 +522,9 @@ export const VIEW_GROUP_DETAILS_INVEST_WEST_SUPER = "/view-group-details/:groupI
 
 export const CONTACT_US = `${GROUP_PATH}/contact-us`;
 export const CONTACT_US_INVEST_WEST_SUPER = "/contact-us";
+
+export const CONTACT_US_2 = `${GROUP_PATH}/contact-us-2`;
+export const CONTACT_US_INVEST_WEST_SUPER_2 = "/contact-us-2";
 
 export const HELP = `${GROUP_PATH}/help`;
 export const HELP_INVEST_WEST_SUPER = "/help";

@@ -49,10 +49,7 @@ export default class DocumentsDownload extends Component {
         }
 
         return (
-            <FlexView
-                column
-                marginTop={20}
-            >
+            <FlexView column marginTop={20} >
                 <List>
                     {
                         documents.map((document, index) => (
@@ -60,10 +57,7 @@ export default class DocumentsDownload extends Component {
                                 ?
                                 null
                                 :
-                                <FlexView
-                                    key={index}
-                                    vAlignContent="center"
-                                >
+                                <FlexView key={index} vAlignContent="center" >
                                     {
                                         <a
                                             href={document.downloadURL}
@@ -74,35 +68,15 @@ export default class DocumentsDownload extends Component {
                                                 width: "100%"
                                             }}
                                         >
-                                            <ListItem
-                                                button
-                                                style={{
-                                                    padding: 7
-                                                }}
-                                            >
+                                            <ListItem button style={{ padding: 7 }} >
                                                 <img
                                                     alt="Document"
                                                     className={css(styles.preview_icon)}
                                                     src={require("../../img/document_icon.png").default}
                                                 />
-                                                <FlexView
-                                                    column
-                                                    hAlignContent="left"
-                                                >
-                                                    <Typography
-                                                        variant="body2"
-                                                        className={css(styles.black_text)}
-                                                        align="left"
-                                                    >
-                                                        {document.fileName}
-                                                    </Typography>
-                                                    <Typography
-                                                        variant="body2"
-                                                        color="textSecondary"
-                                                        align="left"
-                                                    >
-                                                        {document.readableSize}
-                                                    </Typography>
+                                                <FlexView column hAlignContent="left" >
+                                                    <Typography variant="body2" className={css(styles.black_text)} align="left">{document.fileName}</Typography>
+                                                    <Typography variant="body2" color="textSecondary" align="left" >{document.readableSize}</Typography>
                                                 </FlexView>
                                             </ListItem>
                                         </a>
@@ -115,22 +89,13 @@ export default class DocumentsDownload extends Component {
                                                 flip
                                                 placement="top"
                                                 overlay={
-                                                    <Tooltip
-                                                        id={`tooltip-top`}
-                                                    >
-                                                        Delete this document
-                                                    </Tooltip>
+                                                    <Tooltip id={`tooltip-top`}>Delete this document</Tooltip>
                                                 }>
                                                 <IconButton
-                                                    style={{
-                                                        width: 44,
-                                                        height: 44
-                                                    }}
+                                                    style={{ width: 44, height: 44 }}
                                                     onClick={() => this.onDeleteDocument(index)}
                                                 >
-                                                    <CloseIcon
-                                                        fontSize="small"
-                                                    />
+                                                    <CloseIcon fontSize="small" />
                                                 </IconButton>
                                             </OverlayTrigger>
                                             :

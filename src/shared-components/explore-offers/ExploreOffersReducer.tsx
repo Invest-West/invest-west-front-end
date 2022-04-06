@@ -8,6 +8,7 @@ import {
 } from "./ExploreOffersActions";
 import {ProjectInstance} from "../../models/project";
 import {FetchProjectsPhaseOptions} from "../../api/repositories/OfferRepository";
+import {OffersTableStates} from "../offers-table/OffersTableReducer";
 
 export const maxOffersPerPage: number = 12;
 
@@ -20,7 +21,7 @@ export interface ExploreOffersState {
     visibilityFilter: number | "all";
     sectorFilter: string | "all";
     phaseFilter: string | number | "all";
-
+    groupFilter: string | "all";
     currentPage: number;
 
     error?: Error;
@@ -35,7 +36,7 @@ const initialState: ExploreOffersState = {
     visibilityFilter: "all",
     sectorFilter: "all",
     phaseFilter: FetchProjectsPhaseOptions.LivePitch,
-
+    groupFilter: "all",
     currentPage: 1
 }
 
@@ -48,6 +49,10 @@ export const isFetchingOffers = (state: ExploreOffersState) => {
 }
 
 export const successfullyFetchedOffers = (state: ExploreOffersState) => {
+    return state.offersFetched && !state.fetchingOffers && state.error === undefined;
+}
+
+export const successfullyFetchedOffers2 = (state: OffersTableStates) => {
     return state.offersFetched && !state.fetchingOffers && state.error === undefined;
 }
 
@@ -104,6 +109,7 @@ const exploreOffersReducer = (state: ExploreOffersState = initialState, action: 
                     ? {detail: completeFetchingOffersAction.error} : state.error
             }
         case ExploreOffersEvents.FilterChanged:
+            console.log("Filter changed")
             const filterChangedAction: FilterChangedAction = action as FilterChangedAction;
             return {
                 ...state,

@@ -113,15 +113,7 @@ class SidebarContent extends Component {
                 height="100%"
             >
                 {/** Sidebar header */}
-                <FlexView
-                    column
-                    height={65}
-                    vAlignContent="center"
-                    hAlignContent="center"
-                    style={{
-                        padding: 8
-                    }}
-                >
+                <FlexView column height={65} vAlignContent="center" hAlignContent="center" style={{ padding: 8 }} >
                     <NavLink
                         to={
                             groupUserName
@@ -132,13 +124,7 @@ class SidebarContent extends Component {
                         }
                     >
                         <Image
-                            style={{
-                                width: "auto",
-                                height: 65,
-                                margin: 0,
-                                padding: 10,
-                                objectFit: "scale-down"
-                            }}
+                            style={{ width: "auto", height: 65, margin: 0, padding: 10, objectFit: "scale-down" }}
                             src={
                                 !groupProperties
                                     ?
@@ -153,31 +139,18 @@ class SidebarContent extends Component {
                 <Divider/>
 
                 {/** Main navigation */}
-                <FlexView
-                    column
-                    marginTop={10}
-                >
+                <FlexView column marginTop={10} >
                     {/** Home tab */}
                     <List>
                         <NavLink
-                            to={{
-                                pathname: dashboardProps.match.pathname,
-                                search: `?tab=${HOME_TAB}`
-                            }}
+                            to={{ pathname: dashboardProps.match.pathname, search: `?tab=${HOME_TAB}` }}
                             className={css(sharedStyles.nav_link_white_text_hover_without_changing_text_color)}
                         >
-                            <ListItem
-                                button
-                                onClick={() => toggleSidebar(false)}
-                            >
+                            <ListItem button onClick={() => toggleSidebar(false)} >
                                 <ListItemIcon>
                                     <HomeIcon/>
                                 </ListItemIcon>
-                                <ListItemText
-                                    className={css(sharedStyles.black_text)}
-                                >
-                                    {HOME_TAB}
-                                </ListItemText>
+                                <ListItemText className={css(sharedStyles.black_text)}>{HOME_TAB}</ListItemText>
                             </ListItem>
                         </NavLink>
 
@@ -214,10 +187,7 @@ class SidebarContent extends Component {
                                 user.type === DB_CONST.TYPE_ISSUER
                                     ?
                                     <NavLink
-                                        to={{
-                                            pathname: dashboardProps.match.pathname,
-                                            search: `?tab=${MY_OFFERS_TAB}`
-                                        }}
+                                        to={{ pathname: dashboardProps.match.pathname, search: `?tab=${MY_OFFERS_TAB}` }}
                                         className={css(sharedStyles.nav_link_white_text_hover_without_changing_text_color)}
                                     >
                                         <ListItem
@@ -227,11 +197,7 @@ class SidebarContent extends Component {
                                             <ListItemIcon>
                                                 <ProjectIcon/>
                                             </ListItemIcon>
-                                            <ListItemText
-                                                className={css(sharedStyles.black_text)}
-                                            >
-                                                {MY_OFFERS_TAB}
-                                            </ListItemText>
+                                            <ListItemText className={css(sharedStyles.black_text)}>{MY_OFFERS_TAB}</ListItemText>
                                         </ListItem>
                                     </NavLink>
                                     :
@@ -251,18 +217,11 @@ class SidebarContent extends Component {
                                     }}
                                     className={css(sharedStyles.nav_link_white_text_hover_without_changing_text_color)}
                                 >
-                                    <ListItem
-                                        button
-                                        onClick={() => toggleSidebar(false)}
-                                    >
+                                    <ListItem button onClick={() => toggleSidebar(false)} >
                                         <ListItemIcon>
                                             <ProjectIcon/>
                                         </ListItemIcon>
-                                        <ListItemText
-                                            className={css(sharedStyles.black_text)}
-                                        >
-                                            {EXPLORE_OFFERS_TAB}
-                                        </ListItemText>
+                                        <ListItemText className={css(sharedStyles.black_text)}>{EXPLORE_OFFERS_TAB}</ListItemText>
                                     </ListItem>
                                 </NavLink>
                         }
@@ -275,18 +234,11 @@ class SidebarContent extends Component {
                             }}
                             className={css(sharedStyles.nav_link_white_text_hover_without_changing_text_color)}
                         >
-                            <ListItem
-                                button
-                                onClick={() => toggleSidebar(false)}
-                            >
+                            <ListItem button onClick={() => toggleSidebar(false)} >
                                 <ListItemIcon>
                                     <BubbleChartIcon/>
                                 </ListItemIcon>
-                                <ListItemText
-                                    className={css(sharedStyles.black_text)}
-                                >
-                                    {EXPLORE_GROUPS_TAB}
-                                </ListItemText>
+                                <ListItemText className={css(sharedStyles.black_text)}>{EXPLORE_GROUPS_TAB}</ListItemText>
                             </ListItem>
                         </NavLink>
 
@@ -298,29 +250,18 @@ class SidebarContent extends Component {
                             }}
                             className={css(sharedStyles.nav_link_white_text_hover_without_changing_text_color)}
                         >
-                            <ListItem
-                                button
-                                onClick={() => toggleSidebar(false)}
-                            >
+                            <ListItem button onClick={() => toggleSidebar(false)} >
                                 <ListItemIcon>
                                     <School/>
                                 </ListItemIcon>
-                                <ListItemText
-                                    className={css(sharedStyles.black_text)}
-                                >
-                                    {RESOURCES_TAB}
-                                </ListItemText>
+                                <ListItemText className={css(sharedStyles.black_text)}>{RESOURCES_TAB}</ListItemText>
                             </ListItem>
                         </NavLink>
                     </List>
                 </FlexView>
 
                 {/** Footer navigation */}
-                <FlexView
-                    column
-                    height='100%'
-                    vAlignContent="bottom"
-                >
+                <FlexView column height='100%' vAlignContent="bottom" >
                     <List>
                         {/** Profile tab (for normal users) || Settings tab (for admins) */}
                         {
@@ -337,18 +278,11 @@ class SidebarContent extends Component {
                                         }}
                                         className={css(sharedStyles.nav_link_white_text_hover_without_changing_text_color)}
                                     >
-                                        <ListItem
-                                            button
-                                            onClick={() => toggleSidebar(false)}
-                                        >
+                                        <ListItem button onClick={() => toggleSidebar(false)} >
                                             <ListItemIcon>
                                                 <WorkIcon/>
                                             </ListItemIcon>
-                                            <ListItemText
-                                                className={css(sharedStyles.black_text)}
-                                            >
-                                                {PROFILE_TAB}
-                                            </ListItemText>
+                                            <ListItemText className={css(sharedStyles.black_text)}>{PROFILE_TAB}</ListItemText>
                                         </ListItem>
                                     </NavLink>
                                     :
@@ -359,18 +293,11 @@ class SidebarContent extends Component {
                                         }}
                                         className={css(sharedStyles.nav_link_white_text_hover_without_changing_text_color)}
                                     >
-                                        <ListItem
-                                            button
-                                            onClick={() => toggleSidebar(false)}
-                                        >
+                                        <ListItem button onClick={() => toggleSidebar(false)} >
                                             <ListItemIcon>
                                                 <SettingsIcon/>
                                             </ListItemIcon>
-                                            <ListItemText
-                                                className={css(sharedStyles.black_text)}
-                                            >
-                                                {SETTINGS_TAB}
-                                            </ListItemText>
+                                            <ListItemText className={css(sharedStyles.black_text)}>{SETTINGS_TAB}</ListItemText>
                                         </ListItem>
                                     </NavLink>
                         }
@@ -388,16 +315,11 @@ class SidebarContent extends Component {
                                     }}
                                     className={css(sharedStyles.nav_link_white_text_hover_without_changing_text_color)}
                                 >
-                                    <ListItem
-                                        button
-                                        onClick={() => toggleSidebar(false)}
-                                    >
+                                    <ListItem button onClick={() => toggleSidebar(false)} >
                                         <ListItemIcon>
                                             <HistoryIcon/>
                                         </ListItemIcon>
-                                        <ListItemText
-                                            className={css(sharedStyles.black_text)}
-                                        >
+                                        <ListItemText className={css(sharedStyles.black_text)} >
                                             {
                                                 GROUP_ACTIVITIES_TAB
                                             }
@@ -419,18 +341,11 @@ class SidebarContent extends Component {
                                     }}
                                     className={css(sharedStyles.nav_link_white_text_hover_without_changing_text_color)}
                                 >
-                                    <ListItem
-                                        button
-                                        onClick={() => toggleSidebar(false)}
-                                    >
+                                    <ListItem button onClick={() => toggleSidebar(false)} >
                                         <ListItemIcon>
                                             <VerifiedUserIcon/>
                                         </ListItemIcon>
-                                        <ListItemText
-                                            className={css(sharedStyles.black_text)}
-                                        >
-                                            {CHANGE_PASSWORD_TAB}
-                                        </ListItemText>
+                                        <ListItemText className={css(sharedStyles.black_text)}>{CHANGE_PASSWORD_TAB}</ListItemText>
                                     </ListItem>
                                 </NavLink>
                         }
@@ -472,18 +387,11 @@ class SidebarContent extends Component {
                                     }
                                     className={css(sharedStyles.nav_link_white_text_hover_without_changing_text_color)}
                                 >
-                                    <ListItem
-                                        button
-                                        onClick={() => toggleSidebar(false)}
-                                    >
+                                    <ListItem button onClick={() => toggleSidebar(false)} >
                                         <ListItemIcon>
                                             <ContactSupportIcon/>
                                         </ListItemIcon>
-                                        <ListItemText
-                                            className={css(sharedStyles.black_text)}
-                                        >
-                                            {CONTACT_US_TAB}
-                                        </ListItemText>
+                                        <ListItemText className={css(sharedStyles.black_text)}>{CONTACT_US_TAB}</ListItemText>
                                     </ListItem>
                                 </NavLink>
                         }
@@ -506,33 +414,21 @@ class SidebarContent extends Component {
                                     }
                                     className={css(sharedStyles.nav_link_white_text_hover_without_changing_text_color)}
                                 >
-                                    <ListItem
-                                        button
-                                        onClick={() => toggleSidebar(false)}
-                                    >
+                                    <ListItem button onClick={() => toggleSidebar(false)} >
                                         <ListItemIcon>
                                             <InfoIcon/>
                                         </ListItemIcon>
-                                        <ListItemText
-                                            className={css(sharedStyles.black_text)}
-                                        >
-                                            {GUIDELINE_TAB}
-                                        </ListItemText>
+                                        <ListItemText className={css(sharedStyles.black_text)}>{GUIDELINE_TAB}</ListItemText>
                                     </ListItem>
                                 </NavLink>
                         }
 
                         {/** Logout tab */}
-                        <ListItem
-                            button
-                            onClick={this.onLogoutClick}
-                        >
+                        <ListItem button onClick={this.onLogoutClick} >
                             <ListItemIcon>
                                 <ArrowLeft/>
                             </ListItemIcon>
-                            <ListItemText>
-                                Logout
-                            </ListItemText>
+                            <ListItemText>Logout</ListItemText>
                         </ListItem>
                     </List>
                 </FlexView>

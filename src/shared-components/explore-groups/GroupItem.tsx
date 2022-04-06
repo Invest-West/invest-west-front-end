@@ -103,59 +103,26 @@ class GroupItem extends Component<GroupItemProps, any> {
                             }
                         >
                             <Box>
-                                <Box
-                                    display="flex"
-                                    height="220px"
-                                    justifyContent="center"
-                                    bgcolor={colors.grey["200"]}
-                                >
+                                <Box display="flex" height="220px" justifyContent="center" bgcolor={colors.grey["200"]} >
                                     <Image
                                         alt={`${group.displayName} logo`}
                                         src={getGroupLogo(group) ?? undefined}
                                         height="auto"
                                         width="100%"
-                                        style={{
-                                            padding: 40,
-                                            objectFit: "scale-down"
-                                        }}
+                                        style={{ padding: 40, objectFit: "scale-down" }}
                                     />
                                 </Box>
 
-                                <Box
-                                    paddingX="18px"
-                                    paddingY="20px"
-                                >
-                                    <Typography
-                                        variant="subtitle1"
-                                        align="center"
-                                        noWrap
-                                    >
-                                        <b>{group.displayName}</b>
-                                    </Typography>
+                                <Box paddingX="18px" paddingY="20px" >
+                                    <Typography variant="subtitle1" align="center" noWrap ><b>{group.displayName}</b></Typography>
 
                                     {
                                         !groupMember
                                             ? null
-                                            : <Box
-                                                display="flex"
-                                                flexDirection="row"
-                                                marginTop="15px"
-                                                alignItems="center"
-                                                justifyContent="center"
-                                            >
-                                                <CheckCircle
-                                                    fontSize="small"
-                                                    color="primary"
-                                                />
-                                                <Box
-                                                    width="6px"
-                                                />
-                                                <Typography
-                                                    variant="body1"
-                                                    align="center"
-                                                    noWrap
-                                                    color="textSecondary"
-                                                >
+                                            : <Box display="flex" flexDirection="row" marginTop="15px" alignItems="center" justifyContent="center" >
+                                                <CheckCircle fontSize="small" color="primary" />
+                                                <Box width="6px" />
+                                                <Typography variant="body1" align="center" noWrap color="textSecondary" >
                                                     {
                                                         getHomeGroup(AuthenticationState.groupsOfMembership)?.group.anid === groupMember.group.anid
                                                             ? "Home member"
@@ -175,17 +142,8 @@ class GroupItem extends Component<GroupItemProps, any> {
                         ? null
                         : groupMember
                         ? null
-                        : <CardActions
-                            style={{
-                                padding: 0
-                            }}
-                        >
-                            <Box
-                                display="flex"
-                                width="100%"
-                                padding="18px"
-                                justifyContent="center"
-                            >
+                        : <CardActions style={{ padding: 0 }} >
+                            <Box display="flex" width="100%" padding="18px" justifyContent="center" >
                                 {
                                     !hasRequestedToAccessGroup
                                         ? <Button

@@ -100,51 +100,15 @@ class SignInNew extends Component<SignInProps
 
         return <Box>
             {/** Sign in card */}
-            <Row
-                noGutters
-            >
-                <Col
-                    xs={{span: 12, offset: 0}}
-                    md={{span: 6, offset: 3}}
-                    lg={{span: 6, offset: 3}}
-                >
-                    <Box
-                        display="flex"
-                        width="100%"
-                        justifyContent="center"
-                        paddingX={MediaQueryState.isMobile ? "10px" : "0px"}
-                        paddingY={MediaQueryState.isMobile ? "20px" : "60px"}
-                    >
+            <Row noGutters >
+                <Col xs={{span: 12, offset: 0}} md={{span: 6, offset: 3}} lg={{span: 6, offset: 3}} >
+                    <Box display="flex" width="100%" justifyContent="center" paddingX={MediaQueryState.isMobile ? "10px" : "0px"} paddingY={MediaQueryState.isMobile ? "20px" : "60px"} >
                         {/** Sign in card container */}
-                        <Paper
-                            elevation={0}
-                            square
-                            className={css(sharedStyles.kick_starter_border_box)}
-                            style={{
-                                width: 650,
-                                padding: MediaQueryState.isMobile ? 20 : 30
-                            }}
-                        >
+                        <Paper elevation={0} square className={css(sharedStyles.kick_starter_border_box)} style={{ width: 650, padding: MediaQueryState.isMobile ? 20 : 30 }} >
                             {/** Sign in card header */}
-                            <Box
-                                display="flex"
-                                flexDirection="column"
-                                marginBottom="35px"
-                            >
-                                <Typography
-                                    variant="h4"
-                                    align="center"
-                                    paragraph
-                                    color="primary"
-                                >
-                                    Sign in to your account
-                                </Typography>
-                                <Typography
-                                    variant="body1"
-                                    align="center"
-                                >
-                                    Connecting businesses and investors across the South West of England
-                                </Typography>
+                            <Box display="flex" flexDirection="column" marginBottom="35px" >
+                                <Typography variant="h4" align="center" paragraph color="primary">Sign in to your account</Typography>
+                                <Typography variant="body1" align="center">Connecting businesses and investors across the South West of England</Typography>
                             </Box>
 
                             {/** Display message to inform the user that the reset password email
@@ -152,60 +116,29 @@ class SignInNew extends Component<SignInProps
                             {
                                 !successfullySentResetPassword(SignInLocalState)
                                     ? null
-                                    : <Box
-                                        marginBottom="35px"
-                                        color="white"
-                                        bgcolor={appColors.dark_green}
-                                        padding="15px"
-                                    >
-                                        <Typography
-                                            variant="body1"
-                                            align="left"
-                                        >
-                                            An email with password reset instructions has been sent to
-                                            your email address.
-                                        </Typography>
+                                    : <Box marginBottom="35px" color="white" bgcolor={appColors.dark_green} padding="15px" >
+                                        <Typography variant="body1" align="left">An email with password reset instructions has been sent to your email address.</Typography>
                                     </Box>
                             }
 
-                            {/** Display error */}
+                            {/** Signin error */}
                             {
                                 !hasAuthenticationError(AuthenticationState)
                                     ? null
-                                    : <Box
-                                        marginBottom="35px"
-                                        padding="15px"
-                                        color="white"
-                                        bgcolor="error.main"
-                                    >
-                                        <Typography
-                                            variant="body1"
-                                            align="left"
-                                        >
-                                            {AuthenticationState.error?.detail}
+                                    : <Box marginBottom="35px" padding="15px" color="white" bgcolor="error.main" >
+                                        <Typography variant="body1" align="left">
+                                       {/** {AuthenticationState.error?.detail} */}
+                                       Error: Username or password not recognised
                                         </Typography>
                                     </Box>
                             }
 
                             {/** Sign in form */}
-                            <form
-                                onSubmit={onSignInClick}
-                            >
-                                <Box
-                                    display="flex"
-                                    flexDirection="column"
-                                >
+                            <form onSubmit={onSignInClick} >
+                                <Box display="flex" flexDirection="column" >
                                     {/** Email field */}
                                     <FormControl>
-                                        <TextField
-                                            label="Email address"
-                                            name="signInEmail"
-                                            value={SignInLocalState.signInEmail}
-                                            margin="normal"
-                                            variant="outlined"
-                                            error={SignInLocalState.errorSignInEmail}
-                                            onChange={onTextChanged}
-                                        />
+                                        <TextField label="Email address" name="signInEmail" value={SignInLocalState.signInEmail} margin="normal" variant="outlined" error={SignInLocalState.errorSignInEmail} onChange={onTextChanged} />
                                     </FormControl>
 
                                     {/** Password field */}
@@ -220,14 +153,8 @@ class SignInNew extends Component<SignInProps
                                             onChange={onTextChanged}
                                             InputProps={{
                                                 endAdornment: (
-                                                    <InputAdornment
-                                                        position="end"
-                                                    >
-                                                        <IconButton
-                                                            edge="end"
-                                                            aria-label="Toggle password visibility"
-                                                            onClick={togglePasswordVisibility}
-                                                        >
+                                                    <InputAdornment position="end" >
+                                                        <IconButton edge="end" aria-label="Toggle password visibility" onClick={togglePasswordVisibility} >
                                                             {
                                                                 SignInLocalState.showPassword
                                                                     ?
@@ -242,38 +169,12 @@ class SignInNew extends Component<SignInProps
                                         />
                                     </FormControl>
 
-                                    <Box
-                                        marginTop="35px"
-                                        marginBottom="45px"
-                                    >
-                                        <Typography
-                                            variant="body1"
-                                            align="center"
-                                        >
+                                    <Box marginTop="35px" marginBottom="45px" >
+                                        <Typography variant="body1" align="center" >
                                             By clicking Sign In, you agree to our&nbsp;
-                                            <CustomLink
-                                                url={Routes.nonGroupTermsOfUse}
-                                                target="_blank"
-                                                color={getGroupRouteTheme(ManageGroupUrlState).palette.primary.main}
-                                                activeColor="none"
-                                                activeUnderline
-                                                component="nav-link"
-                                                childComponent={
-                                                    "Terms of use"
-                                                }
-                                            />
+                                            <CustomLink url={Routes.nonGroupTermsOfUse} target="_blank" color={getGroupRouteTheme(ManageGroupUrlState).palette.primary.main} activeColor="none" activeUnderline component="nav-link" childComponent={ "Terms of use" } />
                                             &nbsp;and&nbsp;
-                                            <CustomLink
-                                                url={Routes.nonGroupTermsOfUse}
-                                                target="_blank"
-                                                color={getGroupRouteTheme(ManageGroupUrlState).palette.primary.main}
-                                                activeColor="none"
-                                                activeUnderline
-                                                component="nav-link"
-                                                childComponent={
-                                                    "Privacy policy"
-                                                }
-                                            />
+                                            <CustomLink url={Routes.nonGroupPrivacyPolicy} target="_blank" color={getGroupRouteTheme(ManageGroupUrlState).palette.primary.main} activeColor="none" activeUnderline component="nav-link" childComponent={ "Privacy policy" } />
                                             .
                                         </Typography>
                                     </Box>
@@ -281,66 +182,26 @@ class SignInNew extends Component<SignInProps
                                     {
                                         !isAuthenticating(AuthenticationState)
                                             ? null
-                                            : <Box
-                                                display="flex"
-                                                marginBottom="45px"
-                                                justifyContent="center"
-                                            >
-                                                <HashLoader
-                                                    color={getGroupRouteTheme(ManageGroupUrlState).palette.primary.main}
-                                                />
+                                            : <Box display="flex" marginBottom="45px" justifyContent="center" >
+                                                <HashLoader color={getGroupRouteTheme(ManageGroupUrlState).palette.primary.main} />
                                             </Box>
                                     }
 
                                     <FormControl>
-                                        <Button
-                                            type="submit"
-                                            variant="contained"
-                                            color="primary"
-                                            size="large"
-                                            className={css(sharedStyles.no_text_transform)}
-                                        >
-                                            Sign in
-                                        </Button>
+                                        <Button type="submit" variant="contained" color="primary" size="large" className={css(sharedStyles.no_text_transform)}>Sign in</Button>
                                     </FormControl>
 
                                     {/** Sign up */}
-                                    <Box
-                                        display="flex"
-                                        marginTop="25px"
-                                        justifyContent="center"
-                                    >
-                                        <Typography
-                                            variant="body1"
-                                        >
+                                    <Box display="flex" marginTop="25px" justifyContent="center" >
+                                        <Typography variant="body1" >
                                             Don't have an Invest West account?&nbsp;
-                                            <CustomLink
-                                                url={Routes.constructSignUpRoute(ManageGroupUrlState.groupNameFromUrl ?? "")}
-                                                color={getGroupRouteTheme(ManageGroupUrlState).palette.primary.main}
-                                                activeColor="none"
-                                                activeUnderline
-                                                component="nav-link"
-                                                childComponent={
-                                                    "Sign up"
-                                                }
-                                            />
+                                            <CustomLink url={Routes.constructSignUpRoute(ManageGroupUrlState.groupNameFromUrl ?? "")} color={getGroupRouteTheme(ManageGroupUrlState).palette.primary.main} activeColor="none" activeUnderline component="nav-link" childComponent={ "Sign up" } />
                                         </Typography>
                                     </Box>
 
                                     {/** Forgot password */}
-                                    <Box
-                                        display="flex"
-                                        marginTop="16px"
-                                        justifyContent="center"
-                                        onClick={toggleResetPasswordDialog}
-                                    >
-                                        <Typography
-                                            variant="body1"
-                                            color="primary"
-                                            className={css(sharedStyles.nav_link_hover)}
-                                        >
-                                            Forgot your password?
-                                        </Typography>
+                                    <Box display="flex" marginTop="16px" justifyContent="center" onClick={toggleResetPasswordDialog} >
+                                        <Typography variant="body1" color="primary" className={css(sharedStyles.nav_link_hover)}>Forgot your password?</Typography>
                                     </Box>
                                 </Box>
                             </form>
@@ -350,15 +211,8 @@ class SignInNew extends Component<SignInProps
             </Row>
 
             {/** Footer */}
-            <Row
-                noGutters
-            >
-                <Col
-                    xs={12}
-                    sm={12}
-                    md={12}
-                    lg={12}
-                >
+            <Row noGutters>
+                <Col xs={12} sm={12} md={12} lg={12}>
                     <Footer/>
                 </Col>
             </Row>
@@ -389,96 +243,35 @@ class ResetPasswordDialog extends Component<SignInProps, {}> {
             onClose={toggleResetPasswordDialog}
         >
             <DialogTitle>
-                <Box
-                    display="flex"
-                    alignItems="center"
-                >
-                    <Box
-                        display="flex"
-                        justifyContent="flex-start"
-                        flexGrow={2}
-                    >
-                        <Typography
-                            variant="h5"
-                            align="left"
-                        >
-                            Reset Your Password
-                        </Typography>
+                <Box display="flex" alignItems="center">
+                    <Box display="flex" justifyContent="flex-start" flexGrow={2}>
+                        <Typography variant="h5" align="left">Reset Your Password</Typography>
                     </Box>
-                    <Box
-                        display="flex"
-                        justifyContent="flex-end"
-                        flexGrow={1}
-                    >
-                        <IconButton
-                            onClick={toggleResetPasswordDialog}
-                        >
+                    <Box display="flex" justifyContent="flex-end" flexGrow={1}>
+                        <IconButton onClick={toggleResetPasswordDialog}>
                             <Close/>
                         </IconButton>
                     </Box>
                 </Box>
             </DialogTitle>
 
-            <DialogContent
-                style={{
-                    padding: 0
-                }}
-            >
-                <Box
-                    display="flex"
-                    flexDirection="column"
-                    justifyContent="center"
-                    marginTop="15px"
-                    paddingX="24px"
-                >
-                    <Box
-                        display="flex"
-                        flexDirection="column"
-                    >
-                        <Typography
-                            variant="body1"
-                            align="left"
-                        >
-                            Please provide the email address you used
-                            when you signed up for your Invest West account.
-                        </Typography>
-                        <Box
-                            height="25px"
-                        />
-                        <Typography
-                            variant="body1"
-                            align="left"
-                        >
-                            We will send you an email with a link to
-                            reset your password. <b>Please note that this link will only be valid for up to 3 hours.</b>
-                        </Typography>
+            <DialogContent style={{ padding: 0 }}>
+                <Box display="flex" flexDirection="column" justifyContent="center" marginTop="15px" paddingX="24px">
+                    <Box display="flex" flexDirection="column">
+                        <Typography variant="body1" align="left">Please provide the email address you used when you signed up for your Invest West account.</Typography>
+                        <Box height="25px"/>
+                        <Typography variant="body1" align="left">We will send you an email with a link to reset your password. <b>Please note that this link will only be valid for up to 3 hours.</b></Typography>
                     </Box>
 
-                    <Box
-                        height="42px"
-                    />
+                    <Box height="42px"/>
 
-                    <Box
-                        display="flex"
-                        flexDirection="column"
-                    >
+                    <Box display="flex" flexDirection="column">
                         {/** Display error */}
                         {
                             !errorSendingResetPassword(SignInLocalState)
                                 ? null
-                                : <Box
-                                    width="100%"
-                                    bgcolor="error.main"
-                                    padding="15px"
-                                    marginBottom="42px"
-                                    color="white"
-                                >
-                                    <Typography
-                                        variant="body1"
-                                        align="left"
-                                    >
-                                        Unable to send request password email.
-                                    </Typography>
+                                : <Box width="100%" bgcolor="error.main" padding="15px" marginBottom="42px" color="white">
+                                    <Typography variant="body1" align="left">Unable to send request password email.</Typography>
                                 </Box>
                         }
 
@@ -486,50 +279,22 @@ class ResetPasswordDialog extends Component<SignInProps, {}> {
                         {
                             !isProcessingResetPasswordRequest(SignInLocalState)
                                 ? null
-                                : <Box
-                                    display="flex"
-                                    justifyContent="center"
-                                    marginBottom="42px"
-                                >
-                                    <HashLoader
-                                        color={getGroupRouteTheme(ManageGroupUrlState).palette.primary.main}
-                                    />
+                                : <Box display="flex" justifyContent="center" marginBottom="42px">
+                                    <HashLoader color={getGroupRouteTheme(ManageGroupUrlState).palette.primary.main}/>
                                 </Box>
                         }
 
                         {/** Email input */}
-                        <TextField
-                            name="resetPasswordDialogEmail"
-                            value={SignInLocalState.resetPasswordDialogEmail}
-                            label="Email address"
-                            variant="outlined"
-                            fullWidth
-                            onChange={onTextChanged}
-                        />
+                        <TextField name="resetPasswordDialogEmail" value={SignInLocalState.resetPasswordDialogEmail} label="Email address" variant="outlined" fullWidth onChange={onTextChanged}/>
                     </Box>
 
-                    <Box
-                        height="25px"
-                    />
+                    <Box height="25px"/>
                 </Box>
             </DialogContent>
 
             <DialogActions>
-                <Box
-                    display="flex"
-                    justifyContent="flex-end"
-                    padding="8px"
-                >
-                    <Button
-                        color="primary"
-                        variant="contained"
-                        size="medium"
-                        onClick={onSendResetPasswordClick}
-                        className={css(sharedStyles.no_text_transform)}
-                        disabled={SignInLocalState.resetPasswordDialogEmail.trim().length === 0}
-                    >
-                        Send
-                    </Button>
+                <Box display="flex" justifyContent="flex-end" padding="8px">
+                    <Button color="primary" variant="contained" size="medium" onClick={onSendResetPasswordClick} className={css(sharedStyles.no_text_transform)} disabled={SignInLocalState.resetPasswordDialogEmail.trim().length === 0}>Send</Button>
                 </Box>
             </DialogActions>
         </Dialog>;
