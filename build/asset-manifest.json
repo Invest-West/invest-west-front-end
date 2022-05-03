@@ -1,17 +1,17 @@
 {
   "files": {
-    "main.css": "https://platform.investwest.online/static/css/main.6c3fa7d7.chunk.css",
-    "main.js": "https://platform.investwest.online/static/js/main.00c90f3a.chunk.js",
-    "main.js.map": "https://platform.investwest.online/static/js/main.00c90f3a.chunk.js.map",
+    "main.css": "https://platform.investwest.online/static/css/main.cd3f823d.chunk.css",
+    "main.js": "https://platform.investwest.online/static/js/main.50a77ddf.chunk.js",
+    "main.js.map": "https://platform.investwest.online/static/js/main.50a77ddf.chunk.js.map",
     "runtime-main.js": "https://platform.investwest.online/static/js/runtime-main.70306579.js",
     "runtime-main.js.map": "https://platform.investwest.online/static/js/runtime-main.70306579.js.map",
-    "static/css/2.3771ce75.chunk.css": "https://platform.investwest.online/static/css/2.3771ce75.chunk.css",
-    "static/js/2.a9c38a33.chunk.js": "https://platform.investwest.online/static/js/2.a9c38a33.chunk.js",
-    "static/js/2.a9c38a33.chunk.js.map": "https://platform.investwest.online/static/js/2.a9c38a33.chunk.js.map",
+    "static/css/2.0ab909e0.chunk.css": "https://platform.investwest.online/static/css/2.0ab909e0.chunk.css",
+    "static/js/2.807fb4b8.chunk.js": "https://platform.investwest.online/static/js/2.807fb4b8.chunk.js",
+    "static/js/2.807fb4b8.chunk.js.map": "https://platform.investwest.online/static/js/2.807fb4b8.chunk.js.map",
     "index.html": "https://platform.investwest.online/index.html",
-    "static/css/2.3771ce75.chunk.css.map": "https://platform.investwest.online/static/css/2.3771ce75.chunk.css.map",
-    "static/css/main.6c3fa7d7.chunk.css.map": "https://platform.investwest.online/static/css/main.6c3fa7d7.chunk.css.map",
-    "static/js/2.a9c38a33.chunk.js.LICENSE.txt": "https://platform.investwest.online/static/js/2.a9c38a33.chunk.js.LICENSE.txt",
+    "static/css/2.0ab909e0.chunk.css.map": "https://platform.investwest.online/static/css/2.0ab909e0.chunk.css.map",
+    "static/css/main.cd3f823d.chunk.css.map": "https://platform.investwest.online/static/css/main.cd3f823d.chunk.css.map",
+    "static/js/2.807fb4b8.chunk.js.LICENSE.txt": "https://platform.investwest.online/static/js/2.807fb4b8.chunk.js.LICENSE.txt",
     "static/media/admin_logo.png": "https://platform.investwest.online/static/media/admin_logo.ba46fba4.png",
     "static/media/front_page_cover_image.png": "https://platform.investwest.online/static/media/front_page_cover_image.2b9aa708.png",
     "static/media/group_admin_help_accept_reject_2_offer.png": "https://platform.investwest.online/static/media/group_admin_help_accept_reject_2_offer.ef822bde.png",
@@ -83,9 +83,9 @@
   },
   "entrypoints": [
     "static/js/runtime-main.70306579.js",
-    "static/css/2.3771ce75.chunk.css",
-    "static/js/2.a9c38a33.chunk.js",
-    "static/css/main.6c3fa7d7.chunk.css",
-    "static/js/main.00c90f3a.chunk.js"
+    "static/css/2.0ab909e0.chunk.css",
+    "static/js/2.807fb4b8.chunk.js",
+    "static/css/main.cd3f823d.chunk.css",
+    "static/js/main.50a77ddf.chunk.js"
   ]
 }
