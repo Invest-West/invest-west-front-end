@@ -111,8 +111,7 @@ class NotificationsBox extends Component {
 
 
         if (this.wrapperRef && !this.wrapperRef.current.contains(event.target) && !notificationBellRef.contains(event.target) ) {
-            toggleNotifications(event, 'clickoutside');
-            console.log('works');
+            toggleNotifications(event);
         }
     }
 
