@@ -3,47 +3,45 @@ import * as DB_CONST from '../../firebase/databaseConsts';
 import firebase from '../../firebase/firebaseApp';
 
 export const TOGGLE_NOTIFICATIONS = 'TOGGLE_NOTIFICATIONS';
-export const toggleNotifications = event => {
+export const CALLED_LAST = 'CALLED_LAST';
+export const CALLED_BEFORE_LAST = 'CALLED_BEFORE_LAST';
+export const toggleNotifications = (event) => {
     return (dispatch, getState) => {
         const notificationsAnchorEl = getState().manageNotifications.notificationsAnchorEl;
-        const notificationsClickedOutside = getState().manageNotifications.notificationsClickedOutside;
-        const notificationsClickedOutsideActivated = getState().manageNotifications.notificationsClickedOutsideActivated;
+        const notificationBellRef = getState().manageNotifications.notificationBellRef;
 
-        // open notifications
-        // initialises states
-        if (!notificationsAnchorEl) {
+        const openPanel = () => {
             dispatch({
                 type: TOGGLE_NOTIFICATIONS,
-                notificationsAnchorEl: event.currentTarget,
-                notificationsClickedOutsideActivated: true
+                notificationsAnchorEl: notificationBellRef
             });
         }
-        else {
+
+        const closePanel = () => {
             dispatch({
                 type: TOGGLE_NOTIFICATIONS,
-                notificationsAnchorEl: null,
-                notificationsClickedOutsideActivated: false
+                notificationsAnchorEl: null
             });
+        }
+
+        if (!notificationsAnchorEl) {
+            openPanel();
+        }
+        else {
+            closePanel();
         }
     }
 };
 
-export const CLOSED_NOTIFICATIONS = 'CLOSED_NOTIFICATIONS'
-export const closeNotifications = event => {
+export const NOTIFICATIONBELL_REF = 'NOTIFICATIONBELL_REF';
+export const notificationRefUpdated = ref => {
     return (dispatch, getState) => {
-        const notificationsAnchorEl = getState().manageNotifications.notificationsAnchorEl;
-        const notificationsClickedOutside = getState().manageNotifications.notificationsClickedOutside;
-        const notificationsClickedOutsideActivated = getState().manageNotifications.notificationsClickedOutsideActivated;
-
-        if (Boolean(notificationsAnchorEl)) {
-            dispatch({
-                type: CLOSED_NOTIFICATIONS,
-                notificationsAnchorEl: false,
-                notificationsClickedOutside: true
-            });
-        }
+        dispatch({
+            type: NOTIFICATIONBELL_REF,
+            notificationBellRef: ref
+        });
     }
-}
+};
 
 export const LOADING_NOTIFICATIONS = 'LOADING_NOTIFICATIONS';
 export const FINISHED_LOADING_NOTIFICATIONS = 'FINISHED_LOADING_NOTIFICATIONS';
