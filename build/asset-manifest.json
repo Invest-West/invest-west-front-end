@@ -1,17 +1,17 @@
 {
   "files": {
     "main.css": "https://invest-west-conversion-to-github.live/static/css/main.6c3fa7d7.chunk.css",
-    "main.js": "https://invest-west-conversion-to-github.live/static/js/main.f08ba5e0.chunk.js",
-    "main.js.map": "https://invest-west-conversion-to-github.live/static/js/main.f08ba5e0.chunk.js.map",
+    "main.js": "https://invest-west-conversion-to-github.live/static/js/main.1fcc1ec0.chunk.js",
+    "main.js.map": "https://invest-west-conversion-to-github.live/static/js/main.1fcc1ec0.chunk.js.map",
     "runtime-main.js": "https://invest-west-conversion-to-github.live/static/js/runtime-main.82fc935a.js",
     "runtime-main.js.map": "https://invest-west-conversion-to-github.live/static/js/runtime-main.82fc935a.js.map",
     "static/css/2.3771ce75.chunk.css": "https://invest-west-conversion-to-github.live/static/css/2.3771ce75.chunk.css",
-    "static/js/2.3a3a14f9.chunk.js": "https://invest-west-conversion-to-github.live/static/js/2.3a3a14f9.chunk.js",
-    "static/js/2.3a3a14f9.chunk.js.map": "https://invest-west-conversion-to-github.live/static/js/2.3a3a14f9.chunk.js.map",
+    "static/js/2.0a3aa656.chunk.js": "https://invest-west-conversion-to-github.live/static/js/2.0a3aa656.chunk.js",
+    "static/js/2.0a3aa656.chunk.js.map": "https://invest-west-conversion-to-github.live/static/js/2.0a3aa656.chunk.js.map",
     "index.html": "https://invest-west-conversion-to-github.live/index.html",
     "static/css/2.3771ce75.chunk.css.map": "https://invest-west-conversion-to-github.live/static/css/2.3771ce75.chunk.css.map",
     "static/css/main.6c3fa7d7.chunk.css.map": "https://invest-west-conversion-to-github.live/static/css/main.6c3fa7d7.chunk.css.map",
-    "static/js/2.3a3a14f9.chunk.js.LICENSE.txt": "https://invest-west-conversion-to-github.live/static/js/2.3a3a14f9.chunk.js.LICENSE.txt",
+    "static/js/2.0a3aa656.chunk.js.LICENSE.txt": "https://invest-west-conversion-to-github.live/static/js/2.0a3aa656.chunk.js.LICENSE.txt",
     "static/media/admin_logo.png": "https://invest-west-conversion-to-github.live/static/media/admin_logo.ba46fba4.png",
     "static/media/front_page_cover_image.png": "https://invest-west-conversion-to-github.live/static/media/front_page_cover_image.2b9aa708.png",
     "static/media/group_admin_help_accept_reject_2_offer.png": "https://invest-west-conversion-to-github.live/static/media/group_admin_help_accept_reject_2_offer.ef822bde.png",
@@ -84,8 +84,8 @@
   "entrypoints": [
     "static/js/runtime-main.82fc935a.js",
     "static/css/2.3771ce75.chunk.css",
-    "static/js/2.3a3a14f9.chunk.js",
+    "static/js/2.0a3aa656.chunk.js",
     "static/css/main.6c3fa7d7.chunk.css",
-    "static/js/main.f08ba5e0.chunk.js"
+    "static/js/main.1fcc1ec0.chunk.js"
   ]
 }

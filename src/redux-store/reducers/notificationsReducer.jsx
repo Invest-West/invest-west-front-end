@@ -3,7 +3,7 @@ import * as authActions from '../actions/authActions';
 
 const initState = {
     notificationsAnchorEl: null,
-    notificationsClickedOutside: false,
+    notificationBellRef: undefined,
 
     notifications: [],
     loadingNotifications: false,
@@ -18,14 +18,12 @@ const notificationsReducer = (state = initState, action) => {
             return {
                 ...state,
                 notificationsAnchorEl: action.notificationsAnchorEl,
-                notificationsClickedOutsideActivated: action.notificationsClickedOutsideActivated
             };
-        case notificationsActions.CLOSED_NOTIFICATIONS:
+        case notificationsActions.NOTIFICATIONBELL_REF:
             return {
                 ...state,
-                notificationsAnchorEl: action.notificationsAnchorEl,
-                notificationsClickedOutside: action.notificationsClickedOutside
-            }
+                notificationBellRef: action.notificationBellRef
+            };
         case notificationsActions.LOADING_NOTIFICATIONS:
             return {
                 ...state,
