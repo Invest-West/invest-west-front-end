@@ -54,6 +54,7 @@ import {isProjectWaitingToGoLive} from "../../models/project";
 import ExploreGroups from "../../shared-components/explore-groups/ExploreGroups";
 import Resources from "../resources/Resources";
 
+
 export const MAX_CARD_DETAILS_HEIGHT = 2000;
 
 const mapStateToProps = state => {
@@ -79,6 +80,8 @@ const mapStateToProps = state => {
         currentUserLoaded: state.auth.userLoaded,
 
         notifications: state.manageNotifications.notifications,
+        notificationsAnchorEl: state.manageNotifications.notificationsAnchorEl,
+        notificationBellRef: state.manageNotifications.notificationBellRef,
 
         joinRequests: state.manageJoinRequests.joinRequests,
         joinRequestsLoaded: state.manageJoinRequests.joinRequestsLoaded
@@ -97,7 +100,8 @@ const mapDispatchToProps = dispatch => {
 
         groupAdminsTable_setGroup: (group) => dispatch(groupAdminsTableActions.setGroup(group)),
 
-        toggleNotifications: (event) => dispatch(notificationsActions.toggleNotifications(event))
+        toggleNotifications: (event) => dispatch(notificationsActions.toggleNotifications(event)),
+        notificationRefUpdated: (ref) => dispatch(notificationsActions.notificationRefUpdated(ref)),
     }
 };
 
@@ -107,6 +111,7 @@ class AdminDashboard extends Component {
         super(props);
 
         this.firebaseDB = firebase.database();
+        this.notificationBell = React.createRef();
     }
 
     /**
@@ -154,7 +159,9 @@ class AdminDashboard extends Component {
 
             setGroupUserNameFromParams,
             setExpectedAndCurrentPathsForChecking,
-            loadAngelNetwork
+            loadAngelNetwork,
+
+            notificationRefUpdated
         } = this.props;
 
         const match = this.props.match;
@@ -167,6 +174,8 @@ class AdminDashboard extends Component {
         if (groupPropertiesLoaded && shouldLoadOtherData) {
             this.setDataForComponents();
         }
+
+        notificationRefUpdated(this.notificationBell.current);
     }
 
     componentDidUpdate(prevProps, prevState, snapshot) {
@@ -174,7 +183,9 @@ class AdminDashboard extends Component {
             groupPropertiesLoaded,
             shouldLoadOtherData,
 
-            loadAngelNetwork
+            loadAngelNetwork,
+
+            notificationRefUpdated
         } = this.props;
 
         loadAngelNetwork();
@@ -182,6 +193,8 @@ class AdminDashboard extends Component {
         if (groupPropertiesLoaded && shouldLoadOtherData) {
             this.setDataForComponents();
         }
+
+        notificationRefUpdated(this.notificationBell.current);
     };
 
     /**
@@ -480,6 +493,7 @@ class AdminDashboard extends Component {
             currentUserLoaded,
 
             notifications,
+            notificationsAnchorEl,
 
             toggleSidebar,
             toggleNotifications
@@ -568,11 +582,13 @@ class AdminDashboard extends Component {
                                 {/** Notification icon */}
                                 <Col xs={2} sm={2} md={1} lg={1} style={{paddingRight: 13}}>
                                     <FlexView vAlignContent="center" hAlignContent="right" width="100%" >
-                                        <IconButton onMouseDown={toggleNotifications} id="notification-button">
+                                        <div ref={this.notificationBell}>
+                                        <IconButton onMouseDown={ (e) => {toggleNotifications(e)} } id="notification-button">
                                             <Badge badgeContent={notifications.length} color="secondary" invisible={notifications.length === 0}>
                                                 <NotificationsIcon className={css(sharedStyles.white_text)}/>
                                             </Badge>
                                         </IconButton>
+                                        </div>
                                     </FlexView>
                                 </Col>
                             </Row>
@@ -609,7 +625,9 @@ class AdminDashboard extends Component {
             </Container>
 
             {/** Notifications box */}
-            <NotificationsBox/>
+            {notificationsAnchorEl !== null &&
+                <NotificationsBox/>
+            }
 
             {/** User invitation dialog */}
             <InvitationDialog/>

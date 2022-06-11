@@ -194,7 +194,7 @@ class SignInNew extends Component<SignInProps
                                     {/** Sign up */}
                                     <Box display="flex" marginTop="25px" justifyContent="center" >
                                         <Typography variant="body1" >
-                                            Don't have an Invest West account?&nbsp;
+                                            Don't have an Invest West account? &nbsp;
                                             <CustomLink url={Routes.constructSignUpRoute(ManageGroupUrlState.groupNameFromUrl ?? "")} color={getGroupRouteTheme(ManageGroupUrlState).palette.primary.main} activeColor="none" activeUnderline component="nav-link" childComponent={ "Sign up" } />
                                         </Typography>
                                     </Box>
