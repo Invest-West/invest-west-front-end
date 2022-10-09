@@ -155,6 +155,8 @@ const initState = {
         pitchPostMoneyValuation: '',
         detailsAboutEarlierFundraisingRounds: '',
         pitchInvestorsCommitted: '',
+        hasSEIS: '',
+        hasEIS: '',
 
         hasRaisedMoneyBefore: '',
 
@@ -482,6 +484,20 @@ class CreatePitchPageMain extends Component {
                                     :
                                     ''
                             ,
+                            hasSEIS:
+                                project.Pitch.hasOwnProperty('hasSEIS')
+                                    ?
+                                    project.Pitch.hasSEIS
+                                    :
+                                    ''
+                            ,
+                            hasEIS:
+                                project.Pitch.hasOwnProperty('hasEIS')
+                                    ?
+                                    project.Pitch.hasEIS
+                                    :
+                                    ''
+                            ,  
                             pitchPostMoneyValuation:
                                 project.Pitch.hasOwnProperty('postMoneyValuation')
                                     ?
@@ -613,6 +629,9 @@ class CreatePitchPageMain extends Component {
 
             hasRaisedMoneyBefore,
 
+            hasSEIS,
+            hasEIS,
+
             // this field is only available for QIB
             qibSpecialNews
         } = this.state.createProject;
@@ -635,6 +654,8 @@ class CreatePitchPageMain extends Component {
                     || howFundIsBeingRaised.trim().length === 0
                     || financialRound.trim().length === 0
                     || hasRaisedMoneyBefore.trim().length === 0
+                    || hasSEIS.trim().length === 0
+                    || hasEIS.trim().length === 0
                     || (hasRaisedMoneyBefore === "true" && pitchAmountRaisedToDate.trim().length === 0)
                     || (ManageGroupUrlState.groupNameFromUrl === "qib" && qibSpecialNews.trim().length === 0)
                     || (isIssuer(AuthenticationState.currentUser) && !(params.edit && projectEdited) && groupIssuerCreateOfferFor === "undefined")
@@ -1191,6 +1212,9 @@ class CreatePitchPageMain extends Component {
             pitchPresentationText,
             pitchPresentationPlainText,
 
+            hasSEIS,
+            hasEIS,
+
             agreedToShareRaisePublicly,
             agreedToReceiveLocalInvestmentInfo,
 
@@ -1441,6 +1465,28 @@ class CreatePitchPageMain extends Component {
                                                         financialRound
                                                     :
                                                     financialRound
+                                            ,
+                                            hasSEIS:
+                                                saveProgress
+                                                    ?
+                                                    hasSEIS.trim().length === 0
+                                                        ?
+                                                        null
+                                                        :
+                                                        hasSEIS
+                                                    :
+                                                    hasSEIS
+                                            ,
+                                            hasEIS:
+                                                saveProgress
+                                                    ?
+                                                    hasEIS.trim().length === 0
+                                                        ?
+                                                        null
+                                                        :
+                                                        hasEIS
+                                                    :
+                                                    hasEIS
                                             ,
                                             postMoneyValuation:
                                                 pitchPostMoneyValuation.trim().length === 0
@@ -1967,6 +2013,28 @@ class CreatePitchPageMain extends Component {
                                                     :
                                                     financialRound
                                             ,
+                                            hasSEIS:
+                                                saveProgress
+                                                    ?
+                                                    hasSEIS.trim().length === 0
+                                                        ?
+                                                        null
+                                                        :
+                                                        hasSEIS
+                                                    :
+                                                    hasSEIS
+                                            ,
+                                            hasEIS:
+                                            saveProgress
+                                                ?
+                                                hasEIS.trim().length === 0
+                                                    ?
+                                                    null
+                                                    :
+                                                    hasEIS
+                                                :
+                                                hasEIS
+                                            ,
                                             postMoneyValuation:
                                                 pitchPostMoneyValuation.trim().length === 0
                                                     ?
@@ -2473,6 +2541,9 @@ class CreatePitchPageMain extends Component {
             pitchPostMoneyValuation,
             hasRaisedMoneyBefore,
 
+            hasSEIS,
+            hasEIS,
+
             qibSpecialNews
         } = this.state.createProject;
 
@@ -2487,6 +2558,8 @@ class CreatePitchPageMain extends Component {
                 && financialRound.trim().length === 0
                 && pitchPostMoneyValuation.trim().length === 0
                 && hasRaisedMoneyBefore.trim().length === 0
+                && hasEIS.trim().length === 0
+                && hasSEIS.trim().length === 0
                 && (ManageGroupUrlState.groupNameFromUrl === "qib" && qibSpecialNews.trim().length === 0)
             ) {
                 setFeedbackSnackbarContent(
@@ -3523,7 +3596,39 @@ class CreateProject extends Component {
                                             </FormHelperText>
                                         </FormControl>
                                     </FlexView>
+
+                                    <FlexView marginTop={60}>
+                                        <FormControl component="fieldset" required fullWidth
+                                            error={
+                                                createProjectState.pitchPublishCheck === PITCH_PUBLISH_FALSE_MISSING_FIELDS_IN_GENERAL_INFORMATION
+                                                && createProjectState.hasSEIS.trim().length === 0
+                                            }>
+                                            <FormLabel> Have you received SEIS advanced assurance from HMRC?
+                                            </FormLabel>
+                                            <RadioGroup row name="hasSEIS" value={createProjectState.hasSEIS} onChange={this.onInputChanged}>
+                                                <FormControlLabel value={true.toString()} control={<Radio color="primary"/>} label="Yes" labelPlacement="start"/>
+                                                <FormControlLabel value={false.toString()} control={<Radio color="secondary"/>} label="No" labelPlacement="start"/>
+                                            </RadioGroup>
+                                        </FormControl>
+                                    </FlexView>
+
+                                    <FlexView marginTop={60}>
+                                        <FormControl component="fieldset" required fullWidth
+                                            error={
+                                                createProjectState.pitchPublishCheck === PITCH_PUBLISH_FALSE_MISSING_FIELDS_IN_GENERAL_INFORMATION
+                                                && createProjectState.hasEIS.trim().length === 0
+                                            }>
+                                            <FormLabel> Have you received EIS advanced assurance from HMRC?
+                                            </FormLabel>
+                                            <RadioGroup row name="hasEIS" value={createProjectState.hasEIS} onChange={this.onInputChanged}>
+                                                <FormControlLabel value={true.toString()} control={<Radio color="primary"/>} label="Yes" labelPlacement="start"/>
+                                                <FormControlLabel value={false.toString()} control={<Radio color="secondary"/>} label="No" labelPlacement="start"/>
+                                            </RadioGroup>
+                                        </FormControl>
+                                    </FlexView>
                                 </FlexView>
+
+                                
 
                                 <Divider style={{marginTop: 60}}/>
                             </Col>
