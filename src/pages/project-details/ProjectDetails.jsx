@@ -4118,6 +4118,27 @@ class ProjectDetails extends Component {
                                             </FlexView>
                                     }
 
+                                    {
+                                        !project.Pitch.hasOwnProperty('hasEIS')
+                                            ?
+                                            null
+                                            :
+                                            <FlexView className={css(styles.border_box)} style={{backgroundColor: colors.kick_starter_background_color}} column marginTop={30} vAlignContent="center">
+                                                <Typography variant="body1" align="left">Does this pitch have a EIS badge {project.Pitch.hasEIS}</Typography>
+                                            </FlexView>
+                                    }
+
+                                    {
+                                        !project.Pitch.hasOwnProperty('hasSEIS')
+                                            ?
+                                            null
+                                            :
+                                            <FlexView className={css(styles.border_box)} style={{backgroundColor: colors.kick_starter_background_color}} column marginTop={30} vAlignContent="center">
+                                                <Typography variant="body1" align="left">Does this pitch have a EIS badge {project.Pitch.hasSEIS}</Typography>
+                                            </FlexView>
+                                    }
+                                    
+
                                     {/** Details about earlier fundraising rounds */}
                                     {
                                         !project.Pitch.hasOwnProperty('detailsAboutEarlierFundraisingRounds')
