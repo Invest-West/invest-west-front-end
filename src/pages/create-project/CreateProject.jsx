@@ -3605,10 +3605,14 @@ class CreateProject extends Component {
                                             }>
                                             <FormLabel> Have you received SEIS advanced assurance from HMRC?
                                             </FormLabel>
-                                            <RadioGroup row name="hasSEIS" value={createProjectState.hasSEIS} onChange={this.onInputChanged}>
-                                                <FormControlLabel value={true.toString()} control={<Radio color="primary"/>} label="Yes" labelPlacement="start"/>
-                                                <FormControlLabel value={false.toString()} control={<Radio color="secondary"/>} label="No" labelPlacement="start"/>
+                                            <RadioGroup name="hasSEIS" value={createProjectState.hasSEIS} onChange={this.onInputChanged}>
+                                                {
+                                                    DB_CONST.SEIS_BADGE.map(round =>
+                                                        <FormControlLabel key={round} value={round} control={<Radio/>} label={round}/>
+                                                    )
+                                                }
                                             </RadioGroup>
+
                                         </FormControl>
                                     </FlexView>
 
@@ -3620,9 +3624,12 @@ class CreateProject extends Component {
                                             }>
                                             <FormLabel> Have you received EIS advanced assurance from HMRC?
                                             </FormLabel>
-                                            <RadioGroup row name="hasEIS" value={createProjectState.hasEIS} onChange={this.onInputChanged}>
-                                                <FormControlLabel value={true.toString()} control={<Radio color="primary"/>} label="Yes" labelPlacement="start"/>
-                                                <FormControlLabel value={false.toString()} control={<Radio color="secondary"/>} label="No" labelPlacement="start"/>
+                                            <RadioGroup name="hasEIS" value={createProjectState.hasEIS} onChange={this.onInputChanged}>
+                                                {
+                                                    DB_CONST.EIS_BADGE.map(round =>
+                                                        <FormControlLabel key={round} value={round} control={<Radio/>} label={round}/>
+                                                    )
+                                                }
                                             </RadioGroup>
                                         </FormControl>
                                     </FlexView>
