@@ -4114,7 +4114,7 @@ class ProjectDetails extends Component {
                                             null
                                             :
                                             <FlexView className={css(styles.border_box)} style={{backgroundColor: colors.kick_starter_background_color}} column marginTop={30} vAlignContent="center">
-                                                <Typography variant="body1" align="left">How the company is rai{project.Pitch.howFundIsBeingRaised}</Typography>
+                                                <Typography variant="body1" align="left">How does the company plan to raise funds:  {project.Pitch.howFundIsBeingRaised}</Typography>
                                             </FlexView>
                                     }
 
