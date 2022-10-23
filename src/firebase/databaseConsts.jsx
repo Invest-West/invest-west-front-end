@@ -289,6 +289,11 @@ export const USER_TITLES = ["Please select", "Ms.", "Mrs.", "Miss", "Mr.", "Dr."
  * @type {string[]}
  */
 export const FINANCIAL_ROUNDS = ["Pre-seed", "Seed", "Series A", "Series B", "Series C"];
+
+export const EIS_BADGE = ["Yes", "No"];
+
+export const SEIS_BADGE = ["Yes", "No"];
+
 /**
  * ./// ----------------------------------------------------------------------------------------------------------------
  */
