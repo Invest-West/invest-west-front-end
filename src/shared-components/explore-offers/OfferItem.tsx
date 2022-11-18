@@ -1,4 +1,5 @@
 import React, {Component} from "react";
+import FlexView from "react-flexview";
 import {connect} from "react-redux";
 import {AppState} from "../../redux-store/reducers";
 import {getGroupRouteTheme, ManageGroupUrlState} from "../../redux-store/reducers/manageGroupUrlReducer";
@@ -56,7 +57,10 @@ class OfferItem extends Component<OfferItemProps, any> {
             return null;
         }
 
+
+
         const pitchCover: PitchCover | null = getPitchCover(offerInstance.projectDetail);
+
 
         return <CustomLink
             url={Routes.constructProjectDetailRoute(ManageGroupUrlState.groupNameFromUrl ?? null, offerInstance.projectDetail.id)}
@@ -122,6 +126,7 @@ class OfferItem extends Component<OfferItemProps, any> {
                                             </Typography>
                                         </Box>
 
+
                                         {/** Sector / Description */}
                                         <Box color={colors.grey["700"]} >
                                             <title className="projectInfo">
@@ -147,6 +152,8 @@ class OfferItem extends Component<OfferItemProps, any> {
                                         </Box>
                                     </Box>
 
+
+
                                     {/** Divider */}
                                     <Box bgcolor={getGroupRouteTheme(ManageGroupUrlState).palette.primary.main} height="3px" marginTop="30px" marginBottom="15px" />
 
@@ -170,6 +177,26 @@ class OfferItem extends Component<OfferItemProps, any> {
                                             </Typography>
                                         </Box>
                                     </Box>
+
+                                    {
+                                        offerInstance.projectDetail.Pitch.hasSEIS === "No"
+                                            ?
+                                            null
+                                            :
+                                            <Col className="badge-spacing" xs={12} sm={12} md={{span: 5}} lg={{span: 5}}>
+                                                <Typography className="text-badges" variant="body2" align="center"><b> SEIS </b></Typography>
+                                            </Col>
+                                        }
+
+                                        {
+                                        offerInstance.projectDetail.Pitch.hasEIS === "No"
+                                            ?
+                                            null
+                                            :
+                                            <Col className="badge-spacing" xs={12} sm={12} md={{span: 5}} lg={{span: 5}}>
+                                                <Typography className="text-badges" variant="body2" align="center"><b> EIS </b></Typography>
+                                            </Col>
+                                        }
 
                                     {/** Project visibility information */}
                                     <Box display="flex" marginTop="15px" justifyContent="flex-end" color={getGroupRouteTheme(ManageGroupUrlState).palette.primary.main} >
