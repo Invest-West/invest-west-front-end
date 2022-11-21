@@ -12,13 +12,21 @@
 }
 
 
-.text-badges {
-  border-style: solid;
-  border-width: thin;
-  color: #212529;
-};
+.badges {
+  display: flex;
+  margin: 5px -5px;
+  .text-badges {
+    border-style: solid;
+    border-width: thin;
+    color: #4C8484;
+    width: 85px;
+  }
+}
 
 .badge-spacing {
-  padding: 0px 0px 10px 0px  !important;
+  display: flex;
+  flex-wrap: wrap;
+  padding-left: 3px !important;
 }
+
 

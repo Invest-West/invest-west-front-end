@@ -167,7 +167,7 @@ class OfferItem extends Component<OfferItemProps, any> {
                                             }
                                         </Typography>
 
-                                        <Box marginTop="20px" >
+                                        <Box marginTop="5px" >
                                             <Typography variant="body2" align="left" color="textSecondary" >
                                                 {
                                                     !isProjectLive(offerInstance.projectDetail)
@@ -178,12 +178,13 @@ class OfferItem extends Component<OfferItemProps, any> {
                                         </Box>
                                     </Box>
 
-                                    {
+                                    <Box className="badges">
+                                        {
                                         offerInstance.projectDetail.Pitch.hasSEIS === "No"
                                             ?
                                             null
                                             :
-                                            <Col className="badge-spacing" xs={12} sm={12} md={{span: 5}} lg={{span: 5}}>
+                                            <Col className="badge-spacing" >
                                                 <Typography className="text-badges" variant="body2" align="center"><b> SEIS </b></Typography>
                                             </Col>
                                         }
@@ -193,10 +194,11 @@ class OfferItem extends Component<OfferItemProps, any> {
                                             ?
                                             null
                                             :
-                                            <Col className="badge-spacing" xs={12} sm={12} md={{span: 5}} lg={{span: 5}}>
+                                            <Col className="badge-spacing" >
                                                 <Typography className="text-badges" variant="body2" align="center"><b> EIS </b></Typography>
                                             </Col>
                                         }
+                                    </Box>
 
                                     {/** Project visibility information */}
                                     <Box display="flex" marginTop="15px" justifyContent="flex-end" color={getGroupRouteTheme(ManageGroupUrlState).palette.primary.main} >
