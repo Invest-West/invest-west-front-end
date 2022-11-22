@@ -24,6 +24,8 @@ export default interface Project {
     status: number;
     projectName?: string; // optional for draft projects only
     description?: string; // optional for draft projects only
+    hasSEIS?: string; // = Pitch has SEIS badge
+    hasEIS?: string;
     sector?: string; // optional for draft projects only
     edited?: number;
     temporarilyClosed?: boolean;
@@ -81,6 +83,9 @@ export interface ProjectCsv {
 
     pledgeExpiryDate: string | undefined; // = pledge expiredDate
 
+    hasSEIS: string | undefined; // = Pitch has SEIS badge
+    hasEIS: string | undefined; // = Pitch has EIS badge
+
     // this field is only available for QIB group
     qibSpecialNews?: string | undefined; // = pitch qibSpecialNews
 
@@ -102,6 +107,8 @@ export interface ProjectPitch {
     detailsAboutEarlierFundraisingRounds?: string;
     investorsCommitted?: string;
     financialRound?: string;
+    hasSEIS?: string;
+    hasEIS?: string;
     howFundIsBeingRaised?: string;
     presentationDocument?: PitchDocument[];
     supportingDocuments?: PitchDocument[];

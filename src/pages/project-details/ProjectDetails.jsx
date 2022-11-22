@@ -2682,6 +2682,8 @@ class ProjectDetails extends Component {
                                     </Col>
                             }
 
+                            
+
                             {/** Project status */}
                             <Col xs={12} sm={12} md={{span: 5, offset: 0, order: 4}} lg={{span: 12, offset: 0, order: 4}}>
                                 {
@@ -2689,11 +2691,38 @@ class ProjectDetails extends Component {
                                 }
                             </Col>
 
+                            {/** SEIS badge check */}
+                            {
+                                project.Pitch.hasSEIS === "No"
+                                    ?
+                                    null
+                                    :
+                                    <Col xs={12} sm={12} md={{span: 1, offset: 1, order: 5}} lg={{span: 3, offset: 0, order: 5}}>
+                                        <FlexView className={css(styles.border_box)} style={{backgroundColor: colors.kick_starter_background_color}} column hAlignContent="center" vAlignContent="center">
+                                                    <Typography variant="body1"><b>SEIS</b></Typography>
+                                        </FlexView>
+                                    </Col>
+                            }
+
+                            {/** EIS badge check */}
+                            {
+
+                                project.Pitch.hasEIS === "No"
+                                    ?
+                                    null
+                                    :
+                                    <Col xs={12} sm={12} md={{span: 1, offset: 1, order: 6}} lg={{span: 3, offset: 0, order: 6}}>
+                                            <FlexView className={css(styles.border_box)} style={{backgroundColor: colors.kick_starter_background_color,}} hAlignContent="center" vAlignContent="center">
+                                                    <Typography variant="body1"><b>EIS</b></Typography>
+                                        </FlexView>
+                                    </Col>
+                            }
+
                             {/** Contact us */}
                             {
                                 isProjectOwner(AuthenticationState.currentUser, project)
                                     ? null
-                                    : <Col xs={12} sm={12} md={{span: 10, offset: 1, order: 5}} lg={{span: 12, offset: 0, order: 5}} style={{marginTop: 15}}>
+                                    : <Col xs={12} sm={12} md={{span: 10, offset: 1, order: 5}} lg={{span: 12, offset: 0, order: 7}} style={{marginTop: 15}}>
                                         <FlexView column hAlignContent="left">
                                             <FlexView hAlignContent="center" vAlignContent="center">
                                                 <Button color="primary" variant="contained" className={css(sharedStyles.no_text_transform)} disabled={this.shouldHideInformation() || (user.type === TYPE_INVESTOR && !investorSelfCertificationAgreement)} onClick={() => this.toggleContactPitchOwnerDialog()}>Contact us</Button>
@@ -4114,9 +4143,39 @@ class ProjectDetails extends Component {
                                             null
                                             :
                                             <FlexView className={css(styles.border_box)} style={{backgroundColor: colors.kick_starter_background_color}} column marginTop={30} vAlignContent="center">
-                                                <Typography variant="body1" align="left">How the company is rai{project.Pitch.howFundIsBeingRaised}</Typography>
+                                                <Typography variant="body1" align="left">How does the company plan to raise funds:  {project.Pitch.howFundIsBeingRaised}</Typography>
                                             </FlexView>
                                     }
+
+                                   
+                                        
+                                            
+                                    {
+                                        project.Pitch.hasSEIS === "No"
+                                            ?
+                                            null
+                                            :
+                                            <FlexView className={css(styles.border_box)} style={{backgroundColor: colors.kick_starter_background_color}} column marginTop={30} vAlignContent="center">
+                                                <Typography variant="body1" align="left">Does this pitch have a SEIS badge: <b> {project.Pitch.hasSEIS}</b></Typography>
+                                            </FlexView>
+                                    }
+                                            
+                                    
+
+                                    
+                                    {
+                                        project.Pitch.hasEIS === "No"
+                                            ?
+                                            null
+                                            :
+                                            <FlexView className={css(styles.border_box)} style={{backgroundColor: colors.kick_starter_background_color}} column marginTop={30} vAlignContent="center">
+                                                <Typography variant="body1" align="left">Does this pitch have a EIS badge: <b> {project.Pitch.hasEIS}</b></Typography>
+                                            </FlexView>
+                                    }
+                                    
+
+                                    
+                                    
 
                                     {/** Details about earlier fundraising rounds */}
                                     {

@@ -56,7 +56,10 @@ class OfferItem extends Component<OfferItemProps, any> {
             return null;
         }
 
+
+
         const pitchCover: PitchCover | null = getPitchCover(offerInstance.projectDetail);
+
 
         return <CustomLink
             url={Routes.constructProjectDetailRoute(ManageGroupUrlState.groupNameFromUrl ?? null, offerInstance.projectDetail.id)}
@@ -122,6 +125,7 @@ class OfferItem extends Component<OfferItemProps, any> {
                                             </Typography>
                                         </Box>
 
+
                                         {/** Sector / Description */}
                                         <Box color={colors.grey["700"]} >
                                             <title className="projectInfo">
@@ -147,6 +151,8 @@ class OfferItem extends Component<OfferItemProps, any> {
                                         </Box>
                                     </Box>
 
+
+
                                     {/** Divider */}
                                     <Box bgcolor={getGroupRouteTheme(ManageGroupUrlState).palette.primary.main} height="3px" marginTop="30px" marginBottom="15px" />
 
@@ -160,7 +166,7 @@ class OfferItem extends Component<OfferItemProps, any> {
                                             }
                                         </Typography>
 
-                                        <Box marginTop="20px" >
+                                        <Box marginTop="5px" >
                                             <Typography variant="body2" align="left" color="textSecondary" >
                                                 {
                                                     !isProjectLive(offerInstance.projectDetail)
@@ -169,6 +175,28 @@ class OfferItem extends Component<OfferItemProps, any> {
                                                 }
                                             </Typography>
                                         </Box>
+                                    </Box>
+
+                                    <Box className="badges">
+                                        {
+                                        offerInstance.projectDetail.Pitch.hasSEIS === "No"
+                                            ?
+                                            null
+                                            :
+                                            <Col className="badge-spacing" >
+                                                <Typography className="text-badges" variant="body2" align="center"><b> SEIS </b></Typography>
+                                            </Col>
+                                        }
+
+                                        {
+                                        offerInstance.projectDetail.Pitch.hasEIS === "No"
+                                            ?
+                                            null
+                                            :
+                                            <Col className="badge-spacing" >
+                                                <Typography className="text-badges" variant="body2" align="center"><b> EIS </b></Typography>
+                                            </Col>
+                                        }
                                     </Box>
 
                                     {/** Project visibility information */}

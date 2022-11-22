@@ -12,3 +12,20 @@
 }
 
 
+.badges {
+  display: flex;
+  margin: 5px -5px;
+  .text-badges {
+    border-style: solid;
+    border-width: thin;
+    color: #4C8484;
+    width: 85px;
+  }
+}
+
+.badge-spacing {
+  display: flex;
+  flex-wrap: wrap;
+  padding-left: 3px !important;
+}
+
