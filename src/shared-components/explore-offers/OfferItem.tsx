@@ -1,5 +1,4 @@
 import React, {Component} from "react";
-import FlexView from "react-flexview";
 import {connect} from "react-redux";
 import {AppState} from "../../redux-store/reducers";
 import {getGroupRouteTheme, ManageGroupUrlState} from "../../redux-store/reducers/manageGroupUrlReducer";
