@@ -2722,7 +2722,7 @@ class ProjectDetails extends Component {
                             {
                                 isProjectOwner(AuthenticationState.currentUser, project)
                                     ? null
-                                    : <Col xs={12} sm={12} md={{span: 10, offset: 1, order: 5}} lg={{span: 12, offset: 0, order: 5}} style={{marginTop: 15}}>
+                                    : <Col xs={12} sm={12} md={{span: 10, offset: 1, order: 5}} lg={{span: 12, offset: 0, order: 7}} style={{marginTop: 15}}>
                                         <FlexView column hAlignContent="left">
                                             <FlexView hAlignContent="center" vAlignContent="center">
                                                 <Button color="primary" variant="contained" className={css(sharedStyles.no_text_transform)} disabled={this.shouldHideInformation() || (user.type === TYPE_INVESTOR && !investorSelfCertificationAgreement)} onClick={() => this.toggleContactPitchOwnerDialog()}>Contact us</Button>
