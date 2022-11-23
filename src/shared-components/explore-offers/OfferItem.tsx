@@ -179,23 +179,23 @@ class OfferItem extends Component<OfferItemProps, any> {
 
                                     <Box className="badges">
                                         {
-                                        offerInstance.projectDetail.Pitch.hasSEIS === "No"
+                                        offerInstance.projectDetail.Pitch.hasSEIS === "Yes"
                                             ?
-                                            null
-                                            :
                                             <Col className="badge-spacing" >
                                                 <Typography className="text-badges" variant="body2" align="center"><b> SEIS </b></Typography>
                                             </Col>
+                                            :
+                                            null
                                         }
 
                                         {
-                                        offerInstance.projectDetail.Pitch.hasEIS === "No"
+                                        offerInstance.projectDetail.Pitch.hasEIS === "Yes"
                                             ?
-                                            null
-                                            :
                                             <Col className="badge-spacing" >
                                                 <Typography className="text-badges" variant="body2" align="center"><b> EIS </b></Typography>
-                                            </Col>
+                                            </Col>                                          
+                                            :
+                                            null
                                         }
                                     </Box>
 
