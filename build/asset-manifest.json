@@ -1,8 +1,8 @@
 {
   "files": {
-    "main.css": "https://test.investwest.online/static/css/main.8403076f.chunk.css",
-    "main.js": "https://test.investwest.online/static/js/main.090d0806.chunk.js",
-    "main.js.map": "https://test.investwest.online/static/js/main.090d0806.chunk.js.map",
+    "main.css": "https://test.investwest.online/static/css/main.4dc17469.chunk.css",
+    "main.js": "https://test.investwest.online/static/js/main.c73709ed.chunk.js",
+    "main.js.map": "https://test.investwest.online/static/js/main.c73709ed.chunk.js.map",
     "runtime-main.js": "https://test.investwest.online/static/js/runtime-main.4a323356.js",
     "runtime-main.js.map": "https://test.investwest.online/static/js/runtime-main.4a323356.js.map",
     "static/css/2.0ab909e0.chunk.css": "https://test.investwest.online/static/css/2.0ab909e0.chunk.css",
@@ -83,10 +83,9 @@
   },
   "entrypoints": [
     "static/js/runtime-main.4a323356.js",
-    "static/css/2.3771ce75.chunk.css",
-    "static/js/2.1d9b0887.chunk.js",
-    "static/css/main.8403076f.chunk.css",
-    "static/js/main.090d0806.chunk.js"
-
+    "static/css/2.0ab909e0.chunk.css",
+    "static/js/2.a205002f.chunk.js",
+    "static/css/main.4dc17469.chunk.css",
+    "static/js/main.c73709ed.chunk.js"
   ]
 }
