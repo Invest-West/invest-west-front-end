@@ -33,6 +33,7 @@ import sharedStyles from '../../shared-js-css-styles/SharedStyles';
 import * as utils from '../../utils/utils';
 import * as ROUTES from '../../router/routes';
 
+
 const mapStateToProps = state => {
     return {
         groupUserName: state.manageGroupFromParams.groupUserName,
@@ -40,6 +41,7 @@ const mapStateToProps = state => {
         groupPropertiesLoaded: state.manageGroupFromParams.groupPropertiesLoaded,
 
         notificationsAnchorEl: state.manageNotifications.notificationsAnchorEl,
+        notificationBellRef: state.manageNotifications.notificationBellRef,
         notifications: state.manageNotifications.notifications,
         loadingNotifications: state.manageNotifications.loadingNotifications,
         notificationsLoaded: state.manageNotifications.notificationsLoaded
@@ -49,7 +51,6 @@ const mapStateToProps = state => {
 const mapDispatchToProps = dispatch => {
     return {
         toggleNotifications: (event) => dispatch(notificationsActions.toggleNotifications(event)),
-        closeNotifications: (event) => dispatch(notificationsActions.closeNotifications(event)),
         loadNotifications: () => dispatch(notificationsActions.loadNotifications()),
         deleteANotification: (notification) => dispatch(notificationsActions.deleteANotification(notification)),
         deleteAllNotifications: () => dispatch(notificationsActions.deleteAllNotifications()),
@@ -60,6 +61,12 @@ const mapDispatchToProps = dispatch => {
 };
 
 class NotificationsBox extends Component {
+    constructor(props) {
+        super(props);
+
+        this.wrapperRef = React.createRef();
+        this.handleClickOutside = this.handleClickOutside.bind(this);
+    }
 
     componentDidMount() {
         const {
@@ -67,6 +74,8 @@ class NotificationsBox extends Component {
         } = this.props;
 
         loadNotifications();
+
+        document.addEventListener('mouseup', this.handleClickOutside);
     }
 
     componentDidUpdate(prevProps, prevState, snapshot) {
@@ -81,6 +90,7 @@ class NotificationsBox extends Component {
         if (!loadingNotifications && notificationsLoaded) {
             startListeningForNotificationsChanged();
         }
+
     }
 
     componentWillUnmount() {
@@ -89,6 +99,20 @@ class NotificationsBox extends Component {
         } = this.props;
 
         stopListeningForNotificationsChanged();
+
+        document.removeEventListener('mouseup', this.handleClickOutside);
+    }
+
+    handleClickOutside(event) {
+        const {
+            toggleNotifications,
+            notificationBellRef,
+        } = this.props;
+
+
+        if (this.wrapperRef && !this.wrapperRef.current.contains(event.target) && !notificationBellRef.contains(event.target) ) {
+            toggleNotifications(event);
+        }
     }
 
     render() {
@@ -102,7 +126,6 @@ class NotificationsBox extends Component {
             notificationsLoaded,
 
             toggleNotifications,
-            closeNotifications,
             deleteANotification,
             deleteAllNotifications
 
@@ -113,7 +136,7 @@ class NotificationsBox extends Component {
         }
 
         return (
-            <ClickAwayListener onClickAway={closeNotifications} mouseEvent='onMouseUp'>
+            <div ref={this.wrapperRef}>
             <Popper
                 open={Boolean(notificationsAnchorEl)}
                 anchorEl={notificationsAnchorEl}
@@ -264,7 +287,7 @@ class NotificationsBox extends Component {
                     </Fade>
                 )}
             </Popper>
-            </ClickAwayListener>
+            </div>
         );
     }
 }

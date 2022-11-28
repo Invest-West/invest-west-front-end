@@ -58,6 +58,8 @@ const mapStateToProps = state => {
         userLoaded: state.auth.userLoaded,
 
         notifications: state.manageNotifications.notifications,
+        notificationsAnchorEl: state.manageNotifications.notificationsAnchorEl,
+        notificationBellRef: state.manageNotifications.notificationBellRef,
 
         editUserProfile_userEdited: state.editUser.userEdited
     }
@@ -75,7 +77,8 @@ const mapDispatchToProps = dispatch => {
 
         // projectsTable_setUser: (user) => dispatch(projectsTableActions.setUser(user)),
 
-        toggleNotifications: (event) => dispatch(notificationsActions.toggleNotifications(event))
+        toggleNotifications: (event) => dispatch(notificationsActions.toggleNotifications(event)),
+        notificationRefUpdated: (ref) => dispatch(notificationsActions.notificationRefUpdated(ref)),
     }
 };
 
@@ -85,6 +88,7 @@ class IssuerDashboard extends Component {
         super(props);
 
         this.firebaseDB = firebase.database();
+        this.notificationBell = React.createRef();
     }
 
     componentDidMount() {
@@ -94,7 +98,9 @@ class IssuerDashboard extends Component {
 
             setGroupUserNameFromParams,
             setExpectedAndCurrentPathsForChecking,
-            loadAngelNetwork
+            loadAngelNetwork,
+
+            notificationRefUpdated
         } = this.props;
 
         const match = this.props.match;
@@ -107,6 +113,8 @@ class IssuerDashboard extends Component {
         if (groupPropertiesLoaded && shouldLoadOtherData) {
             this.setDataForComponents();
         }
+
+        notificationRefUpdated(this.notificationBell.current);
     }
 
     componentDidUpdate(prevProps, prevState, snapshot) {
@@ -114,7 +122,9 @@ class IssuerDashboard extends Component {
             groupPropertiesLoaded,
             shouldLoadOtherData,
 
-            loadAngelNetwork
+            loadAngelNetwork,
+
+            notificationRefUpdated
         } = this.props;
 
         loadAngelNetwork();
@@ -122,6 +132,8 @@ class IssuerDashboard extends Component {
         if (groupPropertiesLoaded && shouldLoadOtherData) {
             this.setDataForComponents();
         }
+
+        notificationRefUpdated(this.notificationBell.current);
     }
 
     /**
@@ -243,6 +255,7 @@ class IssuerDashboard extends Component {
             userLoaded,
 
             notifications,
+            notificationsAnchorEl,
 
             toggleSidebar,
             toggleNotifications
@@ -322,11 +335,13 @@ class IssuerDashboard extends Component {
                                     </Col>
                                     <Col xs={2} sm={2} md={1} lg={1} style={{paddingRight: 13}}>
                                         <FlexView vAlignContent="center" hAlignContent="right" width="100%">
+                                            <div ref={this.notificationBell}>
                                             <IconButton onClick={toggleNotifications}>
                                                 <Badge badgeContent={notifications.length} color="secondary" invisible={notifications.length === 0}>
                                                     <NotificationsIcon className={css(sharedStyles.white_text)}/>
                                                 </Badge>
                                             </IconButton>
+                                            </div>
                                         </FlexView>
                                     </Col>
                                 </Row>
@@ -339,7 +354,9 @@ class IssuerDashboard extends Component {
                     }
 
                     {/** Notifications box */}
-                    <NotificationsBox/>
+                    {notificationsAnchorEl !== null &&
+                        <NotificationsBox/>
+                    }
 
                     {/** Uploading dialog */}
                     <UploadingDialog/>
