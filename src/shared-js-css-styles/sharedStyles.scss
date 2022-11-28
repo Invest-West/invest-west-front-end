@@ -12,20 +12,58 @@
 }
 
 
-.badges {
+#explore-offers {
+  display: flex;
+  padding: 15px;
+} .offer-image {
+
+} .project-title{
+  
+}
+ .projectInfo {
+  order: 1;
+} .issuer-offer {
+  order:2;
+} .offer-divier {
+  order:3;
+  height: 3px;
+  margin: 30px 0px 15px 0px;
+} .phase-offer{
+  order: 4;
+} .badges {
   display: flex;
   margin: 5px -5px;
-  .text-badges {
-    border-style: solid;
-    border-width: thin;
-    color: #4C8484;
-    width: 85px;
+  flex-direction: row;
+  flex-wrap: wrap;
+  order: 5;
+  flex-shrink: 1;
+  gap: 5px;
+  .seis{
+    margin-left: -10px;
+  }
+  .eis{
+    margin-left: -10px;
+  }
+  .public-offer{
+    align-self:flex-end;
   }
 }
 
-.badge-spacing {
-  display: flex;
-  flex-wrap: wrap;
-  padding-left: 3px !important;
+@media screen and (max-device-width:1510px) {
+  .eis {
+    padding-top:10px ;
+  }
 }
 
+.text-badges {
+  border-style: solid;
+  border-width: thin;
+  color: #4C8484;
+  width: 85px;
+}
+
+@media screen and (min-device-width:1400px) {
+  .text-badges {
+    width: 45px;
+  }
+}
