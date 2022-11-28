@@ -14,9 +14,13 @@
 
 #explore-offers {
   display: flex;
-  flex-direction: column;
   padding: 15px;
-} .projectInfo {
+} .offer-image {
+
+} .project-title{
+  
+}
+ .projectInfo {
   order: 1;
 } .issuer-offer {
   order:2;
@@ -32,6 +36,7 @@
   flex-direction: row;
   flex-wrap: wrap;
   order: 5;
+  flex-shrink: 1;
   gap: 5px;
   .seis{
     margin-left: -10px;
@@ -57,3 +62,8 @@
   width: 85px;
 }
 
+@media screen and (min-device-width:1400px) {
+  .text-badges {
+    width: 45px;
+  }
+}

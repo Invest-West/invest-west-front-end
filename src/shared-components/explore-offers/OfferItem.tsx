@@ -73,6 +73,7 @@ class OfferItem extends Component<OfferItemProps, any> {
                         <Row noGutters >
                             <Col xs={12} sm={12} md={12} lg={12} >
                                 <Box
+                                    className="offer-image"
                                     height={`${CoverMaxHeight}px`}
                                     width="100%"
                                     bgcolor={appColors.dark_green_last_lightness_94_hue_angle_minus_17_color_saturation_100}
@@ -111,7 +112,7 @@ class OfferItem extends Component<OfferItemProps, any> {
 
                                 <Divider/>
 
-                                <Box padding="14px" id="explore-offers" >
+                                <Box padding="14px" className="project-title" >
                                     {/** Project basic information */}
                                     <Box>
                                         {/** Project title */}
