@@ -49,21 +49,9 @@
   }
 }
 
-@media screen and (max-device-width:1510px) {
-  .eis {
-    padding-top:10px ;
-  }
-}
-
 .text-badges {
   border-style: solid;
   border-width: thin;
   color: #4C8484;
-  width: 85px;
-}
-
-@media screen and (min-device-width:1400px) {
-  .text-badges {
-    width: 45px;
-  }
+  width: 45px;
 }
