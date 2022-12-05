@@ -204,34 +204,36 @@ class OfferItem extends Component<OfferItemProps, any> {
                                                 null
                                             }
                                         </Box>
-                                        <OverlayTrigger
-                                            trigger={["hover", "focus"]}
-                                            placement="bottom"
-                                            flip
-                                            overlay={
-                                                <Tooltip id="tooltip-bottom" className="public-offer" >
-                                                    {
-                                                        isProjectPublic(offerInstance.projectDetail)
-                                                            ? "This is a public offer."
-                                                            : isProjectRestricted(offerInstance.projectDetail)
-                                                            ? "This is a restricted offer."
-                                                            : isProjectPrivate(offerInstance.projectDetail)
-                                                                ? "This is a private offer."
-                                                                : null
-                                                    }
-                                                </Tooltip>
-                                            }
-                                        >
-                                            {
-                                                isProjectPublic(offerInstance.projectDetail)
-                                                    ? <PublicIcon/>
-                                                    : isProjectRestricted(offerInstance.projectDetail)
-                                                    ? <RestrictedIcon/>
-                                                    : isProjectPrivate(offerInstance.projectDetail)
-                                                        ? <PrivateIcon/>
-                                                        : <Box/>
-                                            }
-                                        </OverlayTrigger>
+                                        <Box className="public-offer">
+                                            <OverlayTrigger
+                                                trigger={["hover", "focus"]}
+                                                placement="bottom"
+                                                flip
+                                                overlay={
+                                                    <Tooltip id="tooltip-bottom" >
+                                                        {
+                                                            isProjectPublic(offerInstance.projectDetail)
+                                                                ? "This is a public offer."
+                                                                : isProjectRestricted(offerInstance.projectDetail)
+                                                                ? "This is a restricted offer."
+                                                                : isProjectPrivate(offerInstance.projectDetail)
+                                                                    ? "This is a private offer."
+                                                                    : null
+                                                        }
+                                                    </Tooltip>
+                                                }
+                                            >
+                                                {
+                                                    isProjectPublic(offerInstance.projectDetail)
+                                                        ? <PublicIcon/>
+                                                        : isProjectRestricted(offerInstance.projectDetail)
+                                                        ? <RestrictedIcon/>
+                                                        : isProjectPrivate(offerInstance.projectDetail)
+                                                            ? <PrivateIcon/>
+                                                            : <Box/>
+                                                }
+                                            </OverlayTrigger>
+                                        </Box>
                                     </Box>
                                 </Box>
                             </Col>
