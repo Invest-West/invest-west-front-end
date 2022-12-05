@@ -80,9 +80,10 @@
     "static/media/issuer_help_support_01.png": "https://test.investwest.online/static/media/issuer_help_support_01.866d8280.png",
     "static/media/issuer_help_support_02.png": "https://test.investwest.online/static/media/issuer_help_support_02.39aafbdc.png",
     "static/media/logo.png": "https://test.investwest.online/static/media/logo.5e7ff337.png"
+
   },
   "entrypoints": [
-    "static/js/runtime-main.4a323356.js",
+    "static/js/runtime-main.3b1e71ac.js",
     "static/css/2.3771ce75.chunk.css",
     "static/js/2.1d9b0887.chunk.js",
     "static/css/main.1f9b6083.chunk.css",
