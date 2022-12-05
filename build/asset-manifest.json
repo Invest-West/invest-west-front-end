@@ -1,6 +1,6 @@
 {
   "files": {
-    "main.css": "https://test.investwest.online/static/css/main.1f9b6083.chunk.css",
+    "main.css": "https://test.investwest.online/static/css/main.a0de9a20.chunk.css",
     "main.js": "https://test.investwest.online/static/js/main.cea3fd08.chunk.js",
     "main.js.map": "https://test.investwest.online/static/js/main.cea3fd08.chunk.js.map",
     "runtime-main.js": "https://test.investwest.online/static/js/runtime-main.4a323356.js",
@@ -10,7 +10,7 @@
     "static/js/2.1d9b0887.chunk.js.map": "https://test.investwest.online/static/js/2.1d9b0887.chunk.js.map",
     "index.html": "https://test.investwest.online/index.html",
     "static/css/2.3771ce75.chunk.css.map": "https://test.investwest.online/static/css/2.3771ce75.chunk.css.map",
-    "static/css/main.1f9b6083.chunk.css.map": "https://test.investwest.online/static/css/main.1f9b6083.chunk.css.map",
+    "static/css/main.a0de9a20.chunk.css.map": "https://test.investwest.online/static/css/main.a0de9a20.chunk.css.map",
     "static/js/2.1d9b0887.chunk.js.LICENSE.txt": "https://test.investwest.online/static/js/2.1d9b0887.chunk.js.LICENSE.txt",
     "static/media/admin_logo.png": "https://test.investwest.online/static/media/admin_logo.ba46fba4.png",
     "static/media/front_page_cover_image.png": "https://test.investwest.online/static/media/front_page_cover_image.2b9aa708.png",
@@ -80,13 +80,12 @@
     "static/media/issuer_help_support_01.png": "https://test.investwest.online/static/media/issuer_help_support_01.866d8280.png",
     "static/media/issuer_help_support_02.png": "https://test.investwest.online/static/media/issuer_help_support_02.39aafbdc.png",
     "static/media/logo.png": "https://test.investwest.online/static/media/logo.5e7ff337.png"
-
   },
   "entrypoints": [
-    "static/js/runtime-main.3b1e71ac.js",
+    "static/js/runtime-main.4a323356.js",
     "static/css/2.3771ce75.chunk.css",
     "static/js/2.1d9b0887.chunk.js",
-    "static/css/main.1f9b6083.chunk.css",
+    "static/css/main.a0de9a20.chunk.css",
     "static/js/main.cea3fd08.chunk.js"
   ]
 }
