@@ -56,7 +56,10 @@ class OfferItem extends Component<OfferItemProps, any> {
             return null;
         }
 
+
+
         const pitchCover: PitchCover | null = getPitchCover(offerInstance.projectDetail);
+
 
         return <CustomLink
             url={Routes.constructProjectDetailRoute(ManageGroupUrlState.groupNameFromUrl ?? null, offerInstance.projectDetail.id)}
@@ -70,6 +73,7 @@ class OfferItem extends Component<OfferItemProps, any> {
                         <Row noGutters >
                             <Col xs={12} sm={12} md={12} lg={12} >
                                 <Box
+                                    className="offer-image"
                                     height={`${CoverMaxHeight}px`}
                                     width="100%"
                                     bgcolor={appColors.dark_green_last_lightness_94_hue_angle_minus_17_color_saturation_100}
@@ -108,7 +112,7 @@ class OfferItem extends Component<OfferItemProps, any> {
 
                                 <Divider/>
 
-                                <Box padding="14px" >
+                                <Box padding="14px" className="project-title" >
                                     {/** Project basic information */}
                                     <Box>
                                         {/** Project title */}
@@ -122,8 +126,9 @@ class OfferItem extends Component<OfferItemProps, any> {
                                             </Typography>
                                         </Box>
 
+
                                         {/** Sector / Description */}
-                                        <Box color={colors.grey["700"]} >
+                                        <Box color={colors.grey["700"]}>
                                             <title className="projectInfo">
                                                 {
                                                     shouldHideProjectInformationFromUser(AuthenticationState.currentUser, AuthenticationState.groupsOfMembership, offerInstance.projectDetail)
@@ -134,7 +139,7 @@ class OfferItem extends Component<OfferItemProps, any> {
                                         </Box>
 
                                         {/** By issuer */}
-                                        <Box color="black" marginTop="8px" >
+                                        <Box color="black" marginTop="8px" className="issuer-offer" >
                                             <Typography variant="body2" noWrap >
                                                 {
                                                     shouldHideProjectInformationFromUser(AuthenticationState.currentUser, AuthenticationState.groupsOfMembership, offerInstance.projectDetail)
@@ -147,11 +152,13 @@ class OfferItem extends Component<OfferItemProps, any> {
                                         </Box>
                                     </Box>
 
+
+
                                     {/** Divider */}
-                                    <Box bgcolor={getGroupRouteTheme(ManageGroupUrlState).palette.primary.main} height="3px" marginTop="30px" marginBottom="15px" />
+                                    <Box bgcolor={getGroupRouteTheme(ManageGroupUrlState).palette.primary.main} className="offer-divier" />
 
                                     {/** Project phase information */}
-                                    <Box>
+                                    <Box className="phase-offer">
                                         <Typography variant="body2" color="primary" align="left" >
                                             {
                                                 offerInstance.projectDetail.Pitch.fundRequired
@@ -160,7 +167,7 @@ class OfferItem extends Component<OfferItemProps, any> {
                                             }
                                         </Typography>
 
-                                        <Box marginTop="20px" >
+                                        <Box marginTop="5px" >
                                             <Typography variant="body2" align="left" color="textSecondary" >
                                                 {
                                                     !isProjectLive(offerInstance.projectDetail)
@@ -171,36 +178,62 @@ class OfferItem extends Component<OfferItemProps, any> {
                                         </Box>
                                     </Box>
 
+
                                     {/** Project visibility information */}
-                                    <Box display="flex" marginTop="15px" justifyContent="flex-end" color={getGroupRouteTheme(ManageGroupUrlState).palette.primary.main} >
-                                        <OverlayTrigger
-                                            trigger={["hover", "focus"]}
-                                            placement="bottom"
-                                            flip
-                                            overlay={
-                                                <Tooltip id="tooltip-bottom" >
-                                                    {
-                                                        isProjectPublic(offerInstance.projectDetail)
-                                                            ? "This is a public offer."
-                                                            : isProjectRestricted(offerInstance.projectDetail)
-                                                            ? "This is a restricted offer."
-                                                            : isProjectPrivate(offerInstance.projectDetail)
-                                                                ? "This is a private offer."
-                                                                : null
-                                                    }
-                                                </Tooltip>
-                                            }
-                                        >
+                                    <Box className="badges" color={getGroupRouteTheme(ManageGroupUrlState).palette.primary.main} >
+                                        
+                                        <Box>
                                             {
-                                                isProjectPublic(offerInstance.projectDetail)
-                                                    ? <PublicIcon/>
-                                                    : isProjectRestricted(offerInstance.projectDetail)
-                                                    ? <RestrictedIcon/>
-                                                    : isProjectPrivate(offerInstance.projectDetail)
-                                                        ? <PrivateIcon/>
-                                                        : <Box/>
+                                            offerInstance.projectDetail.Pitch.hasSEIS === "Yes"
+                                                ?
+                                                <Col className="seis">
+                                                    <Typography className="text-badges" variant="body2" align="center"><b> SEIS </b></Typography>
+                                                </Col>
+                                                :
+                                                null
                                             }
-                                        </OverlayTrigger>
+                                        </Box>
+                                        <Box>
+                                            {
+                                            offerInstance.projectDetail.Pitch.hasEIS === "Yes"
+                                                ?
+                                                <Col className="eis">
+                                                    <Typography className="text-badges" variant="body2" align="center"><b> EIS </b></Typography>
+                                                </Col>                                          
+                                                :
+                                                null
+                                            }
+                                        </Box>
+                                        <Box className="public-offer">
+                                            <OverlayTrigger
+                                                trigger={["hover", "focus"]}
+                                                placement="bottom"
+                                                flip
+                                                overlay={
+                                                    <Tooltip id="tooltip-bottom" >
+                                                        {
+                                                            isProjectPublic(offerInstance.projectDetail)
+                                                                ? "This is a public offer."
+                                                                : isProjectRestricted(offerInstance.projectDetail)
+                                                                ? "This is a restricted offer."
+                                                                : isProjectPrivate(offerInstance.projectDetail)
+                                                                    ? "This is a private offer."
+                                                                    : null
+                                                        }
+                                                    </Tooltip>
+                                                }
+                                            >
+                                                {
+                                                    isProjectPublic(offerInstance.projectDetail)
+                                                        ? <PublicIcon/>
+                                                        : isProjectRestricted(offerInstance.projectDetail)
+                                                        ? <RestrictedIcon/>
+                                                        : isProjectPrivate(offerInstance.projectDetail)
+                                                            ? <PrivateIcon/>
+                                                            : <Box/>
+                                                }
+                                            </OverlayTrigger>
+                                        </Box>
                                     </Box>
                                 </Box>
                             </Col>
