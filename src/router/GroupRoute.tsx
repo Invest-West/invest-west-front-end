@@ -130,7 +130,7 @@ class GroupRoute extends Component<GroupRouteProps & Readonly<RouteComponentProp
         ) {
             const { location } = this.props;
 
-            safeSetItem('redirectToAfterAuth', location.pathname);
+            safeSetItem('redirectToAfterAuth', `${location.pathname}${location?.search}`);
 
             this.setState({
                 navigatingToSignIn: true
