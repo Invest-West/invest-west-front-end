@@ -43,6 +43,8 @@ import OffersTable from "../../shared-components/offers-table/OffersTable";
 import ExploreGroups from "../../shared-components/explore-groups/ExploreGroups";
 import Resources from "../resources/Resources";
 
+import { safeGetItem, safeRemoveItem } from "../../utils/browser";
+
 const mapStateToProps = state => {
     return {
         groupPropertiesLoaded: state.manageGroupFromParams.groupPropertiesLoaded,
@@ -92,6 +94,8 @@ class IssuerDashboard extends Component {
     }
 
     componentDidMount() {
+
+
         const {
             groupPropertiesLoaded,
             shouldLoadOtherData,
@@ -100,10 +104,17 @@ class IssuerDashboard extends Component {
             setExpectedAndCurrentPathsForChecking,
             loadAngelNetwork,
 
-            notificationRefUpdated
+            notificationRefUpdated,
+
+            history,
+            match,
         } = this.props;
 
-        const match = this.props.match;
+        const redirectTo = safeGetItem('redirectToAfterAuth');
+        if (redirectTo) {
+            safeRemoveItem('redirectToAfterAuth');
+            history.push(redirectTo);
+        }
 
         setGroupUserNameFromParams(match.params.hasOwnProperty('groupUserName') ? match.params.groupUserName : null);
         setExpectedAndCurrentPathsForChecking(match.params.hasOwnProperty('groupUserName') ? ROUTES.DASHBOARD_ISSUER : ROUTES.DASHBOARD_ISSUER_INVEST_WEST_SUPER, match.path);
