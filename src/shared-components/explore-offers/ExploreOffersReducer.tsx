@@ -60,7 +60,7 @@ export const hasOffersForCurrentFilters = (state: ExploreOffersState) => {
     return successfullyFetchedOffers(state) && state.offerInstances.length > 0;
 }
 
-export const isSearchFilterActive = (state: ExploreOffersState) => {
+export const isSearchFilterActive = (state: ExploreOffersState) =>  {
     return state.searchFilter.trim().length > 0;
 }
 
