@@ -50,6 +50,8 @@ import {MediaQueryState} from "../../redux-store/reducers/mediaQueryReducer";
 import {Close} from "@material-ui/icons";
 import CustomLink from "../../shared-js-css-styles/CustomLink";
 import Footer from "../../shared-components/footer/Footer";
+import '../../shared-js-css-styles/sharedStyles.scss';
+import HCaptcha from '@hcaptcha/react-hcaptcha';
 
 interface SignInProps {
     ManageGroupUrlState: ManageGroupUrlState;
@@ -85,6 +87,34 @@ const mapDispatchToProps = (dispatch: ThunkDispatch<any, any, AnyAction>) => {
 class SignInNew extends Component<SignInProps
     & Readonly<RouteComponentProps<RouteParams>>,
     {}> {
+
+         // This is a state variable to store the captcha token
+         state = {
+            captchaToken: ""
+          };
+      
+          // This is a ref to access the HCaptcha instance
+          captchaRef: React.RefObject<HCaptcha> = React.createRef();
+      
+          // This is a handler function that updates the captcha token state when the user completes the captcha
+          handleCaptchaVerify = (token: string) => {
+            this.setState({ captchaToken: token });
+          };
+      
+          // This is a handler function that resets the captcha token state when the user expires or resets the captcha
+          handleCaptchaExpire = () => {
+            this.setState({ captchaToken: "" });
+          };
+      
+          // This is a handler function that submits the login form with the user input and the captcha token
+          handleSubmit = (event: React.FormEvent) => {
+            event.preventDefault();
+            // You can use your own props and methods to perform the login logic here
+            // For example, you can call something like this:
+            // Or you can use an API call or a fetch request to send the data to your backend
+            // Make sure to handle any errors or responses accordingly
+            console.log("Submitting login form with captcha token:", this.state.captchaToken);
+          };
 
     render() {
         const {
@@ -168,6 +198,16 @@ class SignInNew extends Component<SignInProps
                                             }}
                                         />
                                     </FormControl>
+                                    <div className="captcha">
+                                        <FormControl>
+                                        <HCaptcha
+                                            sitekey="ea92df3b-fd27-475e-a7b4-1ebe0f08be78" // Replace this with your site key
+                                            ref={this.captchaRef} // Assign the ref to access the HCaptcha instance
+                                            onVerify={this.handleCaptchaVerify} // Assign the handler function for verification
+                                            onExpire={this.handleCaptchaExpire} // Assign the handler function for expiration
+                                        />
+                                        </FormControl>
+                                    </div>
 
                                     <Box marginTop="35px" marginBottom="45px" >
                                         <Typography variant="body1" align="center" >
@@ -186,6 +226,7 @@ class SignInNew extends Component<SignInProps
                                                 <HashLoader color={getGroupRouteTheme(ManageGroupUrlState).palette.primary.main} />
                                             </Box>
                                     }
+
 
                                     <FormControl>
                                         <Button type="submit" variant="contained" color="primary" size="large" className={css(sharedStyles.no_text_transform)}>Sign in</Button>
