@@ -50,6 +50,7 @@ import {MediaQueryState} from "../../redux-store/reducers/mediaQueryReducer";
 import {Close} from "@material-ui/icons";
 import CustomLink from "../../shared-js-css-styles/CustomLink";
 import Footer from "../../shared-components/footer/Footer";
+import HCaptcha from '@hcaptcha/react-hcaptcha';
 
 interface SignInProps {
     ManageGroupUrlState: ManageGroupUrlState;
@@ -169,6 +170,13 @@ class SignInNew extends Component<SignInProps
                                         />
                                     </FormControl>
 
+                                    <FormControl>
+                                        <HCaptcha
+                                            sitekey="ea92df3b-fd27-475e-a7b4-1ebe0f08be78"
+                                            //onVerify={(token,ekey) => handleVerificationSuccess(token, ekey)}
+                                        />
+                                    </FormControl>
+
                                     <Box marginTop="35px" marginBottom="45px" >
                                         <Typography variant="body1" align="center" >
                                             By clicking Sign In, you agree to our&nbsp;
@@ -186,6 +194,7 @@ class SignInNew extends Component<SignInProps
                                                 <HashLoader color={getGroupRouteTheme(ManageGroupUrlState).palette.primary.main} />
                                             </Box>
                                     }
+
 
                                     <FormControl>
                                         <Button type="submit" variant="contained" color="primary" size="large" className={css(sharedStyles.no_text_transform)}>Sign in</Button>
