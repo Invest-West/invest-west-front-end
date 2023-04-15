@@ -37,13 +37,17 @@ import {
     onSignInClick,
     onTextChanged,
     togglePasswordVisibility,
-    toggleResetPasswordDialog
+    toggleResetPasswordDialog,
+    updateCaptchaToken
 } from "./SignInActions";
 import {
     AuthenticationState,
     hasAuthenticationError,
     isAuthenticating
 } from "../../redux-store/reducers/authenticationReducer";
+import {
+    signIn
+} from "../../redux-store/actions/authenticationActions";
 import HashLoader from "react-spinners/HashLoader";
 import * as appColors from "../../values/colors";
 import {MediaQueryState} from "../../redux-store/reducers/mediaQueryReducer";
@@ -58,19 +62,24 @@ interface SignInProps {
     AuthenticationState: AuthenticationState;
     MediaQueryState: MediaQueryState;
     SignInLocalState: SignInState;
+    captchaToken: string;
+    updateCaptchaToken: (captchaToken: string) => any;
     onTextChanged: (event: React.ChangeEvent<HTMLInputElement>) => any;
     togglePasswordVisibility: () => any;
-    onSignInClick: (event: FormEvent) => any;
+    onSignInClick: (email: string, password: string, captchaToken: string) => any;
     toggleResetPasswordDialog: () => any;
     onSendResetPasswordClick: () => any;
-}
+  }
+  
+  
 
 const mapStateToProps = (state: AppState) => {
     return {
         ManageGroupUrlState: state.ManageGroupUrlState,
         AuthenticationState: state.AuthenticationState,
         MediaQueryState: state.MediaQueryState,
-        SignInLocalState: state.SignInLocalState
+        SignInLocalState: state.SignInLocalState,
+        captchaToken: state.SignInLocalState.captchaToken
     }
 }
 
@@ -78,43 +87,31 @@ const mapDispatchToProps = (dispatch: ThunkDispatch<any, any, AnyAction>) => {
     return {
         onTextChanged: (event: React.ChangeEvent<HTMLInputElement>) => dispatch(onTextChanged(event)),
         togglePasswordVisibility: () => dispatch(togglePasswordVisibility()),
-        onSignInClick: (event: FormEvent) => dispatch(onSignInClick(event)),
+        onSignInClick: (email: string, password: string, captchaToken: string) => dispatch(signIn(email, password, captchaToken)),
         toggleResetPasswordDialog: () => dispatch(toggleResetPasswordDialog()),
-        onSendResetPasswordClick: () => dispatch(onSendResetPasswordClick())
+        onSendResetPasswordClick: () => dispatch(onSendResetPasswordClick()),
+        updateCaptchaToken: (token: string) => dispatch(updateCaptchaToken(token))
     }
 }
 
-class SignInNew extends Component<SignInProps
-    & Readonly<RouteComponentProps<RouteParams>>,
-    {}> {
-
-         // This is a state variable to store the captcha token
-         state = {
-            captchaToken: ""
-          };
-      
-          // This is a ref to access the HCaptcha instance
-          captchaRef: React.RefObject<HCaptcha> = React.createRef();
-      
-          // This is a handler function that updates the captcha token state when the user completes the captcha
-          handleCaptchaVerify = (token: string) => {
-            this.setState({ captchaToken: token });
-          };
-      
-          // This is a handler function that resets the captcha token state when the user expires or resets the captcha
-          handleCaptchaExpire = () => {
-            this.setState({ captchaToken: "" });
-          };
-      
-          // This is a handler function that submits the login form with the user input and the captcha token
-          handleSubmit = (event: React.FormEvent) => {
-            event.preventDefault();
-            // You can use your own props and methods to perform the login logic here
-            // For example, you can call something like this:
-            // Or you can use an API call or a fetch request to send the data to your backend
-            // Make sure to handle any errors or responses accordingly
-            console.log("Submitting login form with captcha token:", this.state.captchaToken);
-          };
+class SignInNew extends Component<SignInProps & Readonly<RouteComponentProps<RouteParams>>, {}> {
+    captchaRef: React.RefObject<HCaptcha> = React.createRef();
+  
+    handleCaptchaVerify = (token: string) => {
+      this.props.updateCaptchaToken(token);
+    };
+  
+    handleCaptchaExpire = () => {
+      this.props.updateCaptchaToken('');
+    };
+  
+    handleSubmit = (event: React.FormEvent) => {
+        event.preventDefault();
+        const { signInEmail, signInPassword } = this.props.SignInLocalState;
+        this.props.onSignInClick(signInEmail, signInPassword, this.props.captchaToken);
+      };
+          
+          
 
     render() {
         const {
@@ -164,7 +161,7 @@ class SignInNew extends Component<SignInProps
                             }
 
                             {/** Sign in form */}
-                            <form onSubmit={onSignInClick} >
+                            <form onSubmit={(event) => this.handleSubmit(event)}>
                                 <Box display="flex" flexDirection="column" >
                                     {/** Email field */}
                                     <FormControl>
@@ -201,11 +198,11 @@ class SignInNew extends Component<SignInProps
                                     <div className="captcha">
                                         <FormControl>
                                         <HCaptcha
-                                            sitekey="ea92df3b-fd27-475e-a7b4-1ebe0f08be78" // Replace this with your site key
-                                            ref={this.captchaRef} // Assign the ref to access the HCaptcha instance
-                                            onVerify={this.handleCaptchaVerify} // Assign the handler function for verification
-                                            onExpire={this.handleCaptchaExpire} // Assign the handler function for expiration
-                                        />
+                                            ref={this.captchaRef}
+                                            sitekey="your-hCaptcha-sitekey"
+                                            onVerify={this.handleCaptchaVerify}
+                                            onExpire={this.handleCaptchaExpire}
+                                            />
                                         </FormControl>
                                     </div>
 
