@@ -199,7 +199,7 @@ class SignInNew extends Component<SignInProps & Readonly<RouteComponentProps<Rou
                                         <FormControl>
                                         <HCaptcha
                                             ref={this.captchaRef}
-                                            sitekey="your-hCaptcha-sitekey"
+                                            sitekey="ea92df3b-fd27-475e-a7b4-1ebe0f08be78"
                                             onVerify={this.handleCaptchaVerify}
                                             onExpire={this.handleCaptchaExpire}
                                             />
