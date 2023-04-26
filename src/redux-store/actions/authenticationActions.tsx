@@ -34,7 +34,7 @@ export interface CompleteAuthenticationAction extends AuthenticationAction {
     error?: Error;
 }
 
-export const signIn: ActionCreator<any> = (email?: string, password?: string) => {
+export const signIn: ActionCreator<any> = (email: string, password: string, captchaToken: string) => {
     return async (dispatch: Dispatch, getState: () => AppState) => {
         const {
             ManageGroupUrlState,

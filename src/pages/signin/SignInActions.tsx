@@ -3,6 +3,7 @@ import React, {FormEvent} from "react";
 import {signIn} from "../../redux-store/actions/authenticationActions";
 import {AppState} from "../../redux-store/reducers";
 import Api, {ApiRoutes} from "../../api/Api";
+import HCaptcha from '@hcaptcha/react-hcaptcha';
 
 export enum SignInEvents {
     ResetAllStates = "SignInEvents.ResetAllStates",
@@ -13,11 +14,26 @@ export enum SignInEvents {
     ClearErrors = "SignInEvents.ClearErrors",
     ToggleResetPasswordDialog = "SignInEvents.ToggleResetPasswordDialog",
     ProcessingResetPasswordRequest = "SignInEvents.ProcessingResetPasswordRequest",
-    CompleteProcessingResetPasswordRequest = "SignInEvents.CompleteProcessingResetPasswordRequest"
+    CompleteProcessingResetPasswordRequest = "SignInEvents.CompleteProcessingResetPasswordRequest",
+    UpdateCaptchaToken = "SIGN_IN_UPDATE_CAPTCHA_TOKEN"
 }
 
 export interface SignInAction extends Action {
 }
+
+export interface UpdateCaptchaTokenAction extends SignInAction {
+    captchaToken: string;
+  }
+  
+  export const updateCaptchaToken: ActionCreator<any> = (captchaToken: string) => {
+    return (dispatch: Dispatch, getState: () => AppState) => {
+      const action: UpdateCaptchaTokenAction = {
+        type: SignInEvents.UpdateCaptchaToken,
+        captchaToken,
+      };
+      return dispatch(action);
+    };
+  };
 
 export interface TextChangedAction extends SignInAction {
     name: string;
@@ -47,7 +63,7 @@ export const togglePasswordVisibility: ActionCreator<any> = () => {
     }
 }
 
-export const onSignInClick: ActionCreator<any> = (event: FormEvent) => {
+export const onSignInClick: ActionCreator<any> = (event: FormEvent, captchaToken: string) => {
     return async (dispatch: Dispatch, getState: () => AppState) => {
         const {
             signInEmail,
@@ -83,9 +99,12 @@ export const onSignInClick: ActionCreator<any> = (event: FormEvent) => {
             return;
         }
 
-        return dispatch(signIn(email, password));
+        // Use the captchaToken here, for example, you can pass it to your signIn function
+        return dispatch(signIn(email, password, captchaToken));
     }
 }
+
+  
 
 export const toggleResetPasswordDialog: ActionCreator<any> = () => {
     return (dispatch: Dispatch, getState: () => AppState) => {
