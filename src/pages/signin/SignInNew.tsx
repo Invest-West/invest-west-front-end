@@ -199,10 +199,15 @@ class SignInNew extends Component<SignInProps & Readonly<RouteComponentProps<Rou
                                         <FormControl>
                                         <HCaptcha
                                             ref={this.captchaRef}
-                                            sitekey="your-hCaptcha-sitekey"
+                                            sitekey="10000000-ffff-ffff-ffff-000000000001"
                                             onVerify={this.handleCaptchaVerify}
                                             onExpire={this.handleCaptchaExpire}
                                             />
+                                            {SignInLocalState.errorCaptchaNotCompleted && (
+                                            <Typography variant="body1" color="error">
+                                                Please complete the captcha.
+                                            </Typography>
+                                        )}
                                         </FormControl>
                                     </div>
 
