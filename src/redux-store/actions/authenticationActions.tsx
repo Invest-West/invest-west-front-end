@@ -36,6 +36,7 @@ export interface CompleteAuthenticationAction extends AuthenticationAction {
 
 export const signIn: ActionCreator<any> = (email: string, password: string, captchaToken: string) => {
     return async (dispatch: Dispatch, getState: () => AppState) => {
+        console.log('Attempting to log in...');
         const {
             ManageGroupUrlState,
             AuthenticationState
@@ -81,6 +82,7 @@ export const signIn: ActionCreator<any> = (email: string, password: string, capt
                     }
                     return dispatch(authenticationCompleteAction);
                 }
+                console.log('Captcha validation successful...');
             }
             // user is currently not signed in with Firebase
             else {

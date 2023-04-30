@@ -121,7 +121,6 @@ class SignInNew extends Component<SignInProps & Readonly<RouteComponentProps<Rou
             SignInLocalState,
             onTextChanged,
             togglePasswordVisibility,
-            onSignInClick,
             toggleResetPasswordDialog
         } = this.props;
 
@@ -196,18 +195,18 @@ class SignInNew extends Component<SignInProps & Readonly<RouteComponentProps<Rou
                                         />
                                     </FormControl>
                                     <div className="captcha">
-                                        <FormControl>
-                                        <HCaptcha
-                                            ref={this.captchaRef}
-                                            sitekey="ea92df3b-fd27-475e-a7b4-1ebe0f08be78"
-                                            onVerify={this.handleCaptchaVerify}
-                                            onExpire={this.handleCaptchaExpire}
-                                            />
+                                        <FormControl error={SignInLocalState.errorCaptchaNotCompleted}>
+                                            <HCaptcha
+                                                ref={this.captchaRef}
+                                                sitekey="10000000-ffff-ffff-ffff-000000000001"
+                                                onVerify={this.handleCaptchaVerify}
+                                                onExpire={this.handleCaptchaExpire}
+                                                />
                                             {SignInLocalState.errorCaptchaNotCompleted && (
-                                            <Typography variant="body1" color="error">
-                                                Please complete the captcha.
-                                            </Typography>
-                                        )}
+                                                <p id="captcha-error-text">Please complete the captcha.</p>
+                                            )}
+                                        
+                                        
                                         </FormControl>
                                     </div>
 
