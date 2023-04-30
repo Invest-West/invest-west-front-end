@@ -15,7 +15,18 @@ export enum SignInEvents {
     ToggleResetPasswordDialog = "SignInEvents.ToggleResetPasswordDialog",
     ProcessingResetPasswordRequest = "SignInEvents.ProcessingResetPasswordRequest",
     CompleteProcessingResetPasswordRequest = "SignInEvents.CompleteProcessingResetPasswordRequest",
-    UpdateCaptchaToken = "SIGN_IN_UPDATE_CAPTCHA_TOKEN"
+    UpdateCaptchaToken = "SIGN_IN_UPDATE_CAPTCHA_TOKEN",
+    CaptchaError = "SignInEvents.CaptchaError",
+    CaptchaNotCompletedError = 'SignInEvents.CaptchaNotCompletedError',
+}
+
+
+export const setCaptchaError: ActionCreator<any> = () => {
+    return (dispatch: Dispatch) => {
+        dispatch({
+            type: SignInEvents.CaptchaError
+        });
+    }
 }
 
 export interface SignInAction extends Action {
@@ -34,6 +45,7 @@ export interface UpdateCaptchaTokenAction extends SignInAction {
       return dispatch(action);
     };
   };
+
 
 export interface TextChangedAction extends SignInAction {
     name: string;
@@ -91,6 +103,17 @@ export const onSignInClick: ActionCreator<any> = (event: FormEvent, captchaToken
         if (password.length === 0) {
             dispatch({
                 type: SignInEvents.SignInPasswordError
+            });
+            allowSignIn = false;
+        }
+
+        if (captchaToken.length === 0) {
+            dispatch(setCaptchaError());
+            allowSignIn = false;
+        }
+        if (captchaToken === "") {
+            dispatch({
+                type: SignInEvents.CaptchaNotCompletedError,
             });
             allowSignIn = false;
         }

@@ -64,6 +64,23 @@ export const signIn: ActionCreator<any> = (email: string, password: string, capt
                 dispatch({
                     type: AuthenticationEvents.StartAuthenticating
                 });
+                // Validate the captchaToken
+                const response = await fetch('https://test.investwest.online/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ captchaToken }),
+                });
+
+                if (!response.ok) {
+                    // Handle failed captcha validation here
+                    authenticationCompleteAction.status = AuthenticationStatus.Unauthenticated;
+                    authenticationCompleteAction.error = {
+                        detail: "Captcha validation failed."
+                    }
+                    return dispatch(authenticationCompleteAction);
+                }
             }
             // user is currently not signed in with Firebase
             else {

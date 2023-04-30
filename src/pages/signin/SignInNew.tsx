@@ -203,6 +203,11 @@ class SignInNew extends Component<SignInProps & Readonly<RouteComponentProps<Rou
                                             onVerify={this.handleCaptchaVerify}
                                             onExpire={this.handleCaptchaExpire}
                                             />
+                                            {SignInLocalState.errorCaptchaNotCompleted && (
+                                            <Typography variant="body1" color="error">
+                                                Please complete the captcha.
+                                            </Typography>
+                                        )}
                                         </FormControl>
                                     </div>
 
