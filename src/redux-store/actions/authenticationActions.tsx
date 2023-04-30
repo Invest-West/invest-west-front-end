@@ -34,7 +34,7 @@ export interface CompleteAuthenticationAction extends AuthenticationAction {
     error?: Error;
 }
 
-export const signIn: ActionCreator<any> = (email?: string, password?: string) => {
+export const signIn: ActionCreator<any> = (email: string, password: string, captchaToken: string) => {
     return async (dispatch: Dispatch, getState: () => AppState) => {
         const {
             ManageGroupUrlState,
@@ -64,6 +64,23 @@ export const signIn: ActionCreator<any> = (email?: string, password?: string) =>
                 dispatch({
                     type: AuthenticationEvents.StartAuthenticating
                 });
+                // Validate the captchaToken
+                const response = await fetch('https://test.investwest.online/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ captchaToken }),
+                });
+
+                if (!response.ok) {
+                    // Handle failed captcha validation here
+                    authenticationCompleteAction.status = AuthenticationStatus.Unauthenticated;
+                    authenticationCompleteAction.error = {
+                        detail: "Captcha validation failed."
+                    }
+                    return dispatch(authenticationCompleteAction);
+                }
             }
             // user is currently not signed in with Firebase
             else {
