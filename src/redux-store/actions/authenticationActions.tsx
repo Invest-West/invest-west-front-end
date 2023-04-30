@@ -65,7 +65,7 @@ export const signIn: ActionCreator<any> = (email: string, password: string, capt
                     type: AuthenticationEvents.StartAuthenticating
                 });
                 // Validate the captchaToken
-                const response = await fetch('https://your-validation-server.com/validate-captcha', {
+                const response = await fetch('https://test.investwest.online/', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
