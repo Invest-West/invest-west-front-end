@@ -58,7 +58,7 @@ const authenticationReducer = (state = initialState, action: AuthenticationActio
             const completeAuthenticationAction: CompleteAuthenticationAction = (action as CompleteAuthenticationAction);
             if (completeAuthenticationAction.status === AuthenticationStatus.Authenticated) {
                 console.log('Successfully logged in!'); // Add this line
-            }
+            }          
             return {
                 ...state,
                 status: completeAuthenticationAction.status,

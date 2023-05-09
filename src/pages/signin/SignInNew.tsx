@@ -107,9 +107,9 @@ class SignInNew extends Component<SignInProps & Readonly<RouteComponentProps<Rou
   
     handleSubmit = (event: React.FormEvent) => {
         event.preventDefault();
-        const { signInEmail, signInPassword } = this.props.SignInLocalState;
-        this.props.onSignInClick(signInEmail, signInPassword, this.props.captchaToken);
-      };
+        const { signInEmail, signInPassword, captchaToken } = this.props.SignInLocalState;
+        this.props.onSignInClick(signInEmail, signInPassword, captchaToken);
+    };
           
           
 
