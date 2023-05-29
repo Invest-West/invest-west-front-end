@@ -104,7 +104,7 @@ class SignInNew extends Component<SignInProps & Readonly<RouteComponentProps<Rou
     handleCaptchaExpire = () => {
       this.props.updateCaptchaToken('');
     };
-  
+    
     handleSubmit = (event: React.FormEvent) => {
         event.preventDefault();
         const { signInEmail, signInPassword } = this.props.SignInLocalState;

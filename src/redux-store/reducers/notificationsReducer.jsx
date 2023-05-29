@@ -1,10 +1,11 @@
 import * as notificationsActions from '../actions/notificationsActions';
+import { SET_HAS_SEEN_INTRO } from '../actions/notificationsActions';
 import * as authActions from '../actions/authActions';
 
 const initState = {
     notificationsAnchorEl: null,
     notificationBellRef: undefined,
-
+    hasSeenIntro: false,
     notifications: [],
     loadingNotifications: false,
     notificationsLoaded: false
@@ -41,6 +42,11 @@ const notificationsReducer = (state = initState, action) => {
             return {
                 ...state,
                 notifications: [...action.notifications]
+            };
+        case SET_HAS_SEEN_INTRO:
+            return {
+                ...state,
+                hasSeenIntro: action.payload,
             };
         default:
             return state;

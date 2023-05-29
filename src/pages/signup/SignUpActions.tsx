@@ -6,6 +6,7 @@ import React from "react";
 import {checkPasswordStrength, PASSWORD_VERY_WEAK} from "../../utils/passwordUtils";
 import {isValidEmailAddress} from "../../utils/emailUtils";
 import {signIn} from "../../redux-store/actions/authenticationActions";
+import { setHasSeenIntro } from "../../redux-store/actions/notificationsActions";
 
 export enum SignUpEvents {
     LoadingInvitedUser = "SignUpEvents.LoadingInvitedUser",
@@ -142,6 +143,7 @@ export const createAccount: ActionCreator<any> = () => {
 
             dispatch(completeAction);
             return dispatch(signIn(email, password));
+            dispatch(setHasSeenIntro(false));
         } catch (error) {
             completeAction.error = error.toString();
             return dispatch(completeAction);

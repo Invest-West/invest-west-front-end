@@ -32,6 +32,9 @@ import sharedStyles from '../../shared-js-css-styles/SharedStyles';
 import * as colors from '../../values/colors';
 import * as ROUTES from '../../router/routes';
 
+import * as IntroJs from 'intro.js/intro.js';
+import 'intro.js/introjs.css';
+
 import {connect} from 'react-redux';
 import * as dashboardSidebarActions from '../../redux-store/actions/dashboardSidebarActions';
 import * as editUserActions from '../../redux-store/actions/editUserActions';
@@ -64,7 +67,9 @@ const mapStateToProps = state => {
         notificationsAnchorEl: state.manageNotifications.notificationsAnchorEl,
         notificationBellRef: state.manageNotifications.notificationBellRef,
 
-        editUserProfile_userEdited: state.editUser.userEdited
+        editUserProfile_userEdited: state.editUser.userEdited,
+
+        hasSeenIntro: state.user.hasSeenIntro
     }
 };
 
@@ -82,6 +87,8 @@ const mapDispatchToProps = dispatch => {
 
         toggleNotifications: (event) => dispatch(notificationsActions.toggleNotifications(event)),
         notificationRefUpdated: (ref) => dispatch(notificationsActions.notificationRefUpdated(ref)),
+
+        setHasSeenIntro: () => dispatch(notificationsActions.setHasSeenIntro())
     }
 };
 
@@ -105,6 +112,9 @@ class InvestorDashboard extends Component {
 
             history,
             match,
+
+            hasSeenIntro,
+            setHasSeenIntro   
         } = this.props;
 
         const redirectTo = safeGetItem('redirectToAfterAuth');
@@ -123,6 +133,20 @@ class InvestorDashboard extends Component {
         }
 
         notificationRefUpdated(this.notificationBell.current);
+
+        if (!hasSeenIntro) {
+            IntroJs().setOptions({
+                stepsEnabled: true,
+                initialStep: 0,
+              steps: [
+                // Your steps here...
+              ],
+              // More options here...
+            }).start();
+      
+            // After starting the tour, set hasSeenIntro to true
+            setHasSeenIntro(true);
+          }
     }
 
     componentDidUpdate(prevProps, prevState, snapshot) {
@@ -282,6 +306,7 @@ class InvestorDashboard extends Component {
         if (authStatus !== AUTH_SUCCESS || !user || (user && user.type !== DB_CONST.TYPE_INVESTOR)) {
             return <PageNotFoundWhole/>;
         }
+        
 
         return (
             <Sidebar

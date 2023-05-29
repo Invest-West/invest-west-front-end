@@ -103,6 +103,13 @@ export const deleteAllNotifications = () => {
     }
 };
 
+  
+export const setHasSeenIntro = (hasSeenIntro) => {
+    return {
+        type: 'SET_HAS_SEEN_INTRO',
+        payload: hasSeenIntro,
+    };
+};
 // Listener ------------------------------------------------------------------------------------------------------------
 
 let notificationsListener = null;
