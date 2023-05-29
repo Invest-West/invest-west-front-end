@@ -11,6 +11,7 @@ import InvestorSelfCertificationRepository from "../../api/repositories/Investor
 import Routes from "../../router/routes";
 import Firebase from "firebase";
 import UserRepository from "../../api/repositories/UserRepository";
+import Api, {ApiRoutes} from "../../api/Api";
 
 export enum AuthenticationEvents {
     StartAuthenticating = "AuthenticationEvents.StartAuthenticating",
@@ -34,13 +35,33 @@ export interface CompleteAuthenticationAction extends AuthenticationAction {
     error?: Error;
 }
 
+/* TODO: remove console logs */
 export const signIn: ActionCreator<any> = (email: string, password: string, captchaToken: string) => {
     return async (dispatch: Dispatch, getState: () => AppState) => {
         console.log('Attempting to log in...');
         const {
             ManageGroupUrlState,
-            AuthenticationState
+            AuthenticationState,
+            SignInLocalState,
         } = getState();
+
+        const hcaptchaToken = SignInLocalState.captchaToken;
+
+        if (!hcaptchaToken || hcaptchaToken === '') {
+            return;
+        }
+
+        const hcaptchaRes = await new Api()
+            .request(
+                "post",
+                ApiRoutes.hcaptchaVerify,
+                {
+                    requestBody: {
+                        token: hcaptchaToken,
+                    },
+                    queryParameters: null
+                }
+            );
 
         if (isAuthenticating(AuthenticationState)) {
             return;

@@ -6,7 +6,6 @@ import HttpResponseError from "./ResponseError";
  * Api routes
  */
 
-const hcaptchaSecretKey = process.env.HCAPTCHA_SECRET_KEY;
 export class ApiRoutes {
     static systemAttributesBaseRoute = "/system-attributes";
     static retrieveSystemAttributesRoute = ApiRoutes.systemAttributesBaseRoute + "/retrieve";
@@ -15,6 +14,7 @@ export class ApiRoutes {
     static authBaseRoute = "/auth";
     static requestResetPasswordRoute = ApiRoutes.authBaseRoute + "/request-reset-password";
     static verifyAuthRoute = ApiRoutes.authBaseRoute + "/verify";
+    static hcaptchaVerify = "/verify-captcha";
     
 
     static emailBaseRoute = "/email";
