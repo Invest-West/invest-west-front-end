@@ -97,7 +97,7 @@ export const signIn: ActionCreator<any> = (email: string, password: string, capt
                     type: AuthenticationEvents.StartAuthenticating
                 });
                 // Validate the captchaToken
-                const response = await fetch('https://test.investwest.online/', {
+                const response = await fetch('https://hcaptcha.com/siteverify', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
