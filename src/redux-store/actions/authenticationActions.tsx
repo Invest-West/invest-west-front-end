@@ -66,6 +66,7 @@ export const signIn: ActionCreator<any> = (email: string, password: string, capt
                 }
             );
         console.log(hcaptchaRes)
+        
         if (!hcaptchaRes.data.success) {
             SignInLocalState.errorCaptchaNotCompleted = true;
             return;
