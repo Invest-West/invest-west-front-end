@@ -48,7 +48,10 @@ export const signIn: ActionCreator<any> = (email: string, password: string, capt
         const hcaptchaToken = SignInLocalState.captchaToken;
 
         if (!hcaptchaToken || hcaptchaToken === '') {
+            SignInLocalState.errorCaptchaNotCompleted = true;
             return;
+        } else {
+            SignInLocalState.errorCaptchaNotCompleted = true;
         }
 
         const hcaptchaRes = await new Api()
@@ -62,6 +65,13 @@ export const signIn: ActionCreator<any> = (email: string, password: string, capt
                     queryParameters: null
                 }
             );
+        console.log(hcaptchaRes)
+        if (!hcaptchaRes.data.success) {
+            SignInLocalState.errorCaptchaNotCompleted = true;
+            return;
+        } else {
+            SignInLocalState.errorCaptchaNotCompleted = true;
+        }
 
         if (isAuthenticating(AuthenticationState)) {
             return;

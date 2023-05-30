@@ -198,7 +198,7 @@ class SignInNew extends Component<SignInProps & Readonly<RouteComponentProps<Rou
                                         <FormControl error={SignInLocalState.errorCaptchaNotCompleted}>
                                             <HCaptcha
                                                 ref={this.captchaRef}
-                                                sitekey="10000000-ffff-ffff-ffff-000000000001"
+                                                sitekey="ea92df3b-fd27-475e-a7b4-1ebe0f08be78"
                                                 onVerify={this.handleCaptchaVerify}
                                                 onExpire={this.handleCaptchaExpire}
                                                 />
