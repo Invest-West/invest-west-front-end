@@ -46,6 +46,7 @@ export class ApiRoutes {
 
     static investorSelfCertificationBaseRoute = "/investor-self-certifications";
     static retrieveInvestorSelfCertificationRoute = ApiRoutes.investorSelfCertificationBaseRoute + "/retrieve";
+    static updateInvestorSelfCertificationRoute = ApiRoutes.investorSelfCertificationBaseRoute + "/update";
 
     static fileBaseRoute = "/file";
     static uploadSingleFileRoute = ApiRoutes.fileBaseRoute + "/upload-single";
