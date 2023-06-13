@@ -37,38 +37,49 @@ import {
     onSignInClick,
     onTextChanged,
     togglePasswordVisibility,
-    toggleResetPasswordDialog
+    toggleResetPasswordDialog,
+    updateCaptchaToken
 } from "./SignInActions";
 import {
     AuthenticationState,
     hasAuthenticationError,
     isAuthenticating
 } from "../../redux-store/reducers/authenticationReducer";
+import {
+    signIn
+} from "../../redux-store/actions/authenticationActions";
 import HashLoader from "react-spinners/HashLoader";
 import * as appColors from "../../values/colors";
 import {MediaQueryState} from "../../redux-store/reducers/mediaQueryReducer";
 import {Close} from "@material-ui/icons";
 import CustomLink from "../../shared-js-css-styles/CustomLink";
 import Footer from "../../shared-components/footer/Footer";
+import '../../shared-js-css-styles/sharedStyles.scss';
+import HCaptcha from '@hcaptcha/react-hcaptcha';
 
 interface SignInProps {
     ManageGroupUrlState: ManageGroupUrlState;
     AuthenticationState: AuthenticationState;
     MediaQueryState: MediaQueryState;
     SignInLocalState: SignInState;
+    captchaToken: string;
+    updateCaptchaToken: (captchaToken: string) => any;
     onTextChanged: (event: React.ChangeEvent<HTMLInputElement>) => any;
     togglePasswordVisibility: () => any;
-    onSignInClick: (event: FormEvent) => any;
+    onSignInClick: (email: string, password: string, captchaToken: string) => any;
     toggleResetPasswordDialog: () => any;
     onSendResetPasswordClick: () => any;
-}
+  }
+  
+  
 
 const mapStateToProps = (state: AppState) => {
     return {
         ManageGroupUrlState: state.ManageGroupUrlState,
         AuthenticationState: state.AuthenticationState,
         MediaQueryState: state.MediaQueryState,
-        SignInLocalState: state.SignInLocalState
+        SignInLocalState: state.SignInLocalState,
+        captchaToken: state.SignInLocalState.captchaToken
     }
 }
 
@@ -76,15 +87,31 @@ const mapDispatchToProps = (dispatch: ThunkDispatch<any, any, AnyAction>) => {
     return {
         onTextChanged: (event: React.ChangeEvent<HTMLInputElement>) => dispatch(onTextChanged(event)),
         togglePasswordVisibility: () => dispatch(togglePasswordVisibility()),
-        onSignInClick: (event: FormEvent) => dispatch(onSignInClick(event)),
+        onSignInClick: (email: string, password: string, captchaToken: string) => dispatch(signIn(email, password, captchaToken)),
         toggleResetPasswordDialog: () => dispatch(toggleResetPasswordDialog()),
-        onSendResetPasswordClick: () => dispatch(onSendResetPasswordClick())
+        onSendResetPasswordClick: () => dispatch(onSendResetPasswordClick()),
+        updateCaptchaToken: (token: string) => dispatch(updateCaptchaToken(token))
     }
 }
 
-class SignInNew extends Component<SignInProps
-    & Readonly<RouteComponentProps<RouteParams>>,
-    {}> {
+class SignInNew extends Component<SignInProps & Readonly<RouteComponentProps<RouteParams>>, {}> {
+    captchaRef: React.RefObject<HCaptcha> = React.createRef();
+  
+    handleCaptchaVerify = (token: string) => {
+      this.props.updateCaptchaToken(token);
+    };
+  
+    handleCaptchaExpire = () => {
+      this.props.updateCaptchaToken('');
+    };
+  
+    handleSubmit = (event: React.FormEvent) => {
+        event.preventDefault();
+        const { signInEmail, signInPassword, captchaToken } = this.props.SignInLocalState;
+        this.props.onSignInClick(signInEmail, signInPassword, captchaToken);
+    };
+          
+          
 
     render() {
         const {
@@ -94,7 +121,6 @@ class SignInNew extends Component<SignInProps
             SignInLocalState,
             onTextChanged,
             togglePasswordVisibility,
-            onSignInClick,
             toggleResetPasswordDialog
         } = this.props;
 
@@ -134,7 +160,7 @@ class SignInNew extends Component<SignInProps
                             }
 
                             {/** Sign in form */}
-                            <form onSubmit={onSignInClick} >
+                            <form onSubmit={(event) => this.handleSubmit(event)}>
                                 <Box display="flex" flexDirection="column" >
                                     {/** Email field */}
                                     <FormControl>
@@ -168,6 +194,21 @@ class SignInNew extends Component<SignInProps
                                             }}
                                         />
                                     </FormControl>
+                                    <div className="captcha">
+                                        <FormControl error={SignInLocalState.errorCaptchaNotCompleted}>
+                                            <HCaptcha
+                                                ref={this.captchaRef}
+                                                sitekey="ea92df3b-fd27-475e-a7b4-1ebe0f08be78"
+                                                onVerify={this.handleCaptchaVerify}
+                                                onExpire={this.handleCaptchaExpire}
+                                                />
+                                            {SignInLocalState.errorCaptchaNotCompleted && (
+                                                <p id="captcha-error-text">Please complete the captcha.</p>
+                                            )}
+                                        
+                                        
+                                        </FormControl>
+                                    </div>
 
                                     <Box marginTop="35px" marginBottom="45px" >
                                         <Typography variant="body1" align="center" >
@@ -186,6 +227,7 @@ class SignInNew extends Component<SignInProps
                                                 <HashLoader color={getGroupRouteTheme(ManageGroupUrlState).palette.primary.main} />
                                             </Box>
                                     }
+
 
                                     <FormControl>
                                         <Button type="submit" variant="contained" color="primary" size="large" className={css(sharedStyles.no_text_transform)}>Sign in</Button>

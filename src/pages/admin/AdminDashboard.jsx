@@ -54,6 +54,7 @@ import {isProjectWaitingToGoLive} from "../../models/project";
 import ExploreGroups from "../../shared-components/explore-groups/ExploreGroups";
 import Resources from "../resources/Resources";
 
+import { safeGetItem, safeRemoveItem } from "../../utils/browser";
 
 export const MAX_CARD_DETAILS_HEIGHT = 2000;
 
@@ -161,10 +162,17 @@ class AdminDashboard extends Component {
             setExpectedAndCurrentPathsForChecking,
             loadAngelNetwork,
 
-            notificationRefUpdated
+            notificationRefUpdated,
+
+            history,
+            match,
         } = this.props;
 
-        const match = this.props.match;
+        const redirectTo = safeGetItem('redirectToAfterAuth');
+        if (redirectTo) {
+            safeRemoveItem('redirectToAfterAuth');
+            history.push(redirectTo);
+        }
 
         setGroupUserNameFromParams(match.params.hasOwnProperty('groupUserName') ? match.params.groupUserName : null);
         setExpectedAndCurrentPathsForChecking(match.params.hasOwnProperty('groupUserName') ? ROUTES.ADMIN : ROUTES.ADMIN_INVEST_WEST_SUPER, match.path);

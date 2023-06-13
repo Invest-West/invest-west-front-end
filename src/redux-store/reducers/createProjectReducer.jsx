@@ -40,6 +40,9 @@ const initState = {
 
         hasRaisedMoneyBefore: '',
 
+        hasEIS: '',
+        hasSEIS: '',
+
         // pitch cover (image or video) --- 1 file
         pitchCover: [],
         // pitch cover - video URL
@@ -136,6 +139,20 @@ const createProjectReducer = (state = initState, action) => {
                                     project.hasOwnProperty('description')
                                         ?
                                         project.description
+                                        :
+                                        ''
+                                ,
+                                hasEIS:
+                                    project.hasOwnProperty('hasEIS')
+                                        ?
+                                        project.hasEIS
+                                        :
+                                        ''
+                                ,
+                                hasSEIS:
+                                    project.hasOwnProperty('hasSEIS')
+                                        ?
+                                        project.hasSEIS
                                         :
                                         ''
                                 ,

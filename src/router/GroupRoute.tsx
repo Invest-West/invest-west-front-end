@@ -33,6 +33,7 @@ import User, {isInvestor, isIssuer} from "../models/user";
 import Admin, {isAdmin} from "../models/admin";
 import GroupOfMembership from "../models/group_of_membership";
 import {BarLoader} from "react-spinners";
+import { safeSetItem } from "../utils/browser";
 
 interface GroupRouteProps extends GroupRouteLocalProps {
     ManageSystemAttributesState: ManageSystemAttributesState;
@@ -127,6 +128,10 @@ class GroupRoute extends Component<GroupRouteProps & Readonly<RouteComponentProp
             && !successfullyAuthenticated(this.props.AuthenticationState)
             && !this.state.navigatingToSignIn
         ) {
+            const { location } = this.props;
+
+            safeSetItem('redirectToAfterAuth', `${location.pathname}${location?.search}`);
+
             this.setState({
                 navigatingToSignIn: true
             });
