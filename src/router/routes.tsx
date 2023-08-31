@@ -20,7 +20,7 @@ export default class Routes {
     static groupSignIn: string = `${Routes.baseGroup}/signin`;
     static superAdminSignIn: string = "/signin/super-admin";
 
-    static nonGroupSignUp:string = "groups/iw/signup";
+    static nonGroupSignUp:string = "/groups/invest-west/signup";
     static groupSignUp: string = `${Routes.baseGroup}/signup/:id?`;
 
     static nonGroupAdminDashboard: string = "/admin";
