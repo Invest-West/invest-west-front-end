@@ -4,6 +4,12 @@ import * as utils from '../../utils/utils';
 import * as realtimeDBUtils from '../../firebase/realtimeDBUtils';
 import * as feedbackSnackbarActions from './feedbackSnackbarActions';
 
+export const isCertificationExpired = (timestamp, expirationMinutes = 24 * 60) => {
+    const now = new Date().getTime();
+    const minutesPassed = (now - timestamp) / (1000 * 60);
+    return minutesPassed >= expirationMinutes;
+  };
+
 export const INVESTOR_SELF_CERTIFICATION_AGREEMENT_SET_USER = 'INVESTOR_SELF_CERTIFICATION_AGREEMENT_SET_USER';
 export const setUser = (uid) => {
     return (dispatch, getState) => {
@@ -24,36 +30,46 @@ export const LOADING_INVESTOR_SELF_CERTIFICATION_AGREEMENT = 'LOADING_INVESTOR_S
 export const FINISHED_LOADING_INVESTOR_SELF_CERTIFICATION_AGREEMENT = 'FINISHED_LOADING_INVESTOR_SELF_CERTIFICATION_AGREEMENT';
 export const loadInvestorSelfCertificationAgreement = () => {
     return (dispatch, getState) => {
-        const {
-            userID
-        } = getState().manageInvestorSelfCertificationAgreement;
-
-        dispatch({
-            type: LOADING_INVESTOR_SELF_CERTIFICATION_AGREEMENT
-        });
-
-        firebase
-            .database()
-            .ref(DB_CONST.INVESTOR_SELF_CERTIFICATION_AGREEMENTS_CHILD)
-            .orderByChild('userID')
-            .equalTo(userID)
-            .once('value', snapshots => {
-                if (!snapshots || !snapshots.exists()) {
-                    dispatch({
-                        type: FINISHED_LOADING_INVESTOR_SELF_CERTIFICATION_AGREEMENT,
-                        result: null
-                    });
-                }
-
-                snapshots.forEach(snapshot => {
-                    dispatch({
-                        type: FINISHED_LOADING_INVESTOR_SELF_CERTIFICATION_AGREEMENT,
-                        result: snapshot.val()
-                    });
-                });
+      const {
+        userID
+      } = getState().manageInvestorSelfCertificationAgreement;
+  
+      dispatch({
+        type: LOADING_INVESTOR_SELF_CERTIFICATION_AGREEMENT
+      });
+  
+      firebase
+        .database()
+        .ref(DB_CONST.INVESTOR_SELF_CERTIFICATION_AGREEMENTS_CHILD)
+        .orderByChild('userID')
+        .equalTo(userID)
+        .once('value', snapshots => {
+          if (!snapshots || !snapshots.exists()) {
+            dispatch({
+              type: FINISHED_LOADING_INVESTOR_SELF_CERTIFICATION_AGREEMENT,
+              result: null
             });
+          }
+  
+          snapshots.forEach(snapshot => {
+            const agreementData = snapshot.val();
+  
+            if (isCertificationExpired(agreementData.selfCertificationTimestamp)) {
+                console.log("Expired")
+              // Certification has expired
+              // Prompt the user to reapply for self-certification
+              // You can use dispatch to update the UI, show a modal, or navigate to another screen
+            }
+  
+            dispatch({
+              type: FINISHED_LOADING_INVESTOR_SELF_CERTIFICATION_AGREEMENT,
+              result: agreementData
+            });
+          });
+        });
     }
-};
+  };
+  
 
 export const INVESTOR_SELF_CERTIFICATION_AGREEMENT_TICK_BOX_CHANGED = 'INVESTOR_SELF_CERTIFICATION_AGREEMENT_TICK_BOX_CHANGED';
 export const handleTickBoxChanged = event => {
@@ -66,23 +82,26 @@ export const handleTickBoxChanged = event => {
 export const UPDATE_INVESTOR_SELF_CERTIFICATION_AGREEMENT = 'UPDATE_INVESTOR_SELF_CERTIFICATION_AGREEMENT';
 export const setInvestorSelfCertificationAgreement = () => {
     return (dispatch, getState) => {
-        const {
-            userID,
-            statementType
-        } = getState().manageInvestorSelfCertificationAgreement;
-
-        const id =  firebase
-            .database()
-            .ref(DB_CONST.INVESTOR_SELF_CERTIFICATION_AGREEMENTS_CHILD)
-            .push()
-            .key;
-
-        const agreementObject = {
-            id,
-            userID: userID,
-            agreedDate: utils.getCurrentDate(),
-            type: statementType
-        };
+      const {
+        userID,
+        statementType
+      } = getState().manageInvestorSelfCertificationAgreement;
+  
+      const id = firebase
+        .database()
+        .ref(DB_CONST.INVESTOR_SELF_CERTIFICATION_AGREEMENTS_CHILD)
+        .push()
+        .key;
+  
+      const timestamp = new Date().getTime(); // Add this line to get the current timestamp
+  
+      const agreementObject = {
+        id,
+        userID: userID,
+        agreedDate: utils.getCurrentDate(),
+        selfCertificationTimestamp: timestamp, // Add this line to store the timestamp
+        type: statementType
+      };
 
         firebase
             .database()

@@ -1,4 +1,5 @@
 import * as investorSelfCertificationAgreementsActions from '../actions/investorSelfCertificationAgreementsActions';
+import { isCertificationExpired } from '../actions/investorSelfCertificationAgreementsActions';
 import * as authActions from '../actions/authActions';
 import * as FIRBASE_CONST from '../../firebase/databaseConsts';
 
@@ -11,6 +12,8 @@ const initState = {
     checkBox1Ticked: false,
     checkBox2Ticked: false,
     checkBox3Ticked: false,
+
+    certificationExpired: false,
 
     investorSelfCertificationAgreement: null,
     investorSelfCertificationAgreementLoaded: false,
@@ -34,11 +37,13 @@ const investorSelfCertificationAgreementsReducer = (state = initState, action) =
                 investorSelfCertificationAgreementBeingLoaded: true
             };
         case investorSelfCertificationAgreementsActions.FINISHED_LOADING_INVESTOR_SELF_CERTIFICATION_AGREEMENT:
+            const certificationExpired = isCertificationExpired(action.result.selfCertificationTimestamp); // Add this line to check for expiration
             return {
-                ...state,
-                investorSelfCertificationAgreement: JSON.parse(JSON.stringify(action.result)),
-                investorSelfCertificationAgreementLoaded: true,
-                investorSelfCertificationAgreementBeingLoaded: false
+            ...state,
+            investorSelfCertificationAgreement: JSON.parse(JSON.stringify(action.result)),
+            investorSelfCertificationAgreementLoaded: true,
+            investorSelfCertificationAgreementBeingLoaded: false,
+            certificationExpired, // Add this line to store the expiration status
             };
         case investorSelfCertificationAgreementsActions.INVESTOR_SELF_CERTIFICATION_AGREEMENT_TICK_BOX_CHANGED:
             return {

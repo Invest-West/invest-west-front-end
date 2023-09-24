@@ -20,4 +20,25 @@ export default class InvestorSelfCertificationRepository {
                 }
             );
     }
+
+    /**
+     * Update investor self certification
+     *
+     * @param userID
+     * @param updatedAgreedDate
+     */
+    public async updateInvestorSelfCertification(userID: string, updatedAgreedDate: string) {
+        return await new Api()
+            .request(
+                "patch",
+                ApiRoutes.updateInvestorSelfCertificationRoute,
+                {
+                    requestBody: {
+                        userID,
+                        updatedAgreedDate
+                    },
+                    queryParameters: {} // Add this empty object
+                }
+            );
+    }
 }

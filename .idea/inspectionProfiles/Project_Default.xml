@@ -7,6 +7,5 @@
         <language minSize="92" name="TypeScript" />
       </Languages>
     </inspection_tool>
-    <inspection_tool class="JSXSyntaxUsed" enabled="true" level="ERROR" enabled_by_default="true" />
   </profile>
 </component>

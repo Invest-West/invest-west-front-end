@@ -5,6 +5,7 @@ import HttpResponseError from "./ResponseError";
 /**
  * Api routes
  */
+
 export class ApiRoutes {
     static systemAttributesBaseRoute = "/system-attributes";
     static retrieveSystemAttributesRoute = ApiRoutes.systemAttributesBaseRoute + "/retrieve";
@@ -13,6 +14,8 @@ export class ApiRoutes {
     static authBaseRoute = "/auth";
     static requestResetPasswordRoute = ApiRoutes.authBaseRoute + "/request-reset-password";
     static verifyAuthRoute = ApiRoutes.authBaseRoute + "/verify";
+    static hcaptchaVerify = "/verify-captcha";
+    
 
     static emailBaseRoute = "/email";
     static sendEmailRoute = ApiRoutes.emailBaseRoute + "/send";
@@ -24,6 +27,8 @@ export class ApiRoutes {
     static updateUser = ApiRoutes.usersBaseRoute + "/update";
     static listGroupsOfMembership = ApiRoutes.usersBaseRoute + "/:uid/groups-of-membership";
     static exportUsersCsvRoute = ApiRoutes.usersBaseRoute + "/export";
+
+    static validateCaptcha = "/validate-captcha";
 
     static groupsBaseRoute = "/groups";
     static listGroups = ApiRoutes.groupsBaseRoute + "/list";
@@ -46,6 +51,7 @@ export class ApiRoutes {
 
     static investorSelfCertificationBaseRoute = "/investor-self-certifications";
     static retrieveInvestorSelfCertificationRoute = ApiRoutes.investorSelfCertificationBaseRoute + "/retrieve";
+    static updateInvestorSelfCertificationRoute = ApiRoutes.investorSelfCertificationBaseRoute + "/update";
 
     static fileBaseRoute = "/file";
     static uploadSingleFileRoute = ApiRoutes.fileBaseRoute + "/upload-single";
@@ -268,6 +274,33 @@ export default class Api {
 
         return httpError;
     }
+
+    /**
+ * Validate captcha token
+ *
+ * @param captchaToken
+ */
+/**
+ * Validate captcha token
+ *
+ * @param captchaToken
+ */
+public async validateCaptcha(captchaToken: string) {
+    try {
+      const response = await this.request('post', ApiRoutes.validateCaptcha, {
+        requestBody: { captchaToken },
+        queryParameters: {},
+      });
+  
+      if (response.data.success) {
+        return { success: true };
+      } else {
+        return { success: false, error: "Captcha validation failed." };
+      }
+    } catch (error) {
+      throw new Error("An error occurred while validating the captcha token.");
+    }
+  }
 
     /**
      * Check if a request is successful by checking the response code
