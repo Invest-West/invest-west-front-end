@@ -271,6 +271,7 @@ class HelpPage extends Component {
         } = this.state;
         /** Group admin guide  */
         return (
+            <Container>
             <Row noGutters style={{marginBottom: 50}}>
                 <Col xs={12} sm={12} md={{span: 8, offset: 2}} lg={{span: 6, offset: 3}}>
                     {/** 1. Navigating Invest West */}
@@ -670,6 +671,13 @@ class HelpPage extends Component {
                     </ExpansionPanel>
                 </Col>
             </Row>
+            <Row>
+                <Col>
+                    <Typography variant="body1" align="center" paragraph>Version 1.2.4</Typography>
+                </Col>
+            </Row>
+            </Container>
+
         );
     };
 
@@ -955,7 +963,11 @@ class HelpPage extends Component {
                         </ExpansionPanelDetails>
                     </ExpansionPanel>
                 </Col>
+                <Typography variant="h2" align="left">
+                                    13. Logging out
+                                </Typography>
             </Row>
+            
         );
     };
 
@@ -1235,6 +1247,7 @@ class HelpPage extends Component {
                     </ExpansionPanel>
                 </Col>
             </Row>
+            
         );
     }
 }
