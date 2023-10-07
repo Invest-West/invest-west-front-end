@@ -162,7 +162,11 @@ export const onSendResetPasswordClick: ActionCreator<any> = () => {
             dispatch(toggleResetPasswordDialog());
             return dispatch(completeAction);
         } catch (error) {
-            completeAction.error = error.toString();
+            if (error instanceof Error) {
+                completeAction.error = error.toString();
+            } else {
+                completeAction.error = "An unknown error occurred";
+            }
             return dispatch(completeAction);
         }
     }
