@@ -1,7 +1,7 @@
 import React, {Component} from "react";
 import FlexView from "react-flexview/lib/index";
 import {css} from "aphrodite";
-import {Divider, List, ListItem, ListItemIcon, ListItemText} from "@material-ui/core";
+import {Divider, List, ListItem, ListItemIcon, ListItemText, Link} from "@material-ui/core";
 import {Image} from "react-bootstrap";
 import HomeIcon from "@material-ui/icons/Home";
 import WorkIcon from "@material-ui/icons/Work";
@@ -114,15 +114,7 @@ class SidebarContent extends Component {
             >
                 {/** Sidebar header */}
                 <FlexView column height={65} vAlignContent="center" hAlignContent="center" style={{ padding: 8 }} >
-                    <NavLink
-                        to={
-                            groupUserName
-                                ?
-                                ROUTES.FRONT.replace(":groupUserName", groupUserName)
-                                :
-                                ROUTES.FRONT_INVEST_WEST_SUPER
-                        }
-                    >
+                    <Link href={groupProperties.website ?? ""} target="_blank">
                         <Image
                             style={{ width: "auto", height: 65, margin: 0, padding: 10, objectFit: "scale-down" }}
                             src={
@@ -133,7 +125,7 @@ class SidebarContent extends Component {
                                     utils.getLogoFromGroup(utils.GET_PLAIN_LOGO, groupProperties)
                             }
                         />
-                    </NavLink>
+                    </Link>
                 </FlexView>
 
                 <Divider/>

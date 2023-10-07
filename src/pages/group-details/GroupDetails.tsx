@@ -10,7 +10,7 @@ import {
     isLoadingData, isRemovingAccessRequest, isSendingAccessRequest,
     successfullyLoadedData
 } from "./GroupDetailsReducer";
-import {Box, Button, colors, Divider, Paper, Typography} from "@material-ui/core";
+import {Box, Button, colors, Divider, Paper, Typography, Link} from "@material-ui/core";
 import {RouteComponentProps} from "react-router-dom";
 import {RouteParams} from "../../router/router";
 import {Col, Image, Row} from "react-bootstrap";
@@ -121,7 +121,9 @@ class GroupDetails extends Component<GroupDetailsProps & Readonly<RouteComponent
                                     {/** Logo section */}
                                     <Col xs={{span: 12, order: 1}} sm={{span: 12, order: 1}} md={{span: 12, order: 1}} lg={{span: 3, order: 1}}>
                                         <Box display="flex"justifyContent="center" alignItems="center">
-                                            <Image alt={`${GroupDetailsLocalState.group?.displayName} logo`} src={getGroupLogo(GroupDetailsLocalState.group ?? null) ?? undefined} style={{width: "100%", height: "auto", padding: 20, objectFit: "scale-down"}}/>
+                                            <Link href={GroupDetailsLocalState.group?.website ?? ""} target="_blank">
+                                                <Image alt={`${GroupDetailsLocalState.group?.displayName} logo`} src={getGroupLogo(GroupDetailsLocalState.group ?? null) ?? undefined} style={{width: "100%", height: "auto", padding: 20, objectFit: "scale-down"}}/>
+                                            </Link>
                                         </Box>
                                     </Col>
 

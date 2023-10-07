@@ -2,7 +2,7 @@ import React, {Component} from "react";
 import {connect} from "react-redux";
 import {AppState} from "../../redux-store/reducers";
 import {Col, Container, Image, Row} from "react-bootstrap";
-import {Box, Button, colors, Divider, Typography} from "@material-ui/core";
+import {Box, Button, colors, Divider, Typography, Link} from "@material-ui/core";
 import CustomLink from "../../shared-js-css-styles/CustomLink";
 import {
     getGroupRouteTheme,
@@ -107,7 +107,10 @@ class Front extends Component<FrontProps & Readonly<RouteComponentProps<RoutePar
                             )
                         }
                     >
+                        {/* Front page link to website */}
                         <Box display="flex" flexDirection="column" alignItems="center" justifyContent="center" flexGrow={3} paddingY="50px">
+                        <Link href={ManageGroupUrlState.group?.website ?? ""} target="_blank">
+
                             {
                                 isValidatingGroupUrl(ManageGroupUrlState)
                                     ? null
@@ -124,6 +127,7 @@ class Front extends Component<FrontProps & Readonly<RouteComponentProps<RoutePar
                                         }}
                                     />
                             }
+                            </Link>
 
                             <Box height="20px"/>
 
