@@ -68,7 +68,7 @@ class OfferItem extends Component<OfferItemProps, any> {
             activeUnderline={false}
             component="nav-link"
             childComponent={
-                <Box border={`1px solid ${colors.grey["300"]}`} >
+                <Box className="tileHoverEffect" border={`1px solid ${colors.grey["300"]}`} >
                     <Container fluid style={{ padding: 0 }} >
                         <Row noGutters >
                             <Col xs={12} sm={12} md={12} lg={12} >
