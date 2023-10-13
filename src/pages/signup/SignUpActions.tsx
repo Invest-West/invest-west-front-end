@@ -79,6 +79,7 @@ export const createAccount: ActionCreator<any> = () => {
             invitedUser,
             userType,
             title,
+            discover,
             firstName,
             lastName,
             email,
@@ -137,7 +138,8 @@ export const createAccount: ActionCreator<any> = () => {
                 },
                 password,
                 groupID: invitedUser ? invitedUser.invitedBy : group?.anid ?? "",
-                acceptMarketingPreferences: acceptMarketingPreferences
+                acceptMarketingPreferences: acceptMarketingPreferences,
+                discover
             });
 
             dispatch(completeAction);

@@ -16,6 +16,7 @@ export interface SignUpData {
     password: string;
     groupID: string;
     acceptMarketingPreferences: boolean;
+    discover: string;
 }
 
 export default class UserRepository {

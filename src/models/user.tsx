@@ -8,6 +8,7 @@ import Admin from "./admin";
 import Address from "./address";
 
 export const UserTitles = ["Ms.", "Mrs.", "Miss", "Mr.", "Dr.", "Prof."];
+export const HearAbout = ["Google", "Newsletter", "Linkedin", "Event"];
 
 export default interface User {
     id: string | "none";
