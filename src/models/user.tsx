@@ -17,6 +17,7 @@ export default interface User {
     firstName: string | "none";
     lastName: string | "none";
     title: string | "none";
+    discover: string | "none";
     profilePicture?: ProfileImage[];
     BusinessProfile?: BusinessProfile;
     type: number;
