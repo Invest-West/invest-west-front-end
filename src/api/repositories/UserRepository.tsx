@@ -18,7 +18,7 @@ export interface SignUpData {
     acceptMarketingPreferences: boolean;
 }
 
-export default class UserRepository {
+    export default class UserRepository {
 
     /**
      * Sign up

@@ -79,6 +79,7 @@ export const createAccount: ActionCreator<any> = () => {
             invitedUser,
             userType,
             title,
+            discover,
             firstName,
             lastName,
             email,
@@ -130,6 +131,7 @@ export const createAccount: ActionCreator<any> = () => {
                 invitedUserID: invitedUser !== undefined ? invitedUser.id : undefined,
                 userProfile: {
                     title,
+                    discover,
                     firstName,
                     lastName,
                     email,
@@ -137,7 +139,7 @@ export const createAccount: ActionCreator<any> = () => {
                 },
                 password,
                 groupID: invitedUser ? invitedUser.invitedBy : group?.anid ?? "",
-                acceptMarketingPreferences: acceptMarketingPreferences
+                acceptMarketingPreferences: acceptMarketingPreferences,
             });
 
             dispatch(completeAction);
