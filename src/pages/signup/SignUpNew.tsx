@@ -18,7 +18,7 @@ import {
 import {Col, Row} from "react-bootstrap";
 import {css} from "aphrodite";
 import sharedStyles from "../../shared-js-css-styles/SharedStyles";
-import {UserTitles} from "../../models/user";
+import {UserTitles, HearAbout} from "../../models/user";
 import {AuthenticationState, isAuthenticating} from "../../redux-store/reducers/authenticationReducer";
 import {RouteComponentProps} from "react-router-dom";
 import {RouteParams} from "../../router/router";
@@ -179,9 +179,7 @@ class SignUpNew extends Component<SignUpProps & Readonly<RouteComponentProps<Rou
 
         return <Box>
             {/** Sign up card */}
-            <Row
-                noGutters
-            >
+            <Row noGutters>
                 <Col
                     xs={{span: 12, offset: 0}}
                     sm={{span: 12, offset: 0}}
@@ -459,11 +457,49 @@ class SignUpNew extends Component<SignUpProps & Readonly<RouteComponentProps<Rou
                                         onChange={handleInputFieldChanged}
                                     />
                                 </FormControl>
+
+
+                                {/** How did you hear about us */}
+                                <Box marginTop="28px"/>
+                                <FormControl fullWidth>
+                                <InputLabel>
+                                    <Typography variant="body1" color="primary">
+                                        How did you hear about us?
+                                    </Typography>
+                                </InputLabel>
+                                <Select
+                                    name="discover"
+                                    value={SignUpLocalState.discover}
+                                    // @ts-ignore
+                                    onChange={handleInputFieldChanged}
+                                    margin="dense"
+                                    style={{
+                                        marginTop: 25
+                                    }}
+                                >
+                                    <MenuItem
+                                        key="-1"
+                                        value="-1"
+                                    >
+                                        Please select
+                                    </MenuItem>
+                                    {
+                                        HearAbout.map((discover, index) => (
+                                            <MenuItem
+                                                key={index}
+                                                value={discover}
+                                            >
+                                                {discover}
+                                            </MenuItem>
+                                        ))
+                                    }
+                                </Select>
+                            </FormControl>
                             </Box>
 
                             {/** Marketing preferences checkbox */}
                             <Box
-                                marginTop="18px"
+                                marginTop="28px"
                             >
                                 <FormControl>
                                     <Box
@@ -552,6 +588,7 @@ class SignUpNew extends Component<SignUpProps & Readonly<RouteComponentProps<Rou
                                         || SignUpLocalState.email.trim().length === 0
                                         || SignUpLocalState.confirmedEmail.trim().length === 0
                                         || SignUpLocalState.password.trim().length === 0
+                                        || SignUpLocalState.discover === "-1"
                                         || SignUpLocalState.confirmedPassword.trim().length === 0
                                     }
                                     onClick={() => createAccount()}

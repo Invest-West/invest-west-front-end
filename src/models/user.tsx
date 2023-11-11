@@ -8,6 +8,7 @@ import Admin from "./admin";
 import Address from "./address";
 
 export const UserTitles = ["Ms.", "Mrs.", "Miss", "Mr.", "Dr.", "Prof."];
+export const HearAbout = ["Google", "Newsletter", "Linkedin", "Event"];
 
 export default interface User {
     id: string | "none";
@@ -16,6 +17,7 @@ export default interface User {
     firstName: string | "none";
     lastName: string | "none";
     title: string | "none";
+    discover: string | "none";
     profilePicture?: ProfileImage[];
     BusinessProfile?: BusinessProfile;
     type: number;
