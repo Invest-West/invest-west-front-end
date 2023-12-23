@@ -68,7 +68,7 @@ interface SignInProps {
     togglePasswordVisibility: () => any;
     onSignInClick: (email: string, password: string, captchaToken: string) => any;
     toggleResetPasswordDialog: () => any;
-    onSendResetPasswordClick: () => any;
+    onSendResetPasswordClick: (email: string) => () => Promise<void>;
   }
   
   
@@ -89,7 +89,7 @@ const mapDispatchToProps = (dispatch: ThunkDispatch<any, any, AnyAction>) => {
         togglePasswordVisibility: () => dispatch(togglePasswordVisibility()),
         onSignInClick: (email: string, password: string, captchaToken: string) => dispatch(signIn(email, password, captchaToken)),
         toggleResetPasswordDialog: () => dispatch(toggleResetPasswordDialog()),
-        onSendResetPasswordClick: () => dispatch(onSendResetPasswordClick()),
+        onSendResetPasswordClick: (email: string) => dispatch(onSendResetPasswordClick(email)),
         updateCaptchaToken: (token: string) => dispatch(updateCaptchaToken(token))
     }
 }
@@ -336,7 +336,7 @@ class ResetPasswordDialog extends Component<SignInProps, {}> {
 
             <DialogActions>
                 <Box display="flex" justifyContent="flex-end" padding="8px">
-                    <Button color="primary" variant="contained" size="medium" onClick={onSendResetPasswordClick} className={css(sharedStyles.no_text_transform)} disabled={SignInLocalState.resetPasswordDialogEmail.trim().length === 0}>Send</Button>
+                    <Button color="primary" variant="contained" size="medium" onClick={() => onSendResetPasswordClick(SignInLocalState.resetPasswordDialogEmail.trim())}  className={css(sharedStyles.no_text_transform)} disabled={SignInLocalState.resetPasswordDialogEmail.trim().length === 0}>Send</Button>
                 </Box>
             </DialogActions>
         </Dialog>;

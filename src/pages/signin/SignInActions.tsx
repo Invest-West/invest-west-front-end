@@ -4,7 +4,7 @@ import {signIn} from "../../redux-store/actions/authenticationActions";
 import {AppState} from "../../redux-store/reducers";
 import Api, {ApiRoutes} from "../../api/Api";
 import HCaptcha from '@hcaptcha/react-hcaptcha';
-
+import firebaseApp from "../../firebase/firebaseApp.jsx";
 
 export enum SignInEvents {
     ResetAllStates = "SignInEvents.ResetAllStates",
@@ -138,8 +138,9 @@ export const toggleResetPasswordDialog: ActionCreator<any> = () => {
     }
 }
 
-export const onSendResetPasswordClick: ActionCreator<any> = () => {
-    return async (dispatch: Dispatch, getState: () => AppState) => {
+export const onSendResetPasswordClick: ActionCreator<any> = (email: string) => {
+    return async (dispatch: Dispatch) => {
+        console.log("onSendResetPasswordClick");
         dispatch({
             type: SignInEvents.ProcessingResetPasswordRequest
         });
@@ -149,16 +150,8 @@ export const onSendResetPasswordClick: ActionCreator<any> = () => {
         }
 
         try {
-            await new Api().request(
-                "post",
-                ApiRoutes.requestResetPasswordRoute,
-                {
-                    queryParameters: null,
-                    requestBody: {
-                        email: getState().SignInLocalState.resetPasswordDialogEmail
-                    }
-                }
-            );
+            const auth = firebaseApp.auth();
+            await auth.sendPasswordResetEmail(email);
             dispatch(toggleResetPasswordDialog());
             return dispatch(completeAction);
         } catch (error) {
