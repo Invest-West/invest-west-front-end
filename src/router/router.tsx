@@ -206,8 +206,10 @@ const AppRouter = () => (
                 // @ts-ignore
                 render={props => <GroupRoute {...props} showHeader={true}
                                              component={<PageNotFound {...props}/>}/>}/>
+            <Route component={PageNotFound}/>
 
         </Switch>
+        
     </BrowserRouter>
 );
 

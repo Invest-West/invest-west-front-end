@@ -76,7 +76,7 @@ export const togglePasswordVisibility: ActionCreator<any> = () => {
     }
 }
 
-export const onSignInClick: ActionCreator<any> = (event: FormEvent, captchaToken: string) => {
+export const onSignInClick: ActionCreator<any> = (event: FormEvent, captchaToken: string, isFirstLogin: boolean = false) => {
     return async (dispatch: Dispatch, getState: () => AppState) => {
         const {
             signInEmail,
@@ -123,8 +123,22 @@ export const onSignInClick: ActionCreator<any> = (event: FormEvent, captchaToken
             return;
         }
 
+        if (!isFirstLogin) {
+            if (captchaToken.length === 0) {
+                dispatch(setCaptchaError());
+                allowSignIn = false;
+            }
+            if (captchaToken === "") {
+                dispatch({
+                    type: SignInEvents.CaptchaNotCompletedError,
+                });
+                allowSignIn = false;
+            }
+        }
+
+
         // Use the captchaToken here, for example, you can pass it to your signIn function
-        return dispatch(signIn(email, password, captchaToken));
+        return dispatch(signIn(email, password, isFirstLogin ? null : captchaToken));
     }
 }
 
