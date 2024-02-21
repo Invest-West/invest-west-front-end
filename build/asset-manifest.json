@@ -1,15 +1,15 @@
 {
   "files": {
     "main.css": "https://demo.investwest.online/static/css/main.f2d9630b.chunk.css",
-    "main.js": "https://demo.investwest.online/static/js/main.64ee8481.chunk.js",
-    "main.js.map": "https://demo.investwest.online/static/js/main.64ee8481.chunk.js.map",
+    "main.js": "https://demo.investwest.online/static/js/main.c1b95e3c.chunk.js",
+    "main.js.map": "https://demo.investwest.online/static/js/main.c1b95e3c.chunk.js.map",
     "runtime-main.js": "https://demo.investwest.online/static/js/runtime-main.3b1e71ac.js",
     "runtime-main.js.map": "https://demo.investwest.online/static/js/runtime-main.3b1e71ac.js.map",
-    "static/css/2.0ab909e0.chunk.css": "https://demo.investwest.online/static/css/2.0ab909e0.chunk.css",
+    "static/css/2.dca312d0.chunk.css": "https://demo.investwest.online/static/css/2.dca312d0.chunk.css",
     "static/js/2.d2042567.chunk.js": "https://demo.investwest.online/static/js/2.d2042567.chunk.js",
     "static/js/2.d2042567.chunk.js.map": "https://demo.investwest.online/static/js/2.d2042567.chunk.js.map",
     "index.html": "https://demo.investwest.online/index.html",
-    "static/css/2.0ab909e0.chunk.css.map": "https://demo.investwest.online/static/css/2.0ab909e0.chunk.css.map",
+    "static/css/2.dca312d0.chunk.css.map": "https://demo.investwest.online/static/css/2.dca312d0.chunk.css.map",
     "static/css/main.f2d9630b.chunk.css.map": "https://demo.investwest.online/static/css/main.f2d9630b.chunk.css.map",
     "static/js/2.d2042567.chunk.js.LICENSE.txt": "https://demo.investwest.online/static/js/2.d2042567.chunk.js.LICENSE.txt",
     "static/media/admin_logo.png": "https://demo.investwest.online/static/media/admin_logo.ba46fba4.png",
@@ -80,13 +80,12 @@
     "static/media/issuer_help_support_01.png": "https://demo.investwest.online/static/media/issuer_help_support_01.866d8280.png",
     "static/media/issuer_help_support_02.png": "https://demo.investwest.online/static/media/issuer_help_support_02.39aafbdc.png",
     "static/media/logo.png": "https://demo.investwest.online/static/media/logo.5e7ff337.png"
-
   },
   "entrypoints": [
     "static/js/runtime-main.3b1e71ac.js",
-    "static/css/2.0ab909e0.chunk.css",
+    "static/css/2.dca312d0.chunk.css",
     "static/js/2.d2042567.chunk.js",
     "static/css/main.f2d9630b.chunk.css",
-    "static/js/main.64ee8481.chunk.js"
+    "static/js/main.c1b95e3c.chunk.js"
   ]
 }
