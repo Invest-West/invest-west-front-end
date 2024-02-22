@@ -19,7 +19,7 @@ import ProfilePageEditable from "../pages/profile/ProfilePageEditable";
 import Front from "../pages/front/Front";
 import SignIn from "../pages/signin/SignInNew";
 import PageNotFound from "../shared-components/page-not-found/PageNotFoundNew";
-
+import ErrorBoundary from './ErrorBoundary';
 import Routes from "./routes";
 import GroupRoute from "./GroupRoute";
 import ResetPassword from "../pages/reset-password/ResetPassword";
@@ -37,6 +37,7 @@ export interface RouteParams {
 }
 
 const AppRouter = () => (
+    <BrowserRouter>
     <BrowserRouter>
         <Switch>
             <Route path={Routes.groupSignUp} exact
@@ -206,10 +207,9 @@ const AppRouter = () => (
                 // @ts-ignore
                 render={props => <GroupRoute {...props} showHeader={true}
                                              component={<PageNotFound {...props}/>}/>}/>
-            <Route component={PageNotFound}/>
 
         </Switch>
-        
+        </BrowserRouter>
     </BrowserRouter>
 );
 

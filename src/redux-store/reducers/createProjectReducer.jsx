@@ -142,20 +142,8 @@ const createProjectReducer = (state = initState, action) => {
                                         :
                                         ''
                                 ,
-                                hasEIS:
-                                    project.hasOwnProperty('hasEIS')
-                                        ?
-                                        project.hasEIS
-                                        :
-                                        ''
-                                ,
-                                hasSEIS:
-                                    project.hasOwnProperty('hasSEIS')
-                                        ?
-                                        project.hasSEIS
-                                        :
-                                        ''
-                                ,
+                                hasEIS: project.hasOwnProperty('hasEIS') ? project.hasEIS : false,
+                                hasSEIS: project.hasOwnProperty('hasSEIS') ? project.hasSEIS : false,
                                 pitchExpiredDate:
                                     project.Pitch.hasOwnProperty('expiredDate')
                                         ?
