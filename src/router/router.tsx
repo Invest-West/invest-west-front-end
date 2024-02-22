@@ -38,7 +38,7 @@ export interface RouteParams {
 
 const AppRouter = () => (
     <BrowserRouter>
-    <BrowserRouter>
+    <ErrorBoundary>
         <Switch>
             <Route path={Routes.groupSignUp} exact
                 // @ts-ignore
@@ -209,7 +209,7 @@ const AppRouter = () => (
                                              component={<PageNotFound {...props}/>}/>}/>
 
         </Switch>
-        </BrowserRouter>
+        </ErrorBoundary>
     </BrowserRouter>
 );
 

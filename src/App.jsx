@@ -12,6 +12,7 @@ import {AUTH_SUCCESS} from './pages/signin/Signin';
 
 import FeedbackSnackbar from './shared-components/feedback-snackbar/FeedbackSnackbar';
 
+import {defaultTheme} from './values/defaultThemes';
 import firebase from './firebase/firebaseApp';
 import * as colors from './values/colors';
 import * as authActions from './redux-store/actions/authActions';
@@ -278,6 +279,8 @@ class App extends Component {
     /**
      * Attach listeners
      */
+
+    
     attachListeners = () => {
         const {
             authStatus,
@@ -338,6 +341,7 @@ class App extends Component {
                 });
         }
     };
+    
 
     getTheme = () => {
         const {
@@ -405,22 +409,3 @@ class App extends Component {
 
 // export the App component using redux connect to hook up states and actions
 export default connect(mapStateToProps, mapDispatchToProps)(App);
-
-export const defaultTheme = responsiveFontSizes(createMuiTheme({
-    palette: {
-        primary: {
-            main: colors.primaryColor
-        },
-
-        secondary: {
-            main: colors.secondaryColor
-        },
-
-        text: {
-            secondary: colors.blue_gray_700,
-        }
-    },
-    typography: {
-        fontFamily: "Muli, sans-serif"
-    }
-}));
