@@ -29,6 +29,7 @@ import {getGroupRouteTheme} from "./redux-store/reducers/manageGroupUrlReducer";
 import IdleTimer from "react-idle-timer";
 import {activeTimeOut} from "./redux-store/reducers/manageSystemIdleTimeReducer";
 import {onIdle} from "./redux-store/actions/manageSystemIdleTimeActions";
+import {defaultTheme} from './values/defaultThemes';
 
 // map redux states to props of this component
 const mapStateToProps = state => {
@@ -405,22 +406,3 @@ class App extends Component {
 
 // export the App component using redux connect to hook up states and actions
 export default connect(mapStateToProps, mapDispatchToProps)(App);
-
-export const defaultTheme = responsiveFontSizes(createMuiTheme({
-    palette: {
-        primary: {
-            main: colors.primaryColor
-        },
-
-        secondary: {
-            main: colors.secondaryColor
-        },
-
-        text: {
-            secondary: colors.blue_gray_700,
-        }
-    },
-    typography: {
-        fontFamily: "Muli, sans-serif"
-    }
-}));
