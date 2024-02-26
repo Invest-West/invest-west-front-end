@@ -36,44 +36,12 @@ export interface CompleteAuthenticationAction extends AuthenticationAction {
 }
 
 /* TODO: remove console logs */
-export const signIn: ActionCreator<any> = (email: string, password: string, captchaToken: string, isFirstLogin: boolean = false) => {
+export const signIn: ActionCreator<any> = (email?: string, password?: string) => {
     return async (dispatch: Dispatch, getState: () => AppState) => {
-        console.log('Attempting to log in...');
         const {
             ManageGroupUrlState,
-            AuthenticationState,
-            SignInLocalState,
+            AuthenticationState
         } = getState();
-
-        const hcaptchaToken = SignInLocalState.captchaToken;
-        console.log('signIn function called with:', { email, password, captchaToken, isFirstLogin });
-
-        if (!isFirstLogin) {
-            console.log('Not a first login, validating captcha...');
-            if (!hcaptchaToken || hcaptchaToken === '') {
-                SignInLocalState.errorCaptchaNotCompleted = true;
-                return;
-            } else {
-                console.log('First login, skipping captcha validation');
-            }
-        
-            const hcaptchaRes = await new Api()
-                .request(
-                    "post",
-                    ApiRoutes.hcaptchaVerify,
-                    {
-                        requestBody: {
-                            token: hcaptchaToken,
-                        },
-                        queryParameters: null
-                    }
-                );
-            
-            if (!hcaptchaRes.data.success) {
-                SignInLocalState.errorCaptchaNotCompleted = true;
-                return;
-            }
-        }
 
         if (isAuthenticating(AuthenticationState)) {
             return;
@@ -98,24 +66,6 @@ export const signIn: ActionCreator<any> = (email: string, password: string, capt
                 dispatch({
                     type: AuthenticationEvents.StartAuthenticating
                 });
-                // Validate the captchaToken
-                const response = await fetch('https://hcaptcha.com/siteverify', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ captchaToken }),
-                });
-
-                if (!response.ok) {
-                    // Handle failed captcha validation here
-                    authenticationCompleteAction.status = AuthenticationStatus.Unauthenticated;
-                    authenticationCompleteAction.error = {
-                        detail: "Captcha validation failed."
-                    }
-                    return dispatch(authenticationCompleteAction);
-                }
-                console.log('Captcha validation successful...');
             }
             // user is currently not signed in with Firebase
             else {
@@ -148,7 +98,6 @@ export const signIn: ActionCreator<any> = (email: string, password: string, capt
                 const retrieveUserResponse = await new UserRepository().retrieveUser(uid);
 
                 const currentUser: User | Admin = retrieveUserResponse.data;
-                console.log('Retrieved current user:', currentUser);
                 const currentAdmin: Admin | null = isAdmin(currentUser);
 
                 // Check:
@@ -157,7 +106,6 @@ export const signIn: ActionCreator<any> = (email: string, password: string, capt
                 let validSuperAdminSignIn: boolean = true;
 
                 if (Routes.isSuperAdminSignInRoute(ManageGroupUrlState.routePath ?? "")) {
-                    console.log('Super admin sign-in route check:', { currentAdmin, validSuperAdminSignIn });
                     if (!(currentAdmin && currentAdmin.superAdmin)) {
                         validSuperAdminSignIn = false;
                         authenticationCompleteAction.error = {
@@ -192,10 +140,6 @@ export const signIn: ActionCreator<any> = (email: string, password: string, capt
                 authenticationCompleteAction.groupsOfMembership = listGroupsOfMembershipResponse.data;
 
                 authenticationCompleteAction.status = AuthenticationStatus.Authenticated;
-
-                console.log('Authentication status:', successfullyAuthenticated(AuthenticationState) ? 'Authenticated' : 'Not Authenticated');
-                console.log('Current user:', AuthenticationState.currentUser);
-                
                 return dispatch(authenticationCompleteAction);
             } else {
                 await dispatch(signOut());
@@ -206,7 +150,6 @@ export const signIn: ActionCreator<any> = (email: string, password: string, capt
                 return dispatch(authenticationCompleteAction);
             }
         } catch (error) {
-            console.log('Error in signIn function:', error);
             await dispatch(signOut());
             authenticationCompleteAction.status = AuthenticationStatus.Unauthenticated;
             authenticationCompleteAction.error = {

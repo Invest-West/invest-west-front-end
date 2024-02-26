@@ -2,8 +2,7 @@ import {
     CompleteProcessingResetPasswordRequestAction,
     SignInAction,
     SignInEvents,
-    TextChangedAction,
-    UpdateCaptchaTokenAction
+    TextChangedAction
 } from "./SignInActions";
 import Error from "../../models/error";
 
@@ -78,19 +77,7 @@ const signInReducer = (state: SignInState = initialState, action: SignInAction) 
             return {
                 ...state,
                 errorSignInPassword: true
-            }
-        case SignInEvents.CaptchaError:
-            return {
-                ...state,
-                captchaToken: '', // reset the token
-                errorCaptchaNotCompleted: true, // set the error
-            };
-        
-        case SignInEvents.CaptchaNotCompletedError:
-            return {
-            ...state,
-            errorCaptchaNotCompleted: true,
-            };              
+            }           
         case SignInEvents.ClearErrors:
             return {
                 ...state,
@@ -103,19 +90,12 @@ const signInReducer = (state: SignInState = initialState, action: SignInAction) 
                 ...state,
                 showResetPasswordDialog: !state.showResetPasswordDialog,
                 resetPasswordDialogEmail: "",
-                resetPasswordDialogError: undefined
             }
         case SignInEvents.ProcessingResetPasswordRequest:
             return {
                 ...state,
                 resetPasswordDialogProcessing: true,
                 resetPasswordDialogError: undefined
-            }
-        case SignInEvents.UpdateCaptchaToken:
-            const updateCaptchaTokenAction = action as UpdateCaptchaTokenAction;
-            return {
-                ...state,
-                captchaToken: updateCaptchaTokenAction.captchaToken,
             }
         case SignInEvents.CompleteProcessingResetPasswordRequest:
             const completeAction: CompleteProcessingResetPasswordRequestAction =

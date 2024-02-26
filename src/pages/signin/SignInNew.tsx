@@ -37,8 +37,7 @@ import {
     onSignInClick,
     onTextChanged,
     togglePasswordVisibility,
-    toggleResetPasswordDialog,
-    updateCaptchaToken
+    toggleResetPasswordDialog
 } from "./SignInActions";
 import {
     AuthenticationState,
@@ -55,18 +54,15 @@ import {Close} from "@material-ui/icons";
 import CustomLink from "../../shared-js-css-styles/CustomLink";
 import Footer from "../../shared-components/footer/Footer";
 import '../../shared-js-css-styles/sharedStyles.scss';
-import HCaptcha from '@hcaptcha/react-hcaptcha';
 
 interface SignInProps {
     ManageGroupUrlState: ManageGroupUrlState;
     AuthenticationState: AuthenticationState;
     MediaQueryState: MediaQueryState;
     SignInLocalState: SignInState;
-    captchaToken: string;
-    updateCaptchaToken: (captchaToken: string) => any;
     onTextChanged: (event: React.ChangeEvent<HTMLInputElement>) => any;
     togglePasswordVisibility: () => any;
-    onSignInClick: (email: string, password: string, captchaToken: string) => any;
+    onSignInClick: (event: FormEvent) => any;
     toggleResetPasswordDialog: () => any;
     onSendResetPasswordClick: (email: string) => () => Promise<void>;
   }
@@ -87,32 +83,14 @@ const mapDispatchToProps = (dispatch: ThunkDispatch<any, any, AnyAction>) => {
     return {
         onTextChanged: (event: React.ChangeEvent<HTMLInputElement>) => dispatch(onTextChanged(event)),
         togglePasswordVisibility: () => dispatch(togglePasswordVisibility()),
-        onSignInClick: (email: string, password: string, captchaToken: string) => dispatch(signIn(email, password, captchaToken)),
+        onSignInClick: (event: FormEvent) => dispatch(onSignInClick(event)),
         toggleResetPasswordDialog: () => dispatch(toggleResetPasswordDialog()),
-        onSendResetPasswordClick: (email: string) => dispatch(onSendResetPasswordClick(email)),
-        updateCaptchaToken: (token: string) => dispatch(updateCaptchaToken(token))
+        onSendResetPasswordClick: (email: string) => dispatch(onSendResetPasswordClick(email))
     }
 }
 
 class SignInNew extends Component<SignInProps & Readonly<RouteComponentProps<RouteParams>>, {}> {
-    captchaRef: React.RefObject<HCaptcha> = React.createRef();
-  
-    handleCaptchaVerify = (token: string) => {
-      this.props.updateCaptchaToken(token);
-    };
-  
-    handleCaptchaExpire = () => {
-      this.props.updateCaptchaToken('');
-    };
-  
-    handleSubmit = (event: React.FormEvent) => {
-        event.preventDefault();
-        const { signInEmail, signInPassword, captchaToken } = this.props.SignInLocalState;
-        this.props.onSignInClick(signInEmail, signInPassword, captchaToken);
-    };
           
-          
-
     render() {
         const {
             ManageGroupUrlState,
@@ -120,6 +98,7 @@ class SignInNew extends Component<SignInProps & Readonly<RouteComponentProps<Rou
             MediaQueryState,
             SignInLocalState,
             onTextChanged,
+            onSignInClick,
             togglePasswordVisibility,
             toggleResetPasswordDialog
         } = this.props;
@@ -160,7 +139,7 @@ class SignInNew extends Component<SignInProps & Readonly<RouteComponentProps<Rou
                             }
 
                             {/** Sign in form */}
-                            <form onSubmit={(event) => this.handleSubmit(event)}>
+                            <form onSubmit={onSignInClick}>
                                 <Box display="flex" flexDirection="column" >
                                     {/** Email field */}
                                     <FormControl>
@@ -194,22 +173,6 @@ class SignInNew extends Component<SignInProps & Readonly<RouteComponentProps<Rou
                                             }}
                                         />
                                     </FormControl>
-                                    <div className="captcha">
-                                        <FormControl error={SignInLocalState.errorCaptchaNotCompleted}>
-                                            <HCaptcha
-                                                ref={this.captchaRef}
-                                                sitekey="ea92df3b-fd27-475e-a7b4-1ebe0f08be78"
-                                                onVerify={this.handleCaptchaVerify}
-                                                onExpire={this.handleCaptchaExpire}
-                                                />
-                                            {SignInLocalState.errorCaptchaNotCompleted && (
-                                                <p id="captcha-error-text">Please complete the captcha.</p>
-                                            )}
-                                        
-                                        
-                                        </FormControl>
-                                    </div>
-
                                     <Box marginTop="35px" marginBottom="45px" >
                                         <Typography variant="body1" align="center" >
                                             By clicking Sign In, you agree to our&nbsp;
