@@ -192,6 +192,10 @@ export const signIn: ActionCreator<any> = (email: string, password: string, capt
                 authenticationCompleteAction.groupsOfMembership = listGroupsOfMembershipResponse.data;
 
                 authenticationCompleteAction.status = AuthenticationStatus.Authenticated;
+
+                console.log('Authentication status:', successfullyAuthenticated(AuthenticationState) ? 'Authenticated' : 'Not Authenticated');
+                console.log('Current user:', AuthenticationState.currentUser);
+                
                 return dispatch(authenticationCompleteAction);
             } else {
                 await dispatch(signOut());

@@ -240,7 +240,7 @@ class ProjectDetailsMain extends Component {
             setExpectedAndCurrentPathsForChecking,
             loadAngelNetwork,
             investorSelfCertificationAgreement_setUser,
-            loadInvestorSelfCertificationAgreement
+            loadInvestorSelfCertificationAgreement,
         } = this.props;
 
         const {
@@ -291,6 +291,8 @@ class ProjectDetailsMain extends Component {
                 }
             }
         }
+        console.log('Page loaded. Authentication status:', this.props.AuthenticationState.isAuthenticated ? 'Authenticated' : 'Not Authenticated');
+        console.log('Current user on page load:', this.props.AuthenticationState.currentUser);
     }
 
     componentDidUpdate(prevProps, prevState, snapshot) {
