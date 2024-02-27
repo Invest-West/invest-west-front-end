@@ -74,8 +74,7 @@ const mapStateToProps = (state: AppState) => {
         ManageGroupUrlState: state.ManageGroupUrlState,
         AuthenticationState: state.AuthenticationState,
         MediaQueryState: state.MediaQueryState,
-        SignInLocalState: state.SignInLocalState,
-        captchaToken: state.SignInLocalState.captchaToken
+        SignInLocalState: state.SignInLocalState
     }
 }
 
