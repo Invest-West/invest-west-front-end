@@ -63,7 +63,6 @@ import * as ROUTES from "../../router/routes";
 import Routes from "../../router/routes";
 import sharedStyles from "../../shared-js-css-styles/SharedStyles";
 
-import "./CreateProject.scss";
 import {getGroupRouteTheme, isValidatingGroupUrl} from "../../redux-store/reducers/manageGroupUrlReducer";
 import {isAuthenticating, successfullyAuthenticated} from "../../redux-store/reducers/authenticationReducer";
 import {isLoadingSystemAttributes} from "../../redux-store/reducers/manageSystemAttributesReducer";
@@ -233,6 +232,9 @@ class CreatePitchPageMain extends Component {
             // call load data here when the save progress button is hit for the first time --> navigate to edit mode
             this.loadData();
         }
+        console.log('Page loaded. Authentication status:', this.props.AuthenticationState.isAuthenticated ? 'Authenticated' : 'Not Authenticated');
+        console.log('Current user on page load:', this.props.AuthenticationState.currentUser);
+        console.log(`Data request status on page load: ${this.state.requestToLoadData ? 'Pending' : 'Not Requested'}`);
     }
 
     componentDidUpdate(prevProps, prevState, snapshot) {
@@ -276,7 +278,7 @@ class CreatePitchPageMain extends Component {
                             : previousState.groupIssuerCreateOfferFor,
                         requestToLoadData: !previousState.requestToLoadData ? true : previousState.requestToLoadData
                     }
-                });
+                }, () => console.log('New state after next step:', this.state));
             }
         }
 
@@ -287,6 +289,14 @@ class CreatePitchPageMain extends Component {
 
         if (saveProgress && !progressBeingSaved) {
             this.uploadProject();
+        }
+
+        if (prevProps.ManageGroupUrlState !== this.props.ManageGroupUrlState) {
+            console.log('ManageGroupUrlState changed:', this.props.ManageGroupUrlState);
+        }
+
+        if (prevProps.AuthenticationState.currentUser !== this.props.AuthenticationState.currentUser) {
+            console.log('Authentication state changed. Current user:', this.props.AuthenticationState.currentUser);
         }
     }
 
@@ -341,6 +351,7 @@ class CreatePitchPageMain extends Component {
                 }
             });
         }
+        console.log(`Navigating to step ${activeStep} with projectID ${projectID}. Current state:`, this.state);
     };
 
     /**
@@ -363,7 +374,7 @@ class CreatePitchPageMain extends Component {
         }
 
         if (!successfullyAuthenticated(AuthenticationState)
-            || (AuthenticationState.currentUser && AuthenticationState.currentUser.type === DB_CONST.TYPE_INVESTOR)
+        || (AuthenticationState.currentUser && AuthenticationState.currentUser.type === DB_CONST.TYPE_INVESTOR)
         ) {
             if (!projectEditedLoaded) {
                 this.setState({
@@ -550,6 +561,13 @@ class CreatePitchPageMain extends Component {
                     });
                 })
                 .catch(error => {
+                    console.error('Error loading project data:', error);
+                    console.log('Current state at error:', this.state);
+                    this.setState({
+                        projectEditedLoaded: true,
+                        projectIDToBeLoadedAfterSavingFirstTime: null,
+                        loadError: 'There was a problem loading the project data. Please try again.'
+                    });
                     this.setState({
                         projectEditedLoaded: true,
                         projectIDToBeLoadedAfterSavingFirstTime: null

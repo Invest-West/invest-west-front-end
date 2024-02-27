@@ -3,7 +3,6 @@ import React, {FormEvent} from "react";
 import {signIn} from "../../redux-store/actions/authenticationActions";
 import {AppState} from "../../redux-store/reducers";
 import Api, {ApiRoutes} from "../../api/Api";
-import HCaptcha from '@hcaptcha/react-hcaptcha';
 import firebaseApp from "../../firebase/firebaseApp.jsx";
 
 export enum SignInEvents {
@@ -16,36 +15,12 @@ export enum SignInEvents {
     ToggleResetPasswordDialog = "SignInEvents.ToggleResetPasswordDialog",
     ProcessingResetPasswordRequest = "SignInEvents.ProcessingResetPasswordRequest",
     CompleteProcessingResetPasswordRequest = "SignInEvents.CompleteProcessingResetPasswordRequest",
-    UpdateCaptchaToken = "SIGN_IN_UPDATE_CAPTCHA_TOKEN",
-    CaptchaError = "SignInEvents.CaptchaError",
-    CaptchaNotCompletedError = 'SignInEvents.CaptchaNotCompletedError',
 }
 
-
-export const setCaptchaError: ActionCreator<any> = () => {
-    return (dispatch: Dispatch) => {
-        dispatch({
-            type: SignInEvents.CaptchaError
-        });
-    }
-}
 
 export interface SignInAction extends Action {
 }
 
-export interface UpdateCaptchaTokenAction extends SignInAction {
-    captchaToken: string;
-  }
-  
-  export const updateCaptchaToken: ActionCreator<any> = (captchaToken: string) => {
-    return (dispatch: Dispatch, getState: () => AppState) => {
-      const action: UpdateCaptchaTokenAction = {
-        type: SignInEvents.UpdateCaptchaToken,
-        captchaToken,
-      };
-      return dispatch(action);
-    };
-  };
 
 
 export interface TextChangedAction extends SignInAction {
@@ -76,7 +51,7 @@ export const togglePasswordVisibility: ActionCreator<any> = () => {
     }
 }
 
-export const onSignInClick: ActionCreator<any> = (event: FormEvent, captchaToken: string) => {
+export const onSignInClick: ActionCreator<any> = (event: FormEvent) => {
     return async (dispatch: Dispatch, getState: () => AppState) => {
         const {
             signInEmail,
@@ -108,23 +83,11 @@ export const onSignInClick: ActionCreator<any> = (event: FormEvent, captchaToken
             allowSignIn = false;
         }
 
-        if (captchaToken.length === 0) {
-            dispatch(setCaptchaError());
-            allowSignIn = false;
-        }
-        if (captchaToken === "") {
-            dispatch({
-                type: SignInEvents.CaptchaNotCompletedError,
-            });
-            allowSignIn = false;
-        }
-
         if (!allowSignIn) {
             return;
         }
 
-        // Use the captchaToken here, for example, you can pass it to your signIn function
-        return dispatch(signIn(email, password, captchaToken));
+        return dispatch(signIn(email, password));
     }
 }
 

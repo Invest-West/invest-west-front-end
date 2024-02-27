@@ -307,8 +307,7 @@ class ExploreOffers extends Component<ExploreOffersProps, {}> {
                                                 ? null
                                                 : <Box marginBottom="40px" >
                                                     <CustomLink
-                                                        url={Routes.constructCreateProjectRoute(ManageGroupUrlState.groupNameFromUrl ?? null)}
-                                                        target="_blank"
+                                                        url={Routes.constructCreateProjectRoute(ManageGroupUrlState.groupNameFromUrl ?? null)}                                                  
                                                         color="none"
                                                         activeColor="none"
                                                         activeUnderline={false}
