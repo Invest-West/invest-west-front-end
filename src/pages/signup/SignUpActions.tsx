@@ -143,7 +143,7 @@ export const createAccount: ActionCreator<any> = () => {
             });
 
             dispatch(completeAction);
-            return dispatch(signIn(email, password, '', true));
+            return dispatch(signIn(email, password));
         } catch (error) {
             completeAction.error = error.toString();
             return dispatch(completeAction);
