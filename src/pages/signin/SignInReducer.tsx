@@ -2,8 +2,7 @@ import {
     CompleteProcessingResetPasswordRequestAction,
     SignInAction,
     SignInEvents,
-    TextChangedAction,
-    UpdateCaptchaTokenAction
+    TextChangedAction
 } from "./SignInActions";
 import Error from "../../models/error";
 
@@ -12,11 +11,8 @@ export interface SignInState {
     signInPassword: string;
     showPassword: boolean;
 
-    captchaToken: string;
-    errorCaptchaNotCompleted: boolean;
     errorSignInEmail: boolean;
     errorSignInPassword: boolean;
-    errorCaptcha: boolean;
     showResetPasswordDialog: boolean;
     resetPasswordDialogEmail: string;
     resetPasswordDialogProcessing: boolean;
@@ -29,11 +25,8 @@ const initialState: SignInState = {
     signInPassword: "",
     showPassword: false,
     
-    captchaToken: "",
-    errorCaptchaNotCompleted: false,
     errorSignInEmail: false,
     errorSignInPassword: false,
-    errorCaptcha: false,
     showResetPasswordDialog: false,
     resetPasswordDialogEmail: "",
     resetPasswordDialogProcessing: false,
@@ -78,44 +71,24 @@ const signInReducer = (state: SignInState = initialState, action: SignInAction) 
             return {
                 ...state,
                 errorSignInPassword: true
-            }
-        case SignInEvents.CaptchaError:
-            return {
-                ...state,
-                captchaToken: '', // reset the token
-                errorCaptchaNotCompleted: true, // set the error
-            };
-        
-        case SignInEvents.CaptchaNotCompletedError:
-            return {
-            ...state,
-            errorCaptchaNotCompleted: true,
-            };              
+            }           
         case SignInEvents.ClearErrors:
             return {
                 ...state,
                 errorSignInEmail: false,
-                errorSignInPassword: false,
-                errorCaptcha: false
+                errorSignInPassword: false
             }
         case SignInEvents.ToggleResetPasswordDialog:
             return {
                 ...state,
                 showResetPasswordDialog: !state.showResetPasswordDialog,
                 resetPasswordDialogEmail: "",
-                resetPasswordDialogError: undefined
             }
         case SignInEvents.ProcessingResetPasswordRequest:
             return {
                 ...state,
                 resetPasswordDialogProcessing: true,
                 resetPasswordDialogError: undefined
-            }
-        case SignInEvents.UpdateCaptchaToken:
-            const updateCaptchaTokenAction = action as UpdateCaptchaTokenAction;
-            return {
-                ...state,
-                captchaToken: updateCaptchaTokenAction.captchaToken,
             }
         case SignInEvents.CompleteProcessingResetPasswordRequest:
             const completeAction: CompleteProcessingResetPasswordRequestAction =

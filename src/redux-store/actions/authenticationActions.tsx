@@ -36,43 +36,12 @@ export interface CompleteAuthenticationAction extends AuthenticationAction {
 }
 
 /* TODO: remove console logs */
-export const signIn: ActionCreator<any> = (email: string, password: string, captchaToken: string) => {
+export const signIn: ActionCreator<any> = (email?: string, password?: string) => {
     return async (dispatch: Dispatch, getState: () => AppState) => {
-        console.log('Attempting to log in...');
         const {
             ManageGroupUrlState,
-            AuthenticationState,
-            SignInLocalState,
+            AuthenticationState
         } = getState();
-
-        const hcaptchaToken = SignInLocalState.captchaToken;
-
-        if (!hcaptchaToken || hcaptchaToken === '') {
-            SignInLocalState.errorCaptchaNotCompleted = true;
-            return;
-        } else {
-            SignInLocalState.errorCaptchaNotCompleted = true;
-        }
-
-        const hcaptchaRes = await new Api()
-            .request(
-                "post",
-                ApiRoutes.hcaptchaVerify,
-                {
-                    requestBody: {
-                        token: hcaptchaToken,
-                    },
-                    queryParameters: null
-                }
-            );
-        console.log(hcaptchaRes)
-        
-        if (!hcaptchaRes.data.success) {
-            SignInLocalState.errorCaptchaNotCompleted = true;
-            return;
-        } else {
-            SignInLocalState.errorCaptchaNotCompleted = true;
-        }
 
         if (isAuthenticating(AuthenticationState)) {
             return;
@@ -97,24 +66,6 @@ export const signIn: ActionCreator<any> = (email: string, password: string, capt
                 dispatch({
                     type: AuthenticationEvents.StartAuthenticating
                 });
-                // Validate the captchaToken
-                const response = await fetch('https://hcaptcha.com/siteverify', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ captchaToken }),
-                });
-
-                if (!response.ok) {
-                    // Handle failed captcha validation here
-                    authenticationCompleteAction.status = AuthenticationStatus.Unauthenticated;
-                    authenticationCompleteAction.error = {
-                        detail: "Captcha validation failed."
-                    }
-                    return dispatch(authenticationCompleteAction);
-                }
-                console.log('Captcha validation successful...');
             }
             // user is currently not signed in with Firebase
             else {
