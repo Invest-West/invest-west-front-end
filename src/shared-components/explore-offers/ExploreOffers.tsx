@@ -4,6 +4,8 @@ import {AppState} from "../../redux-store/reducers";
 import {ThunkDispatch} from "redux-thunk";
 import {AnyAction} from "redux";
 import {Col, Row} from "react-bootstrap";
+import GroupRepository from "../../api/repositories/GroupRepository";
+import GroupProperties from "../../models/group_properties";
 import {
     Box,
     Button, colors,
@@ -24,8 +26,7 @@ import {
     hasOffersForCurrentFilters,
     isFetchingOffers,
     isSearchFilterActive,
-    successfullyFetchedOffers,
-    successfullyFetchedOffers2
+    successfullyFetchedOffers
 } from "./ExploreOffersReducer";
 import {MediaQueryState} from "../../redux-store/reducers/mediaQueryReducer";
 import {getGroupRouteTheme, ManageGroupUrlState} from "../../redux-store/reducers/manageGroupUrlReducer";
@@ -52,7 +53,6 @@ import {
     hasGroupsSelect,
     isExportingCsv,
     isFilteringOffersByName,
-    OffersTableStates,
 } from "../offers-table/OffersTableReducer";
 import Admin from "../../models/admin";
 
@@ -67,7 +67,6 @@ interface ExploreOffersProps {
     filterChanged: (event: any) => any;
     clearSearchFilter: () => any;
     paginationChanged: (event: React.ChangeEvent<unknown>, page: number) => any;
-    OffersTableLocalState: OffersTableStates;
 }
 
 const mapStateToProps = (state: AppState) => {
@@ -77,7 +76,6 @@ const mapStateToProps = (state: AppState) => {
         ManageGroupUrlState: state.ManageGroupUrlState,
         AuthenticationState: state.AuthenticationState,
         ExploreOffersLocalState: state.ExploreOffersLocalState,
-        OffersTableLocalState: state.OffersTableLocalState
     }
 }
 
@@ -85,20 +83,40 @@ const mapDispatchToProps = (dispatch: ThunkDispatch<any, any, AnyAction>) => {
     return {
         onSearchEnter: (event: FormEvent) => dispatch(onSearchEnter(event)),
         fetchOffers: (orderBy?: string) => dispatch(fetchOffers(orderBy)),
-        filterChanged: (event: React.ChangeEvent<HTMLInputElement>) => dispatch(filterChanged(event)),
+        filterChanged: (event: any) => dispatch(filterChanged(event)),
         clearSearchFilter: () => dispatch(clearSearchFilter()),
         paginationChanged: (event: React.ChangeEvent<unknown>, page: number) => dispatch(paginationChanged(event, page))
     }
 }
 
-class ExploreOffers extends Component<ExploreOffersProps, {}> {
+interface ExploreOffersComponentState {
+    groups: GroupProperties[];
+  }
 
+  class ExploreOffers extends Component<ExploreOffersProps, ExploreOffersComponentState> {
+    constructor(props: ExploreOffersProps) {
+      super(props);
+      this.state = {
+        groups: [],
+      };
+    }
+  
     componentDidMount() {
         if (hasNotFetchedOffers(this.props.ExploreOffersLocalState)) {
-            this.props.fetchOffers(FetchProjectsOrderByOptions.Phase);
+          this.props.fetchOffers(FetchProjectsOrderByOptions.Phase);
         }
-    }
-
+        this.fetchGroups();
+      }
+  
+      fetchGroups = async () => {
+        try {
+          const response = await new GroupRepository().fetchGroups();
+          this.setState({ groups: response.data });
+        } catch (error) {
+          console.error("Error fetching groups:", error);
+        }
+      };
+  
     render() {
         const {
             MediaQueryState,
@@ -111,7 +129,6 @@ class ExploreOffers extends Component<ExploreOffersProps, {}> {
             clearSearchFilter,
             paginationChanged,
             onSearchEnter,
-            OffersTableLocalState
         } = this.props;
 
         const paginationPages = calculatePaginationPages(ExploreOffersLocalState);
@@ -123,36 +140,30 @@ class ExploreOffers extends Component<ExploreOffersProps, {}> {
         >
             <Row>
                 {/** Group filter for Explore offers */}
-                <Col xs={12} sm={12} md={6} lg={4} >
-                    <Box paddingY="6px" >
-                        <Typography variant="body1">Group:</Typography>
-                        <Box height="8px" />
-                        <Paper>
-                            <Select
-                                fullWidth
-                                variant="outlined"
-                                name="groupFilter"
-                                value={OffersTableLocalState.groupFilter}
-                                onChange={filterChanged}
-                                input={<OutlinedInput/>}
-                                disabled={!successfullyFetchedOffers2(OffersTableLocalState)}
-                            >
-                                <MenuItem key="all" value="all" >All</MenuItem>
-                                {
-                                    !hasGroupsSelect(OffersTableLocalState)
-                                    || !OffersTableLocalState.groupsSelect
-                                        ? null
-                                        : OffersTableLocalState.groupsSelect.map(group =>
-                                            <MenuItem
-                                                key={group.anid}
-                                                value={group.anid}
-                                            >
-                                                {group.displayName}
-                                            </MenuItem>
-                                        )
-                                }
-                            </Select>
-                        </Paper>
+                <Col xs={12} sm={12} md={6} lg={4}>
+                    <Box paddingY="6px">
+                    <Typography variant="body1">Group:</Typography>
+                    <Box height="8px" />
+                    <Paper>
+                        <Select
+                        fullWidth
+                        variant="outlined"
+                        name="groupFilter"
+                        value={ExploreOffersLocalState.groupFilter}
+                        onChange={filterChanged}
+                        input={<OutlinedInput />}
+                        /* disabled={!successfullyFetchedOffers(ExploreOffersLocalState)}  */
+                        >
+                        <MenuItem key="all" value="all">
+                            All
+                        </MenuItem>
+                        {this.state.groups.map((group) => (
+                            <MenuItem key={group.anid} value={group.anid}>
+                            {group.displayName}
+                            </MenuItem>
+                        ))}
+                        </Select>
+                    </Paper>
                     </Box>
                 </Col>
 
@@ -169,7 +180,7 @@ class ExploreOffers extends Component<ExploreOffersProps, {}> {
                                 name="sectorFilter"
                                 value={ExploreOffersLocalState.sectorFilter}
                                 onChange={filterChanged}
-                                disabled={!successfullyFetchedOffers(ExploreOffersLocalState)}
+                               /* disabled={!successfullyFetchedOffers(ExploreOffersLocalState)} */
                                 input={<OutlinedInput/>}
                             >
                                 <MenuItem key="all" value="all">All sectors</MenuItem>
@@ -186,28 +197,30 @@ class ExploreOffers extends Component<ExploreOffersProps, {}> {
                     </Box>
                 </Col>
 
-                {/** Phase filter */}
-                <Col xs={12} sm={12} md={6} lg={4} >
-                    <Box paddingY="6px" >
-                        <Typography variant="body1">Status:</Typography>
-                        <Box height="8px" />
-                        <Paper>
-                            <Select
-                                fullWidth
-                                variant="outlined"
-                                name="phaseFilter"
-                                value={ExploreOffersLocalState.phaseFilter}
-                                onChange={filterChanged}
-                                disabled={!successfullyFetchedOffers(ExploreOffersLocalState)}
-                                input={<OutlinedInput/>}
-                            >
-                                <MenuItem key={FetchProjectsPhaseOptions.LivePitch} value={FetchProjectsPhaseOptions.LivePitch}>Live</MenuItem>
-
-                                <MenuItem key={FetchProjectsPhaseOptions.ExpiredPitch} value={FetchProjectsPhaseOptions.ExpiredPitch}>Expired</MenuItem>
-                            </Select>
-                        </Paper>
-                    </Box>
-                </Col>
+                {/** Status filter */}
+                <Col xs={12} sm={12} md={6} lg={4}>
+                <Box paddingY="6px">
+                    <Typography variant="body1">Status:</Typography>
+                    <Box height="8px" />
+                    <Paper>
+                        <Select
+                            fullWidth
+                            variant="outlined"
+                            name="phaseFilter"
+                            value={ExploreOffersLocalState.phaseFilter}
+                            onChange={filterChanged}
+                            input={<OutlinedInput />}
+                        >
+                            <MenuItem key={FetchProjectsPhaseOptions.Live} value={FetchProjectsPhaseOptions.Live}>
+                                Live
+                            </MenuItem>
+                            <MenuItem key={FetchProjectsPhaseOptions.ExpiredPitch} value={FetchProjectsPhaseOptions.ExpiredPitch}>
+                                Expired
+                            </MenuItem>
+                        </Select>
+                    </Paper>
+                </Box>
+            </Col>
             </Row>
 
             {/** Search bar */}
