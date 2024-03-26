@@ -8,7 +8,7 @@ import {
 import Error from "../../models/error";
 import {colors} from "@material-ui/core";
 import {createMuiTheme, responsiveFontSizes, Theme} from "@material-ui/core/styles";
-import {defaultTheme} from "../../App";
+import {defaultTheme} from "../../values/defaultThemes";
 
 export interface ManageGroupUrlState {
     routePath: string | undefined;

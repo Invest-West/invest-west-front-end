@@ -221,8 +221,7 @@ class OffersTable extends Component<OffersTableProps, any> {
                                                     issuer: tableUser.id
                                                 })
                                                 : ""
-                                        }
-                                        target="_blank"
+                                        }                                        
                                         color="none"
                                         activeColor="none"
                                         activeUnderline={false}

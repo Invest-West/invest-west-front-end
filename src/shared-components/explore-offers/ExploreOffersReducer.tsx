@@ -7,6 +7,7 @@ import {
     PaginationChangedAction
 } from "./ExploreOffersActions";
 import {ProjectInstance} from "../../models/project";
+import GroupProperties from "../../models/group_properties";
 import {FetchProjectsPhaseOptions} from "../../api/repositories/OfferRepository";
 import {OffersTableStates} from "../offers-table/OffersTableReducer";
 
@@ -17,10 +18,12 @@ export interface ExploreOffersState {
     fetchingOffers: boolean;
     offersFetched: boolean;
 
+    groups: GroupProperties[];
+
     searchFilter: string;
     visibilityFilter: number | "all";
     sectorFilter: string | "all";
-    phaseFilter: string | number | "all";
+    phaseFilter: FetchProjectsPhaseOptions;
     groupFilter: string | "all";
     currentPage: number;
 
@@ -31,11 +34,11 @@ const initialState: ExploreOffersState = {
     offerInstances: [],
     fetchingOffers: false,
     offersFetched: false,
-
+    groups: [],
     searchFilter: "",
     visibilityFilter: "all",
     sectorFilter: "all",
-    phaseFilter: FetchProjectsPhaseOptions.LivePitch,
+    phaseFilter: FetchProjectsPhaseOptions.Live,
     groupFilter: "all",
     currentPage: 1
 }
@@ -49,10 +52,6 @@ export const isFetchingOffers = (state: ExploreOffersState) => {
 }
 
 export const successfullyFetchedOffers = (state: ExploreOffersState) => {
-    return state.offersFetched && !state.fetchingOffers && state.error === undefined;
-}
-
-export const successfullyFetchedOffers2 = (state: OffersTableStates) => {
     return state.offersFetched && !state.fetchingOffers && state.error === undefined;
 }
 
@@ -88,6 +87,8 @@ export const calculatePaginationIndices = (state: ExploreOffersState) => {
 }
 
 const exploreOffersReducer = (state: ExploreOffersState = initialState, action: ExploreOffersAction) => {
+    console.log("Current state:", state);
+    console.log("Received action:", action);
     switch (action.type) {
         case ExploreOffersEvents.FetchingOffers:
             return {
@@ -109,12 +110,16 @@ const exploreOffersReducer = (state: ExploreOffersState = initialState, action: 
                     ? {detail: completeFetchingOffersAction.error} : state.error
             }
         case ExploreOffersEvents.FilterChanged:
-            console.log("Filter changed")
             const filterChangedAction: FilterChangedAction = action as FilterChangedAction;
             return {
                 ...state,
-                [filterChangedAction.name]: filterChangedAction.value
-            }
+                [filterChangedAction.name]: filterChangedAction.value,
+                offerInstances: [],
+                fetchingOffers: false,
+                offersFetched: false,
+                currentPage: 1,
+                error: undefined
+            };
         case ExploreOffersEvents.ClearSearchFilter:
             return {
                 ...state,
