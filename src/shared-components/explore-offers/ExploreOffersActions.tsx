@@ -5,7 +5,8 @@ import {AppState} from "../../redux-store/reducers";
 import {PROJECT_VISIBILITY_PUBLIC, PROJECT_VISIBILITY_RESTRICTED} from "../../firebase/databaseConsts";
 import OfferRepository, {
     FetchProjectsOptions,
-    FetchProjectsOrderByOptions
+    FetchProjectsOrderByOptions,
+    FetchProjectsPhaseOptions
 } from "../../api/repositories/OfferRepository";
 
 export enum ExploreOffersEvents {
@@ -41,54 +42,51 @@ export const onSearchEnter: ActionCreator<any> = (event: FormEvent) => {
     }
 }
 
-export const fetchOffers: ActionCreator<any> = (orderBy?: FetchProjectsOrderByOptions) => {
+export const fetchOffers: ActionCreator<any> = () => {
     return async (dispatch: Dispatch, getState: () => AppState) => {
         const {
             searchFilter,
             visibilityFilter,
             sectorFilter,
             phaseFilter,
-            groupFilter
+            groupFilter,
         } = getState().ExploreOffersLocalState;
 
-        const fetchOffersOptions: FetchProjectsOptions = orderBy === undefined ? {
+        // Determine orderBy based on phaseFilter and potentially other conditions
+        let orderBy;
+        if (groupFilter === "all") {
+            orderBy = phaseFilter === FetchProjectsPhaseOptions.ExpiredPitch ? FetchProjectsOrderByOptions.Group : FetchProjectsOrderByOptions.Phase;
+        } else {
+            // If not 'all' groups, maintain existing logic
+            orderBy = phaseFilter === FetchProjectsPhaseOptions.ExpiredPitch ? FetchProjectsOrderByOptions.Group : FetchProjectsOrderByOptions.Phase;
+        }
+
+        const fetchOffersOptions: FetchProjectsOptions = {
             search: searchFilter.trim().length === 0 ? undefined : searchFilter,
-            visibility: visibilityFilter === "all" || visibilityFilter === PROJECT_VISIBILITY_PUBLIC
-            || visibilityFilter === PROJECT_VISIBILITY_RESTRICTED
-                ? visibilityFilter : undefined,
-            group: groupFilter,
-            sector: sectorFilter,
-            phase: phaseFilter
-        } : {
-            search: searchFilter.trim().length === 0 ? undefined : searchFilter,
-            visibility: visibilityFilter === "all" || visibilityFilter === PROJECT_VISIBILITY_PUBLIC
-            || visibilityFilter === PROJECT_VISIBILITY_RESTRICTED
-                ? visibilityFilter : undefined,
-            group: groupFilter,
-            sector: sectorFilter,
+            visibility: visibilityFilter,
+            group: groupFilter === "all" ? undefined : groupFilter,
+            sector: sectorFilter === "all" ? undefined : sectorFilter,
             phase: phaseFilter,
-            orderBy: orderBy
+            orderBy,
         };
 
-        dispatch({
-            type: ExploreOffersEvents.FetchingOffers
-        });
-
-        const completeAction: CompleteFetchingOffersAction = {
-            type: ExploreOffersEvents.CompleteFetchingOffers,
-            offerInstances: []
-        }
+        dispatch({ type: ExploreOffersEvents.FetchingOffers });
 
         try {
             const response = await new OfferRepository().fetchOffers(fetchOffersOptions);
-            completeAction.offerInstances = response.data;
-            return dispatch(completeAction);
+            dispatch({
+                type: ExploreOffersEvents.CompleteFetchingOffers,
+                offerInstances: response.data,
+            });
         } catch (error) {
-            completeAction.error = error.toString();
-            return dispatch(completeAction);
+            dispatch({
+                type: ExploreOffersEvents.CompleteFetchingOffers,
+                error: error.toString(),
+                offerInstances: [],
+            });
         }
-    }
-}
+    };
+};
 
 export const filterChanged: ActionCreator<any> = (event: React.ChangeEvent<HTMLInputElement>) => {
     return (dispatch: Dispatch, getState: () => AppState) => {
@@ -111,11 +109,11 @@ export const filterChanged: ActionCreator<any> = (event: React.ChangeEvent<HTMLI
                 }
                 return dispatch(fetchOffers(FetchProjectsOrderByOptions.Group));
             case "sectorFilter":
-                return  dispatch(fetchOffers(FetchProjectsOrderByOptions.Sector));
+                return dispatch(fetchOffers(FetchProjectsOrderByOptions.Sector));
             case "phaseFilter":
                 return dispatch(fetchOffers(FetchProjectsOrderByOptions.Phase));
             case "groupFilter":
-                return dispatch(fetchOffers(FetchProjectsOrderByOptions.Group))
+                return dispatch(fetchOffers(value === "all" ? undefined : FetchProjectsOrderByOptions.Group));
             default:
                 return;
         }
