@@ -3,7 +3,6 @@ import {ActionCreator, Dispatch} from "redux";
 import {AppState} from "../../../../redux-store/reducers";
 import {openFeedbackSnackbar} from "../../../feedback-snackbar/FeedbackSnackbarActions";
 import {FeedbackSnackbarTypes} from "../../../feedback-snackbar/FeedbackSnackbarReducer";
-import React from "react";
 import {EditImageDialogModes, isDeletingProfilePicture, isSavingProfilePicture} from "../../ProfileReducer";
 import UserRepository from "../../../../api/repositories/UserRepository";
 import User from "../../../../models/user";
