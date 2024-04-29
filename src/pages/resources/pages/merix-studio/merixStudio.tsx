@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/img-redundant-alt */
 import React, {Component} from "react";
 import {connect} from "react-redux";
 import {AppState} from "../../../../redux-store/reducers";

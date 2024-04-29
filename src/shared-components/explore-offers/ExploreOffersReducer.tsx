@@ -9,7 +9,6 @@ import {
 import {ProjectInstance} from "../../models/project";
 import GroupProperties from "../../models/group_properties";
 import {FetchProjectsPhaseOptions} from "../../api/repositories/OfferRepository";
-import {OffersTableStates} from "../offers-table/OffersTableReducer";
 
 export const maxOffersPerPage: number = 12;
 
