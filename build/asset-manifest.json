@@ -1,17 +1,17 @@
 {
   "files": {
     "main.css": "https://demo.investwest.online/static/css/main.6e8d5085.chunk.css",
-    "main.js": "https://demo.investwest.online/static/js/main.c66ee980.chunk.js",
-    "main.js.map": "https://demo.investwest.online/static/js/main.c66ee980.chunk.js.map",
+    "main.js": "https://demo.investwest.online/static/js/main.7412b4fc.chunk.js",
+    "main.js.map": "https://demo.investwest.online/static/js/main.7412b4fc.chunk.js.map",
     "runtime-main.js": "https://demo.investwest.online/static/js/runtime-main.3b1e71ac.js",
     "runtime-main.js.map": "https://demo.investwest.online/static/js/runtime-main.3b1e71ac.js.map",
     "static/css/2.dca312d0.chunk.css": "https://demo.investwest.online/static/css/2.dca312d0.chunk.css",
-    "static/js/2.463ba310.chunk.js": "https://demo.investwest.online/static/js/2.463ba310.chunk.js",
-    "static/js/2.463ba310.chunk.js.map": "https://demo.investwest.online/static/js/2.463ba310.chunk.js.map",
+    "static/js/2.6f84872b.chunk.js": "https://demo.investwest.online/static/js/2.6f84872b.chunk.js",
+    "static/js/2.6f84872b.chunk.js.map": "https://demo.investwest.online/static/js/2.6f84872b.chunk.js.map",
     "index.html": "https://demo.investwest.online/index.html",
     "static/css/2.dca312d0.chunk.css.map": "https://demo.investwest.online/static/css/2.dca312d0.chunk.css.map",
     "static/css/main.6e8d5085.chunk.css.map": "https://demo.investwest.online/static/css/main.6e8d5085.chunk.css.map",
-    "static/js/2.463ba310.chunk.js.LICENSE.txt": "https://demo.investwest.online/static/js/2.463ba310.chunk.js.LICENSE.txt",
+    "static/js/2.6f84872b.chunk.js.LICENSE.txt": "https://demo.investwest.online/static/js/2.6f84872b.chunk.js.LICENSE.txt",
     "static/media/admin_logo.png": "https://demo.investwest.online/static/media/admin_logo.ba46fba4.png",
     "static/media/front_page_cover_image.png": "https://demo.investwest.online/static/media/front_page_cover_image.2b9aa708.png",
     "static/media/group_admin_help_accept_reject_2_offer.png": "https://demo.investwest.online/static/media/group_admin_help_accept_reject_2_offer.ef822bde.png",
@@ -84,8 +84,8 @@
   "entrypoints": [
     "static/js/runtime-main.3b1e71ac.js",
     "static/css/2.dca312d0.chunk.css",
-    "static/js/2.463ba310.chunk.js",
+    "static/js/2.6f84872b.chunk.js",
     "static/css/main.6e8d5085.chunk.css",
-    "static/js/main.c66ee980.chunk.js"
+    "static/js/main.7412b4fc.chunk.js"
   ]
 }
