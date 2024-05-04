@@ -177,7 +177,10 @@ class AdminDashboard extends Component {
         setGroupUserNameFromParams(match.params.hasOwnProperty('groupUserName') ? match.params.groupUserName : null);
         setExpectedAndCurrentPathsForChecking(match.params.hasOwnProperty('groupUserName') ? ROUTES.ADMIN : ROUTES.ADMIN_INVEST_WEST_SUPER, match.path);
 
-        loadAngelNetwork();
+        loadAngelNetwork()
+        .catch(error => {
+            console.error('Error loading angel network:', error);
+        });
 
         if (groupPropertiesLoaded && shouldLoadOtherData) {
             this.setDataForComponents();
@@ -196,7 +199,10 @@ class AdminDashboard extends Component {
             notificationRefUpdated
         } = this.props;
 
-        loadAngelNetwork();
+        loadAngelNetwork()
+        .catch(error => {
+            console.error('Error loading angel network:', error);
+        });
 
         if (groupPropertiesLoaded && shouldLoadOtherData) {
             this.setDataForComponents();

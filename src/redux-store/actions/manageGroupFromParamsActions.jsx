@@ -30,128 +30,136 @@ export const LOADING_ANGEL_NETWORK = 'LOADING_ANGEL_NETWORK';
 export const ANGEL_NETWORK_LOADED = 'ANGEL_NETWORK_LOADED';
 export const loadAngelNetwork = () => {
     return (dispatch, getState) => {
-        const {
-            groupUserName,
-            groupProperties,
-            groupPropertiesLoaded,
-            angelNetworkBeingLoaded,
+        return new Promise((resolve, reject) => {
+            const {
+                groupUserName,
+                groupProperties,
+                groupPropertiesLoaded,
+                angelNetworkBeingLoaded,
 
-            expectedPath,
-            currentPath
-        } = getState().manageGroupFromParams;
+                expectedPath,
+                currentPath
+            } = getState().manageGroupFromParams;
 
-        const firebaseUser = firebase.auth().currentUser;
+            const firebaseUser = firebase.auth().currentUser;
 
-        // angel network has not been loaded before
-        if (!groupProperties && !groupPropertiesLoaded && !angelNetworkBeingLoaded) {
-
-            dispatch({
-                type: LOADING_ANGEL_NETWORK
-            });
-
-            // path expected and current path not matched
-            if (expectedPath !== currentPath) {
+            // angel network has not been loaded before
+            if (!groupProperties && !groupPropertiesLoaded && !angelNetworkBeingLoaded) {
                 dispatch({
-                    type: ANGEL_NETWORK_LOADED,
-                    angelNetwork: null,
-                    shouldLoadOtherData: false
+                    type: LOADING_ANGEL_NETWORK
                 });
-                return;
-            }
 
-            // groupUserName is not specified --> Invest West super
-            if (!groupUserName) {
-                // the user is logged in
-                if (firebaseUser) {
-                    realtimeDBUtils
-                        .getUserBasedOnID(firebaseUser.uid)
-                        .then(user => {
-                            if (user.type === DB_CONST.TYPE_ADMIN) {
-                                if (user.superAdmin) {
-                                    dispatch({
-                                        type: ANGEL_NETWORK_LOADED,
-                                        angelNetwork: null,
-                                        shouldLoadOtherData: true
-                                    });
-                                }
-                                else {
+                // path expected and current path not matched
+                if (expectedPath !== currentPath) {
+                    dispatch({
+                        type: ANGEL_NETWORK_LOADED,
+                        angelNetwork: null,
+                        shouldLoadOtherData: false
+                    });
+                    resolve();
+                    return;
+                }
+
+                // groupUserName is not specified --> Invest West super
+                if (!groupUserName) {
+                    // the user is logged in
+                    if (firebaseUser) {
+                        realtimeDBUtils
+                            .getUserBasedOnID(firebaseUser.uid)
+                            .then(user => {
+                                if (user.type === DB_CONST.TYPE_ADMIN) {
+                                    if (user.superAdmin) {
+                                        dispatch({
+                                            type: ANGEL_NETWORK_LOADED,
+                                            angelNetwork: null,
+                                            shouldLoadOtherData: true
+                                        });
+                                    } else {
+                                        dispatch({
+                                            type: ANGEL_NETWORK_LOADED,
+                                            angelNetwork: null,
+                                            shouldLoadOtherData: false
+                                        });
+                                    }
+                                } else {
                                     dispatch({
                                         type: ANGEL_NETWORK_LOADED,
                                         angelNetwork: null,
                                         shouldLoadOtherData: false
                                     });
                                 }
-                            }
-                            else {
+                                resolve();
+                            })
+                            .catch(error => {
+                                console.error('Error loading user:', error);
                                 dispatch({
                                     type: ANGEL_NETWORK_LOADED,
                                     angelNetwork: null,
                                     shouldLoadOtherData: false
                                 });
-                            }
-                        })
-                        .catch(error => {
-                            dispatch({
-                                type: ANGEL_NETWORK_LOADED,
-                                angelNetwork: null,
-                                shouldLoadOtherData: false
+                                reject(error);
                             });
+                    }
+                    // the user is not logged in
+                    else {
+                        dispatch({
+                            type: ANGEL_NETWORK_LOADED,
+                            angelNetwork: null,
+                            shouldLoadOtherData: true
                         });
-                }
-                // the user is not logged in
-                else {
-                    dispatch({
-                        type: ANGEL_NETWORK_LOADED,
-                        angelNetwork: null,
-                        shouldLoadOtherData: true
-                    });
+                        resolve();
+                        return;
+                    }
                     return;
                 }
-                return;
-            }
 
-            // angel network has been loaded before
-            if (groupProperties) {
-                // if anid = null (Invest West) or anid = angel network's anid
-                // do not need to load the angel network again
-                if (groupUserName === groupProperties.groupUserName) {
-                    dispatch({
-                        type: ANGEL_NETWORK_LOADED,
-                        angelNetwork: groupProperties,
-                        shouldLoadOtherData: true
-                    });
-                    return;
+                // angel network has been loaded before
+                if (groupProperties) {
+                    // if anid = null (Invest West) or anid = angel network's anid
+                    // do not need to load the angel network again
+                    if (groupUserName === groupProperties.groupUserName) {
+                        dispatch({
+                            type: ANGEL_NETWORK_LOADED,
+                            angelNetwork: groupProperties,
+                            shouldLoadOtherData: true
+                        });
+                        resolve();
+                        return;
+                    }
+                    // if the loaded angel network's anid is not the same as the anid specified in the URL --> load again
+                    else {
+                        dispatch({
+                            type: SET_GROUP_USER_NAME_FROM_PARAMS,
+                            groupUserName
+                        });
+
+                        dispatch({
+                            type: LOADING_ANGEL_NETWORK
+                        });
+                    }
                 }
-                // if the loaded angel network's anid is not the same as the anid specified in the URL --> load again
-                else {
-                    dispatch({
-                        type: SET_GROUP_USER_NAME_FROM_PARAMS,
-                        groupUserName
-                    });
 
-                    dispatch({
-                        type: LOADING_ANGEL_NETWORK
+                realtimeDBUtils
+                    .loadAngelNetworkBasedOnGroupUserName(groupUserName)
+                    .then(angelNetwork => {
+                        dispatch({
+                            type: ANGEL_NETWORK_LOADED,
+                            angelNetwork,
+                            shouldLoadOtherData: true
+                        });
+                        resolve();
+                    })
+                    .catch(error => {
+                        console.error('Error loading angel network:', error);
+                        dispatch({
+                            type: ANGEL_NETWORK_LOADED,
+                            angelNetwork: null,
+                            shouldLoadOtherData: false
+                        });
+                        reject(error);
                     });
-                }
             }
-
-            realtimeDBUtils
-                .loadAngelNetworkBasedOnGroupUserName(groupUserName)
-                .then(angelNetwork => {
-                    dispatch({
-                        type: ANGEL_NETWORK_LOADED,
-                        angelNetwork,
-                        shouldLoadOtherData: true
-                    });
-                })
-                .catch(error => {
-                    dispatch({
-                        type: ANGEL_NETWORK_LOADED,
-                        angelNetwork: null,
-                        shouldLoadOtherData: false
-                    });
-                });
-        }
+        });
     }
 };
 

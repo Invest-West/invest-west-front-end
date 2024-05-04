@@ -562,7 +562,7 @@ class CreatePitchPageMain extends Component {
                 })
                 .catch(error => {
                     console.error('Error loading project data:', error);
-                    console.log('Current state at error:', this.state);
+                    //console.log('Current state at error:', this.state);
                     this.setState({
                         projectEditedLoaded: true,
                         projectIDToBeLoadedAfterSavingFirstTime: null,
