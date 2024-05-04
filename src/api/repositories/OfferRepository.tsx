@@ -41,7 +41,7 @@ export default class OfferRepository {
      * @param options
      */
     public async fetchOffers(options: FetchProjectsOptions) {
-        console.log("Fetching offers with options:", options);
+        //console.log("Fetching offers with options:", options);
         const fetchOptions = { ...options, orderBy: options.orderBy || FetchProjectsOrderByOptions.Phase };
         try {
             const response = await new Api().request(
@@ -52,10 +52,10 @@ export default class OfferRepository {
                     queryParameters: fetchOptions
                 }
             );
-            console.log("API response:", response);
+            //console.log("API response:", response);
             return response;
         } catch (error) {
-            console.error("Error fetching offers:", error);
+            //console.error("Error fetching offers:", error);
             throw error;
         }
     }

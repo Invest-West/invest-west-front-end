@@ -719,7 +719,7 @@ export const getUser = async (type, userID) => {
                 .ref(DB_CONST.USERS_CHILD)
                 .child(userID)
                 .once('value', snapshot => {
-                    console.log("User snapshot value:", snapshot.val());
+                    //console.log("User snapshot value:", snapshot.val());
                     // if the user's node does not exist
                     if (!snapshot || !snapshot.exists()) {
                         return reject("User not found");
@@ -739,7 +739,7 @@ export const getUser = async (type, userID) => {
                 .ref(DB_CONST.ADMINISTRATORS_CHILD)
                 .child(userID)
                 .once('value', snapshot => {
-                    console.log("Admin snapshot value:", snapshot.val());
+                    //console.log("Admin snapshot value:", snapshot.val());
                     // if the user's node does not exist
                     if (!snapshot || !snapshot.exists()) {
                         return reject("User not found");
