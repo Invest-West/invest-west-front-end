@@ -64,19 +64,20 @@ export const loadGroupAdmins = () => {
         });
 
         realtimeDBUtils
-            .loadGroupAdminsBasedOnGroupID(tableGroup.anid)
-            .then(groupAdmins => {
-                dispatch({
-                    type: GROUP_ADMINS_TABLE_FINISHED_LOADING_GROUP_ADMINS,
-                    groupAdmins: [...groupAdmins]
-                });
-            })
-            .catch(error => {
-                dispatch({
-                    type: GROUP_ADMINS_TABLE_FINISHED_LOADING_GROUP_ADMINS,
-                    groupAdmins: []
-                });
+        .loadGroupAdminsBasedOnGroupID(tableGroup.anid)
+        .then(groupAdmins => {
+            dispatch({
+                type: GROUP_ADMINS_TABLE_FINISHED_LOADING_GROUP_ADMINS,
+                groupAdmins: [...groupAdmins]
             });
+        })
+        .catch(error => {
+            console.error('Error loading group admins:', error);
+            dispatch({
+                type: GROUP_ADMINS_TABLE_FINISHED_LOADING_GROUP_ADMINS,
+                groupAdmins: []
+            });
+        });
     }
 };
 

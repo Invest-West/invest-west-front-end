@@ -196,6 +196,7 @@ const filterGroupsByGroupFilter: ActionCreator<any> = () => {
             if (satisfiedFilter) {
                 groupsFiltered.push(group);
             }
+            return null;
         });
 
         const action: FilterGroupsByGroupFilterAction = {

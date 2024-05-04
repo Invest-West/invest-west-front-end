@@ -1,5 +1,4 @@
-import {ProfileAction, setCopiedUser} from "../../ProfileActions";
-import User, {BusinessProfile, hasBusinessProfile} from "../../../../models/user";
+import {ProfileAction} from "../../ProfileActions";
 import {ActionCreator, Dispatch} from "redux";
 import {AppState} from "../../../../redux-store/reducers";
 import Address from "../../../../models/address";
@@ -45,15 +44,12 @@ export interface BusinessProfileCheckBoxChangedAction extends BusinessProfileAct
 export const findAddress: ActionCreator<any> = (mode: "registeredOffice" | "tradingAddress") => {
     return async (dispatch: Dispatch, getState: () => AppState) => {
         const {
-            copiedUser,
-            BusinessProfileState
+            copiedUser
         } = getState().ProfileLocalState;
 
         if (!copiedUser) {
             return;
         }
-
-        let postcode: string;
 
         // if (hasBusinessProfile(copiedUser)) {
         //     if (mode === "registeredOffice") {

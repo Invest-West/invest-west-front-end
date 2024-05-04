@@ -31,14 +31,13 @@ import {
 import {MediaQueryState} from "../../redux-store/reducers/mediaQueryReducer";
 import {getGroupRouteTheme, ManageGroupUrlState} from "../../redux-store/reducers/manageGroupUrlReducer";
 import {AuthenticationState} from "../../redux-store/reducers/authenticationReducer";
-import {PROJECT_VISIBILITY_PUBLIC, PROJECT_VISIBILITY_RESTRICTED} from "../../firebase/databaseConsts";
 import {clearSearchFilter, fetchOffers, filterChanged, onSearchEnter, paginationChanged} from "./ExploreOffersActions";
 import {ManageSystemAttributesState} from "../../redux-store/reducers/manageSystemAttributesReducer";
 import {BeatLoader} from "react-spinners";
 import OfferItem from "./OfferItem";
 import {Pagination} from "@material-ui/lab";
 import RiskWarning from "../risk-warning/RiskWarning";
-import User, {isIssuer} from "../../models/user";
+import {isIssuer} from "../../models/user";
 import CustomLink from "../../shared-js-css-styles/CustomLink";
 import Routes from "../../router/routes";
 import CreateIcon from "@material-ui/icons/CreateOutlined";
@@ -47,14 +46,6 @@ import {css} from "aphrodite";
 import sharedStyles from "../../shared-js-css-styles/SharedStyles";
 import {FetchProjectsOrderByOptions, FetchProjectsPhaseOptions} from "../../api/repositories/OfferRepository";
 import {Close, Search} from "@material-ui/icons";
-import {
-    hasErrorExportingCsv,
-    hasErrorFetchingOffers,
-    hasGroupsSelect,
-    isExportingCsv,
-    isFilteringOffersByName,
-} from "../offers-table/OffersTableReducer";
-import Admin from "../../models/admin";
 
 interface ExploreOffersProps {
     MediaQueryState: MediaQueryState;

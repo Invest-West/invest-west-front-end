@@ -44,9 +44,6 @@ import {
     hasAuthenticationError,
     isAuthenticating
 } from "../../redux-store/reducers/authenticationReducer";
-import {
-    signIn
-} from "../../redux-store/actions/authenticationActions";
 import HashLoader from "react-spinners/HashLoader";
 import * as appColors from "../../values/colors";
 import {MediaQueryState} from "../../redux-store/reducers/mediaQueryReducer";

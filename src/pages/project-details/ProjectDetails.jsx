@@ -2221,7 +2221,6 @@ class ProjectDetails extends Component {
             pledges,
             pledgesLoaded,
 
-            votes,
             votesLoaded,
 
             investorPledge,

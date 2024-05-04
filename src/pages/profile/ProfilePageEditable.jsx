@@ -21,18 +21,15 @@ import Profile from '../../shared-components/profile/Profile';
 const mapStateToProps = state => {
     return {
         AuthenticationState: state.AuthenticationState,
-
         groupProperties: state.manageGroupFromParams.groupProperties,
         groupPropertiesLoaded: state.manageGroupFromParams.groupPropertiesLoaded,
         shouldLoadOtherData: state.manageGroupFromParams.shouldLoadOtherData,
-
-        authStatus: state.auth.authStatus,
-        authenticating: state.auth.authenticating,
-        admin: state.auth.user,
-        adminLoaded: state.auth.userLoaded,
-
+        authStatus: state.auth ? state.auth.authStatus : null,
+        authenticating: state.auth ? state.auth.authenticating : false,
+        admin: state.auth ? state.auth.user : null,
+        adminLoaded: state.auth ? state.auth.userLoaded : false,
         editUserProfile_userEdited: state.editUser.userEdited,
-        projectsTable_user: state.projectsTable.user
+        projectsTable_user: state.projectsTable ? state.projectsTable.user : null
     }
 };
 
