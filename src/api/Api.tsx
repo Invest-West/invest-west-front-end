@@ -27,19 +27,45 @@ export class ApiRoutes {
     static listGroupsOfMembership = ApiRoutes.usersBaseRoute + "/:uid/groups-of-membership";
     static exportUsersCsvRoute = ApiRoutes.usersBaseRoute + "/export";
 
+    /* Student view routes */
+    static studentsBaseRoute = "/students";
+    static createStudent = ApiRoutes.studentsBaseRoute + "/create";
+    static retrieveStudent = ApiRoutes.studentsBaseRoute + "/:uid/retrieve";
+    static retrieveInvitedStudent = ApiRoutes.studentsBaseRoute + "/:invitedUserID/retrieve-invited";
+    static updateStudent = ApiRoutes.studentsBaseRoute + "/update";
+    static listCoursesOfMembership = ApiRoutes.studentsBaseRoute + "/:uid/groups-of-membership";
+    static exportStudentCsvRoute = ApiRoutes.studentsBaseRoute + "/export";
+
     static groupsBaseRoute = "/groups";
     static listGroups = ApiRoutes.groupsBaseRoute + "/list";
     static retrieveGroup = ApiRoutes.groupsBaseRoute + "/:groupUserName";
     static addMembersToGroup = ApiRoutes.groupsBaseRoute + "/:group/add-members";
     static listGroupMembers = ApiRoutes.groupsBaseRoute + "/:group/list-members";
 
+    /* Course base routes */
+    static coursesBaseRoute = "/courses";
+    static listCourses = ApiRoutes.coursesBaseRoute + "/list";
+    static retrieveCourse = ApiRoutes.coursesBaseRoute + "/:courseId/retrieve";
+    static addStudentsToCourse = ApiRoutes.coursesBaseRoute + "/:course/add-students";
+    static listCourseStudents = ApiRoutes.groupsBaseRoute + "/:course/list-students";
+
     static projectsBaseRoute = "/projects";
     static listProjectsRoute = ApiRoutes.projectsBaseRoute + "/list";
     static sendProjectBackToIssuerRoute = ApiRoutes.projectsBaseRoute + "/send-back-to-issuer";
     static exportProjectsToCsvRoute = ApiRoutes.projectsBaseRoute + "/export";
 
+    /* Student project routes */
+    static studentProjectsBaseRoute = "/projects";
+    static listStudentProjectsRoute = ApiRoutes.studentProjectsBaseRoute + "/list";
+    static sendStudentProjectBackToIssuerRoute = ApiRoutes.studentProjectsBaseRoute + "/send-back-to-teacher";
+    static exportStudentProjectsToCsvRoute = ApiRoutes.studentProjectsBaseRoute + "/export";
+
     static groupAdminsBaseRoute = "/group-admins";
     static addGroupAdminRoute = ApiRoutes.groupAdminsBaseRoute + "/add";
+
+    /* Course admin routes */
+    static courseAdminsBaseRoute = "/course-admins";
+    static addCourseAdminRoute = ApiRoutes.courseAdminsBaseRoute + "/add";
 
     static accessRequestsBaseRoute = "/access-requests";
     static listAccessRequestsRoute = ApiRoutes.accessRequestsBaseRoute + "/list";

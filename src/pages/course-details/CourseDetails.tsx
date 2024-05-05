@@ -9,14 +9,14 @@ import {
     hasErrorLoadingData,
     isLoadingData, isRemovingAccessRequest, isSendingAccessRequest,
     successfullyLoadedData
-} from "./GroupDetailsReducer";
+} from "./CourseDetailsReducer";
 import {Box, Button, colors, Divider, Paper, Typography, Link} from "@material-ui/core";
 import {RouteComponentProps} from "react-router-dom";
 import {RouteParams} from "../../router/router";
 import {Col, Image, Row} from "react-bootstrap";
 import {BeatLoader} from "react-spinners";
 import {getGroupRouteTheme, ManageGroupUrlState} from "../../redux-store/reducers/manageGroupUrlReducer";
-import {loadData, removeAccessRequest, sendAccessRequest} from "./GroupDetailsActions";
+import {loadData, removeAccessRequest, sendAccessRequest} from "./CourseDetailsActions";
 import {getGroupLogo} from "../../models/group_properties";
 import {AuthenticationState} from "../../redux-store/reducers/authenticationReducer";
 import Admin, {isAdmin} from "../../models/admin";
