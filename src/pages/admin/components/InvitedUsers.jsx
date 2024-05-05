@@ -478,6 +478,9 @@ class InvitedUsers extends Component {
                 </Table>
             </Paper>
         );
+    } catch (error) {
+        console.error("Error in renderInvitedUsersTable:", error);
+        return null;
     }
 
     /**
@@ -569,6 +572,7 @@ class InvitedUsers extends Component {
                             <TableCell colSpan={2}>
                                 <FlexView column>
                                     {/** User name */}
+                                    {invitedUser.officialUser ? (
                                     <NavLink
                                         to={
                                             invitedUser.hasOwnProperty('officialUserID')
@@ -594,15 +598,15 @@ class InvitedUsers extends Component {
                                         className={css(sharedStyles.nav_link_hover_without_changing_text_color)}
                                     >
                                         <Typography color="primary" align="left">
-                                            {
-                                                invitedUser.hasOwnProperty('officialUser')
-                                                    ?
-                                                    `${invitedUser.officialUser.firstName} ${invitedUser.officialUser.lastName}`
-                                                    :
-                                                    `${invitedUser.firstName} ${invitedUser.lastName}`
-                                            }
+                                            {`${invitedUser.officialUser.firstName} ${invitedUser.officialUser.lastName}`}
                                         </Typography>
                                     </NavLink>
+
+                                    ) : (
+                                        <Typography color="textSecondary" align="left">
+                                            User not found
+                                        </Typography>
+                                    )}
 
                                     {/** Resend invite button */}
                                     {

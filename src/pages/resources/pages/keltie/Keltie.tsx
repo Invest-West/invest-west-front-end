@@ -240,7 +240,7 @@ class Keltie extends Component<KeltieProps, any> {
                                     The UK IPO (Intellectual Property Office) provide funding for IP audits and support
                                     for start-ups. <b>For more information on accessing IP audit funding in the South West,
                                     follow this link</b>&nbsp;
-                                    <a href="https://www.businesswest.co.uk/about/partners-programmes/innovate2succeed" target="_blank">Innovate UK EDGE | Business West</a>.
+                                    <a href="https://www.businesswest.co.uk/about/partners-programmes/innovate2succeed" target="_blank" rel="noreferrer">Innovate UK EDGE | Business West</a>.
                                 </Typography>
                             </Box>
 

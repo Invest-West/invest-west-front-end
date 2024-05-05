@@ -11,7 +11,6 @@ import InvestorSelfCertificationRepository from "../../api/repositories/Investor
 import Routes from "../../router/routes";
 import Firebase from "firebase";
 import UserRepository from "../../api/repositories/UserRepository";
-import Api, {ApiRoutes} from "../../api/Api";
 
 export enum AuthenticationEvents {
     StartAuthenticating = "AuthenticationEvents.StartAuthenticating",

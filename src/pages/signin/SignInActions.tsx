@@ -2,7 +2,6 @@ import {Action, ActionCreator, Dispatch} from "redux";
 import React, {FormEvent} from "react";
 import {signIn} from "../../redux-store/actions/authenticationActions";
 import {AppState} from "../../redux-store/reducers";
-import Api, {ApiRoutes} from "../../api/Api";
 import firebaseApp from "../../firebase/firebaseApp.jsx";
 
 export enum SignInEvents {

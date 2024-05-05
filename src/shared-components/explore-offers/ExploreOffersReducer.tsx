@@ -9,7 +9,6 @@ import {
 import {ProjectInstance} from "../../models/project";
 import GroupProperties from "../../models/group_properties";
 import {FetchProjectsPhaseOptions} from "../../api/repositories/OfferRepository";
-import {OffersTableStates} from "../offers-table/OffersTableReducer";
 
 export const maxOffersPerPage: number = 12;
 
@@ -87,8 +86,8 @@ export const calculatePaginationIndices = (state: ExploreOffersState) => {
 }
 
 const exploreOffersReducer = (state: ExploreOffersState = initialState, action: ExploreOffersAction) => {
-    console.log("Current state:", state);
-    console.log("Received action:", action);
+    //console.log("Current state:", state);
+    //console.log("Received action:", action);
     switch (action.type) {
         case ExploreOffersEvents.FetchingOffers:
             return {

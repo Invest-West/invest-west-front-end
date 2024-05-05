@@ -8,18 +8,9 @@ import {
     Radio,
     Divider,
     Button,
-    TextField,
-    ExpansionPanel,
-    ExpansionPanelSummary,
-    ExpansionPanelDetails,
-    Checkbox
+    TextField
 } from "@material-ui/core";
 import {KeyboardDatePicker} from "@material-ui/pickers";
-import AddIcon from "@material-ui/icons/Add";
-import CloseIcon from "@material-ui/icons/Close";
-import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
-import CreateIcon from "@material-ui/icons/CreateOutlined";
-import DeleteIcon from "@material-ui/icons/DeleteOutlined";
 import PublicIcon from "@material-ui/icons/Public";
 import {
     Col,
@@ -27,7 +18,7 @@ import {
     Row
 } from "react-bootstrap";
 import FlexView from "react-flexview";
-import {css, StyleSheet} from "aphrodite";
+import {css} from "aphrodite";
 import {NavLink} from "react-router-dom";
 
 import {connect} from "react-redux";
@@ -106,26 +97,10 @@ class GroupAdminSettings extends Component {
             groupDetails,
             groupAttributesEdited,
 
-            clubAttributes,
-
             groupWebsite,
             groupDescription,
             primaryColor,
             secondaryColor,
-
-            addNewPledgeFAQ,
-            addedPledgeQuestion,
-            addedPledgeAnswer,
-            expandedPledgeFAQ,
-            editExpandedPledgeFAQ,
-            editedPledgeQuestion,
-            editedPledgeAnswer,
-
-            toggleAddNewPledgeFAQ,
-            submitNewPledgeFAQ,
-            toggleEditExpandedPledgeFAQ,
-            saveEditedPledgeFAQ,
-            deleteExistingPledgeFAQ,
 
             handleInputChanged,
             handlePitchExpiryDateChanged,
@@ -463,10 +438,3 @@ class GroupAdminSettings extends Component {
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(GroupAdminSettings);
-
-const styles = StyleSheet.create({
-    frequently_asked_question_box: {
-        border: `1px solid ${colors.gray_300}`,
-        marginTop: 12
-    }
-});

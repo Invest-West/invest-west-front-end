@@ -719,6 +719,7 @@ export const getUser = async (type, userID) => {
                 .ref(DB_CONST.USERS_CHILD)
                 .child(userID)
                 .once('value', snapshot => {
+                    //console.log("User snapshot value:", snapshot.val());
                     // if the user's node does not exist
                     if (!snapshot || !snapshot.exists()) {
                         return reject("User not found");
@@ -738,6 +739,7 @@ export const getUser = async (type, userID) => {
                 .ref(DB_CONST.ADMINISTRATORS_CHILD)
                 .child(userID)
                 .once('value', snapshot => {
+                    //console.log("Admin snapshot value:", snapshot.val());
                     // if the user's node does not exist
                     if (!snapshot || !snapshot.exists()) {
                         return reject("User not found");
@@ -763,9 +765,9 @@ export const getUser = async (type, userID) => {
  */
 export const getUserBasedOnID = async (uid) => {
     return new Promise((resolve, reject) => {
-
         if (!uid) {
-            return reject("Null id provided");
+            console.warn("Null id provided");
+            return resolve(null);
         }
 
         // get normal user
@@ -785,7 +787,8 @@ export const getUserBasedOnID = async (uid) => {
                                     return resolve(admin);
                                 })
                                 .catch(error => {
-                                    return reject("Group not found");
+                                    console.error("Error loading group details:", error);
+                                    return resolve(null);
                                 });
                         }
                         // admin is a super admin
@@ -794,7 +797,8 @@ export const getUserBasedOnID = async (uid) => {
                         }
                     })
                     .catch(error => {
-                        return reject("Profile not found");
+                        console.warn("Admin not found for uid:", uid);
+                        return resolve(null);
                     });
             });
     });
