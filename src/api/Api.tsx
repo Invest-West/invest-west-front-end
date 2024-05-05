@@ -210,7 +210,7 @@ export default class Api {
             return this.parseResponse(response);
         } catch (exception) {
             const error = Api.parseError(exception);
-            console.log(`Failed to request. Status code: ${error.statusCode}. Cause: ${error.message}`);
+            console.error(`Failed to request ${url}. Status code: ${error.statusCode}. Cause: ${error.message}`);
             throw new Error(error.statusCode + " " + error.message);
         }
     }
@@ -250,7 +250,7 @@ export default class Api {
             if (error.response.data) {
                 httpError = {
                     statusCode: error.response.data.code,
-                    message: error.response.data.detail ?? error.response.data.message
+                    message: `Server responded with status code ${error.response.status}: ${error.response.data.detail ?? error.response.data.message}`
                 }
             }
         }

@@ -172,6 +172,18 @@ class SignUpNew extends Component<SignUpProps & Readonly<RouteComponentProps<Rou
                                 // other error
                                 : "Retry"
                         }
+
+                        {/** Error message */}
+                        {
+                            hasErrorCreatingAccount(SignUpLocalState)
+                                ? <Box marginY="20px">
+                                    <Typography align="center" variant="body1" color="error">
+                                        {SignUpLocalState.errorCreatingAccount?.detail}
+                                    </Typography>
+                                    {console.error("Error creating account:", SignUpLocalState.errorCreatingAccount)}
+                                </Box>
+                                : null
+                        }
                     </Button>
                 </Box>;
             }

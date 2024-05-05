@@ -37,13 +37,23 @@ const investorSelfCertificationAgreementsReducer = (state = initState, action) =
                 investorSelfCertificationAgreementBeingLoaded: true
             };
         case investorSelfCertificationAgreementsActions.FINISHED_LOADING_INVESTOR_SELF_CERTIFICATION_AGREEMENT:
-            const certificationExpired = isCertificationExpired(action.result.selfCertificationTimestamp); // Add this line to check for expiration
+            if (!action.result) {
+                return {
+                    ...state,
+                    investorSelfCertificationAgreementLoaded: false,
+                    investorSelfCertificationAgreementBeingLoaded: false,
+                    certificationExpired: false // Ensures this field is explicitly set in case of null result
+                };
+            }
+            const certificationExpired = action.result.selfCertificationTimestamp ?
+                isCertificationExpired(action.result.selfCertificationTimestamp) : false;
+        
             return {
-            ...state,
-            investorSelfCertificationAgreement: JSON.parse(JSON.stringify(action.result)),
-            investorSelfCertificationAgreementLoaded: true,
-            investorSelfCertificationAgreementBeingLoaded: false,
-            certificationExpired, // Add this line to store the expiration status
+                ...state,
+                investorSelfCertificationAgreement: action.result ? JSON.parse(JSON.stringify(action.result)) : null,
+                investorSelfCertificationAgreementLoaded: true,
+                investorSelfCertificationAgreementBeingLoaded: false,
+                certificationExpired
             };
         case investorSelfCertificationAgreementsActions.INVESTOR_SELF_CERTIFICATION_AGREEMENT_TICK_BOX_CHANGED:
             return {

@@ -145,7 +145,8 @@ export const createAccount: ActionCreator<any> = () => {
             dispatch(completeAction);
             return dispatch(signIn(email, password));
         } catch (error) {
-            completeAction.error = error.toString();
+            console.error("Error creating account:", error);
+            completeAction.error = `Error creating account: ${error.message}`;
             return dispatch(completeAction);
         }
     }
