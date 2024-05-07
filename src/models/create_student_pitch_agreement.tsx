@@ -2,9 +2,9 @@
  * Create pitch agreement
  * --> The issuer must agree to the T&Cs before they can submit a pitch.
  */
-export default interface StudentProjectAgreement {
-    issuerID: string;
-    projectID: string;
+export default interface CreatePitchAgreement {
+    teacherID: string;
+    studentProjectID: string;
     date: number;
 
     /**

@@ -1,59 +1,59 @@
 import {Action, ActionCreator, Dispatch} from "redux";
-import GroupProperties from "../../models/group_properties";
+import CourseProperties from "../../models/course_properties";
 import {InvitedUserWithProfile} from "../../models/invited_user";
 import {ProjectInstance} from "../../models/project";
 import {AppState} from "../../redux-store/reducers";
-import GroupRepository from "../../api/repositories/GroupRepository";
+import CourseRepository from "../../api/repositories/CourseRepository";
 import OfferRepository, {FetchProjectsOrderByOptions} from "../../api/repositories/OfferRepository";
 import AccessRequest, {AccessRequestInstance} from "../../models/access_request";
 import Admin, {isAdmin} from "../../models/admin";
 import AccessRequestRepository from "../../api/repositories/AccessRequestRepository";
 
-export enum GroupDetailsEvents {
-    LoadingData = "GroupDetailsEvents.LoadData",
-    CompleteLoadingData = "GroupDetailsEvents.CompleteLoadingData",
-    SendingAccessRequest = "GroupDetailsEvents.SendingAccessRequest",
-    CompleteSendingAccessRequest = "GroupDetailsEvents.CompleteSendingAccessRequest",
-    RemovingAccessRequest = "GroupDetailsEvents.RemovingAccessRequest",
-    CompleteRemovingAccessRequest = "GroupDetailsEvents.CompleteRemovingAccessRequest"
+export enum CourseDetailsEvents {
+    LoadingData = "CourseDetailsEvents.LoadData",
+    CompleteLoadingData = "CourseDetailsEvents.CompleteLoadingData",
+    SendingAccessRequest = "CourseDetailsEvents.SendingAccessRequest",
+    CompleteSendingAccessRequest = "CourseDetailsEvents.CompleteSendingAccessRequest",
+    RemovingAccessRequest = "CourseDetailsEvents.RemovingAccessRequest",
+    CompleteRemovingAccessRequest = "CourseDetailsEvents.CompleteRemovingAccessRequest"
 }
 
-export interface GroupDetailsAction extends Action {
+export interface CourseDetailsAction extends Action {
 
 }
 
-export interface CompleteLoadingDataAction extends GroupDetailsAction {
-    group?: GroupProperties;
+export interface CompleteLoadingDataAction extends CourseDetailsAction {
+    course?: CourseProperties;
     members?: InvitedUserWithProfile[];
     offers?: ProjectInstance[];
     accessRequestInstances?: AccessRequestInstance[];
     error?: string;
 }
 
-export interface CompleteSendingAccessRequestAction extends GroupDetailsAction {
+export interface CompleteSendingAccessRequestAction extends CourseDetailsAction {
     error?: string;
     updatedAccessRequestInstances?: AccessRequestInstance[]
 }
 
-export interface CompleteRemovingAccessRequestAction extends GroupDetailsAction {
+export interface CompleteRemovingAccessRequestAction extends CourseDetailsAction {
     error?: string;
     updatedAccessRequestInstances?: AccessRequestInstance[]
 }
 
-export const loadData: ActionCreator<any> = (groupUserName: string) => {
+export const loadData: ActionCreator<any> = (courseUserName: string) => {
     return async (dispatch: Dispatch, getState: () => AppState) => {
         const {
             accessRequestsInstances
-        } = getState().GroupDetailsLocalState;
+        } = getState().CourseDetailsLocalState;
 
         dispatch({
-            type: GroupDetailsEvents.LoadingData
+            type: CourseDetailsEvents.LoadingData
         });
 
         const currentUser = getState().AuthenticationState.currentUser;
 
         const completeAction: CompleteLoadingDataAction = {
-            type: GroupDetailsEvents.CompleteLoadingData
+            type: CourseDetailsEvents.CompleteLoadingData
         }
 
         if (!currentUser) {
@@ -61,40 +61,40 @@ export const loadData: ActionCreator<any> = (groupUserName: string) => {
             return dispatch(completeAction);
         }
 
-        if (groupUserName === undefined) {
+        if (courseUserName === undefined) {
             completeAction.error = "Invalid request.";
             return dispatch(completeAction);
         }
 
         try {
-            const groupResponse = await new GroupRepository().getGroup(groupUserName);
-            const group: GroupProperties = groupResponse.data;
+            const courseResponse = await new CourseRepository().getCourse(courseUserName);
+            const course: CourseProperties = courseResponse.data;
 
-            const membersResponse = await new GroupRepository().fetchGroupMembers(group.anid);
-            const members: InvitedUserWithProfile[] = membersResponse.data;
+            const studentsResponse = await new CourseRepository().fetchCourseMembers(course.anid);
+            const students: InvitedStudentWithProfile[] = studentsResponse.data;
 
             const offersResponse = await new OfferRepository().fetchOffers({
                 phase: "all",
-                group: group.anid,
-                orderBy: FetchProjectsOrderByOptions.Group
+                course: course.anid,
+                orderBy: FetchProjectsOrderByOptions.Course
             });
             const offers: ProjectInstance[] = offersResponse.data;
 
-            const admin: Admin | null = isAdmin(currentUser);
+            const admin: Admin | null = isAdmin(currentStudent);
             if (!admin || (admin && !admin.superAdmin)) {
-                // user is an issuer, investor, or group admin
+                // student is an issuer, investor, or course admin
                 // and access requests have not been fetched
                 if (!accessRequestsInstances) {
                     const accessRequestInstancesResponse = await new AccessRequestRepository().fetchAccessRequests({
-                        user: currentUser.id,
-                        orderBy: "user"
+                        student: currentStudent.id,
+                        orderBy: "student"
                     });
                     completeAction.accessRequestInstances = accessRequestInstancesResponse.data;
                 }
             }
 
-            completeAction.group = group;
-            completeAction.members = members;
+            completeAction.course = course;
+            completeAction.students = students;
             completeAction.offers = offers;
             return dispatch(completeAction);
         } catch (error) {
@@ -106,30 +106,30 @@ export const loadData: ActionCreator<any> = (groupUserName: string) => {
 
 export const sendAccessRequest: ActionCreator<any> = () => {
     return async (dispatch: Dispatch, getState: () => AppState) => {
-        const currentUser = getState().AuthenticationState.currentUser;
-        if (!currentUser) {
+        const currentStudent = getState().AuthenticationState.currentStudent;
+        if (!currentStudent) {
             return;
         }
 
-        const group = getState().GroupDetailsLocalState.group;
+        const course = getState().CourseDetailsLocalState.course;
 
         dispatch({
-            type: GroupDetailsEvents.SendingAccessRequest
+            type: CourseDetailsEvents.SendingAccessRequest
         });
 
         const completeAction: CompleteSendingAccessRequestAction = {
-            type: GroupDetailsEvents.CompleteSendingAccessRequest
+            type: CourseDetailsEvents.CompleteSendingAccessRequest
         };
 
-        if (!group) {
+        if (!course) {
             completeAction.error = "Invalid request.";
             return dispatch(completeAction);
         }
 
         try {
-            const response = await new AccessRequestRepository().createAccessRequest(currentUser.id, group.anid);
+            const response = await new AccessRequestRepository().createAccessRequest(currentStudent.id, course.anid);
             const accessRequestInstance: AccessRequestInstance = response.data;
-            const currentAccessRequestInstances: AccessRequestInstance[] | undefined = getState().ExploreGroupsLocalState.accessRequestsInstances;
+            const currentAccessRequestInstances: AccessRequestInstance[] | undefined = getState().ExploreCoursesLocalState.accessRequestsInstances;
             if (currentAccessRequestInstances !== undefined) {
                 completeAction.updatedAccessRequestInstances = [
                     ...currentAccessRequestInstances,
@@ -148,33 +148,33 @@ export const sendAccessRequest: ActionCreator<any> = () => {
 
 export const removeAccessRequest: ActionCreator<any> = () => {
     return async (dispatch: Dispatch, getState: () => AppState) => {
-        const currentUser = getState().AuthenticationState.currentUser;
-        if (!currentUser) {
+        const currentStudent = getState().AuthenticationState.currentStudent;
+        if (!currentStudent) {
             return;
         }
 
-        const group = getState().GroupDetailsLocalState.group;
+        const course = getState().CourseDetailsLocalState.course;
 
         dispatch({
-            type: GroupDetailsEvents.RemovingAccessRequest
+            type: CourseDetailsEvents.RemovingAccessRequest
         });
 
         const completeAction: CompleteRemovingAccessRequestAction = {
-            type: GroupDetailsEvents.CompleteRemovingAccessRequest
+            type: CourseDetailsEvents.CompleteRemovingAccessRequest
         };
 
-        if (!group) {
+        if (!course) {
             completeAction.error = "Invalid request.";
             return dispatch(completeAction);
         }
 
         try {
-            const currentAccessRequestInstances: AccessRequestInstance[] | undefined = getState().GroupDetailsLocalState.accessRequestsInstances;
+            const currentAccessRequestInstances: AccessRequestInstance[] | undefined = getState().CourseDetailsLocalState.accessRequestsInstances;
             if (!currentAccessRequestInstances) {
                 return dispatch(completeAction);
             }
             const accessRequestIndex = currentAccessRequestInstances.findIndex(
-                accessRequestInstance => accessRequestInstance.group.anid === group.anid && accessRequestInstance.user.id === currentUser.id);
+                accessRequestInstance => accessRequestInstance.course.anid === course.anid && accessRequestInstance.user.id === currentUser.id);
             if (accessRequestIndex === -1) {
                 return dispatch(completeAction);
             }

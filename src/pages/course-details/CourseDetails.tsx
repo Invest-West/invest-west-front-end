@@ -4,7 +4,7 @@ import {AppState} from "../../redux-store/reducers";
 import {ThunkDispatch} from "redux-thunk";
 import {AnyAction} from "redux";
 import {
-    GroupDetailsState,
+    CourseDetailsState,
     hasAccessRequestsBeenSatisfied,
     hasErrorLoadingData,
     isLoadingData, isRemovingAccessRequest, isSendingAccessRequest,
@@ -15,13 +15,13 @@ import {RouteComponentProps} from "react-router-dom";
 import {RouteParams} from "../../router/router";
 import {Col, Image, Row} from "react-bootstrap";
 import {BeatLoader} from "react-spinners";
-import {getGroupRouteTheme, ManageGroupUrlState} from "../../redux-store/reducers/manageGroupUrlReducer";
+import {getCourseRouteTheme, ManageCourseUrlState} from "../../redux-store/reducers/manageCourseUrlReducer";
 import {loadData, removeAccessRequest, sendAccessRequest} from "./CourseDetailsActions";
-import {getGroupLogo} from "../../models/group_properties";
+import {getCourseLogo} from "../../models/course_properties";
 import {AuthenticationState} from "../../redux-store/reducers/authenticationReducer";
 import Admin, {isAdmin} from "../../models/admin";
 import {dateInReadableFormat} from "../../utils/utils";
-import GroupOfMembership, {getHomeGroup} from "../../models/group_of_membership";
+import CourseOfMembership, {getHomeCourse} from "../../models/course_of_membership";
 import {CheckCircle} from "@material-ui/icons";
 import CustomLink from "../../shared-js-css-styles/CustomLink";
 import * as appColors from "../../values/colors";
@@ -30,12 +30,12 @@ import {css} from "aphrodite";
 import sharedStyles from "../../shared-js-css-styles/SharedStyles";
 import Footer from "../../shared-components/footer/Footer";
 
-interface GroupDetailsProps {
+interface CourseDetailsProps {
     MediaQueryState: MediaQueryState;
-    ManageGroupUrlState: ManageGroupUrlState;
+    ManageCourseUrlState: ManageCourseUrlState;
     AuthenticationState: AuthenticationState;
-    GroupDetailsLocalState: GroupDetailsState;
-    loadData: (viewedGroupUserName: string) => any;
+    CourseDetailsLocalState: CourseDetailsState;
+    loadData: (viewedCourseUserName: string) => any;
     sendAccessRequest: () => any;
     removeAccessRequest: () => any;
 }
@@ -43,32 +43,32 @@ interface GroupDetailsProps {
 const mapStateToProps = (state: AppState) => {
     return {
         MediaQueryState: state.MediaQueryState,
-        ManageGroupUrlState: state.ManageGroupUrlState,
+        ManageCourseUrlState: state.ManageCourseUrlState,
         AuthenticationState: state.AuthenticationState,
-        GroupDetailsLocalState: state.GroupDetailsLocalState
+        CourseDetailsLocalState: state.CourseDetailsLocalState
     }
 }
 
 const mapDispatchToProps = (dispatch: ThunkDispatch<any, any, AnyAction>) => {
     return {
-        loadData: (viewedGroupUserName: string) => dispatch(loadData(viewedGroupUserName)),
+        loadData: (viewedCourseUserName: string) => dispatch(loadData(viewedCourseUserName)),
         sendAccessRequest: () => dispatch(sendAccessRequest()),
         removeAccessRequest: () => dispatch(removeAccessRequest())
     }
 }
 
-class GroupDetails extends Component<GroupDetailsProps & Readonly<RouteComponentProps<RouteParams>>, any> {
+class CourseDetails extends Component<CourseDetailsProps & Readonly<RouteComponentProps<RouteParams>>, any> {
 
     componentDidMount() {
-        this.props.loadData(this.props.match.params.viewedGroupUserName);
+        this.props.loadData(this.props.match.params.viewedCourseUserName);
     }
 
     render() {
         const {
             MediaQueryState,
-            ManageGroupUrlState,
+            ManageCourseUrlState,
             AuthenticationState,
-            GroupDetailsLocalState,
+            CourseDetailsLocalState,
             sendAccessRequest,
             removeAccessRequest
         } = this.props;
@@ -82,31 +82,31 @@ class GroupDetails extends Component<GroupDetailsProps & Readonly<RouteComponent
         const currentAdmin: Admin | null = isAdmin(currentUser);
 
         // loading
-        if (isLoadingData(GroupDetailsLocalState)) {
+        if (isLoadingData(CourseDetailsLocalState)) {
             return <Box display="flex" justifyContent="center" marginTop="50px">
                 <BeatLoader
-                    color={getGroupRouteTheme(ManageGroupUrlState).palette.primary.main}
+                    color={getCourseRouteTheme(ManageCourseUrlState).palette.primary.main}
                 />
             </Box>;
         }
 
         // error
-        if (hasErrorLoadingData(GroupDetailsLocalState) || !successfullyLoadedData(GroupDetailsLocalState)) {
+        if (hasErrorLoadingData(CourseDetailsLocalState) || !successfullyLoadedData(CourseDetailsLocalState)) {
             return <Box display="flex" justifyContent="center" alignItems="center" marginTop="50px">
                 <Typography variant="h5" color="error" align="center">Error loading page. Please retry.</Typography>
             </Box>;
         }
 
-        let groupMember: GroupOfMembership | undefined = undefined;
+        let courseMember: CourseOfMembership | undefined = undefined;
         if (!currentAdmin) {
-            groupMember = AuthenticationState.groupsOfMembership.find(
-                groupOfMembership => groupOfMembership.group.anid === GroupDetailsLocalState.group?.anid);
+            courseMember = AuthenticationState.coursesOfMembership.find(
+                courseOfMembership => courseOfMembership.course.anid === CourseDetailsLocalState.course?.anid);
         }
 
-        let hasRequestedToAccessGroup: boolean = false;
-        if (hasAccessRequestsBeenSatisfied(GroupDetailsLocalState)) {
-            hasRequestedToAccessGroup = GroupDetailsLocalState.accessRequestsInstances
-                ?.findIndex(accessRequestInstance => accessRequestInstance.group.anid === GroupDetailsLocalState.group?.anid) !== -1;
+        let hasRequestedToAccessCourse: boolean = false;
+        if (hasAccessRequestsBeenSatisfied(CourseDetailsLocalState)) {
+            hasRequestedToAccessCourse = CourseDetailsLocalState.accessRequestsInstances
+                ?.findIndex(accessRequestInstance => accessRequestInstance.course.anid === CourseDetailsLocalState.course?.course) !== -1;
         }
 
         // successfully loaded
@@ -121,8 +121,8 @@ class GroupDetails extends Component<GroupDetailsProps & Readonly<RouteComponent
                                     {/** Logo section */}
                                     <Col xs={{span: 12, order: 1}} sm={{span: 12, order: 1}} md={{span: 12, order: 1}} lg={{span: 3, order: 1}}>
                                         <Box display="flex"justifyContent="center" alignItems="center">
-                                            <Link href={GroupDetailsLocalState.group?.website ?? ""} target="_blank">
-                                                <Image alt={`${GroupDetailsLocalState.group?.displayName} logo`} src={getGroupLogo(GroupDetailsLocalState.group ?? null) ?? undefined} style={{width: "100%", height: "auto", padding: 20, objectFit: "scale-down"}}/>
+                                            <Link href={CourseDetailsLocalState.course?.website ?? ""} target="_blank">
+                                                <Image alt={`${CourseDetailsLocalState.course?.displayName} logo`} src={getCourseLogo(CourseDetailsLocalState.course ?? null) ?? undefined} style={{width: "100%", height: "auto", padding: 20, objectFit: "scale-down"}}/>
                                             </Link>
                                         </Box>
                                     </Col>
@@ -130,26 +130,26 @@ class GroupDetails extends Component<GroupDetailsProps & Readonly<RouteComponent
                                     {/** Name section */}
                                     <Col xs={{span: 12, order: 2}} sm={{span: 12, order: 2}} md={{span: 12, order: 2}} lg={{span: 9, order: 2}}>
                                         <Box display="flex" flexDirection="column" height="100%" justifyContent="center" alignItems="center">
-                                            <Typography align="center" variant="h4">{GroupDetailsLocalState.group?.displayName}</Typography>
+                                            <Typography align="center" variant="h4">{CourseDetailsLocalState.course?.displayName}</Typography>
 
                                             {/** Home/platform member + joined date (available for investor and issuer) */}
                                             {
                                                 currentAdmin
                                                     ? null
-                                                    : !groupMember
+                                                    : !courseMember
                                                     ? <Box marginTop="25px">
                                                         {
-                                                            !hasRequestedToAccessGroup
-                                                                ? <Button variant="outlined" className={css(sharedStyles.no_text_transform)} onClick={() => sendAccessRequest()} disabled={isSendingAccessRequest(GroupDetailsLocalState)}>
+                                                            !hasRequestedToAccessCourse
+                                                                ? <Button variant="outlined" className={css(sharedStyles.no_text_transform)} onClick={() => sendAccessRequest()} disabled={isSendingAccessRequest(CourseDetailsLocalState)}>
                                                                     {
-                                                                        isSendingAccessRequest(GroupDetailsLocalState)
+                                                                        isSendingAccessRequest(CourseDetailsLocalState)
                                                                             ? "Sending request ..."
-                                                                            : "Join Group"
+                                                                            : "Join Course"
                                                                     }
                                                                 </Button>
-                                                                : <Button variant="outlined" className={css(sharedStyles.no_text_transform)} onClick={() => removeAccessRequest()} disabled={isRemovingAccessRequest(GroupDetailsLocalState)}>
+                                                                : <Button variant="outlined" className={css(sharedStyles.no_text_transform)} onClick={() => removeAccessRequest()} disabled={isRemovingAccessRequest(CourseDetailsLocalState)}>
                                                                     {
-                                                                        isRemovingAccessRequest(GroupDetailsLocalState)
+                                                                        isRemovingAccessRequest(CourseDetailsLocalState)
                                                                             ? "Cancelling ..."
                                                                             : "Cancel request"
                                                                     }
@@ -162,7 +162,7 @@ class GroupDetails extends Component<GroupDetailsProps & Readonly<RouteComponent
                                                             <Box width="6px"/>
                                                             <Typography variant="body1" align="center" color="textSecondary">
                                                                 {
-                                                                    getHomeGroup(AuthenticationState.groupsOfMembership)?.group.anid === groupMember.group.anid
+                                                                    getHomeCourse(AuthenticationState.coursesOfMembership)?.course.anid === courseMember.course.anid
                                                                         ? "Home member"
                                                                         : "Platform member"
                                                                 }
@@ -173,7 +173,7 @@ class GroupDetails extends Component<GroupDetailsProps & Readonly<RouteComponent
                                                         <Box marginTop="5px">
                                                             <Typography variant="body1" align="center" color="textSecondary">
                                                                 Joined
-                                                                on: {dateInReadableFormat(groupMember.joinedDate)}
+                                                                on: {dateInReadableFormat(courseMember.joinedDate)}
                                                             </Typography>
                                                         </Box>
                                                     </Box>
@@ -196,20 +196,20 @@ class GroupDetails extends Component<GroupDetailsProps & Readonly<RouteComponent
                                 <Typography variant="h6">About</Typography>
 
                                 <Box marginTop="18px" whiteSpace="pre-line">
-                                    <Typography variant="body1" align="left">{GroupDetailsLocalState.group?.description}</Typography>
+                                    <Typography variant="body1" align="left">{CourseDetailsLocalState.course?.description}</Typography>
                                 </Box>
 
                                 <Box marginTop="18px">
                                     <Typography variant="body1" align="left">For more information, visit us at:&nbsp;
                                         <CustomLink
-                                            url={GroupDetailsLocalState.group?.website ?? ""}
+                                            url={CourseDetailsLocalState.course?.website ?? ""}
                                             target="_blank"
                                             color="none"
                                             activeColor="none"
                                             activeUnderline={true}
                                             component="a"
                                             childComponent={
-                                                GroupDetailsLocalState.group?.website ?? "unknown"
+                                                CourseDetailsLocalState.course?.website ?? "unknown"
                                             }/>
                                     </Typography>
                                 </Box>
@@ -231,7 +231,7 @@ class GroupDetails extends Component<GroupDetailsProps & Readonly<RouteComponent
                                     <Row>
                                         <Col xs={12} sm={12} md={6} lg={6}>
                                             <Box padding="18px">
-                                                <Typography variant="h4" align="left">{GroupDetailsLocalState.members?.length}</Typography>
+                                                <Typography variant="h4" align="left">{CourseDetailsLocalState.members?.length}</Typography>
                                                     <Box height="2px"/>
                                                 <Typography variant="body1" align="left">Members</Typography>
                                             </Box>
@@ -244,7 +244,7 @@ class GroupDetails extends Component<GroupDetailsProps & Readonly<RouteComponent
                                                 </Box>
 
                                                 <Box padding="18px">
-                                                    <Typography variant="h4" align="left">{GroupDetailsLocalState.offers?.length}</Typography>
+                                                    <Typography variant="h4" align="left">{CourseDetailsLocalState.offers?.length}</Typography>
 
                                                     <Box height="2px"/>
 
@@ -270,4 +270,4 @@ class GroupDetails extends Component<GroupDetailsProps & Readonly<RouteComponent
     }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(GroupDetails);
+export default connect(mapStateToProps, mapDispatchToProps)(CourseDetails);

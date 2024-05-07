@@ -10,3 +10,13 @@ export default interface Pledge {
     projectID: string;
     status: number;
 }
+
+export default interface StudentPledge {
+    id: string;
+    anid: string;
+    amount: number | "";
+    date: number;
+    studentID: string;
+    studentProjectID: string;
+    status: number;
+}

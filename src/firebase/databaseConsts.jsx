@@ -178,6 +178,13 @@ export const TYPE_ADMIN = 3;
  * ./// ----------------------------------------------------------------------------------------------------------------
  */
 
+/** 
+ * STUDENT TYPE
+ */
+export const TYPE_STUDENT = 1;
+export const TYPE_TEACHER = 2;
+export const TYPE_PROF = 3;
+
 /**
  * PROJECT VISIBILITY --------------------------------------------------------------------------------------------------
  *
@@ -191,6 +198,15 @@ export const PROJECT_VISIBILITY_PUBLIC = 3;
 /**
  * ./// ----------------------------------------------------------------------------------------------------------------
  */
+
+/** STUDENT PROJECT VISIBILITY --------------------------------------------------------------------------------------------------
+ * 
+ *  @type {number}
+ */
+export const STUDENT_PROJECT_VISIBILITY_PRIVATE = 1;
+export const STUDENT_PROJECT_VISIBILITY_RESTRICTED = 2;
+export const STUDENT_PROJECT_VISIBILITY_PUBLIC = 3;
+
 
 /**
  * INVESTOR AGREEMENT TYPE ---------------------------------------------------------------------------------------------
@@ -222,15 +238,35 @@ export const PROJECT_STATUS_PRIMARY_OFFER_PHASE = 4;
 export const PROJECT_STATUS_SUCCESSFUL = 5;
 export const PROJECT_STATUS_FAILED = 6;
 
+// --- Student project status ---
+export const STUDENT_PROJECT_STATUS_DRAFT = -2; // project has not been published yet
+export const STUDENT_PROJECT_STATUS_REJECTED = -1; // this status means the project failed even before it is publicly showed
+export const STUDENT_PROJECT_STATUS_BEING_CHECKED = 0; // the project (offer) must be checked by admin first
+export const STUDENT_PROJECT_STATUS_PITCH_PHASE = 1;
+export const STUDENT_PROJECT_STATUS_PITCH_PHASE_EXPIRED_WAITING_TO_BE_CHECKED = 2;
+export const STUDENT_PROJECT_STATUS_PRIMARY_OFFER_CREATED_WAITING_TO_BE_CHECKED = 3;
+export const STUDENT_PROJECT_STATUS_PRIMARY_OFFER_PHASE = 4;
+export const STUDENT_PROJECT_STATUS_SUCCESSFUL = 5;
+export const STUDENT_PROJECT_STATUS_FAILED = 6;
+
 // --- Pitch status only ---
 export const PITCH_STATUS_ON_GOING = 1;
 export const PITCH_STATUS_ACCEPTED = 2;
 export const PITCH_STATUS_REJECTED = 3;
+
 // when the admin accepts a pitch, its status will change to this state (pitch accepted and waiting for primary offer to be created)
 // when the issuer creates a primary offer, the pitch's status will change to PITCH_STATUS_ACCEPTED
 export const PITCH_STATUS_ACCEPTED_CREATE_PRIMARY_OFFER = 4;
 // this status means the pitch has expired but admin has not accepted or rejected it
 export const PITCH_STATUS_WAITING_FOR_ADMIN = 5;
+
+// --- Student Pitch status only ---
+export const STUDENT_PITCH_STATUS_ON_GOING = 1;
+export const STUDENT_PITCH_STATUS_ACCEPTED = 2;
+export const STUDENT_PITCH_STATUS_REJECTED = 3;
+export const STUDENT_PITCH_STATUS_ACCEPTED_CREATE_PRIMARY_OFFER = 4;
+export const STUDENT_PITCH_STATUS_WAITING_FOR_ADMIN = 5;
+
 
 // --- Pledge status only ---
 export const PRIMARY_OFFER_STATUS_ON_GOING = 1;
