@@ -63,11 +63,11 @@ import * as ROUTES from "../../router/routes";
 import Routes from "../../router/routes";
 import sharedStyles from "../../shared-js-css-styles/SharedStyles";
 
-import {getGroupRouteTheme, isValidatingGroupUrl} from "../../redux-store/reducers/manageGroupUrlReducer";
+import {getCourseRouteTheme, isValidatingCourseUrl} from "../../redux-store/reducers/manageCourseUrlReducer";
 import {isAuthenticating, successfullyAuthenticated} from "../../redux-store/reducers/authenticationReducer";
 import {isLoadingSystemAttributes} from "../../redux-store/reducers/manageSystemAttributesReducer";
-import {isIssuer} from "../../models/user";
-import {getHomeGroup} from "../../models/group_of_membership";
+import {isTeacher} from "../../models/student";
+import {getHomeCourse} from "../../models/course_of_membership";
 import {isDraftProjectNotSubmitted} from "../../models/project";
 import Api, {ApiRoutes} from "../../api/Api";
 import CustomLink from "../../shared-js-css-styles/CustomLink";
@@ -76,8 +76,8 @@ const PITCH_COVER_FILES_CHANGED = 1;
 const PITCH_SUPPORTING_DOCUMENTS_FILES_CHANGED = 2;
 const PITCH_PRESENTATION_FILES_CHANGED = 3;
 
-export const PITCH_COVER_FILE_TYPE_SELECTED = 1; // users select to upload an image or a video for their pitch cover
-export const PITCH_COVER_VIDEO_URL_TYPE_SELECTED = 2; // users select to upload a video URL for their pitch cover
+export const PITCH_COVER_FILE_TYPE_SELECTED = 1; // students select to upload an image or a video for their pitch cover
+export const PITCH_COVER_VIDEO_URL_TYPE_SELECTED = 2; // students select to upload a video URL for their pitch cover
 
 // pitch create non-check
 export const PITCH_PUBLISH_CHECK_NONE = 0;
@@ -105,7 +105,7 @@ export const STEP_ACCEPT_TERMS_AND_CONDITIONS = 4;
 const mapStateToProps = state => {
     return {
         ManageSystemAttributesState: state.ManageSystemAttributesState,
-        ManageGroupUrlState: state.ManageGroupUrlState,
+        ManageCourseUrlState: state.ManageCourseUrlState,
         AuthenticationState: state.AuthenticationState,
         isMobile: state.MediaQueryState.isMobile,
 
@@ -138,7 +138,7 @@ const initState = {
 
         activeStep: STEP_PITCH_GENERAL_INFORMATION,
 
-        groupIssuerCreateOfferFor: "undefined",
+        courseTeacherCreateOfferFor: "undefined",
 
         // pitch sector
         pitchSector: '-',
@@ -168,14 +168,14 @@ const initState = {
         // ------------------------------------------------------
         // pitch supporting documents --- max 10 files
         pitchSupportingDocuments: [],
-        // pitch presentation file (user uploads a file for pitch presentation) --- 1 file
+        // pitch presentation file (student uploads a file for pitch presentation) --- 1 file
         pitchPresentationDocument: [],
-        // pitch presentation text (user uses the provided text editor to make pitch presentation)
+        // pitch presentation text (student uses the provided text editor to make pitch presentation)
         pitchPresentationText: {ops: []},
         // plain text obtained from quill editor
         pitchPresentationPlainText: null,
 
-        // check for missing fields (or invalid inputs) when the user hits the Next button
+        // check for missing fields (or invalid inputs) when the student hits the Next button
         pitchPublishCheck: PITCH_PUBLISH_CHECK_NONE,
 
         // these 2 states are used to display popover error message when the Publish button is clicked
@@ -195,7 +195,7 @@ const initState = {
 
         projectID: null, // set when project has been successfully published to pass to UploadDialog
 
-        // customized fields (for specific groups only) ------------------------------------------------------------------
+        // customized fields (for specific courses only) ------------------------------------------------------------------
         // this field is only available for QIB
         qibSpecialNews: ''
         // -------------------------------------------------------------------------------------------------------------
@@ -233,13 +233,13 @@ class CreatePitchPageMain extends Component {
             this.loadData();
         }
         console.log('Page loaded. Authentication status:', this.props.AuthenticationState.isAuthenticated ? 'Authenticated' : 'Not Authenticated');
-        console.log('Current user on page load:', this.props.AuthenticationState.currentUser);
+        console.log('Current student on page load:', this.props.AuthenticationState.currentStudent);
         console.log(`Data request status on page load: ${this.state.requestToLoadData ? 'Pending' : 'Not Requested'}`);
     }
 
     componentDidUpdate(prevProps, prevState, snapshot) {
         const {
-            ManageGroupUrlState,
+            ManageCourseUrlState,
             AuthenticationState
         } = this.props;
 
@@ -252,10 +252,10 @@ class CreatePitchPageMain extends Component {
         } = this.state;
 
         const previousState = this.props.location.state;
-        // when the user clicks Save for the first time
+        // when the student clicks Save for the first time
         // or when they click on the Next button in the STEP_PITCH_GENERAL_INFORMATION step
         // the page will reload to take them to the edit page with the project ID.
-        // If the user clicks on the Next button in the STEP_PITCH_GENERAL_INFORMATION step, once the page is
+        // If the student clicks on the Next button in the STEP_PITCH_GENERAL_INFORMATION step, once the page is
         // reloaded, they should be taken to the next step rather than stay in the same step.
         if (previousState !== undefined && previousState !== null) {
             if (!recoveredFromPreviousState) {
@@ -269,13 +269,13 @@ class CreatePitchPageMain extends Component {
                                 previousState.activeStep
                                 :
                                 this.state.createProject.activeStep,
-                        groupIssuerCreateOfferFor: !previousState.groupIssuerCreateOfferFor
-                            ? ManageGroupUrlState.group
-                                ? ManageGroupUrlState.group.anid
-                                : getHomeGroup(AuthenticationState.groupsOfMembership) === null
+                        courseTeacherCreateOfferFor: !previousState.courseTeacherCreateOfferFor
+                            ? ManageCourseUrlState.course
+                                ? ManageCourseUrlState.course.anid
+                                : getHomeCourse(AuthenticationState.coursesOfMembership) === null
                                     ? "undefined"
-                                    : getHomeGroup(AuthenticationState.groupsOfMembership).group.anid
-                            : previousState.groupIssuerCreateOfferFor,
+                                    : getHomeCourse(AuthenticationState.coursesOfMembership).course.anid
+                            : previousState.courseTeacherCreateOfferFor,
                         requestToLoadData: !previousState.requestToLoadData ? true : previousState.requestToLoadData
                     }
                 }, () => console.log('New state after next step:', this.state));
@@ -291,12 +291,12 @@ class CreatePitchPageMain extends Component {
             this.uploadProject();
         }
 
-        if (prevProps.ManageGroupUrlState !== this.props.ManageGroupUrlState) {
-            console.log('ManageGroupUrlState changed:', this.props.ManageGroupUrlState);
+        if (prevProps.ManageCourseUrlState !== this.props.ManageCourseUrlState) {
+            console.log('ManageCourseUrlState changed:', this.props.ManageCourseUrlState);
         }
 
-        if (prevProps.AuthenticationState.currentUser !== this.props.AuthenticationState.currentUser) {
-            console.log('Authentication state changed. Current user:', this.props.AuthenticationState.currentUser);
+        if (prevProps.AuthenticationState.currentStudent !== this.props.AuthenticationState.currentStudent) {
+            console.log('Authentication state changed. Current student:', this.props.AuthenticationState.currentStudent);
         }
     }
 
@@ -308,7 +308,7 @@ class CreatePitchPageMain extends Component {
 
     /**
      * Navigate to the same page with active step saved
-     * This will save the activeStep of the page, so when the user refreshes the page,
+     * This will save the activeStep of the page, so when the student refreshes the page,
      * they can still continue with their previous step.
      *
      * @param activeStep
@@ -316,7 +316,7 @@ class CreatePitchPageMain extends Component {
      */
     navigateToTheSamePageWithActiveStepSaved = (activeStep, projectID) => {
         const {
-            ManageGroupUrlState
+            ManageCourseUrlState
         } = this.props;
 
         // projectID not null
@@ -324,10 +324,10 @@ class CreatePitchPageMain extends Component {
         if (projectID) {
             this.props.history.push({
                 pathname:
-                    ManageGroupUrlState.groupNameFromUrl
+                    ManageCourseUrlState.courseNameFromUrl
                         ?
                         ROUTES.CREATE_OFFER
-                            .replace(":groupUserName", ManageGroupUrlState.groupNameFromUrl)
+                            .replace(":courseStudent", ManageCourseUrlState.courseNameFromUrl)
                         :
                         ROUTES.CREATE_OFFER_INVEST_WEST_SUPER,
                 search: `?edit=${projectID}`,
@@ -340,10 +340,10 @@ class CreatePitchPageMain extends Component {
         else {
             this.props.history.push({
                 pathname:
-                    ManageGroupUrlState.groupNameFromUrl
+                    ManageCourseUrlState.courseNameFromUrl
                         ?
                         ROUTES.CREATE_OFFER
-                            .replace(":groupUserName", ManageGroupUrlState.groupNameFromUrl)
+                            .replace(":courseStudent", ManageCourseUrlState.courseNameFromUrl)
                         :
                         ROUTES.CREATE_OFFER_INVEST_WEST_SUPER,
                 state: {
@@ -359,7 +359,7 @@ class CreatePitchPageMain extends Component {
      */
     loadData = () => {
         const {
-            ManageGroupUrlState,
+            ManageCourseUrlState,
             AuthenticationState,
             selectProjectVisibility_setProject
         } = this.props;
@@ -369,12 +369,12 @@ class CreatePitchPageMain extends Component {
             projectIDToBeLoadedAfterSavingFirstTime
         } = this.state;
 
-        if (isValidatingGroupUrl(ManageGroupUrlState) || isAuthenticating(AuthenticationState)) {
+        if (isValidatingCourseUrl(ManageCourseUrlState) || isAuthenticating(AuthenticationState)) {
             return;
         }
 
         if (!successfullyAuthenticated(AuthenticationState)
-        || (AuthenticationState.currentUser && AuthenticationState.currentUser.type === DB_CONST.TYPE_INVESTOR)
+        || (AuthenticationState.currentStudent && AuthenticationState.currentStudent.type === DB_CONST.TYPE_INVESTOR)
         ) {
             if (!projectEditedLoaded) {
                 this.setState({
@@ -398,8 +398,8 @@ class CreatePitchPageMain extends Component {
                 .loadAParticularProject(!params.edit ? projectIDToBeLoadedAfterSavingFirstTime : params.edit)
                 .then(project => {
 
-                    // allow the group admin to change the visibility of the project
-                    if (AuthenticationState.currentUser.type === DB_CONST.TYPE_ADMIN) {
+                    // allow the course teacher to change the visibility of the project
+                    if (AuthenticationState.currentStudent.type === DB_CONST.TYPE_PROF) {
                         selectProjectVisibility_setProject(project);
                     }
 
@@ -431,7 +431,7 @@ class CreatePitchPageMain extends Component {
 
                         createProject: {
                             ...this.state.createProject,
-                            groupIssuerCreateOfferFor:
+                            courseTeacherCreateOfferFor:
                                 !isDraftProjectNotSubmitted(project)
                                     ? "undefined"
                                     : project.hasOwnProperty('anid')
@@ -582,25 +582,25 @@ class CreatePitchPageMain extends Component {
 
                 createProject: {
                     ...this.state.createProject,
-                    groupIssuerCreateOfferFor: ManageGroupUrlState.group
-                        ? ManageGroupUrlState.group.anid
-                        : getHomeGroup(AuthenticationState.groupsOfMembership) === null
+                    courseTeacherCreateOfferFor: ManageCourseUrlState.course
+                        ? ManageCourseUrlState.course.anid
+                        : getHomeCourse(AuthenticationState.coursesOfMembership) === null
                             ? "undefined"
-                            : getHomeGroup(AuthenticationState.groupsOfMembership).group.anid,
+                            : getHomeCourse(AuthenticationState.coursesOfMembership).course.anid,
                     pitchExpiryDate:
-                        ManageGroupUrlState.group.groupUserName === "qib"
+                        ManageCourseUrlState.course.courseStudent === "qib"
                             ?
-                            // if the group is QIB,
-                            // set the pitch expiry date to the one specified by the QIB' admins
+                            // if the course is QIB,
+                            // set the pitch expiry date to the one specified by the QIB' teachers
                             // Note: must ensure the defaultPitchExpiryDate field is valid
-                            ManageGroupUrlState.group.settings.defaultPitchExpiryDate
+                            ManageCourseUrlState.course.settings.defaultPitchExpiryDate
                             :
                             this.state.createProject.pitchExpiryDate
                 }
             });
 
-            // allow the group admin to change the visibility of the project
-            if (AuthenticationState.currentUser.type === DB_CONST.TYPE_ADMIN) {
+            // allow the course teacher to change the visibility of the project
+            if (AuthenticationState.currentStudent.type === DB_CONST.TYPE_PROF) {
                 selectProjectVisibility_setProject(null);
             }
         }
@@ -614,7 +614,7 @@ class CreatePitchPageMain extends Component {
         const params = queryString.parse(this.props.location.search);
 
         const {
-            ManageGroupUrlState,
+            ManageCourseUrlState,
             AuthenticationState
         } = this.props;
 
@@ -624,7 +624,7 @@ class CreatePitchPageMain extends Component {
         } = this.state;
 
         const {
-            groupIssuerCreateOfferFor,
+            courseTeacherCreateOfferFor,
 
             activeStep,
 
@@ -655,7 +655,7 @@ class CreatePitchPageMain extends Component {
         } = this.state.createProject;
 
         // progress is being saved,
-        // we shouldn't let the user click
+        // we shouldn't let the Student click
         if (progressBeingSaved) {
             return;
         }
@@ -663,20 +663,13 @@ class CreatePitchPageMain extends Component {
         switch (activeStep) {
             // General information
             case STEP_PITCH_GENERAL_INFORMATION:
-                // if one of the fields in the General information part is missing, ask the user to fill them
+                // if one of the fields in the General information part is missing, ask the Student to fill them
                 if (pitchSector === "-"
                     || pitchProjectName.trim().length === 0
                     || pitchProjectDescription.trim().length === 0
                     || pitchExpiryDate === null
-                    || pitchRaiseRequired.trim().length === 0
-                    || howFundIsBeingRaised.trim().length === 0
-                    || financialRound.trim().length === 0
-                    || hasRaisedMoneyBefore.trim().length === 0
-                    || hasSEIS.trim().length === 0
-                    || hasEIS.trim().length === 0
-                    || (hasRaisedMoneyBefore === "true" && pitchAmountRaisedToDate.trim().length === 0)
-                    || (ManageGroupUrlState.groupNameFromUrl === "qib" && qibSpecialNews.trim().length === 0)
-                    || (isIssuer(AuthenticationState.currentUser) && !(params.edit && projectEdited) && groupIssuerCreateOfferFor === "undefined")
+                    || (ManageCourseUrlState.courseNameFromUrl === "qib" && qibSpecialNews.trim().length === 0)
+                    || (isTeacher(AuthenticationState.currentStudent) && !(params.edit && projectEdited) && courseTeacherCreateOfferFor === "undefined")
                 ) {
                     this.setState({
                         createProject: {
@@ -704,7 +697,7 @@ class CreatePitchPageMain extends Component {
                     return;
                 }
 
-                // if the user enters invalid value for the money, warn them
+                // if the Student enters invalid value for the money, warn them
                 if ((hasRaisedMoneyBefore === "true" && !utils.getNumberFromInputString(pitchAmountRaisedToDate))
                     || !utils.getNumberFromInputString(pitchRaiseRequired)
                     || (pitchPostMoneyValuation.trim().length > 0 && !utils.getNumberFromInputString(pitchPostMoneyValuation))
@@ -756,7 +749,7 @@ class CreatePitchPageMain extends Component {
                         return;
                     }
                 } else {
-                    // if the user has not uploaded pitch cover, ask them to upload
+                    // if the Student has not uploaded pitch cover, ask them to upload
                     if (!pitchCoverTypeSelected
                         || (pitchCoverTypeSelected === PITCH_COVER_FILE_TYPE_SELECTED && pitchCover.length === 0)
                         || (pitchCoverTypeSelected === PITCH_COVER_VIDEO_URL_TYPE_SELECTED && pitchCoverVideoURL.trim().length === 0)
@@ -784,7 +777,7 @@ class CreatePitchPageMain extends Component {
             case STEP_PITCH_DECK:
                 // for QIB, pitch deck is considered as one-pager
                 // there will be no presentation text, so don't need to check
-                if (ManageGroupUrlState.groupNameFromUrl === "qib") {
+                if (ManageCourseUrlState.courseNameFromUrl === "qib") {
                     // in edit mode
                     if (params.edit && projectEdited) {
                         if (pitchPresentationDocument.length === 0
@@ -807,7 +800,7 @@ class CreatePitchPageMain extends Component {
                             return;
                         }
                     } else {
-                        // if the user has not created their pitch presentation, ask them to do so by uploading a presentation file or use the text editor provided
+                        // if the Student has not created their pitch presentation, ask them to do so by uploading a presentation file or use the text editor provided
                         if (pitchPresentationDocument.length === 0) {
                             this.setState({
                                 createProject: {
@@ -820,7 +813,7 @@ class CreatePitchPageMain extends Component {
                         }
                     }
                 }
-                    // for other groups, we need to ensure the user is uploading a pitch deck file or filling
+                    // for other courses, we need to ensure the Student is uploading a pitch deck file or filling
                 // in the text editor or both
                 else {
                     // in edit mode
@@ -846,7 +839,7 @@ class CreatePitchPageMain extends Component {
                             return;
                         }
                     } else {
-                        // if the user has not created their pitch presentation, ask them to do so by uploading a presentation file or use the text editor provided
+                        // if the Student has not created their pitch presentation, ask them to do so by uploading a presentation file or use the text editor provided
                         if (pitchPresentationDocument.length === 0 && pitchPresentationText.ops.length === 0) {
                             this.setState({
                                 createProject: {
@@ -972,7 +965,7 @@ class CreatePitchPageMain extends Component {
     handleFilesChanged = (mode, files) => {
 
         const {
-            ManageGroupUrlState
+            ManageCourseUrlState
         } = this.props;
 
         const {
@@ -1007,8 +1000,8 @@ class CreatePitchPageMain extends Component {
                 // there can be more than 1 pitch supporting files
                 case PITCH_SUPPORTING_DOCUMENTS_FILES_CHANGED:
                     // for QIB, supporting document will be considered as pitch deck
-                    // so, the user can only upload one file
-                    if (ManageGroupUrlState.groupNameFromUrl === "qib") {
+                    // so, the Student can only upload one file
+                    if (ManageCourseUrlState.courseNameFromUrl === "qib") {
                         this.setState(prevState => ({
                             createProject: {
                                 ...prevState.createProject,
@@ -1016,7 +1009,7 @@ class CreatePitchPageMain extends Component {
                             }
                         }));
                     }
-                    // for other groups, the user can upload multiple files for supporting documents
+                    // for other courses, the Student can upload multiple files for supporting documents
                     else {
                         if (projectEdited) {
                             if (!projectEdited.Pitch.supportingDocuments) {
@@ -1099,7 +1092,7 @@ class CreatePitchPageMain extends Component {
         const name = event.target.name;
         const value = event.target.value;
 
-        if (name === "groupIssuerCreateOfferFor") {
+        if (name === "courseTeacherCreateOfferFor") {
             this.setState({
                 createProject: {
                     ...this.state.createProject,
@@ -1113,7 +1106,7 @@ class CreatePitchPageMain extends Component {
 
             const params = queryString.parse(this.props.location.search);
 
-            let index = AuthenticationState.groupsOfMembership.findIndex(groupOfMembership => groupOfMembership.group.anid === value);
+            let index = AuthenticationState.coursesOfMembership.findIndex(courseOfMembership => courseOfMembership.course.anid === value);
             if (index === -1) {
                 return;
             }
@@ -1122,11 +1115,11 @@ class CreatePitchPageMain extends Component {
             if (params.edit) {
                 this.props.history.push({
                     pathname: ROUTES.CREATE_OFFER
-                        .replace(":groupUserName", AuthenticationState.groupsOfMembership[index].group.groupUserName),
+                        .replace(":courseStudent", AuthenticationState.coursesOfMembership[index].course.courseStudent),
                     search: `?edit=${params.edit}`,
                     state: {
                         activeStep: this.state.createProject.activeStep,
-                        groupIssuerCreateOfferFor: value,
+                        courseTeacherCreateOfferFor: value,
                         requestToLoadData: true
                     }
                 });
@@ -1135,10 +1128,10 @@ class CreatePitchPageMain extends Component {
             else {
                 this.props.history.push({
                     pathname: ROUTES.CREATE_OFFER
-                        .replace(":groupUserName", AuthenticationState.groupsOfMembership[index].group.groupUserName),
+                        .replace(":courseStudent", AuthenticationState.coursesOfMembership[index].course.courseStudent),
                     state: {
                         activeStep: this.state.createProject.activeStep,
-                        groupIssuerCreateOfferFor: value,
+                        courseTeacherCreateOfferFor: value,
                         requestToLoadData: true
                     }
                 });
@@ -1191,7 +1184,7 @@ class CreatePitchPageMain extends Component {
         const params = queryString.parse(this.props.location.search);
 
         const {
-            ManageGroupUrlState,
+            ManageCourseUrlState,
             AuthenticationState,
 
             projectVisibilitySetting
@@ -1206,7 +1199,7 @@ class CreatePitchPageMain extends Component {
         } = this.state;
 
         const {
-            groupIssuerCreateOfferFor,
+            courseTeacherCreateOfferFor,
 
             activeStep,
 
@@ -1278,8 +1271,8 @@ class CreatePitchPageMain extends Component {
 
             // pitch storage reference
             const projectStorageRef = this.firebaseStorage
-                .ref(DB_CONST.USERS_CHILD)
-                .child(projectEdited.issuerID)
+                .ref(DB_CONST.STUDENTS_CHILD)
+                .child(projectEdited.teacherID)
                 .child(DB_CONST.PROJECTS_CHILD)
                 .child(projectEdited.id);
 
@@ -1319,12 +1312,12 @@ class CreatePitchPageMain extends Component {
 
                                     let updatedProject = {
                                         ...JSON.parse(JSON.stringify(projectEdited)),
-                                        issuer: null,
-                                        group: null,
+                                        teacher: null,
+                                        course: null,
                                         anid:
                                             isDraftProjectNotSubmitted(projectEdited)
-                                                ? groupIssuerCreateOfferFor !== "undefined"
-                                                ? groupIssuerCreateOfferFor
+                                                ? courseTeacherCreateOfferFor !== "undefined"
+                                                ? courseTeacherCreateOfferFor
                                                 : projectEdited.anid
                                                 : projectEdited.anid,
                                         projectName:
@@ -1632,12 +1625,12 @@ class CreatePitchPageMain extends Component {
                                             if (!saveProgress) {
                                                 // if the draft offer is published, don't need to check for sending notifications
                                                 if (projectEdited.status !== DB_CONST.PROJECT_STATUS_DRAFT) {
-                                                    projectBeforeEdited.issuer = null;
-                                                    projectBeforeEdited.group = null;
+                                                    projectBeforeEdited.teacher = null;
+                                                    projectBeforeEdited.course = null;
                                                     // track activity for editing a published project
                                                     realtimeDBUtils
                                                         .trackActivity({
-                                                            userID: AuthenticationState.currentUser.id,
+                                                            studentID: AuthenticationState.currentStudent.id,
                                                             activityType: DB_CONST.ACTIVITY_TYPE_POST,
                                                             interactedObjectLocation: DB_CONST.PROJECTS_CHILD,
                                                             interactedObjectID: projectEdited.id,
@@ -1675,7 +1668,7 @@ class CreatePitchPageMain extends Component {
                                                                         const notification = {
                                                                             title: `${projectEdited.projectName} has been edited`,
                                                                             message: `Please have a look at the changes that have been made in this offer. You may find some more useful information.`,
-                                                                            userID: investorID,
+                                                                            studentID: investorID,
                                                                             action: ROUTES.PROJECT_DETAILS_INVEST_WEST_SUPER.replace(":projectID", projectEdited.id)
                                                                         };
                                                                         notifications.push(notification);
@@ -1721,7 +1714,7 @@ class CreatePitchPageMain extends Component {
                                                 else {
                                                     // don't need to check for prior TCs acceptance because this is create new mode
                                                     const acceptedTCsObj = {
-                                                        issuerID: AuthenticationState.currentUser.id,
+                                                        teacherID: AuthenticationState.currentStudent.id,
                                                         projectID: projectEdited.id,
                                                         date: utils.getCurrentDate(),
                                                         agreedToShareRaisePublicly
@@ -1749,7 +1742,7 @@ class CreatePitchPageMain extends Component {
                                                             // track activity for creating a new project from a draft one
                                                             realtimeDBUtils
                                                                 .trackActivity({
-                                                                    userID: AuthenticationState.currentUser.id,
+                                                                    studentID: AuthenticationState.currentStudent.id,
                                                                     activityType: DB_CONST.ACTIVITY_TYPE_POST,
                                                                     interactedObjectLocation: DB_CONST.PROJECTS_CHILD,
                                                                     interactedObjectID: projectEdited.id,
@@ -1758,12 +1751,12 @@ class CreatePitchPageMain extends Component {
                                                                     value: updatedProject
                                                                 });
 
-                                                            // if the user is an issuer,
+                                                            // if the Student is an teacher,
                                                             // update the marketing preferences setting
-                                                            if (AuthenticationState.currentUser.type === DB_CONST.TYPE_ISSUER) {
+                                                            if (AuthenticationState.currentStudent.type === DB_CONST.TYPE_TEACHER) {
                                                                 realtimeDBUtils
                                                                     .updateMarketingPreferencesSetting({
-                                                                        userID: AuthenticationState.currentUser.id,
+                                                                        studentID: AuthenticationState.currentStudent.id,
                                                                         field: "agreedToReceiveLocalInvestmentInfo",
                                                                         value: agreedToReceiveLocalInvestmentInfo
                                                                     })
@@ -1834,8 +1827,8 @@ class CreatePitchPageMain extends Component {
 
             // pitch storage reference
             const projectStorageRef = this.firebaseStorage
-                .ref(DB_CONST.USERS_CHILD)
-                .child(AuthenticationState.currentUser.id)
+                .ref(DB_CONST.STUDENTS_CHILD)
+                .child(AuthenticationState.currentStudent.id)
                 .child(DB_CONST.PROJECTS_CHILD)
                 .child(projectID);
 
@@ -1875,42 +1868,42 @@ class CreatePitchPageMain extends Component {
 
                                     const projectObj = {
                                         id: projectID,
-                                        anid: groupIssuerCreateOfferFor === "undefined" ? ManageGroupUrlState.group.anid : groupIssuerCreateOfferFor,
+                                        anid: courseTeacherCreateOfferFor === "undefined" ? ManageCourseUrlState.course.anid : courseTeacherCreateOfferFor,
                                         visibility:
                                             projectVisibilitySetting === -1
                                                 ?
-                                                ManageGroupUrlState.group.settings.projectVisibility
+                                                ManageCourseUrlState.course.settings.projectVisibility
                                                 :
                                                 projectVisibilitySetting
                                         ,
-                                        issuerID:
-                                        // a group admin is creating an offer on behalf of a known issuer
-                                            params.admin && params.issuer
+                                        teacherID:
+                                        // a course teacher is creating an offer on behalf of a known teacher
+                                            params.teacher && params.teacher
                                                 ?
-                                                // then the issuerID is set to the id of the issuer that the
-                                                // group admin is creating an offer for
-                                                params.issuer
+                                                // then the teacherID is set to the id of the teacher that the
+                                                // course teacher is creating an offer for
+                                                params.teacher
                                                 :
-                                                // in this case, it can be the issuer creating their own offer
-                                                // or a group admin is doing so for an unknown issuer --> this means
-                                                // the group admin clicks on the "Create new investment opportunity" in their
+                                                // in this case, it can be the teacher creating their own offer
+                                                // or a course teacher is doing so for an unknown teacher --> this means
+                                                // the course teacher clicks on the "Create new investment opportunity" in their
                                                 // main dashboard.
-                                                AuthenticationState.currentUser.id
-                                        , // this can the id of the issuer or the group admin
-                                        createdByGroupAdmin:
-                                        // a group admin is creating an offer on behalf of a known issuer
-                                            params.admin && params.issuer
+                                                AuthenticationState.currentStudent.id
+                                        , // this can the id of the teacher or the course teacher
+                                        createdByCourseTeacher:
+                                        // a course teacher is creating an offer on behalf of a known teacher
+                                            params.teacher && params.teacher
                                                 ?
-                                                // then, set the admin id as a proof of creating
-                                                params.admin
+                                                // then, set the teacher id as a proof of creating
+                                                params.teacher
                                                 :
-                                                // the group admin is creating an offer for an unknown issuer
-                                                AuthenticationState.currentUser.type === DB_CONST.TYPE_ADMIN
+                                                // the course teacher is creating an offer for an unknown teacher
+                                                AuthenticationState.currentStudent.type === DB_CONST.TYPE_PROF
                                                     ?
-                                                    // then, this field is also set to the group admin id
-                                                    AuthenticationState.currentUser.id
+                                                    // then, this field is also set to the course teacher id
+                                                    AuthenticationState.currentStudent.id
                                                     :
-                                                    // this case means that the issuer is creating their own offer
+                                                    // this case means that the teacher is creating their own offer
                                                     // so this field is set to null
                                                     null
                                         ,
@@ -1922,14 +1915,14 @@ class CreatePitchPageMain extends Component {
                                                 ?
                                                 DB_CONST.PROJECT_STATUS_DRAFT
                                                 :
-                                                // if a group admin creates the offer
+                                                // if a course teacher creates the offer
                                                 // then let it go live
-                                                AuthenticationState.currentUser.type === DB_CONST.TYPE_ADMIN
+                                                AuthenticationState.currentStudent.type === DB_CONST.TYPE_PROF
                                                     ?
                                                     DB_CONST.PROJECT_STATUS_PITCH_PHASE
                                                     :
-                                                    // if an issuer creates the offer
-                                                    // let the group admin check it first
+                                                    // if an teacher creates the offer
+                                                    // let the course teacher check it first
                                                     DB_CONST.PROJECT_STATUS_BEING_CHECKED
                                         ,
                                         Pitch: {
@@ -2161,7 +2154,7 @@ class CreatePitchPageMain extends Component {
                                                 // track activity for creating a new project
                                                 realtimeDBUtils
                                                     .trackActivity({
-                                                        userID: AuthenticationState.currentUser.id,
+                                                        studentID: AuthenticationState.currentStudent.id,
                                                         activityType: DB_CONST.ACTIVITY_TYPE_POST,
                                                         interactedObjectLocation: DB_CONST.PROJECTS_CHILD,
                                                         interactedObjectID: projectID,
@@ -2178,7 +2171,7 @@ class CreatePitchPageMain extends Component {
                                                 // don't need to check for prior TCs acceptance because this is create new mode
                                                 const acceptedTCsObj = {
                                                     id,
-                                                    issuerID: AuthenticationState.currentUser.id,
+                                                    teacherID: AuthenticationState.currentStudent.id,
                                                     projectID: projectID,
                                                     date: utils.getCurrentDate()
                                                 };
@@ -2438,7 +2431,7 @@ class CreatePitchPageMain extends Component {
     };
 
     /**
-     * This function is used to close the popover error message displayed when the user hits the Publish click without filling all the required fields
+     * This function is used to close the popover error message displayed when the Student hits the Publish click without filling all the required fields
      */
     handlePopoverErrorMessageClose = () => {
         this.setState({
@@ -2539,7 +2532,7 @@ class CreatePitchPageMain extends Component {
     handleSaveProgressClick = () => {
 
         const {
-            ManageGroupUrlState,
+            ManageCourseUrlState,
 
             setFeedbackSnackbarContent
         } = this.props;
@@ -2571,14 +2564,7 @@ class CreatePitchPageMain extends Component {
                 && pitchProjectName.trim().length === 0
                 && pitchProjectDescription.trim().length === 0
                 && pitchExpiryDate === null
-                && pitchRaiseRequired.trim().length === 0
-                && howFundIsBeingRaised.trim().length === 0
-                && financialRound.trim().length === 0
-                && pitchPostMoneyValuation.trim().length === 0
-                && hasRaisedMoneyBefore.trim().length === 0
-                && hasEIS.trim().length === 0
-                && hasSEIS.trim().length === 0
-                && (ManageGroupUrlState.groupNameFromUrl === "qib" && qibSpecialNews.trim().length === 0)
+                && (ManageCourseUrlState.courseNameFromUrl === "qib" && qibSpecialNews.trim().length === 0)
             ) {
                 setFeedbackSnackbarContent(
                     'You have nothing to save.',
@@ -2601,7 +2587,7 @@ class CreatePitchPageMain extends Component {
                 return;
             }
 
-            // check if amount raised specified if the user chose Yes for prior investment
+            // check if amount raised specified if the Student chose Yes for prior investment
             if (hasRaisedMoneyBefore.trim().length > 0) {
                 if (hasRaisedMoneyBefore === "true"
                     && pitchAmountRaisedToDate.trim().length === 0
@@ -2643,7 +2629,7 @@ class CreatePitchPageMain extends Component {
     };
 
     /**
-     * Handle when the user clicks on the Delete draft button
+     * Handle when the Student clicks on the Delete draft button
      */
     handleDeleteDraftClick = () => {
 
@@ -2706,8 +2692,8 @@ class CreatePitchPageMain extends Component {
         } = this.state;
 
         let storageRef = this.firebaseStorage
-            .ref(DB_CONST.USERS_CHILD)
-            .child(AuthenticationState.currentUser.id)
+            .ref(DB_CONST.STUDENTS_CHILD)
+            .child(AuthenticationState.currentStudent.id)
             .child(DB_CONST.PROJECTS_CHILD)
             .child(projectEdited.id);
 
@@ -2827,7 +2813,7 @@ class CreatePitchPageMain extends Component {
 
         const {
             ManageSystemAttributesState,
-            ManageGroupUrlState,
+            ManageCourseUrlState,
             AuthenticationState,
             isMobile
         } = this.props;
@@ -2843,19 +2829,19 @@ class CreatePitchPageMain extends Component {
         } = this.state;
 
         if (isLoadingSystemAttributes(ManageSystemAttributesState)
-            || isValidatingGroupUrl(ManageGroupUrlState)
+            || isValidatingCourseUrl(ManageCourseUrlState)
             || isAuthenticating(AuthenticationState)
         ) {
             return null;
         }
 
         // when creating a new offer,
-        // if no user found or found user is an investor or a super admin
+        // if no Student found or found Student is an investor or a super teacher
         // --> display Page Not Found
         if (!successfullyAuthenticated(AuthenticationState)
-            || (successfullyAuthenticated(AuthenticationState) && AuthenticationState.currentUser.type === DB_CONST.TYPE_INVESTOR)
-            || (!params.edit && AuthenticationState.currentUser && (AuthenticationState.currentUser.type === DB_CONST.TYPE_INVESTOR
-                    || (AuthenticationState.currentUser.type === DB_CONST.TYPE_ADMIN && AuthenticationState.currentUser.superAdmin))
+            || (successfullyAuthenticated(AuthenticationState) && AuthenticationState.currentStudent.type === DB_CONST.TYPE_STUDENT)
+            || (!params.edit && AuthenticationState.currentStudent && (AuthenticationState.currentStudent.type === DB_CONST.TYPE_TEACHER
+                    || (AuthenticationState.currentStudent.type === DB_CONST.TYPE_PROF && AuthenticationState.currentStudent.superTeacher))
             )
         ) {
             return (
@@ -2869,18 +2855,18 @@ class CreatePitchPageMain extends Component {
             if (!projectEditedLoaded) {
                 return (
                     <FlexView width="100%" hAlignContent="center"  style={{padding: 30}}>
-                        <HashLoader color={getGroupRouteTheme(ManageGroupUrlState).palette.primary.main}/>
+                        <HashLoader color={getCourseRouteTheme(ManageCourseUrlState).palette.primary.main}/>
                     </FlexView>
                 );
             }
 
-            // no offer found or found offer does not belong to the current issuer/group admin
+            // no offer found or found offer does not belong to the current teacher/Course Teacher
             if (
                 !projectEdited
-                // current user is an issuer that does not own the project
+                // current Student is an teacher that does not own the project
                 || (projectEdited
-                    && AuthenticationState.currentUser.type === DB_CONST.TYPE_ISSUER
-                    && AuthenticationState.currentUser.id !== projectEdited.issuerID
+                    && AuthenticationState.currentStudent.type === DB_CONST.TYPE_TEACHER
+                    && AuthenticationState.currentStudent.id !== projectEdited.teacherID
                 )
             ) {
                 return (
@@ -2889,7 +2875,7 @@ class CreatePitchPageMain extends Component {
             }
 
             // check editable offer
-            if (!utils.shouldAProjectBeEdited(AuthenticationState.currentUser, projectEdited)) {
+            if (!utils.shouldAProjectBeEdited(AuthenticationState.currentStudent, projectEdited)) {
                 return (
                     <FlexView marginTop={50} width="100%">
                         <Typography variant="h4" align="center">This offer can't be edited anymore</Typography>
@@ -2897,15 +2883,15 @@ class CreatePitchPageMain extends Component {
                 );
             }
 
-            // current user is a group admin that does not own the project
+            // current Student is a Course Teacher that does not own the project
             if (projectEdited
-                && AuthenticationState.currentUser.type === DB_CONST.TYPE_ADMIN
-                && !AuthenticationState.currentUser.superAdmin
-                && AuthenticationState.currentUser.anid !== projectEdited.anid
+                && AuthenticationState.currentStudent.type === DB_CONST.TYPE_PROF
+                && !AuthenticationState.currentStudent.superTeacher
+                && AuthenticationState.currentStudent.anid !== projectEdited.anid
             ) {
                 return <FlexView marginTop={50} hAlignContent="center">
                     <Typography variant="h4" align="center">
-                        {`You can only edit offers from ${getHomeGroup(AuthenticationState.groupsOfMembership).group.displayName}.`}
+                        {`You can only edit offers from ${getHomeCourse(AuthenticationState.coursesOfMembership).course.displayName}.`}
                     </Typography>
                 </FlexView>;
             }
@@ -2915,11 +2901,11 @@ class CreatePitchPageMain extends Component {
             <Container fluid style={{padding: 0}}>
                 <CreateProject
                     clubAttributes={ManageSystemAttributesState.systemAttributes}
-                    groupUserName={ManageGroupUrlState.group ? ManageGroupUrlState.group.groupUserName : null}
-                    groupProperties={ManageGroupUrlState.group}
+                    courseStudent={ManageCourseUrlState.course ? ManageCourseUrlState.course.courseStudent : null}
+                    courseProperties={ManageCourseUrlState.course}
                     params={params}
                     AuthenticationState={AuthenticationState}
-                    currentUser={AuthenticationState.currentUser}
+                    currentStudent={AuthenticationState.currentStudent}
                     projectEdited={projectEdited}
                     projectEditedLoaded={projectEditedLoaded}
                     saveProgress={saveProgress}
@@ -2945,8 +2931,8 @@ class CreatePitchPageMain extends Component {
                 />
 
                 <UploadingDialog
-                    groupUserName={ManageGroupUrlState.group ? ManageGroupUrlState.group.groupUserName : null}
-                    currentUser={AuthenticationState.currentUser}
+                    courseStudent={ManageCourseUrlState.course ? ManageCourseUrlState.course.courseStudent : null}
+                    currentStudent={AuthenticationState.currentStudent}
                     open={this.state.createProject.openUploadingProgressDialog}
                     uploadFileMode={this.state.createProject.uploadFileMode}
                     uploadFileProgress={this.state.createProject.uploadFileProgress}
@@ -3025,12 +3011,12 @@ class CreateProject extends Component {
     };
 
     /**
-     * Render pop-over error message (if any) when the user clicks to move to the next step
+     * Render pop-over error message (if any) when the Student clicks to move to the next step
      */
     renderPitchPublishErrorMessage = () => {
 
         const {
-            groupUserName
+            courseStudent
         } = this.props;
 
         let msg = "";
@@ -3052,10 +3038,10 @@ class CreateProject extends Component {
                 break;
             case PITCH_PUBLISH_FALSE_MISSING_PITCH_PRESENTATION:
                 // for QIB, pitch deck is a one-pager
-                if (groupUserName === "qib") {
+                if (courseStudent === "qib") {
                     msg = "Please upload your one-pager.";
                 }
-                // for other groups, pitch deck is still pitch deck
+                // for other courses, pitch deck is still pitch deck
                 else {
                     msg = "Please upload a file or use our provided text editor to make your pitch presentation.";
                 }
@@ -3074,9 +3060,9 @@ class CreateProject extends Component {
             AuthenticationState,
 
             clubAttributes,
-            groupUserName,
-            groupProperties,
-            currentUser,
+            courseStudent,
+            courseProperties,
+            currentStudent,
             params,
             projectEdited,
 
@@ -3104,7 +3090,7 @@ class CreateProject extends Component {
                                 </Step>
                                 <Step key={2}>
                                     {
-                                        groupUserName === "qib"
+                                        courseStudent === "qib"
                                             ?
                                             <StepLabel>One-pager</StepLabel>
                                             :
@@ -3113,7 +3099,7 @@ class CreateProject extends Component {
                                 </Step>
                                 <Step key={3}>
                                     {
-                                        groupUserName === "qib"
+                                        courseStudent === "qib"
                                             ?
                                             <StepLabel>Pitch deck</StepLabel>
                                             :
@@ -3162,7 +3148,7 @@ class CreateProject extends Component {
                                     </FlexView>
 
                                     {
-                                        currentUser.type === DB_CONST.TYPE_ADMIN
+                                        currentStudent.type === DB_CONST.TYPE_PROF
                                             ?
                                             <FlexView marginTop={30}>
                                                 <SelectPitchVisibility/>
@@ -3171,24 +3157,24 @@ class CreateProject extends Component {
                                             null
                                     }
 
-                                    {/** Let the issuer select the group they want to create an offer for */}
+                                    {/** Let the teacher select the course they want to create an offer for */}
                                     {
-                                        createProjectState.groupIssuerCreateOfferFor === "undefined"
+                                        createProjectState.courseTeacherCreateOfferFor === "undefined"
                                             ? null
                                             : params.edit && projectEdited && !isDraftProjectNotSubmitted(projectEdited)
                                             ? null
-                                            : !isIssuer(AuthenticationState.currentUser)
+                                            : !isTeacher(AuthenticationState.currentStudent)
                                                 ? null
-                                                : AuthenticationState.groupsOfMembership === null || AuthenticationState.groupsOfMembership.length === 0
+                                                : AuthenticationState.coursesOfMembership === null || AuthenticationState.coursesOfMembership.length === 0
                                                     ? null
                                                     : <FlexView marginTop={30}>
                                                         <FormControl fullWidth required>
-                                                            <FormLabel>Select group</FormLabel>
-                                                            <Select name="groupIssuerCreateOfferFor" value={createProjectState.groupIssuerCreateOfferFor} margin="dense" input={<OutlinedInput/>} onChange={this.onInputChanged}>
+                                                            <FormLabel>Select course</FormLabel>
+                                                            <Select name="courseTeacherCreateOfferFor" value={createProjectState.courseTeacherCreateOfferFor} margin="dense" input={<OutlinedInput/>} onChange={this.onInputChanged}>
                                                                 {
-                                                                    AuthenticationState.groupsOfMembership.map(
-                                                                        groupOfMembership =>
-                                                                            <MenuItem key={groupOfMembership.group.anid} value={groupOfMembership.group.anid}>{groupOfMembership.group.displayName}</MenuItem>
+                                                                    AuthenticationState.coursesOfMembership.map(
+                                                                        courseOfMembership =>
+                                                                            <MenuItem key={courseOfMembership.course.anid} value={courseOfMembership.course.anid}>{courseOfMembership.course.displayName}</MenuItem>
                                                                     )
                                                                 }
                                                             </Select>
@@ -3232,20 +3218,20 @@ class CreateProject extends Component {
                                         /**
                                          * Select expiry date
                                          *
-                                         * For QIB: Hide this section as the group admins will set
+                                         * For QIB: Hide this section as the course Teachers will set
                                          * the default expiry date for all the projects.
                                          */
                                     }
                                     {
-                                        groupUserName === "qib"
+                                        courseStudent === "qib"
                                             ?
                                             <FlexView marginTop={30}>
                                                 <Row noGutters style={{width: "100%"}}>
                                                     <Col xs={12} sm={12} md={12} lg={12}>
                                                         <Typography align="left" variant="body2" color="textSecondary">
                                                             Pitch expiry
-                                                            date: {utils.dateInReadableFormat(groupProperties.settings.defaultPitchExpiryDate)} (set
-                                                            by QIB admins)
+                                                            date: {utils.dateInReadableFormat(courseProperties.settings.defaultPitchExpiryDate)} (set
+                                                            by QIB Teachers)
                                                         </Typography>
                                                     </Col>
                                                 </Row>
@@ -3306,7 +3292,7 @@ class CreateProject extends Component {
                                                                         <FlexView column>
                                                                             <Typography variant="body1" align="left" color="primary">
                                                                                 {
-                                                                                    currentUser.type === DB_CONST.TYPE_ADMIN
+                                                                                    currentStudent.type === DB_CONST.TYPE_PROF
                                                                                         ?
                                                                                         null
                                                                                         :
@@ -3322,7 +3308,7 @@ class CreateProject extends Component {
                                                                                 }
                                                                             </Typography>
                                                                             {
-                                                                                currentUser.type !== DB_CONST.TYPE_ADMIN
+                                                                                currentStudent.type !== DB_CONST.TYPE_PROF
                                                                                     ?
                                                                                     null
                                                                                     :
@@ -3332,7 +3318,7 @@ class CreateProject extends Component {
                                                                                             <Typography variant="body1" align="left" color="primary">
                                                                                                 Pitch phase has ended.
                                                                                                 Waiting
-                                                                                                for the issuer to create
+                                                                                                for the teacher to create
                                                                                                 pledge.
                                                                                             </Typography>
                                                                                             :
@@ -3568,11 +3554,11 @@ class CreateProject extends Component {
                                          */
                                     }
                                     {
-                                        groupUserName === "qib"
+                                        courseStudent === "qib"
                                         || (
-                                            !groupUserName
-                                            && currentUser.type === DB_CONST.TYPE_ADMIN
-                                            && currentUser.superAdmin
+                                            !courseStudent
+                                            && currentStudent.type === DB_CONST.TYPE_PROF
+                                            && currentStudent.superTeacher
                                         )
                                             ?
                                             <FlexView marginTop={45}>
@@ -3580,7 +3566,7 @@ class CreateProject extends Component {
                                                     <FormLabel>What special news should Briony talk about when she mentions your investment raise at the QIB?</FormLabel>
                                                     <TextField name="qibSpecialNews" value={createProjectState.qibSpecialNews} placeholder="This would be a good place to mention if you have already made progress in your funding round." fullWidth variant="outlined" onChange={this.onInputChanged} multiline rowsMax={3}
                                                         error={
-                                                            groupUserName === "qib"
+                                                            courseStudent === "qib"
                                                             && createProjectState.qibSpecialNews === PITCH_PUBLISH_FALSE_INVALID_FUND
                                                             && createProjectState.qibSpecialNews.trim().length === 0
                                                         }
@@ -3713,7 +3699,7 @@ class CreateProject extends Component {
                                             </Typography>
 
                                             {
-                                                groupUserName !== "qib"
+                                                courseStudent !== "qib"
                                                     ?
                                                     null
                                                     :
@@ -3870,11 +3856,11 @@ class CreateProject extends Component {
                                     (
                                         createProjectState.activeStep === STEP_PITCH_DECK
                                             ?
-                                            // Pitch deck (other groups)
+                                            // Pitch deck (other courses)
                                             // One-pager (for QIB only)
                                             <Col xs={12} sm={12} md={{span: 10, offset: 1}} lg={{span: 6, offset: 3}} style={{marginTop: 30}}>
                                                 {
-                                                    groupUserName === "qib"
+                                                    courseStudent === "qib"
                                                         ?
                                                         // QIB pitch deck which is also known as one-pager
                                                         <FlexView column>
@@ -3956,7 +3942,7 @@ class CreateProject extends Component {
                                                             </FlexView>
                                                         </FlexView>
                                                         :
-                                                        // other groups pitch deck
+                                                        // other courses pitch deck
                                                         <FlexView column>
                                                             <Typography color="primary" variant="h6" align="left">Step 3: Upload pitch deck</Typography>
 
@@ -4083,11 +4069,11 @@ class CreateProject extends Component {
                                             (
                                                 createProjectState.activeStep === STEP_PITCH_SUPPORTING_DOCUMENTS
                                                     ?
-                                                    // Supporting documents (other groups)
+                                                    // Supporting documents (other courses)
                                                     // Pitch deck (for QIB only)
                                                     <Col xs={12} sm={12} md={{span: 10, offset: 1}} lg={{span: 6, offset: 3}} style={{marginTop: 30}}>
                                                         {
-                                                            groupUserName === "qib"
+                                                            courseStudent === "qib"
                                                                 ?
                                                                 // QIB supporting document which is also known as pitch deck
                                                                 <FlexView column>
@@ -4159,7 +4145,7 @@ class CreateProject extends Component {
                                                                     {/** Divider */}
                                                                     <Divider style={{marginTop: 20, marginBottom: 20}}/></FlexView>
                                                                 :
-                                                                // Other groups supporting documents
+                                                                // Other courses supporting documents
                                                                 <FlexView column>
                                                                     <Typography color="primary" variant="h6" align="left">Step 4: Upload supporting documents</Typography>
 
@@ -4316,11 +4302,11 @@ class CreateProject extends Component {
                                                                                     className={css(sharedStyles.nav_link_hover)}
                                                                                     style={{
                                                                                         color:
-                                                                                            !groupProperties
+                                                                                            !courseProperties
                                                                                                 ?
                                                                                                 colors.primaryColor
                                                                                                 :
-                                                                                                groupProperties.settings.primaryColor
+                                                                                                courseProperties.settings.primaryColor
                                                                                     }}
                                                                                 >
                                                                                     terms and conditions.
@@ -4520,7 +4506,7 @@ class UploadingDialog extends Component {
     render() {
 
         const {
-            groupUserName,
+            courseStudent,
 
             open,
             uploadFileMode,
@@ -4532,7 +4518,7 @@ class UploadingDialog extends Component {
             params,
             projectEdited, // pass in if in edit mode
             projectID,
-            currentUser,
+            currentStudent,
 
             ...other
         } = this.props;
@@ -4584,9 +4570,9 @@ class UploadingDialog extends Component {
                             <FlexView width="100%" hAlignContent="center" marginBottom={20} marginRight={20} marginLeft={20}>
                                 <NavLink
                                     to={
-                                        groupUserName
+                                        courseStudent
                                             ?
-                                            ROUTES.PROJECT_DETAILS.replace(":groupUserName", groupUserName).replace(":projectID", projectID)
+                                            ROUTES.PROJECT_DETAILS.replace(":courseStudent", courseStudent).replace(":projectID", projectID)
                                             :
                                             ROUTES.PROJECT_DETAILS_INVEST_WEST_SUPER.replace(":projectID", projectID)
                                     }
@@ -4610,21 +4596,21 @@ class UploadingDialog extends Component {
                                 </NavLink>
                                 <NavLink
                                     to={
-                                        currentUser.type === DB_CONST.TYPE_ISSUER
+                                        currentStudent.type === DB_CONST.TYPE_TEACHER
                                             ?
-                                            groupUserName
+                                            courseStudent
                                                 ?
-                                                `${ROUTES.DASHBOARD_ISSUER.replace(":groupUserName", groupUserName)}?tab=Home`
+                                                `${ROUTES.DASHBOARD_TEACHER.replace(":courseStudent", courseStudent)}?tab=Home`
                                                 :
-                                                `${ROUTES.DASHBOARD_ISSUER_INVEST_WEST_SUPER}?tab=Home`
+                                                `${ROUTES.DASHBOARD_TEACHER_INVEST_WEST_SUPER}?tab=Home`
                                             :
-                                            currentUser.type === DB_CONST.TYPE_ADMIN
+                                            currentStudent.type === DB_CONST.TYPE_PROF
                                                 ?
-                                                groupUserName
+                                                courseStudent
                                                     ?
-                                                    `${ROUTES.ADMIN.replace(":groupUserName", groupUserName)}?tab=Home`
+                                                    `${ROUTES.PROF.replace(":courseStudent", courseStudent)}?tab=Home`
                                                     :
-                                                    `${ROUTES.ADMIN_INVEST_WEST_SUPER}?tab=Home`
+                                                    `${ROUTES.TEACHER_STUDENT_SUPER}?tab=Home`
                                                 :
                                                 ""
                                     }
@@ -4642,11 +4628,11 @@ class UploadingDialog extends Component {
     renderUploadFileMode = () => {
 
         const {
-            groupUserName,
+            courseStudent,
             uploadFileMode,
             params,
             projectEdited,
-            currentUser
+            currentStudent
         } = this.props;
 
         switch (uploadFileMode) {
@@ -4671,7 +4657,7 @@ class UploadingDialog extends Component {
                 if (params.edit && projectEdited) {
                     if (projectEdited.status !== DB_CONST.PROJECT_STATUS_DRAFT) {
                         return <Typography variant="body1" color="textSecondary" align="left">Your offer has been successfully updated.</Typography>;
-                    } else if (currentUser.type === DB_CONST.TYPE_ADMIN) {
+                    } else if (currentStudent.type === DB_CONST.TYPE_PROF) {
                         return <Typography variant="body1" color="textSecondary" align="left">
                             {
                                 "Your offer has been uploaded.\n" +
@@ -4683,7 +4669,7 @@ class UploadingDialog extends Component {
                             <Typography variant="body1" color="textSecondary" align="left">
                                 {
                                     "Your offer has been uploaded.\n" +
-                                    "It will not be published until the group administrator has approved" +
+                                    "It will not be published until the course administrator has approved" +
                                     " it.\n" +
                                     "You will be notified once approved.\n"
                                 }
@@ -4692,9 +4678,9 @@ class UploadingDialog extends Component {
                             <Typography variant="body1" color="textSecondary" align="left">Invite investors to register and view your pitch with the following link:</Typography>
                             <br/>
                             <Box border={1} bgcolor={colors.gray_100} padding="6px">
-                                <CustomLink url={Routes.constructSignUpRoute(groupUserName)} target="_blank" color="none" activeColor="none" activeUnderline={true} component="a"
+                                <CustomLink url={Routes.constructSignUpRoute(courseStudent)} target="_blank" color="none" activeColor="none" activeUnderline={true} component="a"
                                     childComponent={
-                                        <Typography variant="body1" color="textSecondary" align="left">{process.env.REACT_APP_PUBLIC_URL + Routes.constructSignUpRoute(groupUserName)}</Typography>
+                                        <Typography variant="body1" color="textSecondary" align="left">{process.env.REACT_APP_PUBLIC_URL + Routes.constructSignUpRoute(courseStudent)}</Typography>
                                     }
                                 />
                             </Box>
@@ -4704,13 +4690,13 @@ class UploadingDialog extends Component {
                     return <Typography variant="body1" color="textSecondary" align="left">
                         {/** Note: This is unnecessary --> Consider removing it. */}
                         {
-                            currentUser.type === DB_CONST.TYPE_ADMIN
+                            currentStudent.type === DB_CONST.TYPE_PROF
                                 ?
                                 "Your offer has been uploaded.\n" +
                                 "Please double check and make it go live."
                                 :
                                 "Your offer has been uploaded.\n" +
-                                "It will not be published until the group administrator has approved it.\n" +
+                                "It will not be published until the course administrator has approved it.\n" +
                                 "You will be notified once approved."
                         }
                     </Typography>;

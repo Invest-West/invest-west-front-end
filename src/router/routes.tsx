@@ -13,48 +13,90 @@ export interface CreateProjectRouteParams {
 export default class Routes {
     static baseGroup: string = "/groups/:groupUserName";
 
+    static baseCourse: string = "/courses/:courseName";
+
     static nonGroupFront: string = "/";
     static groupFront: string = `${Routes.baseGroup}`;
+
+    static nonCourseFront: string = "/courses";
+    static courseFront: string = `${Routes.baseCourse}`;
 
     static nonGroupSignIn: string = "/groups/invest-west/signin";
     static groupSignIn: string = `${Routes.baseGroup}/signin`;
     static superAdminSignIn: string = "/signin/super-admin";
 
+    static nonCourseSignIn: string = "/courses/signin";
+    static courseSignIn: string = `${Routes.baseCourse}/signin`;
+    static superTeacherSignIn: string = "/signin/super-teacher";
+
     static nonGroupSignUp:string = "/groups/invest-west/signup";
     static groupSignUp: string = `${Routes.baseGroup}/signup/:id?`;
+
+    static nonCourseSignUp: string = "/courses/signup";
+    static courseSignUp: string = `${Routes.baseCourse}/signup/:id?`;
 
     static nonGroupAdminDashboard: string = "/admin";
     static groupAdminDashboard: string = `${Routes.baseGroup}/admin`;
 
+    static nonCourseTeacherDashboard: string = "/teacher";
+    static courseTeacherDashboard: string = `${Routes.baseCourse}/teacher`;
+
     static groupIssuerDashboard: string = `${Routes.baseGroup}/dashboard/issuer`;
+    static courseStudentDashboard: string = `${Routes.baseCourse}/dashboard/student`;
 
     static groupInvestorDashboard: string = `${Routes.baseGroup}/dashboard/investor`;
+    static courseStudentViewerDashboard: string = `${Routes.baseCourse}/dashboard/student-viewer`;
 
     static nonGroupViewUserProfile: string = "/view-profile/:userID";
     static groupViewUserProfile: string = `${Routes.baseGroup}/view-profile/:userID`;
 
+    static nonCourseViewStudentProfile: string = "/view-profile/:studentID";
+    static courseViewStudentProfile: string = `${Routes.baseCourse}/view-profile/:studentID`;
+
     static nonGroupEditUserProfile: string = "/edit-profile/:userID";
     static groupEditUserProfile: string = `${Routes.baseGroup}/edit-profile/:userID`;
+
+    static nonCourseEditStudentProfile: string = "/edit-profile/:studentID";
+    static courseEditStudentProfile: string = `${Routes.baseCourse}/edit-profile/:studentID`;
 
     static nonGroupCreateOffer: string = "/create-offer";
     static groupCreateOffer: string = `${Routes.baseGroup}/create-offer`;
 
+    static nonCourseCreateOffer: string = "/create-offer";
+    static courseCreateOffer: string = `${Routes.baseCourse}/create-offer`;
+
     static nonGroupViewOffer: string = "/projects/:projectID";
     static groupViewOffer: string = `${Routes.baseGroup}/projects/:projectID`;
+
+    static nonCourseViewOffer: string = "/projects/:projectID";
+    static courseViewOffer: string = `${Routes.baseCourse}/projects/:projectID`;
 
     static nonGroupViewPledge: string = "/pledge";
     static groupViewPledge: string = `${Routes.baseGroup}/pledge`;
 
+    static nonCourseViewPledge: string = "/student-pledge";
+    static courseViewPledge: string = `${Routes.baseCourse}/student-pledge`;
+
     static nonGroupViewGroup: string = "/view-group-details/:viewedGroupUserName";
     static groupViewGroup: string = `${Routes.baseGroup}/view-group-details/:viewedGroupUserName`;
+
+    static nonCourseViewCourse: string = "/view-course-details/:viewedCourseStudentName";
+    static courseViewCourse: string = `${Routes.baseCourse}/view-course-details/:viewedCourseStudentName`;
 
     static nonGroupViewResourceDetail: string = "/resources/:resourceName";
     static groupViewResourceDetail: string = `${Routes.baseGroup}/resources/:resourceName`;
 
+    static nonCourseViewResourceDetail: string = "/resources/:resourceStudent";
+    static courseViewResourceDetail: string = `${Routes.baseCourse}/resources/:resourceStudent`;
+
     static nonGroupContactUs: string = "/contact-us";
     static groupContactUs: string = `${Routes.baseGroup}/contact-us`;
 
+    static nonCourseContactUs: string = "/contact-us-student";
+    static courseContactUs: string = `${Routes.baseCourse}/contact-us-student`;
+
     static groupHelp: string = `${Routes.baseGroup}/help`;
+    static courseHelp: string = `${Routes.baseCourse}/help`;
 
     static nonGroupTermsOfUse: string = "/terms-of-use";
     static nonGroupPrivacyPolicy: string = "/privacy-policy";
@@ -62,7 +104,14 @@ export default class Routes {
     static nonGroupCreatePitchTermsAndConditions: string = "/create-project-terms-and-conditions";
     static nonGroupMarketingPreferences: string = "/marketing-preferences";
 
+    static nonCourseTermsOfUse: string = "/student-terms-of-use";
+    static nonCoursePrivacyPolicy: string = "/student-privacy-policy";
+    static nonCourseRiskWarning: string = "/student-risk-warning-footer";
+    static nonCourseCreatePitchTermsAndConditions: string = "/student-create-project-terms-and-conditions";
+    static nonCourseMarketingPreferences: string = "/student-marketing-preferences";
+
     static nonGroupAuthAction: string = "/auth/action";
+    static nonCourseAuthAction: string = "/student-auth/action";
 
     static error404: string = "/error/404";
 
@@ -459,50 +508,101 @@ export const ORIGINAL_WEB_URL = "https://investwest.online";
 // angel network path INCLUDING Invest West angel network
 export const GROUP_PATH = "/groups/:groupUserName";
 
+// network path for Courses
+export const COURSE_PATH = "/courses/:courseName";
+
 // front with angel network logo
 export const FRONT = GROUP_PATH;
+
+// front with student new logo
+export const FRONT_STUDENT = COURSE_PATH;
+
 // front with Invest West page --> Only for Invest West super admins
 export const FRONT_INVEST_WEST_SUPER = "/";
+
+// front with Student only for default
+export const FRONT_STUDENT_DEFAULT = "/";
 
 // sign in with angel network logo --> only allow admins and users belong to this angel network to login
 export const SIGN_IN = `${GROUP_PATH}/signin`;
 // sign in with Invest West logo --> only allow Invest West super admins to login
 export const SIGN_IN_INVEST_WEST_SUPER = "/signin";
 
+// sign in with Student logo --> only allow students to login
+export const SIGN_IN_STUDENT = `${COURSE_PATH}/signin`;
+
+// sign in with Student logo --> only allow students super admins to login
+export const SIGN_IN_STUDENT_SUPER = "/signin";
+
 // admin dashboard of an angel network --> only allow admins of the angel network to interact
 export const ADMIN = `${GROUP_PATH}/admin`;
 // issuer dashboard of Invest West --> only allow Invest West super admins to interact
 export const ADMIN_INVEST_WEST_SUPER = "/admin";
+
+// Teacher dashboard only allow admins
+export const TEACHER = `${COURSE_PATH}/teacher`;
+// Teacher dashboard only allow admins
+export const TEACHER_STUDENT_SUPER = "/teacher";
 
 // issuer dashboard of an angel network --> only allow issuers of the angel network to interact
 export const DASHBOARD_ISSUER = `${GROUP_PATH}/dashboard/issuer`;
 // issuer dashboard of Invest West --> only allow Invest West super admins to interact
 export const DASHBOARD_ISSUER_INVEST_WEST_SUPER = "/dashboard/issuer";
 
+// student dashboard of an angel network --> only allow students of the angel network to interact
+export const DASHBOARD_STUDENT = `${COURSE_PATH}/dashboard/student`;
+// student dashboard of Invest West --> only allow Invest West super admins to interact
+export const DASHBOARD_STUDENT_INVEST_WEST_SUPER = "/dashboard/student";
+
 // investor dashboard of an angel network --> only allow investors of the angel network to interact
 export const DASHBOARD_INVESTOR = `${GROUP_PATH}/dashboard/investor`;
 // investor dashboard of Invest West --> only allow Invest West super admins to interact
 export const DASHBOARD_INVESTOR_INVEST_WEST_SUPER = "/dashboard/investor";
+
+// student viewer dashboard of an angel network --> only allow students of the angel network to interact
+export const DASHBOARD_STUDENT_VIEWER = `${COURSE_PATH}/dashboard/student-viewer`;
+// student viewer dashboard of Invest West --> only allow Invest West super admins to interact
+export const DASHBOARD_STUDENT_VIEWER_INVEST_WEST_SUPER = "/dashboard/student-viewer";
 
 // sign up page for an angel network --> only users who have been invited by this angel network can see
 export const SIGN_UP = `${GROUP_PATH}/signup/:id`;
 // sign up page for Invest West --> only Invest West super admins can interact
 export const SIGN_UP_INVEST_WEST_SUPER = "/signup/:id";
 
+// sign up page for a student --> only students can interact
+export const SIGN_UP_STUDENT = `${COURSE_PATH}/signup/:id`;
+// sign up page for a student --> only students super admins can interact
+export const SIGN_UP_STUDENT_SUPER = "/signup/:id";
+
 // view a user's profile while logged in under an angel network
 export const USER_PROFILE = `${GROUP_PATH}/view-profile/:userID`;
 // view a user's profile while logged in under Invest West super admins
 export const USER_PROFILE_INVEST_WEST_SUPER = "/view-profile/:userID";
+
+// view a student's profile while not logged in
+export const STUDENT_PROFILE = `${COURSE_PATH}/view-profile/:userID`;
+// view a student's profile while not logged in
+export const STUDENT_PROFILE_STUDENT_SUPER = "/view-profile/:userID";
 
 // edit a user's profile for group admins
 export const EDIT_USER_PROFILE = `${GROUP_PATH}/edit-profile/:userID`;
 // edit a user's profile for super admins
 export const EDIT_USER_PROFILE_INVEST_WEST_SUPER = "/edit-profile/:userID";
 
+// edit a student's profile for group admins
+export const EDIT_STUDENT_PROFILE = `${COURSE_PATH}/edit-profile/:userID`;
+// edit a student's profile for super admins
+export const EDIT_STUDENT_PROFILE_STUDENT_SUPER = "/edit-profile/:userID";
+
 // pledge under an angel network
 export const PLEDGE = `${GROUP_PATH}/pledge`;
 // pledge under Invest West Invest West super admins
 export const PLEDGE_INVEST_WEST_SUPER = "/pledge";
+
+//  pledge under a course
+export const PLEDGE_STUDENT = `${COURSE_PATH}/pledge`;
+//  pledge under a course
+export const PLEDGE_STUDENT_SUPER = "/pledge";
 
 // create an offer under an angel network
 export const CREATE_OFFER = `${GROUP_PATH}/create-offer`;
@@ -512,19 +612,39 @@ export const GROUP_ADMIN_CREATE_OFFER_ON_BEHALF_OF_ISSUER = `${CREATE_OFFER}?adm
 export const CREATE_OFFER_INVEST_WEST_SUPER = "/create-offer";
 export const EDIT_OFFER_INVEST_WEST_SUPER = `${CREATE_OFFER_INVEST_WEST_SUPER}?edit=:projectID`;
 
+// create an offer under a course
+export const CREATE_OFFER_STUDENT = `${COURSE_PATH}/create-offer`;
+export const EDIT_OFFER_STUDENT = `${CREATE_OFFER_STUDENT}?edit=:projectID`;
+export const COURSE_TEACHER_CREATE_OFFER_ON_BEHALF_OF_TEACHER = `${CREATE_OFFER_STUDENT}?teacher=:teacherID&teacher=:teacherID`;
+// create an offer under Invest West super admins
+export const CREATE_OFFER_STUDENT_SUPER = "/create-offer";
+export const EDIT_OFFER_STUDENT_SUPER = `${CREATE_OFFER_STUDENT_SUPER}?edit=:projectID`;
+
 // view offer's details under an angel network
 export const PROJECT_DETAILS = `${GROUP_PATH}/projects/:projectID`;
 // view offer's details under Invest West super admins
 export const PROJECT_DETAILS_INVEST_WEST_SUPER = "/projects/:projectID";
 
+// view offer's details under a course
+export const PROJECT_COURSE_DETAILS = `${COURSE_PATH}/projects/:projectID`;
+// view offer's details under a course admins
+export const PROJECT_COURSE_DETAILS_STUDENT_SUPER = "/projects/:projectID";
+
 export const VIEW_GROUP_DETAILS = `${GROUP_PATH}/view-group-details/:groupID`;
 export const VIEW_GROUP_DETAILS_INVEST_WEST_SUPER = "/view-group-details/:groupID";
+
+// view resource details under an course
+export const VIEW_COURSE_DETAILS = `${COURSE_PATH}/view-course-details/:courseID`;
+export const VIEW_COURSE_DETAILS_STUDENT_SUPER = "/view-course-details/:courseID";
 
 export const CONTACT_US = `${GROUP_PATH}/contact-us`;
 export const CONTACT_US_INVEST_WEST_SUPER = "/contact-us";
 
 export const CONTACT_US_2 = `${GROUP_PATH}/contact-us-2`;
 export const CONTACT_US_INVEST_WEST_SUPER_2 = "/contact-us-2";
+
+export const CONTACT_US_STUDENT = `${COURSE_PATH}/contact-us`;
+export const CONTACT_US_STUDENT_SUPER = "/contact-us";
 
 export const HELP = `${GROUP_PATH}/help`;
 export const HELP_INVEST_WEST_SUPER = "/help";
@@ -533,6 +653,7 @@ export const TERMS_OF_USE = "/terms-of-use";
 export const PRIVACY_POLICY = "/privacy-policy";
 export const RISK_WARNING = "/risk-warning-footer";
 export const CREATE_PITCH_TERMS_AND_CONDITIONS = "/create-project-terms-and-conditions";
+export const CREATE_STUDENT_PROJECT_TERMS_AND_CONDITIONS = "/create-student-project-terms-and-conditions";
 export const ABOUT_US = "/about-us";
 export const MARKETING_PREFERENCES = "/marketing-preferences";
 

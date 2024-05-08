@@ -6,15 +6,15 @@ import {
     CourseDetailsEvents
 } from "./CourseDetailsActions";
 import CourseProperties from "../../models/course_properties";
-import {InvitedUserWithProfile} from "../../models/invited_user";
-import {ProjectInstance} from "../../models/project";
+import {InvitedStudentWithProfile} from "../../models/invited_student";
+import {StudentProjectInstance} from "../../models/studentProject";
 import Error from "../../models/error";
 import {AccessRequestInstance} from "../../models/access_request";
 
 export interface CourseDetailsState {
     course?: CourseProperties;
-    members?: InvitedUserWithProfile[];
-    offers?: ProjectInstance[];
+    members?: InvitedStudentWithProfile[];
+    offers?: StudentProjectInstance[];
     accessRequestsInstances?: AccessRequestInstance[];
 
     loadingData: boolean;

@@ -19,7 +19,7 @@ import {getCourseRouteTheme, ManageCourseUrlState} from "../../redux-store/reduc
 import {loadData, removeAccessRequest, sendAccessRequest} from "./CourseDetailsActions";
 import {getCourseLogo} from "../../models/course_properties";
 import {AuthenticationState} from "../../redux-store/reducers/authenticationReducer";
-import Admin, {isAdmin} from "../../models/admin";
+import Teacher, {isTeacher} from "../../models/teacher";
 import {dateInReadableFormat} from "../../utils/utils";
 import CourseOfMembership, {getHomeCourse} from "../../models/course_of_membership";
 import {CheckCircle} from "@material-ui/icons";
@@ -35,7 +35,7 @@ interface CourseDetailsProps {
     ManageCourseUrlState: ManageCourseUrlState;
     AuthenticationState: AuthenticationState;
     CourseDetailsLocalState: CourseDetailsState;
-    loadData: (viewedCourseUserName: string) => any;
+    loadData: (viewedCourseStudent: string) => any;
     sendAccessRequest: () => any;
     removeAccessRequest: () => any;
 }
@@ -51,7 +51,7 @@ const mapStateToProps = (state: AppState) => {
 
 const mapDispatchToProps = (dispatch: ThunkDispatch<any, any, AnyAction>) => {
     return {
-        loadData: (viewedCourseUserName: string) => dispatch(loadData(viewedCourseUserName)),
+        loadData: (viewedCourseStudent: string) => dispatch(loadData(viewedCourseStudent)),
         sendAccessRequest: () => dispatch(sendAccessRequest()),
         removeAccessRequest: () => dispatch(removeAccessRequest())
     }
@@ -60,7 +60,7 @@ const mapDispatchToProps = (dispatch: ThunkDispatch<any, any, AnyAction>) => {
 class CourseDetails extends Component<CourseDetailsProps & Readonly<RouteComponentProps<RouteParams>>, any> {
 
     componentDidMount() {
-        this.props.loadData(this.props.match.params.viewedCourseUserName);
+        this.props.loadData(this.props.match.params.viewedCourseStudent);
     }
 
     render() {
@@ -73,13 +73,13 @@ class CourseDetails extends Component<CourseDetailsProps & Readonly<RouteCompone
             removeAccessRequest
         } = this.props;
 
-        const currentUser = AuthenticationState.currentUser;
+        const currentStudent = AuthenticationState.currentStudent;
 
-        if (!currentUser) {
+        if (!currentStudent) {
             return null;
         }
 
-        const currentAdmin: Admin | null = isAdmin(currentUser);
+        const currentTeacher: Teacher | null = isTeacher(currentStudent);
 
         // loading
         if (isLoadingData(CourseDetailsLocalState)) {
@@ -98,7 +98,7 @@ class CourseDetails extends Component<CourseDetailsProps & Readonly<RouteCompone
         }
 
         let courseMember: CourseOfMembership | undefined = undefined;
-        if (!currentAdmin) {
+        if (!currentTeacher) {
             courseMember = AuthenticationState.coursesOfMembership.find(
                 courseOfMembership => courseOfMembership.course.anid === CourseDetailsLocalState.course?.anid);
         }
@@ -134,7 +134,7 @@ class CourseDetails extends Component<CourseDetailsProps & Readonly<RouteCompone
 
                                             {/** Home/platform member + joined date (available for investor and issuer) */}
                                             {
-                                                currentAdmin
+                                                currentTeacher
                                                     ? null
                                                     : !courseMember
                                                     ? <Box marginTop="25px">

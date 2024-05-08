@@ -1,27 +1,27 @@
 import Api, {ApiRoutes} from "../Api";
 
 export interface FetchCoursesParams {
-    groupIds?: string[];
+    courseIds?: string[];
     name?: string;
 }
 
-export default class GroupRepository {
+export default class CourseRepository {
 
     /**
-     * Get group
+     * Get course
      *
-     * @param groupUserName
+     * @param courseStudent
      */
-    public async getGroup(groupUserName: string) {
+    public async getCourse(courseStudent: string) {
         return await new Api()
             .request(
                 "get",
-                ApiRoutes.retrieveGroup.replace(":groupUserName", groupUserName)
+                ApiRoutes.retrieveCourse.replace(":courseStudent", courseStudent)
             );
     }
 
     /**
-     * Fetch groups
+     * Fetch courses
      *
      * @param params
      */
@@ -38,15 +38,15 @@ export default class GroupRepository {
     }
 
     /**
-     * Fetch group members
+     * Fetch course members
      *
-     * @param groupID
+     * @param courseID
      */
-    public async fetchGroupMembers(groupID: string | "system") {
+    public async fetchCourseMembers(courseID: string | "system") {
         return await new Api()
             .request(
                 "get",
-                ApiRoutes.listGroupMembers.replace(":group", groupID)
+                ApiRoutes.listCourseMembers.replace(":course", courseID)
             );
     }
 }

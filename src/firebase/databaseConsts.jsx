@@ -316,6 +316,8 @@ export const EDIT_A_PLEDGE = 2;
  */
 export const USER_TITLES = ["Please select", "Ms.", "Mrs.", "Miss", "Mr.", "Dr.", "Prof."];
 
+export const STUDENT_TITLES = ["Please select", "Ms.", "Mrs.", "Miss", "Mr.", "Dr.", "Prof."];
+
 export const HEAR_ABOUT = ["Please select", "Google", "Newsletter", "Linkedin", "Event"];
 
 /**

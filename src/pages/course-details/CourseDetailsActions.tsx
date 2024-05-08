@@ -1,12 +1,12 @@
 import {Action, ActionCreator, Dispatch} from "redux";
 import CourseProperties from "../../models/course_properties";
-import {InvitedUserWithProfile} from "../../models/invited_user";
+import {InvitedStudentWithProfile} from "../../models/invited_student";
 import {ProjectInstance} from "../../models/project";
 import {AppState} from "../../redux-store/reducers";
 import CourseRepository from "../../api/repositories/CourseRepository";
 import OfferRepository, {FetchProjectsOrderByOptions} from "../../api/repositories/OfferRepository";
 import AccessRequest, {AccessRequestInstance} from "../../models/access_request";
-import Admin, {isAdmin} from "../../models/admin";
+import Teacher, {isTeacher} from "../../models/teacher";
 import AccessRequestRepository from "../../api/repositories/AccessRequestRepository";
 
 export enum CourseDetailsEvents {
@@ -24,7 +24,7 @@ export interface CourseDetailsAction extends Action {
 
 export interface CompleteLoadingDataAction extends CourseDetailsAction {
     course?: CourseProperties;
-    members?: InvitedUserWithProfile[];
+    members?: InvitedStudentWithProfile[];
     offers?: ProjectInstance[];
     accessRequestInstances?: AccessRequestInstance[];
     error?: string;
@@ -40,7 +40,7 @@ export interface CompleteRemovingAccessRequestAction extends CourseDetailsAction
     updatedAccessRequestInstances?: AccessRequestInstance[]
 }
 
-export const loadData: ActionCreator<any> = (courseUserName: string) => {
+export const loadData: ActionCreator<any> = (courseStudent: string) => {
     return async (dispatch: Dispatch, getState: () => AppState) => {
         const {
             accessRequestsInstances
@@ -61,13 +61,13 @@ export const loadData: ActionCreator<any> = (courseUserName: string) => {
             return dispatch(completeAction);
         }
 
-        if (courseUserName === undefined) {
+        if (courseStudent === undefined) {
             completeAction.error = "Invalid request.";
             return dispatch(completeAction);
         }
 
         try {
-            const courseResponse = await new CourseRepository().getCourse(courseUserName);
+            const courseResponse = await new CourseRepository().getCourse(courseStudent);
             const course: CourseProperties = courseResponse.data;
 
             const studentsResponse = await new CourseRepository().fetchCourseMembers(course.anid);
@@ -80,9 +80,9 @@ export const loadData: ActionCreator<any> = (courseUserName: string) => {
             });
             const offers: ProjectInstance[] = offersResponse.data;
 
-            const admin: Admin | null = isAdmin(currentStudent);
-            if (!admin || (admin && !admin.superAdmin)) {
-                // student is an issuer, investor, or course admin
+            const teacher: Teacher | null = isTeacher(currentStudent);
+            if (!teacher || (teacher && !teacher.superTeacher)) {
+                // student is an issuer, investor, or course teacher
                 // and access requests have not been fetched
                 if (!accessRequestsInstances) {
                     const accessRequestInstancesResponse = await new AccessRequestRepository().fetchAccessRequests({
@@ -174,7 +174,7 @@ export const removeAccessRequest: ActionCreator<any> = () => {
                 return dispatch(completeAction);
             }
             const accessRequestIndex = currentAccessRequestInstances.findIndex(
-                accessRequestInstance => accessRequestInstance.course.anid === course.anid && accessRequestInstance.user.id === currentUser.id);
+                accessRequestInstance => accessRequestInstance.course.anid === course.anid && accessRequestInstance.student.id === currentStudent.id);
             if (accessRequestIndex === -1) {
                 return dispatch(completeAction);
             }
