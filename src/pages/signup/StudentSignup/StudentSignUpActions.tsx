@@ -1,15 +1,15 @@
 import {Action, ActionCreator, Dispatch} from "redux";
 import {AppState} from "../../redux-store/reducers";
-import InvitedUser from "../../models/invited_user";
-import UserRepository from "../../api/repositories/UserRepository";
+import InvitedStudent from "../../../models/invited_student";
+import StudentRepository from "../../../api/repositories/StudentRepository";
 import React from "react";
-import {checkPasswordStrength, PASSWORD_VERY_WEAK} from "../../utils/passwordUtils";
-import {isValidEmailAddress} from "../../utils/emailUtils";
-import {signIn} from "../../redux-store/actions/authenticationActions";
+import {checkPasswordStrength, PASSWORD_VERY_WEAK} from "../../../utils/passwordUtils";
+import {isValidEmailAddress} from "../../../utils/emailUtils";
+import {signIn} from "../../../redux-store/actions/authenticationActions";
 
 export enum SignUpEvents {
-    LoadingInvitedUser = "SignUpEvents.LoadingInvitedUser",
-    CompleteLoadingInvitedUser = "SignUpEvents.CompleteLoadingInvitedUser",
+    LoadingInvitedStudent = "SignUpEvents.LoadingInvitedStudent",
+    CompleteLoadingInvitedStudent = "SignUpEvents.CompleteLoadingInvitedStudent",
     InputFieldChanged = "SignUpEvents.InputFieldChanged",
     CreatingAccount = "SignUpEvents.CreatingAccount",
     CompleteCreatingAccount = "SignUpEvents.CompleteCreatingAccount"
@@ -19,8 +19,8 @@ export interface SignUpAction extends Action {
 
 }
 
-export interface CompleteLoadingInvitedUserAction extends SignUpAction {
-    invitedUser?: InvitedUser;
+export interface CompleteLoadingInvitedStudentAction extends SignUpAction {
+    invitedStudent?: InvitedStudent;
     error?: string;
 }
 
@@ -33,21 +33,21 @@ export interface CompleteCreatingAccountAction extends SignUpAction {
     error?: string;
 }
 
-export const loadInvitedUser: ActionCreator<any> = (invitedUserID: string) => {
+export const loadInvitedStudent: ActionCreator<any> = (invitedStudentID: string) => {
     return async (dispatch: Dispatch, getState: () => AppState) => {
 
-        const completeAction: CompleteLoadingInvitedUserAction = {
-            type: SignUpEvents.CompleteLoadingInvitedUser
+        const completeAction: CompleteLoadingInvitedStudentAction = {
+            type: SignUpEvents.CompleteLoadingInvitedStudent
         };
 
         try {
             dispatch({
-                type: SignUpEvents.LoadingInvitedUser
+                type: SignUpEvents.LoadingInvitedStudent
             });
 
-            const response = await new UserRepository().retrieveInvitedUser(invitedUserID);
-            const invitedUser: InvitedUser = response.data;
-            completeAction.invitedUser = JSON.parse(JSON.stringify(invitedUser));
+            const response = await new StudentRepository().retrieveInvitedStudent(invitedStudentID);
+            const invitedStudent: InvitedStudent = response.data;
+            completeAction.invitedStudent = JSON.parse(JSON.stringify(invitedStudent));
             return dispatch(completeAction);
         } catch (error) {
             completeAction.error = error.toString();
@@ -76,10 +76,9 @@ export const handleInputFieldChanged: ActionCreator<any> = (event: React.ChangeE
 export const createAccount: ActionCreator<any> = () => {
     return async (dispatch: Dispatch, getState: () => AppState) => {
         const {
-            invitedUser,
-            userType,
+            invitedStudent,
+            studentType,
             title,
-            discover,
             firstName,
             lastName,
             email,
@@ -90,8 +89,8 @@ export const createAccount: ActionCreator<any> = () => {
         } = getState().SignUpLocalState;
 
         const {
-            group
-        } = getState().ManageGroupUrlState;
+            course
+        } = getState().ManageCourseUrlState;
 
         const completeAction: CompleteCreatingAccountAction = {
             type: SignUpEvents.CompleteCreatingAccount
@@ -126,19 +125,19 @@ export const createAccount: ActionCreator<any> = () => {
                 type: SignUpEvents.CreatingAccount
             });
 
-            await new UserRepository().signUp({
-                isPublicRegistration: invitedUser === undefined,
-                invitedUserID: invitedUser !== undefined ? invitedUser.id : undefined,
-                userProfile: {
+            await new StudentRepository().signUp({
+                isPublicRegistration: invitedStudent === undefined,
+                invitedStudentID: invitedStudent !== undefined ? invitedStudent.id : undefined,
+                studentProfile: {
                     title,
                     discover,
                     firstName,
                     lastName,
                     email,
-                    type: userType
+                    type: studentType
                 },
                 password,
-                groupID: invitedUser ? invitedUser.invitedBy : group?.anid ?? "",
+                courseID: invitedStudent ? invitedStudent.invitedBy : course?.anid ?? "",
                 acceptMarketingPreferences: acceptMarketingPreferences,
             });
 

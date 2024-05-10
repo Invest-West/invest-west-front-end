@@ -1,6 +1,6 @@
 import React, {Component} from "react";
 import {connect} from "react-redux";
-import {AppState} from "../../redux-store/reducers";
+import {AppState} from "../../../redux-store/reducers";
 import {ThunkDispatch} from "redux-thunk";
 import {AnyAction} from "redux";
 import {
@@ -17,43 +17,43 @@ import {
 } from "@material-ui/core";
 import {Col, Row} from "react-bootstrap";
 import {css} from "aphrodite";
-import sharedStyles from "../../shared-js-css-styles/SharedStyles";
-import {UserTitles, HearAbout} from "../../models/user";
-import {AuthenticationState, isAuthenticating} from "../../redux-store/reducers/authenticationReducer";
+import sharedStyles from "../../../shared-js-css-styles/SharedStyles";
+import {StudentTitles, HearAbout} from "../../../models/student";
+import {AuthenticationState, isAuthenticating} from "../../../redux-store/reducers/authenticationReducer";
 import {RouteComponentProps} from "react-router-dom";
-import {RouteParams} from "../../router/router";
-import {createAccount, handleInputFieldChanged, loadInvitedUser} from "./SignUpActions";
+import {RouteParams} from "../../../router/router";
+import {createAccount, handleInputFieldChanged, loadInvitedStudent} from "./StudentSignUpActions";
 import {
     hasErrorCreatingAccount,
-    hasErrorLoadingInvitedUser,
+    hasErrorLoadingInvitedStudent,
     isCreatingAccount,
-    isLoadingInvitedUser,
-    notFoundInvitedUser,
+    isLoadingInvitedStudent,
+    notFoundInvitedStudent,
     SignUpState
-} from "./SignUpReducer";
-import {getGroupRouteTheme, ManageGroupUrlState} from "../../redux-store/reducers/manageGroupUrlReducer";
+} from "./StudentSignUpReducer";
+import {getCourseRouteTheme, ManageCourseUrlState} from "../../../redux-store/reducers/manageCourseUrlReducer";
 import {BarLoader} from "react-spinners";
-import Routes from "../../router/routes";
-import CustomLink from "../../shared-js-css-styles/CustomLink";
-import {TYPE_INVESTOR, TYPE_ISSUER} from "../../firebase/databaseConsts";
-import {MediaQueryState} from "../../redux-store/reducers/mediaQueryReducer";
+import Routes from "../../../router/routes";
+import CustomLink from "../../../shared-js-css-styles/CustomLink";
+import {TYPE_STUDENT, TYPE_TEACHER} from "../../../firebase/databaseConsts";
+import {MediaQueryState} from "../../../redux-store/reducers/mediaQueryReducer";
 import HashLoader from "react-spinners/HashLoader";
-import {hasRegistered} from "../../models/invited_user";
-import Footer from "../../shared-components/footer/Footer";
+import {hasRegistered} from "../../../models/invited_student";
+import Footer from "../../../shared-components/footer/Footer";
 
 interface SignUpProps {
-    ManageGroupUrlState: ManageGroupUrlState;
+    ManageCourseUrlState: ManageCourseUrlState;
     MediaQueryState: MediaQueryState;
     AuthenticationState: AuthenticationState;
     SignUpLocalState: SignUpState;
-    loadInvitedUser: (invitedUserID: string) => any;
+    loadInvitedStudent: (invitedStudentID: string) => any;
     handleInputFieldChanged: (event: React.ChangeEvent<HTMLInputElement>) => any;
     createAccount: () => any;
 }
 
 const mapStateToProps = (state: AppState) => {
     return {
-        ManageGroupUrlState: state.ManageGroupUrlState,
+        ManageCourseUrlState: state.ManageCourseUrlState,
         MediaQueryState: state.MediaQueryState,
         AuthenticationState: state.AuthenticationState,
         SignUpLocalState: state.SignUpLocalState
@@ -62,31 +62,31 @@ const mapStateToProps = (state: AppState) => {
 
 const mapDispatchToProps = (dispatch: ThunkDispatch<any, any, AnyAction>) => {
     return {
-        loadInvitedUser: (invitedUserID: string) => dispatch(loadInvitedUser(invitedUserID)),
+        loadInvitedStudent: (invitedStudentID: string) => dispatch(loadInvitedStudent(invitedStudentID)),
         handleInputFieldChanged: (event: React.ChangeEvent<HTMLInputElement>) => dispatch(handleInputFieldChanged(event)),
         createAccount: () => dispatch(createAccount())
     }
 }
 
-class SignUpNew extends Component<SignUpProps & Readonly<RouteComponentProps<RouteParams>>, {}> {
-    // invited user id (optional parameter from the url)
-    // if invitedUserId = undefined --> public registration
-    private invitedUserId: string | undefined;
+class SignUp extends Component<SignUpProps & Readonly<RouteComponentProps<RouteParams>>, {}> {
+    // invited Student id (optional parameter from the url)
+    // if invitedStudentId = undefined --> public registration
+    private invitedStudentId: string | undefined;
 
     componentDidMount() {
         const {
-            loadInvitedUser
+            loadInvitedStudent
         } = this.props;
 
-        this.invitedUserId = this.props.match.params.id;
-        if (this.invitedUserId) {
-            loadInvitedUser(this.invitedUserId);
+        this.invitedStudentId = this.props.match.params.id;
+        if (this.invitedStudentId) {
+            loadInvitedStudent(this.invitedStudentId);
         }
     }
 
     render() {
         const {
-            ManageGroupUrlState,
+            ManageCourseUrlState,
             AuthenticationState,
             MediaQueryState,
             SignUpLocalState,
@@ -94,14 +94,14 @@ class SignUpNew extends Component<SignUpProps & Readonly<RouteComponentProps<Rou
             createAccount
         } = this.props;
 
-        // invited user ID is specified in the url
-        if (this.invitedUserId) {
-            // loading invited user
-            if (isLoadingInvitedUser(SignUpLocalState)) {
+        // invited Student ID is specified in the url
+        if (this.invitedStudentId) {
+            // loading invited Student
+            if (isLoadingInvitedStudent(SignUpLocalState)) {
                 return (
                     <Box>
                         <BarLoader
-                            color={getGroupRouteTheme(ManageGroupUrlState).palette.primary.main}
+                            color={getCourseRouteTheme(ManageCourseUrlState).palette.primary.main}
                             width="100%"
                             height={4}
                         />
@@ -109,10 +109,10 @@ class SignUpNew extends Component<SignUpProps & Readonly<RouteComponentProps<Rou
                 );
             }
 
-            // error loading invited user (network error or not found)
-            // OR user has already signed up
-            if (hasErrorLoadingInvitedUser(SignUpLocalState)
-                || (SignUpLocalState.invitedUser && hasRegistered(SignUpLocalState.invitedUser))
+            // error loading invited Student (network error or not found)
+            // OR Student has already signed up
+            if (hasErrorLoadingInvitedStudent(SignUpLocalState)
+                || (SignUpLocalState.invitedStudent && hasRegistered(SignUpLocalState.invitedStudent))
             ) {
                 return <Box
                     marginTop="30px"
@@ -125,14 +125,14 @@ class SignUpNew extends Component<SignUpProps & Readonly<RouteComponentProps<Rou
                         color="error"
                     >
                         {
-                            // invalid invitedUserID
-                            notFoundInvitedUser(SignUpLocalState)
+                            // invalid invitedStudentID
+                            notFoundInvitedStudent(SignUpLocalState)
                                 ? "This registration URL is not valid."
-                                // user has already signed up
-                                : SignUpLocalState.invitedUser && hasRegistered(SignUpLocalState.invitedUser)
+                                // Student has already signed up
+                                : SignUpLocalState.invitedStudent && hasRegistered(SignUpLocalState.invitedStudent)
                                 ? "You have already registered. Please sign in."
                                 // other error
-                                : `${SignUpLocalState.errorLoadingInvitedUser?.detail}`
+                                : `${SignUpLocalState.errorLoadingInvitedStudent?.detail}`
                         }
                     </Typography>
                     <Box
@@ -143,17 +143,17 @@ class SignUpNew extends Component<SignUpProps & Readonly<RouteComponentProps<Rou
                         variant="contained"
                         color="primary"
                         onClick={() => {
-                            // invalid invitedUserID
-                            if (notFoundInvitedUser(SignUpLocalState)) {
+                            // invalid invitedStudentID
+                            if (notFoundInvitedStudent(SignUpLocalState)) {
                                 this.props.history.replace(
-                                    Routes.constructSignUpRoute(ManageGroupUrlState.groupNameFromUrl ?? "")
+                                    Routes.constructSignUpRoute(ManageCourseUrlState.courseNameFromUrl ?? "")
                                 );
                                 window.location.reload();
                                 return;
                             }
 
-                            // user has already signed up
-                            if (SignUpLocalState.invitedUser && hasRegistered(SignUpLocalState.invitedUser)) {
+                            // Student has already signed up
+                            if (SignUpLocalState.invitedStudent && hasRegistered(SignUpLocalState.invitedStudent)) {
                                 this.props.history.push(Routes.constructSignInRoute(this.props.match.params));
                                 return;
                             }
@@ -163,11 +163,11 @@ class SignUpNew extends Component<SignUpProps & Readonly<RouteComponentProps<Rou
                         }}
                     >
                         {
-                            // invalid invitedUserID
-                            notFoundInvitedUser(SignUpLocalState)
+                            // invalid invitedStudentID
+                            notFoundInvitedStudent(SignUpLocalState)
                                 ? "Go to public registration"
-                                // user has already signed up
-                                : SignUpLocalState.invitedUser && hasRegistered(SignUpLocalState.invitedUser)
+                                // Student has already signed up
+                                : SignUpLocalState.invitedStudent && hasRegistered(SignUpLocalState.invitedStudent)
                                 ? "Sign in"
                                 // other error
                                 : "Retry"
@@ -219,7 +219,7 @@ class SignUpNew extends Component<SignUpProps & Readonly<RouteComponentProps<Rou
                                 variant="h5"
                                 color="primary"
                             >
-                                {`Welcome to ${ManageGroupUrlState.group?.displayName}`}
+                                {`Welcome to ${ManageCourseUrlState.course?.displayName}`}
                             </Typography>
 
                             <Box
@@ -235,7 +235,7 @@ class SignUpNew extends Component<SignUpProps & Readonly<RouteComponentProps<Rou
                                         justifyContent="center"
                                     >
                                         <HashLoader
-                                            color={getGroupRouteTheme(ManageGroupUrlState).palette.primary.main}
+                                            color={getCourseRouteTheme(ManageCourseUrlState).palette.primary.main}
                                         />
                                     </Box>
                                     : null
@@ -258,11 +258,11 @@ class SignUpNew extends Component<SignUpProps & Readonly<RouteComponentProps<Rou
                                     : null
                             }
 
-                            {/** User type */}
+                            {/** Student type */}
                             <FormControl
                                 required
                                 fullWidth
-                                disabled={this.invitedUserId !== undefined}
+                                disabled={this.invitedStudentId !== undefined}
                             >
                                 <InputLabel>
                                     <Typography
@@ -273,8 +273,8 @@ class SignUpNew extends Component<SignUpProps & Readonly<RouteComponentProps<Rou
                                     </Typography>
                                 </InputLabel>
                                 <Select
-                                    name="userType"
-                                    value={SignUpLocalState.userType}
+                                    name="studentType"
+                                    value={SignUpLocalState.studentType}
                                     // @ts-ignore
                                     onChange={handleInputFieldChanged}
                                     margin="dense"
@@ -289,14 +289,14 @@ class SignUpNew extends Component<SignUpProps & Readonly<RouteComponentProps<Rou
                                         Please select
                                     </MenuItem>
                                     <MenuItem
-                                        key={TYPE_INVESTOR}
-                                        value={TYPE_INVESTOR}
+                                        key={TYPE_STUDENT}
+                                        value={TYPE_STUDENT}
                                     >
                                         Invest
                                     </MenuItem>
                                     <MenuItem
-                                        key={TYPE_ISSUER}
-                                        value={TYPE_ISSUER}
+                                        key={TYPE_TEACHER}
+                                        value={TYPE_TEACHER}
                                     >
                                         Raise funds
                                     </MenuItem>
@@ -337,7 +337,7 @@ class SignUpNew extends Component<SignUpProps & Readonly<RouteComponentProps<Rou
                                         Please select
                                     </MenuItem>
                                     {
-                                        UserTitles.map((title, index) => (
+                                        StudentTitles.map((title, index) => (
                                             <MenuItem
                                                 key={index}
                                                 value={title}
@@ -409,7 +409,7 @@ class SignUpNew extends Component<SignUpProps & Readonly<RouteComponentProps<Rou
                                         fullWidth
                                         variant="outlined"
                                         margin="dense"
-                                        disabled={this.invitedUserId !== undefined}
+                                        disabled={this.invitedStudentId !== undefined}
                                         onChange={handleInputFieldChanged}
                                     />
                                 </FormControl>
@@ -530,9 +530,9 @@ class SignUpNew extends Component<SignUpProps & Readonly<RouteComponentProps<Rou
                                         >
                                             Accept&nbsp;
                                             <CustomLink
-                                                url={Routes.nonGroupMarketingPreferences}
+                                                url={Routes.nonCourseMarketingPreferences}
                                                 target="_blank"
-                                                color={getGroupRouteTheme(ManageGroupUrlState).palette.primary.main}
+                                                color={getCourseRouteTheme(ManageCourseUrlState).palette.primary.main}
                                                 activeColor="none"
                                                 activeUnderline
                                                 component="a"
@@ -556,9 +556,9 @@ class SignUpNew extends Component<SignUpProps & Readonly<RouteComponentProps<Rou
                                 >
                                     By signing up, you agree to our&nbsp;
                                     <CustomLink
-                                        url={Routes.nonGroupTermsOfUse}
+                                        url={Routes.nonCourseTermsOfUse}
                                         target="_blank"
-                                        color={getGroupRouteTheme(ManageGroupUrlState).palette.primary.main}
+                                        color={getCourseRouteTheme(ManageCourseUrlState).palette.primary.main}
                                         activeColor="none"
                                         activeUnderline
                                         component="a"
@@ -568,9 +568,9 @@ class SignUpNew extends Component<SignUpProps & Readonly<RouteComponentProps<Rou
                                     />
                                     &nbsp;and&nbsp;
                                     <CustomLink
-                                        url={Routes.nonGroupPrivacyPolicy}
+                                        url={Routes.nonCoursePrivacyPolicy}
                                         target="_blank"
-                                        color={getGroupRouteTheme(ManageGroupUrlState).palette.primary.main}
+                                        color={getCourseRouteTheme(ManageCourseUrlState).palette.primary.main}
                                         activeColor="none"
                                         activeUnderline
                                         component="a"
@@ -593,14 +593,13 @@ class SignUpNew extends Component<SignUpProps & Readonly<RouteComponentProps<Rou
                                     color="primary"
                                     variant="contained"
                                     disabled={
-                                        SignUpLocalState.userType === -1
+                                        SignUpLocalState.studentType === -1
                                         || SignUpLocalState.title === "-1"
                                         || SignUpLocalState.firstName.trim().length === 0
                                         || SignUpLocalState.lastName.trim().length === 0
                                         || SignUpLocalState.email.trim().length === 0
                                         || SignUpLocalState.confirmedEmail.trim().length === 0
                                         || SignUpLocalState.password.trim().length === 0
-                                        || SignUpLocalState.discover === "-1"
                                         || SignUpLocalState.confirmedPassword.trim().length === 0
                                     }
                                     onClick={() => createAccount()}
@@ -620,7 +619,7 @@ class SignUpNew extends Component<SignUpProps & Readonly<RouteComponentProps<Rou
                                     Already have an Invest West account?&nbsp;
                                     <CustomLink
                                         url={Routes.constructSignInRoute(this.props.match.params)}
-                                        color={getGroupRouteTheme(ManageGroupUrlState).palette.primary.main}
+                                        color={getCourseRouteTheme(ManageCourseUrlState).palette.primary.main}
                                         activeColor="none"
                                         activeUnderline
                                         component="nav-link"
@@ -652,4 +651,4 @@ class SignUpNew extends Component<SignUpProps & Readonly<RouteComponentProps<Rou
     }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(SignUpNew);
+export default connect(mapStateToProps, mapDispatchToProps)(SignUpStudent);

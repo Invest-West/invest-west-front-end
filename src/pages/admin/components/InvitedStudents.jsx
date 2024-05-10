@@ -216,8 +216,8 @@ class InvitedStudents extends Component {
                                 value={filterStudentType}
                                 onChange={handleInputChanged}>
                                 <MenuItem value={0}>All</MenuItem>
-                                <MenuItem value={DB_CONST.TYPE_INVESTOR}>Investor</MenuItem>
-                                <MenuItem value={DB_CONST.TYPE_ISSUER}>Issuer</MenuItem>
+                                <MenuItem value={DB_CONST.TYPE_STUDENT}>Student</MenuItem>
+                                <MenuItem value={DB_CONST.TYPE_TEACHER}>Teacher</MenuItem>
                             </Select>
                         </FormControl>
                     </Col>

@@ -50,14 +50,14 @@ export const loadData: ActionCreator<any> = (courseStudent: string) => {
             type: CourseDetailsEvents.LoadingData
         });
 
-        const currentUser = getState().AuthenticationState.currentUser;
+        const currentStudent = getState().AuthenticationState.currentStudent;
 
         const completeAction: CompleteLoadingDataAction = {
             type: CourseDetailsEvents.CompleteLoadingData
         }
 
-        if (!currentUser) {
-            completeAction.error = "Unauthenticated user.";
+        if (!currentStudent) {
+            completeAction.error = "Unauthenticated student.";
             return dispatch(completeAction);
         }
 
@@ -82,7 +82,7 @@ export const loadData: ActionCreator<any> = (courseStudent: string) => {
 
             const teacher: Teacher | null = isTeacher(currentStudent);
             if (!teacher || (teacher && !teacher.superTeacher)) {
-                // student is an issuer, investor, or course teacher
+                // student is an teacher, investor, or course teacher
                 // and access requests have not been fetched
                 if (!accessRequestsInstances) {
                     const accessRequestInstancesResponse = await new AccessRequestRepository().fetchAccessRequests({

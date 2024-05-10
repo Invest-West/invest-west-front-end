@@ -18,20 +18,20 @@ import {
     Typography
 } from "@material-ui/core";
 import {RouteComponentProps} from "react-router-dom";
-import {RouteParams} from "../../router/router";
-import {getGroupRouteTheme, ManageGroupUrlState} from "../../redux-store/reducers/manageGroupUrlReducer";
+import {RouteParams} from "../../../router/router";
+import {getCourseRouteTheme, ManageCourseUrlState} from "../../../redux-store/reducers/manageCourseUrlReducer";
 import {Col, Row} from "react-bootstrap";
 import {css} from "aphrodite";
-import sharedStyles from "../../shared-js-css-styles/SharedStyles";
+import sharedStyles from "../../../shared-js-css-styles/SharedStyles";
 import VisibilityOff from "@material-ui/icons/VisibilityOff";
 import Visibility from "@material-ui/icons/Visibility";
-import Routes from "../../router/routes";
+import Routes from "../../../router/routes";
 import {
     errorSendingResetPassword,
     isProcessingResetPasswordRequest,
     SignInState,
     successfullySentResetPassword
-} from "./SignInReducer";
+} from "./StudentSignInReducer";
 import {
     onSendResetPasswordClick,
     onSignInClick,
@@ -56,7 +56,7 @@ import Footer from "../../shared-components/footer/Footer";
 import '../../shared-js-css-styles/sharedStyles.scss';
 
 interface SignInProps {
-    ManageGroupUrlState: ManageGroupUrlState;
+    ManageCourseUrlState: ManageCourseUrlState;
     AuthenticationState: AuthenticationState;
     MediaQueryState: MediaQueryState;
     SignInLocalState: SignInState;
@@ -71,7 +71,7 @@ interface SignInProps {
 
 const mapStateToProps = (state: AppState) => {
     return {
-        ManageGroupUrlState: state.ManageGroupUrlState,
+        ManageCourseUrlState: state.ManageCourseUrlState,
         AuthenticationState: state.AuthenticationState,
         MediaQueryState: state.MediaQueryState,
         SignInLocalState: state.SignInLocalState
@@ -92,7 +92,7 @@ class SignInNew extends Component<SignInProps & Readonly<RouteComponentProps<Rou
           
     render() {
         const {
-            ManageGroupUrlState,
+            ManageCourseUrlState,
             AuthenticationState,
             MediaQueryState,
             SignInLocalState,
@@ -175,9 +175,9 @@ class SignInNew extends Component<SignInProps & Readonly<RouteComponentProps<Rou
                                     <Box marginTop="35px" marginBottom="45px" >
                                         <Typography variant="body1" align="center" >
                                             By clicking Sign In, you agree to our&nbsp;
-                                            <CustomLink url={Routes.nonGroupTermsOfUse} target="_blank" color={getGroupRouteTheme(ManageGroupUrlState).palette.primary.main} activeColor="none" activeUnderline component="nav-link" childComponent={ "Terms of use" } />
+                                            <CustomLink url={Routes.nonCourseTermsOfUse} target="_blank" color={getCourseRouteTheme(ManageCourseUrlState).palette.primary.main} activeColor="none" activeUnderline component="nav-link" childComponent={ "Terms of use" } />
                                             &nbsp;and&nbsp;
-                                            <CustomLink url={Routes.nonGroupPrivacyPolicy} target="_blank" color={getGroupRouteTheme(ManageGroupUrlState).palette.primary.main} activeColor="none" activeUnderline component="nav-link" childComponent={ "Privacy policy" } />
+                                            <CustomLink url={Routes.nonCoursePrivacyPolicy} target="_blank" color={getCourseRouteTheme(ManageCourseUrlState).palette.primary.main} activeColor="none" activeUnderline component="nav-link" childComponent={ "Privacy policy" } />
                                             .
                                         </Typography>
                                     </Box>
@@ -186,7 +186,7 @@ class SignInNew extends Component<SignInProps & Readonly<RouteComponentProps<Rou
                                         !isAuthenticating(AuthenticationState)
                                             ? null
                                             : <Box display="flex" marginBottom="45px" justifyContent="center" >
-                                                <HashLoader color={getGroupRouteTheme(ManageGroupUrlState).palette.primary.main} />
+                                                <HashLoader color={getCourseRouteTheme(ManageCourseUrlState).palette.primary.main} />
                                             </Box>
                                     }
 
@@ -199,7 +199,7 @@ class SignInNew extends Component<SignInProps & Readonly<RouteComponentProps<Rou
                                     <Box display="flex" marginTop="25px" justifyContent="center" >
                                         <Typography variant="body1" >
                                             Don't have an Invest West account? &nbsp;
-                                            <CustomLink url={Routes.constructSignUpRoute(ManageGroupUrlState.groupNameFromUrl ?? "")} color={getGroupRouteTheme(ManageGroupUrlState).palette.primary.main} activeColor="none" activeUnderline component="nav-link" childComponent={ "Sign up" } />
+                                            <CustomLink url={Routes.constructSignUpRoute(ManageCourseUrlState.courseNameFromUrl ?? "")} color={getCourseRouteTheme(ManageCourseUrlState).palette.primary.main} activeColor="none" activeUnderline component="nav-link" childComponent={ "Sign up" } />
                                         </Typography>
                                     </Box>
 
@@ -232,7 +232,7 @@ export default connect(mapStateToProps, mapDispatchToProps)(SignInNew);
 class ResetPasswordDialog extends Component<SignInProps, {}> {
     render() {
         const {
-            ManageGroupUrlState,
+            ManageCourseUrlState,
             SignInLocalState,
             onTextChanged,
             toggleResetPasswordDialog,
@@ -284,7 +284,7 @@ class ResetPasswordDialog extends Component<SignInProps, {}> {
                             !isProcessingResetPasswordRequest(SignInLocalState)
                                 ? null
                                 : <Box display="flex" justifyContent="center" marginBottom="42px">
-                                    <HashLoader color={getGroupRouteTheme(ManageGroupUrlState).palette.primary.main}/>
+                                    <HashLoader color={getCourseRouteTheme(ManageCourseUrlState).palette.primary.main}/>
                                 </Box>
                         }
 

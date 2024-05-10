@@ -31,7 +31,7 @@ import sharedStyles from '../../../shared-js-css-styles/SharedStyles';
 export const SEND_INVITATION_NONE = 0;
 export const SEND_INVITATION_PROCESSING = 1;
 export const SEND_INVITATION_INVITED_BEFORE = 2;
-export const SEND_INVITATION_STUDENT_CANNOT_BE_INVITED = 3; // user is an issuer in another group or an admin
+export const SEND_INVITATION_STUDENT_CANNOT_BE_INVITED = 3; // student is an student in another group or an admin
 export const SEND_INVITATION_ERROR_HAPPENED = 4;
 export const SEND_INVITATION_SUCCESS = 5;
 
@@ -148,8 +148,8 @@ class InvitationStudentDialog extends Component {
                         <FormControl required error={sendButtonClick && studentType.length === 0}>
                             <FormLabel>Student type</FormLabel>
                             <RadioGroup row name="studentType" value={studentType} onChange={handleInputChanged}>
-                                <FormControlLabel value={DB_CONST.TYPE_ISSUER.toString()} control={<Radio color='primary'/>} label="Issuer"/>
-                                <FormControlLabel value={DB_CONST.TYPE_INVESTOR.toString()} control={<Radio color='primary'/>} label="Investor"/>
+                                <FormControlLabel value={DB_CONST.TYPE_TEACHER.toString()} control={<Radio color='primary'/>} label="Teacher"/>
+                                <FormControlLabel value={DB_CONST.TYPE_STUDENT.toString()} control={<Radio color='primary'/>} label="Student"/>
                             </RadioGroup>
                         </FormControl>
                     </FlexView>
@@ -195,13 +195,13 @@ class InvitationStudentDialog extends Component {
                 res.msg =
                     sendStatusExtraInfo.hasOwnProperty('officialStudentID')
                         ?
-                        `This student is already an ${sendStatusExtraInfo.type === DB_CONST.TYPE_INVESTOR ? 'investor' : 'issuer'} in your group.`
+                        `This student is already an ${sendStatusExtraInfo.type === DB_CONST.TYPE_STUDENT ? 'student' : 'teacher'} in your group.`
                         :
-                        `You have invited this student as an ${sendStatusExtraInfo.type === DB_CONST.TYPE_INVESTOR ? 'investor' : 'issuer'} before.`;
+                        `You have invited this student as an ${sendStatusExtraInfo.type === DB_CONST.TYPE_STUDENT ? 'student' : 'teacher'} before.`;
                 res.color = "error";
                 break;
             case SEND_INVITATION_STUDENT_CANNOT_BE_INVITED:
-                res.msg = "Student is an admin or an issuer of another group.";
+                res.msg = "Student is an admin or an teacher of another group.";
                 res.color = "error";
                 break;
             case SEND_INVITATION_ERROR_HAPPENED:
@@ -209,7 +209,7 @@ class InvitationStudentDialog extends Component {
                 res.color = "error";
                 break;
             case SEND_INVITATION_SUCCESS:
-                res.msg = "Invitation has been sent to this user.";
+                res.msg = "Invitation has been sent to this student.";
                 res.color = "primary";
                 break;
             default:

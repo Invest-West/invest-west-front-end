@@ -37,7 +37,7 @@ import CreatePledgeDialog from "../../shared-components/create-pledge-dialog/Cre
 import SelectPitchVisibility from "../../shared-components/select-pitch-visibility/SelectPitchVisibility";
 import InfoOverlay from "../../shared-components/info_overlay/InfoOverlay";
 import {connect} from "react-redux";
-import * as manageGroupFromParamsActions from "../../redux-store/actions/manageGroupFromParamsActions";
+import * as manageCourseFromParamsActions from "../../redux-store/actions/manageCourseFromParamsActions";
 import * as pledgesTableActions from "../../redux-store/actions/pledgesTableActions";
 import * as investorSelfCertificationAgreementsActions
     from "../../redux-store/actions/investorSelfCertificationAgreementsActions";
@@ -56,20 +56,20 @@ import {KeyboardDatePicker} from "@material-ui/pickers";
 import Api, {ApiRoutes} from "../../api/Api";
 import {
     isDraftProject,
-    isProjectCreatedByGroupAdmin,
+    isProjectCreatedByCourseTeacher,
     isProjectFailed,
     isProjectInLivePitchPhase,
     isProjectInLivePledgePhase,
     isProjectLive,
     isProjectOwner,
-    isProjectPitchExpiredWaitingForAdminToCheck,
+    isProjectPitchExpiredWaitingForTeacherToCheck,
     isProjectRejectedToGoLive,
     isProjectSuccessful,
     isProjectTemporarilyClosed,
     isProjectWaitingForPledgeToBeChecked,
     isProjectWaitingForPledgeToBeCreated,
     isProjectWaitingToGoLive
-} from "../../models/project";
+} from "../../models/studentProjectproject";
 import DocumentsDownload from "../../shared-components/documents-download/DocumentsDownload";
 import RiskWarning from "../../shared-components/risk-warning/RiskWarning";
 import {toggleContactPitchOwnerDialog} from "./components/contact-pitch-owner-dialog/ContactPitchOwnerDialogActions";
@@ -77,16 +77,16 @@ import ContactPitchOwnerDialog from "./components/contact-pitch-owner-dialog/Con
 import FeedbackSnackbarNew from "../../shared-components/feedback-snackbar/FeedbackSnackbarNew";
 import {hasAuthenticationError, isAuthenticating} from "../../redux-store/reducers/authenticationReducer";
 
-const ADMIN_OFFER_STATES_PUBLISH_PITCH = 0;
-const ADMIN_OFFER_STATES_MOVE_TO_PLEDGE = 1;
-const ADMIN_OFFER_STATES_PUBLISH_PLEDGE = 2;
+const TEACHER_OFFER_STATES_PUBLISH_PITCH = 0;
+const TEACHER_OFFER_STATES_MOVE_TO_PLEDGE = 1;
+const TEACHER_OFFER_STATES_PUBLISH_PLEDGE = 2;
 
-const MAIN_BODY_ADMIN_OFFER_STATES = 0;
+const MAIN_BODY_TEACHER_OFFER_STATES = 0;
 const MAIN_BODY_CAMPAIGN = 1;
 const MAIN_BODY_DOCUMENTS = 2;
 const MAIN_BODY_COMMENTS = 3;
 const MAIN_BODY_NOTES = 4;
-const MAIN_BODY_INVESTORS_PLEDGED = 5; // only available for issuer and admin
+const MAIN_BODY_INVESTORS_PLEDGED = 5; // only available for teacher and teacher
 
 const MAX_COVER_HEIGHT_IN_MOBILE_MODE = 240;
 const MAX_COVER_HEIGHT_IN_BIG_SCREEN_MODE = 550;
@@ -97,20 +97,20 @@ const mapStateToProps = (state) => {
 
         isMobile: state.MediaQueryState.isMobile,
 
-        groupUserName: state.manageGroupFromParams.groupUserName,
-        groupProperties: state.manageGroupFromParams.groupProperties,
-        groupPropertiesLoaded: state.manageGroupFromParams.groupPropertiesLoaded,
-        shouldLoadOtherData: state.manageGroupFromParams.shouldLoadOtherData,
+        courseStudent: state.manageCourseFromParams.courseStudent,
+        courseProperties: state.manageCourseFromParams.courseProperties,
+        coursePropertiesLoaded: state.manageCourseFromParams.coursePropertiesLoaded,
+        shouldLoadOtherData: state.manageCourseFromParams.shouldLoadOtherData,
 
         authStatus: state.auth.authStatus,
         authenticating: state.auth.authenticating,
-        user: state.auth.user,
-        userLoaded: state.auth.userLoaded,
-        userBeingLoaded: state.auth.userBeingLoaded,
-        groupsUserIsIn: state.auth.groupsUserIsIn,
+        student: state.auth.student,
+        studentLoaded: state.auth.studentLoaded,
+        studentBeingLoaded: state.auth.studentBeingLoaded,
+        coursesStudentIsIn: state.auth.coursesStudentIsIn,
 
         // Investor self-certification agreement (for investor only) ----------------------------------------------------
-        investorSelfCertificationAgreement_userID: state.manageInvestorSelfCertificationAgreement.userID,
+        investorSelfCertificationAgreement_studentID: state.manageInvestorSelfCertificationAgreement.studentID,
         investorSelfCertificationAgreement: state.manageInvestorSelfCertificationAgreement.investorSelfCertificationAgreement,
         investorSelfCertificationAgreementLoaded: state.manageInvestorSelfCertificationAgreement.investorSelfCertificationAgreementLoaded,
         investorSelfCertificationAgreementBeingLoaded: state.manageInvestorSelfCertificationAgreement.investorSelfCertificationAgreementBeingLoaded,
@@ -122,12 +122,12 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
     return {
-        setGroupUserNameFromParams: (groupUserName) => dispatch(manageGroupFromParamsActions.setGroupUserNameFromParams(groupUserName)),
-        setExpectedAndCurrentPathsForChecking: (expectedPath, currentPath) => dispatch(manageGroupFromParamsActions.setExpectedAndCurrentPathsForChecking(expectedPath, currentPath)),
-        loadAngelNetwork: () => dispatch(manageGroupFromParamsActions.loadAngelNetwork()),
+        setCourseStudentFromParams: (courseStudent) => dispatch(manageCourseFromParamsActions.setCourseStudentFromParams(courseStudent)),
+        setExpectedAndCurrentPathsForChecking: (expectedPath, currentPath) => dispatch(manageCourseFromParamsActions.setExpectedAndCurrentPathsForChecking(expectedPath, currentPath)),
+        loadAngelNetwork: () => dispatch(manageCourseFromParamsActions.loadAngelNetwork()),
 
         // Investor self-certification agreement functions --------------------------------------------------------------
-        investorSelfCertificationAgreement_setUser: (uid) => dispatch(investorSelfCertificationAgreementsActions.setUser(uid)),
+        investorSelfCertificationAgreement_setStudent: (uid) => dispatch(investorSelfCertificationAgreementsActions.setStudent(uid)),
         loadInvestorSelfCertificationAgreement: () => dispatch(investorSelfCertificationAgreementsActions.loadInvestorSelfCertificationAgreement()),
         //--------------------------------------------------------------------------------------------------------------
 
@@ -172,7 +172,7 @@ class ProjectDetailsMain extends Component {
             investorPledgeLoaded: false,
 
             mainBody: MAIN_BODY_CAMPAIGN,
-            adminOfferStatesActiveStep: ADMIN_OFFER_STATES_PUBLISH_PITCH,
+            teacherOfferStatesActiveStep: TEACHER_OFFER_STATES_PUBLISH_PITCH,
 
             comments: [],
             commentsLoaded: false,
@@ -188,18 +188,18 @@ class ProjectDetailsMain extends Component {
             currentCommentText: "",
             // -------------------------------------------
 
-            // available for the issuer/group admins who own the project only
+            // available for the teacher/course teachers who own the project only
             // allow the owners to reply to the investor's comments
             replyingToComment: null,
             replyText: "",
             replyEdited: null,
             // -------------------------------------------
 
-            // this state is used to capture the change in date when an admin wants to bring
+            // this state is used to capture the change in date when an teacher wants to bring
             // an expired pitch back to live
             changedPitchExpiryDate: null,
 
-            // when an admin wants to send the pitch back to the issuer with some feedback rather than publish it
+            // when an teacher wants to send the pitch back to the teacher with some feedback rather than publish it
             addingRejectFeedback: false,
             rejectFeedback: "",
             sendingProjectBack: false,
@@ -216,30 +216,30 @@ class ProjectDetailsMain extends Component {
                 votes: [],
                 votesLoaded: false,
 
-                // the issuer object (the issuer who made this pitch)
-                projectIssuer: null,
-                projectIssuerLoaded: false
+                // the teacher object (the teacher who made this pitch)
+                projectTeacher: null,
+                projectTeacherLoaded: false
             }
         }
     }
 
     componentDidMount() {
         const {
-            groupPropertiesLoaded,
+            coursePropertiesLoaded,
             shouldLoadOtherData,
 
-            user,
-            userLoaded,
-            userBeingLoaded,
+            student,
+            studentLoaded,
+            studentBeingLoaded,
 
-            investorSelfCertificationAgreement_userID,
+            investorSelfCertificationAgreement_studentID,
             investorSelfCertificationAgreementLoaded,
             investorSelfCertificationAgreementBeingLoaded,
 
-            setGroupUserNameFromParams,
+            setCourseStudentFromParams,
             setExpectedAndCurrentPathsForChecking,
             loadAngelNetwork,
-            investorSelfCertificationAgreement_setUser,
+            investorSelfCertificationAgreement_setStudent,
             loadInvestorSelfCertificationAgreement,
         } = this.props;
 
@@ -250,14 +250,14 @@ class ProjectDetailsMain extends Component {
 
         const match = this.props.match;
 
-        setGroupUserNameFromParams(match.params.hasOwnProperty("groupUserName")
+        setCourseStudentFromParams(match.params.hasOwnProperty("courseStudent")
             ?
-            match.params.groupUserName
+            match.params.courseStudent
             :
             null
         );
         setExpectedAndCurrentPathsForChecking(
-            match.params.hasOwnProperty("groupUserName")
+            match.params.hasOwnProperty("courseStudent")
                 ?
                 ROUTES.PROJECT_DETAILS
                 :
@@ -266,49 +266,49 @@ class ProjectDetailsMain extends Component {
 
         loadAngelNetwork();
 
-        if (groupPropertiesLoaded && shouldLoadOtherData) {
-            if (!userBeingLoaded && userLoaded) {
+        if (coursePropertiesLoaded && shouldLoadOtherData) {
+            if (!studentBeingLoaded && studentLoaded) {
                 if (!dataBeingLoaded && !dataLoaded) {
                     // load data if not loaded
                     this.loadData();
                 }
 
-                if (user) {
-                    if (!investorSelfCertificationAgreement_userID && user.type === DB_CONST.TYPE_INVESTOR) {
-                        investorSelfCertificationAgreement_setUser(user.id);
+                if (student) {
+                    if (!investorSelfCertificationAgreement_studentID && student.type === DB_CONST.TYPE_INVESTOR) {
+                        investorSelfCertificationAgreement_setStudent(student.id);
                     }
                 }
             }
 
-            // if user id for reference in self-certification agreement has been set
-            if (investorSelfCertificationAgreement_userID) {
+            // if student id for reference in self-certification agreement has been set
+            if (investorSelfCertificationAgreement_studentID) {
                 // if self-certification agreement has not been loaded
                 if (!investorSelfCertificationAgreementLoaded
                     && !investorSelfCertificationAgreementBeingLoaded
-                    && user.type === DB_CONST.TYPE_INVESTOR
+                    && student.type === DB_CONST.TYPE_INVESTOR
                 ) {
                     loadInvestorSelfCertificationAgreement();
                 }
             }
         }
         console.log('Page loaded. Authentication status:', this.props.AuthenticationState.isAuthenticated ? 'Authenticated' : 'Not Authenticated');
-        console.log('Current user on page load:', this.props.AuthenticationState.currentUser);
+        console.log('Current student on page load:', this.props.AuthenticationState.currentStudent);
     }
 
     componentDidUpdate(prevProps, prevState, snapshot) {
         const {
-            groupPropertiesLoaded,
+            coursePropertiesLoaded,
             shouldLoadOtherData,
 
-            user,
-            userLoaded,
-            userBeingLoaded,
+            student,
+            studentLoaded,
+            studentBeingLoaded,
 
-            investorSelfCertificationAgreement_userID,
+            investorSelfCertificationAgreement_studentID,
             investorSelfCertificationAgreementLoaded,
             investorSelfCertificationAgreementBeingLoaded,
 
-            investorSelfCertificationAgreement_setUser,
+            investorSelfCertificationAgreement_setStudent,
             loadInvestorSelfCertificationAgreement,
 
             loadAngelNetwork
@@ -326,26 +326,26 @@ class ProjectDetailsMain extends Component {
 
         loadAngelNetwork();
 
-        if (groupPropertiesLoaded && shouldLoadOtherData) {
-            if (!userBeingLoaded && userLoaded) {
+        if (coursePropertiesLoaded && shouldLoadOtherData) {
+            if (!studentBeingLoaded && studentLoaded) {
                 if (!dataBeingLoaded && !dataLoaded) {
                     // load data if not loaded
                     this.loadData();
                 }
 
-                if (user) {
-                    if (!investorSelfCertificationAgreement_userID && user.type === DB_CONST.TYPE_INVESTOR) {
-                        investorSelfCertificationAgreement_setUser(user.id);
+                if (student) {
+                    if (!investorSelfCertificationAgreement_studentID && student.type === DB_CONST.TYPE_INVESTOR) {
+                        investorSelfCertificationAgreement_setStudent(student.id);
                     }
                 }
             }
 
-            // if user id for reference in self-certification agreement has been set
-            if (investorSelfCertificationAgreement_userID) {
+            // if student id for reference in self-certification agreement has been set
+            if (investorSelfCertificationAgreement_studentID) {
                 // if self-certification agreement has not been loaded
                 if (!investorSelfCertificationAgreementLoaded
                     && !investorSelfCertificationAgreementBeingLoaded
-                    && user.type === DB_CONST.TYPE_INVESTOR
+                    && student.type === DB_CONST.TYPE_INVESTOR
                 ) {
                     loadInvestorSelfCertificationAgreement();
                 }
@@ -403,8 +403,8 @@ class ProjectDetailsMain extends Component {
      */
     loadData = () => {
         const {
-            user,
-            userLoaded,
+            student,
+            studentLoaded,
 
             selectProjectVisibility_setProject
         } = this.props;
@@ -414,11 +414,11 @@ class ProjectDetailsMain extends Component {
             dataBeingLoaded
         } = this.state;
 
-        if (!userLoaded) {
+        if (!studentLoaded) {
             return;
         }
 
-        if (!user) {
+        if (!student) {
             if (!dataLoaded) {
                 this.setState({
                     dataLoaded: true,
@@ -427,7 +427,7 @@ class ProjectDetailsMain extends Component {
                     projectDetail: {
                         ...this.state.projectDetail,
                         projectLoaded: true, // project is null
-                        projectIssuerLoaded: true, // project issuer is null
+                        projectTeacherLoaded: true, // project teacher is null
                         votesLoaded: true,
                         pledgesLoaded: true
                     }
@@ -452,10 +452,10 @@ class ProjectDetailsMain extends Component {
             .loadAParticularProject(projectID)
             .then(project => {
                 // track activity for investors only
-                if (user.type === DB_CONST.TYPE_INVESTOR) {
+                if (student.type === DB_CONST.TYPE_INVESTOR) {
                     realtimeDBUtils
                         .trackActivity({
-                            userID: user.id,
+                            studentID: student.id,
                             activityType: DB_CONST.ACTIVITY_TYPE_VIEW,
                             interactedObjectLocation: DB_CONST.PROJECTS_CHILD,
                             interactedObjectID: project.id,
@@ -474,30 +474,30 @@ class ProjectDetailsMain extends Component {
                         projectLoaded: true
                     },
                     mainBody:
-                        user.type === DB_CONST.TYPE_ADMIN
+                        student.type === DB_CONST.TYPE_PROF
                             ?
-                            user.anid === project.anid
+                            student.anid === project.anid
                                 ?
-                                MAIN_BODY_ADMIN_OFFER_STATES
+                                MAIN_BODY_TEACHER_OFFER_STATES
                                 :
                                 MAIN_BODY_CAMPAIGN
                             :
                             MAIN_BODY_CAMPAIGN
                     ,
-                    adminOfferStatesActiveStep:
+                    teacherOfferStatesActiveStep:
                         project.status === DB_CONST.PROJECT_STATUS_BEING_CHECKED
                             ?
-                            ADMIN_OFFER_STATES_PUBLISH_PITCH
+                            TEACHER_OFFER_STATES_PUBLISH_PITCH
                             :
                             (project.status === DB_CONST.PROJECT_STATUS_PITCH_PHASE || project.status === DB_CONST.PROJECT_STATUS_PITCH_PHASE_EXPIRED_WAITING_TO_BE_CHECKED)
                                 ?
-                                ADMIN_OFFER_STATES_MOVE_TO_PLEDGE
+                                TEACHER_OFFER_STATES_MOVE_TO_PLEDGE
                                 :
                                 (project.status === DB_CONST.PROJECT_STATUS_PRIMARY_OFFER_CREATED_WAITING_TO_BE_CHECKED || project.status === DB_CONST.PROJECT_STATUS_PRIMARY_OFFER_PHASE)
                                     ?
-                                    ADMIN_OFFER_STATES_PUBLISH_PLEDGE
+                                    TEACHER_OFFER_STATES_PUBLISH_PLEDGE
                                     :
-                                    ADMIN_OFFER_STATES_PUBLISH_PITCH
+                                    TEACHER_OFFER_STATES_PUBLISH_PITCH
                 });
 
                 // load votes
@@ -518,13 +518,13 @@ class ProjectDetailsMain extends Component {
                             .loadPledges(project.id, null, realtimeDBUtils.LOAD_PLEDGES_ORDER_BY_PROJECT)
                             .then(pledges => {
 
-                                // if the current user is an investor, check if they pledged this project
-                                if (user.type === DB_CONST.TYPE_INVESTOR) {
-                                    let currentUserPledgeIndex = pledges.findIndex(pledge => pledge.investorID === user.id && pledge.amount !== '');
+                                // if the current student is an investor, check if they pledged this project
+                                if (student.type === DB_CONST.TYPE_INVESTOR) {
+                                    let currentStudentPledgeIndex = pledges.findIndex(pledge => pledge.investorID === student.id && pledge.amount !== '');
                                     // this investor has pledges this project before
-                                    if (currentUserPledgeIndex !== -1) {
+                                    if (currentStudentPledgeIndex !== -1) {
                                         this.setState({
-                                            investorPledge: pledges[currentUserPledgeIndex]
+                                            investorPledge: pledges[currentStudentPledgeIndex]
                                         });
                                     }
                                 }
@@ -540,18 +540,18 @@ class ProjectDetailsMain extends Component {
                                     }
                                 });
 
-                                // load the profile of the Issuer or the Group Admin created this project
-                                // this user can be the issuer who created the offer themselves
-                                // or the group admin who created this offer on behalf of an unknown issuer
-                                // or the issuer who got the group admin create this offer for
+                                // load the profile of the teacher or the course teacher created this project
+                                // this student can be the teacher who created the offer themselves
+                                // or the course teacher who created this offer on behalf of an unknown teacher
+                                // or the teacher who got the course teacher create this offer for
                                 realtimeDBUtils
-                                    .getUserBasedOnID(project.issuerID)
-                                    .then(projectIssuer => {
+                                    .getStudentBasedOnID(project.teacherID)
+                                    .then(projectTeacher => {
                                         this.setState({
                                             projectDetail: {
                                                 ...this.state.projectDetail,
-                                                projectIssuer: projectIssuer,
-                                                projectIssuerLoaded: true
+                                                projectTeacher: projectTeacher,
+                                                projectTeacherLoaded: true
                                             }
                                         });
                                     })
@@ -563,7 +563,7 @@ class ProjectDetailsMain extends Component {
                                             projectDetail: {
                                                 ...this.state.projectDetail,
                                                 projectLoaded: true, // project is null
-                                                projectIssuerLoaded: true, // project issuer is null
+                                                projectTeacherLoaded: true, // project Teacher is null
                                                 votesLoaded: true,
                                                 pledgesLoaded: true
                                             }
@@ -578,7 +578,7 @@ class ProjectDetailsMain extends Component {
                                     projectDetail: {
                                         ...this.state.projectDetail,
                                         projectLoaded: true, // project is null
-                                        projectIssuerLoaded: true, // project issuer is null
+                                        projectTeacherLoaded: true, // project Teacher is null
                                         votesLoaded: true,
                                         pledgesLoaded: true
                                     }
@@ -593,7 +593,7 @@ class ProjectDetailsMain extends Component {
                             projectDetail: {
                                 ...this.state.projectDetail,
                                 projectLoaded: true, // project is null
-                                projectIssuerLoaded: true, // project issuer is null
+                                projectTeacherLoaded: true, // project Teacher is null
                                 votesLoaded: true,
                                 pledgesLoaded: true
                             }
@@ -610,7 +610,7 @@ class ProjectDetailsMain extends Component {
                     projectDetail: {
                         ...this.state.projectDetail,
                         projectLoaded: true, // project is null
-                        projectIssuerLoaded: true, // project issuer is null
+                        projectTeacherLoaded: true, // project Teacher is null
                         votesLoaded: true,
                         pledgesLoaded: true
                     }
@@ -623,7 +623,7 @@ class ProjectDetailsMain extends Component {
      */
     loadDataWhenUIElementsChange = () => {
         const {
-            user,
+            student,
 
             pledgesTable_setProject
         } = this.props;
@@ -663,7 +663,7 @@ class ProjectDetailsMain extends Component {
                             let voteIndex = votes.findIndex(existingVote => existingVote.id === vote.id);
                             if (voteIndex === -1) {
                                 realtimeDBUtils
-                                    .getUserBasedOnID(vote.investorID)
+                                    .getStudentBasedOnID(vote.investorID)
                                     .then(investor => {
                                         vote.investor = investor;
                                         this.setState({
@@ -745,7 +745,7 @@ class ProjectDetailsMain extends Component {
                             let pledgeIndex = pledges.findIndex(existingPledge => existingPledge.id === pledge.id);
                             if (pledgeIndex === -1) {
                                 realtimeDBUtils
-                                    .getUserBasedOnID(pledge.investorID)
+                                    .getStudentBasedOnID(pledge.investorID)
                                     .then(investor => {
                                         pledge.investor = investor;
                                         this.setState({
@@ -790,7 +790,7 @@ class ProjectDetailsMain extends Component {
                                                 currentPledge
                                             :
                                             // current pledge is null
-                                            pledge.investorID === user.id
+                                            pledge.investorID === student.id
                                                 ?
                                                 pledge.amount === ""
                                                     ?
@@ -843,14 +843,14 @@ class ProjectDetailsMain extends Component {
             }
         }
 
-        // if the user clicks on the Pledges tab
+        // if the student clicks on the Pledges tab
         if (mainBody === MAIN_BODY_INVESTORS_PLEDGED) {
             if (project) {
                 pledgesTable_setProject(project);
             }
         }
 
-        // if the user clicks on the Comments tab
+        // if the student clicks on the Comments tab
         if (mainBody === MAIN_BODY_COMMENTS) {
             // if comments have not been loaded yet
             if (!commentsLoaded) {
@@ -882,7 +882,7 @@ class ProjectDetailsMain extends Component {
                                             comment.replies = [];
 
                                             // assign comment to currentComment object if it belongs to the current investor
-                                            if (comment.commentedBy === user.id) {
+                                            if (comment.commentedBy === student.id) {
                                                 const currentComment = this.state.currenComment;
                                                 if (!currentComment) {
                                                     this.setState({
@@ -897,9 +897,9 @@ class ProjectDetailsMain extends Component {
 
                                             if (commentIndex === -1) {
                                                 realtimeDBUtils
-                                                    .getUserBasedOnID(comment.commentedBy)
-                                                    .then(user => {
-                                                        comment.author = user;
+                                                    .getStudentBasedOnID(comment.commentedBy)
+                                                    .then(student => {
+                                                        comment.author = student;
                                                         this.setState({
                                                             comments: [...comments, comment]
                                                         });
@@ -965,9 +965,9 @@ class ProjectDetailsMain extends Component {
                                                         return;
                                                     }
                                                     realtimeDBUtils
-                                                        .getUserBasedOnID(reply.repliedBy)
-                                                        .then(user => {
-                                                            reply.author = user;
+                                                        .getStudentBasedOnID(reply.repliedBy)
+                                                        .then(student => {
+                                                            reply.author = student;
                                                             comment.replies = [...comment.replies, reply];
 
                                                             comments[correspondingCommentIndex] = comment;
@@ -1009,8 +1009,8 @@ class ProjectDetailsMain extends Component {
                                                     // reply is live
                                                     else {
                                                         realtimeDBUtils
-                                                            .getUserBasedOnID(reply.repliedBy)
-                                                            .then(user => {
+                                                            .geStudentBasedOnID(reply.repliedBy)
+                                                            .then(student => {
                                                                 reply.author = comment.replies[replyIndex].author;
                                                                 comment.replies[replyIndex] = reply;
 
@@ -1048,8 +1048,8 @@ class ProjectDetailsMain extends Component {
      */
     handleVotePitch = voteVal => {
         const {
-            groupProperties,
-            user
+            courseProperties,
+            student
         } = this.props;
 
         const {
@@ -1057,7 +1057,7 @@ class ProjectDetailsMain extends Component {
             votes
         } = this.state.projectDetail;
 
-        let currentVoteObj = getInvestorVote(votes, user);
+        let currentVoteObj = getInvestorVote(votes, student);
         if (currentVoteObj) {
             currentVoteObj.investor = null;
         }
@@ -1090,7 +1090,7 @@ class ProjectDetailsMain extends Component {
                     // record the investor's activity
                     realtimeDBUtils
                         .trackActivity({
-                            userID: user.id,
+                            studentID: student.id,
                             activityType: DB_CONST.ACTIVITY_TYPE_POST,
                             interactedObjectLocation: DB_CONST.VOTES_CHILD,
                             interactedObjectID: newVoteObj.id,
@@ -1117,8 +1117,8 @@ class ProjectDetailsMain extends Component {
                 .key;
 
             newVoteObj.id = id;
-            newVoteObj.anid = groupProperties ? groupProperties.anid : null;
-            newVoteObj.investorID = user.id;
+            newVoteObj.anid = courseProperties ? courseProperties.anid : null;
+            newVoteObj.investorID = student.id;
             newVoteObj.projectID = project.id;
             newVoteObj.voted = voteVal;
             newVoteObj.date = utils.getCurrentDate();
@@ -1131,7 +1131,7 @@ class ProjectDetailsMain extends Component {
                     // record the investor's activity for first time voting
                     realtimeDBUtils
                         .trackActivity({
-                            userID: user.id,
+                            studentID: student.id,
                             activityType: DB_CONST.ACTIVITY_TYPE_POST,
                             interactedObjectLocation: DB_CONST.VOTES_CHILD,
                             interactedObjectID: id,
@@ -1146,12 +1146,12 @@ class ProjectDetailsMain extends Component {
                             value: newVoteObj
                         });
 
-                    // send a notification to notify the issuer
+                    // send a notification to notify the teacher
                     realtimeDBUtils
                         .sendNotification({
                             title: "Someone liked your pitch",
                             message: "Congratulations. A new investor has showed interest in your pitch.",
-                            userID: project.issuerID,
+                            studentID: project.teacherID,
                             action: ROUTES
                                 .PROJECT_DETAILS_INVEST_WEST_SUPER
                                 .replace(":projectID", project.id)
@@ -1184,30 +1184,30 @@ class ProjectDetailsMain extends Component {
             this.projectListener
                 .on("value", snapshot => {
                     const project = snapshot.val();
-                    project.group = this.state.projectDetail.project.group;
-                    project.issuer = this.state.projectDetail.project.issuer;
+                    project.course = this.state.projectDetail.project.course;
+                    project.teacher = this.state.projectDetail.project.teacher;
 
                     this.setState({
                         projectDetail: {
                             ...this.state.projectDetail,
                             project: project,
                         },
-                        adminOfferStatesActiveStep:
+                        teacherOfferStatesActiveStep:
                             project.status === DB_CONST.PROJECT_STATUS_BEING_CHECKED
                                 ?
-                                ADMIN_OFFER_STATES_PUBLISH_PITCH
+                                TEACHER_OFFER_STATES_PUBLISH_PITCH
                                 :
                                 project.status === DB_CONST.PROJECT_STATUS_PITCH_PHASE
                                 || project.status === DB_CONST.PROJECT_STATUS_PITCH_PHASE_EXPIRED_WAITING_TO_BE_CHECKED
                                     ?
-                                    ADMIN_OFFER_STATES_MOVE_TO_PLEDGE
+                                    TEACHER_OFFER_STATES_MOVE_TO_PLEDGE
                                     :
                                     project.status === DB_CONST.PROJECT_STATUS_PRIMARY_OFFER_CREATED_WAITING_TO_BE_CHECKED
                                     || project.status === DB_CONST.PROJECT_STATUS_PRIMARY_OFFER_PHASE
                                         ?
-                                        ADMIN_OFFER_STATES_PUBLISH_PLEDGE
+                                        TEACHER_OFFER_STATES_PUBLISH_PLEDGE
                                         :
-                                        ADMIN_OFFER_STATES_PUBLISH_PITCH
+                                        TEACHER_OFFER_STATES_PUBLISH_PITCH
                     });
                 });
         }
@@ -1232,20 +1232,20 @@ class ProjectDetailsMain extends Component {
     };
 
     /**
-     * Handle when the Super user decides whether the project can go live or not
+     * Handle when the Super student decides whether the project can go live or not
      *
      * @param decision
      */
     handleMakeProjectGoLiveDecision = decision => {
         const {
-            user
+            student
         } = this.props;
         const {
             project
         } = this.state.projectDetail;
 
         realtimeDBUtils
-            .makeProjectGoLiveDecision(user, JSON.parse(JSON.stringify(project)), decision)
+            .makeProjectGoLiveDecision(student, JSON.parse(JSON.stringify(project)), decision)
             .then(() => {
                 // success
             })
@@ -1255,26 +1255,26 @@ class ProjectDetailsMain extends Component {
     };
 
     /**
-     * Handle when the Super user decides whether the project can go to the Pledge phase
+     * Handle when the Super student decides whether the project can go to the Pledge phase
      *
      * @param decision
      */
     handleMakeProjectGoToPledgePhaseDecision = decision => {
         const {
-            user
+            student
         } = this.props;
         const {
             project
         } = this.state.projectDetail;
 
         if (project.Pitch.status !== DB_CONST.PITCH_STATUS_ON_GOING
-            && project.Pitch.status !== DB_CONST.PITCH_STATUS_WAITING_FOR_ADMIN
+            && project.Pitch.status !== DB_CONST.PITCH_STATUS_WAITING_FOR_TEACHER
         ) {
             return;
         }
 
         realtimeDBUtils
-            .makeProjectGoToPledgePhaseDecision(user, JSON.parse(JSON.stringify(project)), decision)
+            .makeProjectGoToPledgePhaseDecision(student, JSON.parse(JSON.stringify(project)), decision)
             .then(() => {
                 // success
             })
@@ -1284,20 +1284,20 @@ class ProjectDetailsMain extends Component {
     };
 
     /**
-     * Handle when the Super user decides whether the project's Pledge can go live
+     * Handle when the Super student decides whether the project's Pledge can go live
      *
      * @param decision
      */
     handleMakeProjectPledgeGoLiveDecision = decision => {
         const {
-            user
+            student
         } = this.props;
         const {
             project
         } = this.state.projectDetail;
 
         realtimeDBUtils
-            .makeProjectPledgeGoLiveDecision(user, JSON.parse(JSON.stringify(project)), decision)
+            .makeProjectPledgeGoLiveDecision(student, JSON.parse(JSON.stringify(project)), decision)
             .then(() => {
                 // success
             })
@@ -1380,8 +1380,8 @@ class ProjectDetailsMain extends Component {
      */
     handleSubmitCommentClick = () => {
         const {
-            groupProperties,
-            user,
+            courseProperties,
+            student,
 
             setFeedbackSnackbarContent
         } = this.props;
@@ -1409,9 +1409,9 @@ class ProjectDetailsMain extends Component {
 
         const comment = {
             id,
-            commenterANID: groupProperties ? groupProperties.anid : null,
+            commenterANID: courseProperties ? courseProperties.anid : null,
             projectID: project.id,
-            commentedBy: user.id,
+            commentedBy: student.id,
             status: DB_CONST.COMMENT_STATUS_POSTED,
             commentedDate: utils.getCurrentDate(),
             comment: commentText
@@ -1425,7 +1425,7 @@ class ProjectDetailsMain extends Component {
                 // track investor's activity for posting a new comment
                 realtimeDBUtils
                     .trackActivity({
-                        userID: user.id,
+                        studentID: student.id,
                         activityType: DB_CONST.ACTIVITY_TYPE_POST,
                         interactedObjectLocation: DB_CONST.COMMENTS_CHILD,
                         interactedObjectID: id,
@@ -1434,12 +1434,12 @@ class ProjectDetailsMain extends Component {
                         value: comment
                     });
 
-                // send a notification to notify the issuer
+                // send a notification to notify the teacher
                 realtimeDBUtils
                     .sendNotification({
                         title: "Someone commented on your pitch",
                         message: "An investor has commented on your pitch. Go and see what they said.",
-                        userID: project.issuerID,
+                        studentID: project.teacherID,
                         action: ROUTES.PROJECT_DETAILS_INVEST_WEST_SUPER.replace(":projectID", project.id)
                     })
                     .then(() => {
@@ -1467,7 +1467,7 @@ class ProjectDetailsMain extends Component {
     };
 
     /**
-     * Handle when the user (investor) cancels the update for their comment
+     * Handle when the student (investor) cancels the update for their comment
      */
     handleCancelUpdateCurrentComment = () => {
         const {
@@ -1480,7 +1480,7 @@ class ProjectDetailsMain extends Component {
     };
 
     /**
-     * Handle when the user (investor) submits the update for their comment
+     * Handle when the student (investor) submits the update for their comment
      */
     handleSubmitUpdateCurrentComment = () => {
         const {
@@ -1515,7 +1515,7 @@ class ProjectDetailsMain extends Component {
                 // track investor's activity
                 realtimeDBUtils
                     .trackActivity({
-                        userID: currentComment.commentedBy,
+                        studentID: currentComment.commentedBy,
                         activityType: DB_CONST.ACTIVITY_TYPE_POST,
                         interactedObjectLocation: DB_CONST.COMMENTS_CHILD,
                         interactedObjectID: currentComment.id,
@@ -1564,7 +1564,7 @@ class ProjectDetailsMain extends Component {
         } = this.state.projectDetail;
 
         const {
-            user,
+            student,
             setFeedbackSnackbarContent
         } = this.props;
 
@@ -1574,7 +1574,7 @@ class ProjectDetailsMain extends Component {
                 repliedDate: utils.getCurrentDate(),
                 projectID: project.id,
                 commentID: replyingToComment.id,
-                repliedBy: user.id,
+                repliedBy: student.id,
                 status: DB_CONST.COMMENT_REPLY_STATUS_POSTED
             };
 
@@ -1584,7 +1584,7 @@ class ProjectDetailsMain extends Component {
                     // track activity
                     realtimeDBUtils
                         .trackActivity({
-                            userID: user.id,
+                            studentID: student.id,
                             activityType: DB_CONST.ACTIVITY_TYPE_POST,
                             interactedObjectLocation: DB_CONST.COMMENT_REPLIES_CHILD,
                             interactedObjectID: replyID,
@@ -1634,7 +1634,7 @@ class ProjectDetailsMain extends Component {
                     // track activity
                     realtimeDBUtils
                         .trackActivity({
-                            userID: user.id,
+                            studentID: student.id,
                             activityType: DB_CONST.ACTIVITY_TYPE_POST,
                             interactedObjectLocation: DB_CONST.COMMENT_REPLIES_CHILD,
                             interactedObjectID: replyAfterUpdating.id,
@@ -1680,7 +1680,7 @@ class ProjectDetailsMain extends Component {
     handleDeleteCommentReply = reply => {
 
         const {
-            user,
+            student,
             setFeedbackSnackbarContent
         } = this.props;
 
@@ -1694,7 +1694,7 @@ class ProjectDetailsMain extends Component {
                 // track activity
                 realtimeDBUtils
                     .trackActivity({
-                        userID: user.id,
+                        studentID: student.id,
                         activityType: DB_CONST.ACTIVITY_TYPE_POST,
                         interactedObjectLocation: DB_CONST.COMMENT_REPLIES_CHILD,
                         interactedObjectID: reply.id,
@@ -1740,9 +1740,9 @@ class ProjectDetailsMain extends Component {
      *
      * @param step
      */
-    handleAdminOfferStatesStepClick = step => {
+    handleTeacherOfferStatesStepClick = step => {
         this.setState({
-            adminOfferStatesActiveStep: step
+            teacherOfferStatesActiveStep: step
         });
     };
 
@@ -1761,11 +1761,11 @@ class ProjectDetailsMain extends Component {
         } = this.state;
 
         const {
-            user,
+            student,
             setFeedbackSnackbarContent
         } = this.props;
 
-        if (user.type !== DB_CONST.TYPE_ADMIN) {
+        if (student.type !== DB_CONST.TYPE_PROF) {
             return;
         }
 
@@ -1802,9 +1802,9 @@ class ProjectDetailsMain extends Component {
     }
 
     /**
-     * Send project back to issuer
+     * Send project back to teacher
      */
-    sendProjectBackToIssuer = async () => {
+    sendProjectBackToTeacher = async () => {
         const {
             projectDetail,
             rejectFeedback,
@@ -1824,10 +1824,10 @@ class ProjectDetailsMain extends Component {
         });
 
         try {
-            // send project back to the issuer
+            // send project back to the teacher
             await new Api().request(
                 "post",
-                ApiRoutes.sendProjectBackToIssuerRoute,
+                ApiRoutes.sendProjectBackToTeacherRoute,
                 {
                     queryParameters: null,
                     requestBody: {
@@ -1861,16 +1861,16 @@ class ProjectDetailsMain extends Component {
 
             isMobile,
 
-            groupUserName,
-            groupProperties,
-            groupPropertiesLoaded,
+            courseStudent,
+            courseProperties,
+            coursePropertiesLoaded,
             shouldLoadOtherData,
 
             authStatus,
             authenticating,
-            user,
-            userLoaded,
-            groupsUserIsIn,
+            student,
+            studentLoaded,
+            coursesStudentIsIn,
 
             investorSelfCertificationAgreement,
 
@@ -1886,7 +1886,7 @@ class ProjectDetailsMain extends Component {
             investorPledgeLoaded,
 
             mainBody,
-            adminOfferStatesActiveStep,
+            teacherOfferStatesActiveStep,
 
             comments,
             commentsLoaded,
@@ -1919,11 +1919,11 @@ class ProjectDetailsMain extends Component {
             votes,
             votesLoaded,
 
-            projectIssuer,
-            projectIssuerLoaded
+            projectTeacher,
+            projectTeacherLoaded
         } = this.state.projectDetail;
 
-        if (!groupPropertiesLoaded) {
+        if (!coursePropertiesLoaded) {
             return (
                 <FlexView marginTop={30} hAlignContent="center">
                     <HashLoader color={colors.primaryColor}/>
@@ -1935,23 +1935,23 @@ class ProjectDetailsMain extends Component {
             return <PageNotFoundWhole/>;
         }
 
-        if (authenticating || !userLoaded || isAuthenticating(AuthenticationState)) {
+        if (authenticating || !studentLoaded || isAuthenticating(AuthenticationState)) {
             return (
                 <FlexView marginTop={30} hAlignContent="center">
                     <HashLoader
                         color={
-                            !groupProperties
+                            !courseProperties
                                 ?
                                 colors.primaryColor
                                 :
-                                groupProperties.settings.primaryColor
+                                courseProperties.settings.primaryColor
                         }
                     />
                 </FlexView>
             );
         }
 
-        if (authStatus !== AUTH_SUCCESS || !user || hasAuthenticationError(AuthenticationState)) {
+        if (authStatus !== AUTH_SUCCESS || !student || hasAuthenticationError(AuthenticationState)) {
             return <PageNotFoundWhole/>;
         }
 
@@ -1959,15 +1959,15 @@ class ProjectDetailsMain extends Component {
             <div>
                 <ProjectDetails
                     AuthenticationState={this.props.AuthenticationState}
-                    groupUserName={groupUserName}
-                    groupProperties={groupProperties}
+                    courseStudent={courseStudent}
+                    courseProperties={courseProperties}
                     isMobile={isMobile}
-                    user={user}
-                    userLoaded={userLoaded}
-                    groupsUserIsIn={groupsUserIsIn}
+                    student={student}
+                    studentLoaded={studentLoaded}
+                    coursesStudentIsIn={coursesStudentIsIn}
                     investorSelfCertificationAgreement={investorSelfCertificationAgreement}
                     mainBody={mainBody}
-                    adminOfferStatesActiveStep={adminOfferStatesActiveStep}
+                    teacherOfferStatesActiveStep={teacherOfferStatesActiveStep}
                     comments={comments}
                     commentsLoaded={commentsLoaded}
                     currentComment={currentComment}
@@ -1987,12 +1987,12 @@ class ProjectDetailsMain extends Component {
                     pledgesLoaded={pledgesLoaded}
                     investorPledge={investorPledge}
                     investorPledgeLoaded={investorPledgeLoaded}
-                    projectIssuer={projectIssuer}
-                    projectIssuerLoaded={projectIssuerLoaded}
+                    projectTeacher={projectTeacher}
+                    projectTeacherLoaded={projectTeacherLoaded}
                     projectVisibilitySetting={projectVisibilitySetting}
                     onVote={this.handleVotePitch}
                     onDocumentClick={this.handleDocumentClick}
-                    // only available for admins ----------------------------
+                    // only available for teachers ----------------------------
                     onMakeProjectGoLiveDecision={this.handleMakeProjectGoLiveDecision}
                     onMakeProjectGoToPledgePhaseDecision={this.handleMakeProjectGoToPledgePhaseDecision}
                     onMakeProjectPledgeGoLiveDecision={this.handleMakeProjectPledgeGoLiveDecision}
@@ -2006,14 +2006,14 @@ class ProjectDetailsMain extends Component {
                     onToggleReplyToComment={this.handleToggleReplyToComment}
                     onSubmitCommentReply={this.handleSubmitCommentReply}
                     onDeleteCommentReply={this.handleDeleteCommentReply}
-                    onAdminOfferStatesStepClick={this.handleAdminOfferStatesStepClick}
+                    onTeacherOfferStatesStepClick={this.handleTeacherOfferStatesStepClick}
                     createPledgeDialog_toggleDialog={createPledgeDialog_toggleDialog}
                     createPledgeDialog_setProject={createPledgeDialog_setProject}
                     selectProjectVisibility_setProject={selectProjectVisibility_setProject}
                     bringPitchBackToLive={this.bringPitchBackToLive}
                     toggleRejectFeedback={this.toggleRejectFeedback}
-                    sendProjectBackToIssuer={this.sendProjectBackToIssuer}
-                    toggleContactPitchOwnerDialog={() => this.props.toggleContactPitchOwnerDialog(project.projectName, projectIssuer.email)}
+                    sendProjectBackToTeacher={this.sendProjectBackToTeacher}
+                    toggleContactPitchOwnerDialog={() => this.props.toggleContactPitchOwnerDialog(project.projectName, projectTeacher.email)}
                 />
 
                 <CommentDialog
@@ -2083,7 +2083,7 @@ class ProjectDetails extends Component {
     };
 
     /**
-     * Make a decision whether a project can go live (Admin only)
+     * Make a decision whether a project can go live (Teacher only)
      *
      * @param decision
      */
@@ -2160,8 +2160,8 @@ class ProjectDetails extends Component {
      *
      * @param step
      */
-    onAdminOfferStatesStepClick = step => {
-        this.props.onAdminOfferStatesStepClick(step);
+    onTeacherOfferStatesStepClick = step => {
+        this.props.onTeacherOfferStatesStepClick(step);
     };
 
     /**
@@ -2179,10 +2179,10 @@ class ProjectDetails extends Component {
     }
 
     /**
-     * Send project back to issuer
+     * Send project back to Teacher
      */
-    sendProjectBackToIssuer = () => {
-        this.props.sendProjectBackToIssuer();
+    sendProjectBackToTeacher = () => {
+        this.props.sendProjectBackToTeacher();
     }
 
     /**
@@ -2199,19 +2199,19 @@ class ProjectDetails extends Component {
         const {
             AuthenticationState,
 
-            groupsUserIsIn,
+            coursesStudentIsIn,
 
-            groupUserName,
-            groupProperties,
+            courseStudent,
+            courseProperties,
 
             isMobile,
 
-            user,
+            student,
 
             investorSelfCertificationAgreement,
 
             mainBody,
-            adminOfferStatesActiveStep,
+            teacherOfferStatesActiveStep,
 
             comments,
             commentsLoaded,
@@ -2227,8 +2227,8 @@ class ProjectDetails extends Component {
             investorPledge,
             investorPledgeLoaded,
 
-            projectIssuer,
-            projectIssuerLoaded,
+            projectTeacher,
+            projectTeacherLoaded,
 
             currentComment,
             currentCommentText,
@@ -2255,7 +2255,7 @@ class ProjectDetails extends Component {
         if (!pledgesLoaded
             || !votesLoaded
             || !investorPledgeLoaded
-            || !projectIssuerLoaded
+            || !projectTeacherLoaded
         ) {
             return (
                 <Row noGutters>
@@ -2263,11 +2263,11 @@ class ProjectDetails extends Component {
                         <FlexView width="100%" marginTop={20} hAlignContent="center">
                             <HashLoader
                                 color={
-                                    !groupProperties
+                                    !courseProperties
                                         ?
                                         colors.primaryColor
                                         :
-                                        groupProperties.settings.primaryColor
+                                        courseProperties.settings.primaryColor
                                 }
                             />
                         </FlexView>
@@ -2279,13 +2279,13 @@ class ProjectDetails extends Component {
         // return Page Not Found for security reason
         if (!project
             || !pledges
-            || !projectIssuer
+            || !projectTeacher
             // the project is private
-            // the user is an investor/issuer that is not in the group that owns this project
+            // the student is an investor/teacher that is not in the course that owns this project
             || (
                 project.visibility === DB_CONST.PROJECT_VISIBILITY_PRIVATE
-                && (user.type === DB_CONST.TYPE_INVESTOR || user.type === DB_CONST.TYPE_ISSUER)
-                && (groupsUserIsIn !== null && groupsUserIsIn.findIndex(group => group.anid === project.anid) === -1)
+                && (student.type === DB_CONST.TYPE_INVESTOR || student.type === DB_CONST.TYPE_TEACHER)
+                && (coursesStudentIsIn !== null && coursesStudentIsIn.findIndex(course => course.anid === project.anid) === -1)
             )
         ) {
             return (
@@ -2298,13 +2298,13 @@ class ProjectDetails extends Component {
         }
 
         // the project is temporarily closed
-        // only display its content to the super admins,
-        // group admins that own this project, and the issuer of this project
+        // only display its content to the super teachers,
+        // course teachers that own this project, and the teacher of this project
         if (utils.isProjectTemporarilyClosed(project)
             && (
-                (user.type === DB_CONST.TYPE_ISSUER && user.id !== project.issuerID)
-                || (user.type === DB_CONST.TYPE_INVESTOR)
-                || (user.type === DB_CONST.TYPE_ADMIN && !user.superAdmin && user.anid !== project.anid)
+                (student.type === DB_CONST.TYPE_TEACHER && student.id !== project.teacherID)
+                || (student.type === DB_CONST.TYPE_INVESTOR)
+                || (student.type === DB_CONST.TYPE_PROF && !student.superTeacher && student.anid !== project.anid)
             )
         ) {
             return (
@@ -2319,17 +2319,17 @@ class ProjectDetails extends Component {
         }
 
         // the project is private
-        // the user is a group admin that does not own this project
+        // the student is a course teacher that does not own this project
         if (project.visibility === DB_CONST.PROJECT_VISIBILITY_PRIVATE
-            && (user.type === DB_CONST.TYPE_ADMIN)
-            && !user.superAdmin
-            && user.anid !== project.anid
+            && (student.type === DB_CONST.TYPE_PROF)
+            && !student.superTeacher
+            && student.anid !== project.anid
         ) {
             return (
                 <Row noGutters style={{marginLeft: 10, marginRight: 10}}>
                     <Col xs={12} md={{span: 10, offset: 1}} lg={{span: 8, offset: 2}}>
                         <FlexView marginTop={40} hAlignContent="center">
-                            <Typography variant="h5" align="center"> You can only edit offers from your group.</Typography>
+                            <Typography variant="h5" align="center"> You can only edit offers from your course.</Typography>
                         </FlexView>
                     </Col>
                 </Row>
@@ -2344,7 +2344,7 @@ class ProjectDetails extends Component {
                 return (comment1.commentedDate - comment2.commentedDate);
             });
 
-            let currentCommentIndex = sortedComments.findIndex(comment => comment.commentedBy === user.id);
+            let currentCommentIndex = sortedComments.findIndex(comment => comment.commentedBy === student.id);
             if (currentCommentIndex !== -1) {
                 const currentComment = comments[currentCommentIndex];
                 sortedComments.splice(currentCommentIndex, 1);
@@ -2377,7 +2377,7 @@ class ProjectDetails extends Component {
                             </Col>
                     }
 
-                    {/** Pledge (displayed if the user is an investor and has pledged this project before) */}
+                    {/** Pledge (displayed if the student is an investor and has pledged this project before) */}
                     {
                         !investorPledge
                             ?
@@ -2409,9 +2409,9 @@ class ProjectDetails extends Component {
                                                         :
                                                         <NavLink
                                                             to={{
-                                                                pathname: groupUserName
+                                                                pathname: courseStudent
                                                                     ?
-                                                                    ROUTES.PLEDGE.replace(":groupUserName", groupUserName)
+                                                                    ROUTES.PLEDGE.replace(":courseStudent", courseStudent)
                                                                     :
                                                                     ROUTES.PLEDGE_INVEST_WEST_SUPER
                                                                 ,
@@ -2451,12 +2451,12 @@ class ProjectDetails extends Component {
                                 }
                             </Typography>
                             {
-                                user.type === DB_CONST.TYPE_ADMIN
-                                || (user.type === DB_CONST.TYPE_ISSUER && user.id === project.issuerID)
+                                student.type === DB_CONST.TYPE_PROF
+                                || (student.type === DB_CONST.TYPE_TEACHER && student.id === project.teacherID)
                                     ?
                                     <FlexView width="100%" hAlignContent="center" vAlignContent="center" marginTop={20}>
                                         {
-                                            !utils.shouldAProjectBeEdited(user, project)
+                                            !utils.shouldAProjectBeEdited(student, project)
                                                 ?
                                                 <Button color="default" variant="outlined" size="medium" className={css(sharedStyles.no_text_transform)} disabled>
                                                     <CreateIcon style={{marginRight: 8,  width: 20, height: "auto"}}
@@ -2464,10 +2464,10 @@ class ProjectDetails extends Component {
                                                 :
                                                 <NavLink
                                                     to={
-                                                        groupUserName
+                                                        courseStudent
                                                             ?
                                                             ROUTES.EDIT_OFFER
-                                                                .replace(":groupUserName", groupUserName)
+                                                                .replace(":courseStudent", courseStudent)
                                                                 .replace(":projectID", project.id)
                                                             :
                                                             ROUTES.EDIT_OFFER_INVEST_WEST_SUPER
@@ -2484,7 +2484,7 @@ class ProjectDetails extends Component {
                                         {/*>*/}
                                         {/*    <InfoOverlay*/}
                                         {/*        message={*/}
-                                        {/*            user.type === DB_CONST.TYPE_ADMIN*/}
+                                        {/*            student.type === DB_CONST.TYPE_PROF*/}
                                         {/*                ?*/}
                                         {/*                "Edit offer."*/}
                                         {/*                :*/}
@@ -2492,7 +2492,7 @@ class ProjectDetails extends Component {
                                         {/*                    ?*/}
                                         {/*                    "This offer is still a draft. Complete it."*/}
                                         {/*                    :*/}
-                                        {/*                    !utils.shouldAProjectBeEdited(user, project)*/}
+                                        {/*                    !utils.shouldAProjectBeEdited(student, project)*/}
                                         {/*                        ?*/}
                                         {/*                        "Pages cannot be edited."*/}
                                         {/*                        :*/}
@@ -2507,7 +2507,7 @@ class ProjectDetails extends Component {
                             }
 
                             {
-                                user.id === project.issuerID
+                                student.id === project.teacherID
                                     ?
                                     null
                                     :
@@ -2516,27 +2516,27 @@ class ProjectDetails extends Component {
                                             to={
                                                 this.shouldHideInformation()
                                                 || (
-                                                    project.hasOwnProperty('createdByGroupAdmin')
-                                                    && project.createdByGroupAdmin
+                                                    project.hasOwnProperty('createdByCourseTeacher')
+                                                    && project.createdByCourseTeacher
                                                 )
                                                     ?
-                                                    groupUserName
+                                                    courseStudent
                                                         ?
-                                                        ROUTES.VIEW_GROUP_DETAILS
-                                                            .replace(":groupUserName", groupUserName)
-                                                            .replace(":groupID", project.group.groupUserName)
+                                                        ROUTES.VIEW_COURSE_DETAILS
+                                                            .replace(":courseStudent", courseStudent)
+                                                            .replace(":courseID", project.course.courseStudent)
                                                         :
-                                                        ROUTES.VIEW_GROUP_DETAILS_INVEST_WEST_SUPER
-                                                            .replace(":groupID", project.group.groupUserName)
+                                                        ROUTES.VIEW_COURSE_DETAILS_INVEST_WEST_SUPER
+                                                            .replace(":courseID", project.course.courseStudent)
                                                     :
-                                                    groupUserName
+                                                    courseStudent
                                                         ?
-                                                        ROUTES.USER_PROFILE
-                                                            .replace(":groupUserName", groupUserName)
-                                                            .replace(":userID", projectIssuer.id)
+                                                        ROUTES.STUDENT_PROFILE
+                                                            .replace(":courseStudent", courseStudent)
+                                                            .replace(":studentID", projectTeacher.id)
                                                         :
-                                                        ROUTES.USER_PROFILE_INVEST_WEST_SUPER
-                                                            .replace(":userID", projectIssuer.id)
+                                                        ROUTES.STUDENT_PROFILE_INVEST_WEST_SUPER
+                                                            .replace(":studentID", projectTeacher.id)
                                             }
                                             className={css(sharedStyles.nav_link_hover, styles.black_text)}
                                         >
@@ -2544,26 +2544,26 @@ class ProjectDetails extends Component {
                                                 {
                                                     this.shouldHideInformation()
                                                     || (
-                                                        project.hasOwnProperty('createdByGroupAdmin')
-                                                        && project.createdByGroupAdmin
+                                                        project.hasOwnProperty('createdByCourseTeacher')
+                                                        && project.createdByCourseTeacher
                                                     )
                                                         ?
-                                                        <u>by {`${project.group.displayName}`}</u>
+                                                        <u>by {`${project.course.displayName}`}</u>
                                                         :
-                                                        <u>by {`${projectIssuer.firstName} ${projectIssuer.lastName}`}</u>
+                                                        <u>by {`${projectTeacher.firstName} ${projectTeacher.lastName}`}</u>
                                                 }
                                             </Typography>
                                         </NavLink>
                                         {
-                                            project.hasOwnProperty('createdByGroupAdmin')
-                                            && project.createdByGroupAdmin
+                                            project.hasOwnProperty('createdByCourseTeacher')
+                                            && project.createdByCourseTeacher
                                                 ?
                                                 null
                                                 :
-                                                projectIssuer.hasOwnProperty('linkedin')
-                                                && projectIssuer.linkedin.trim().length > 0
+                                                projectTeacher.hasOwnProperty('linkedin')
+                                                && projectTeacher.linkedin.trim().length > 0
                                                     ?
-                                                    <a href={projectIssuer.linkedin} target="_blank" rel="noopener noreferrer">
+                                                    <a href={projectTeacher.linkedin} target="_blank" rel="noopener noreferrer">
                                                         <img alt="linkedin_logo" src={require("../../img/linkedin_logo.png").default} style={{width: 64,  height: 64}}/>
                                                     </a>
                                                     :
@@ -2579,7 +2579,7 @@ class ProjectDetails extends Component {
                         {
                             this.shouldHideInformation()
                                 ?
-                                <Image src={utils.getLogoFromGroup(utils.GET_PLAIN_LOGO, project.group)}
+                                <Image src={utils.getLogoFromCourse(utils.GET_PLAIN_LOGO, project.course)}
                                     style={{
                                         maxHeight:
                                             isMobile
@@ -2627,11 +2627,11 @@ class ProjectDetails extends Component {
                             <Col xs={12} sm={12} md={{span: 10, offset: 1, order: 1}} lg={{span: 12, offset: 0, order: 1}}>
                                 <FlexView width="100%" height={4} style={{
                                         backgroundColor:
-                                            !groupProperties
+                                            !courseProperties
                                                 ?
                                                 colors.primaryColor
                                                 :
-                                                groupProperties.settings.primaryColor
+                                                courseProperties.settings.primaryColor
                                     }}
                                 />
                             </Col>
@@ -2644,7 +2644,7 @@ class ProjectDetails extends Component {
                                         || utils.isProjectWaitingToGoLive(project)
                                         || utils.isProjectRejectedToGoLive(project)
                                         || utils.isProjectInLivePitchPhase(project)
-                                        || utils.isProjectPitchExpiredWaitingForAdminToCheck(project)
+                                        || utils.isProjectPitchExpiredWaitingForTeacherToCheck(project)
                                         || utils.isProjectWaitingForPledgeToBeCreated(project)
                                         || utils.isProjectWaitingForPledgeToBeChecked(project)
                                             ?
@@ -2722,15 +2722,15 @@ class ProjectDetails extends Component {
 
                             {/** Contact us */}
                             {
-                                isProjectOwner(AuthenticationState.currentUser, project)
+                                isProjectOwner(AuthenticationState.currentStudent, project)
                                     ? null
                                     : <Col xs={12} sm={12} md={{span: 10, offset: 1, order: 5}} lg={{span: 12, offset: 0, order: 7}} style={{marginTop: 15}}>
                                         <FlexView column hAlignContent="left">
                                             <FlexView hAlignContent="center" vAlignContent="center">
-                                                <Button color="primary" variant="contained" className={css(sharedStyles.no_text_transform)} disabled={this.shouldHideInformation() || (user.type === TYPE_INVESTOR && !investorSelfCertificationAgreement)} onClick={() => this.toggleContactPitchOwnerDialog()}>Contact us</Button>
+                                                <Button color="primary" variant="contained" className={css(sharedStyles.no_text_transform)} disabled={this.shouldHideInformation() || (student.type === TYPE_INVESTOR && !investorSelfCertificationAgreement)} onClick={() => this.toggleContactPitchOwnerDialog()}>Contact us</Button>
                                                 {/*<Button*/}
                                                 {/*    size="medium"*/}
-                                                {/*    variant={getInvestorVote(votes, user) && getInvestorVote(votes, user).voted ? "contained" : "outlined"}*/}
+                                                {/*    variant={getInvestorVote(votes, student) && getInvestorVote(votes, student).voted ? "contained" : "outlined"}*/}
                                                 {/*    color="primary"*/}
                                                 {/*    disabled={this.shouldVoteDisabled()}*/}
                                                 {/*    onClick={() => this.onVote(true)}*/}
@@ -2761,7 +2761,7 @@ class ProjectDetails extends Component {
                                                 {/*</FlexView>*/}
                                             </FlexView>
                                             {/*{*/}
-                                            {/*    user.type === DB_CONST.TYPE_ISSUER*/}
+                                            {/*    student.type === DB_CONST.TYPE_TEACHER*/}
                                             {/*        ?*/}
                                             {/*        <Typography*/}
                                             {/*            variant="body2"*/}
@@ -2780,21 +2780,21 @@ class ProjectDetails extends Component {
                                         {
                                             this.shouldHideInformation()
                                                 ?
-                                                user.type === DB_CONST.TYPE_ADMIN
+                                                student.type === DB_CONST.TYPE_PROF
                                                     ?
                                                     <FlexView column marginTop={20}>
                                                         <Typography align="left" variant="body2" color="textSecondary">You cannot see detailed information of this restricted offer.</Typography>
                                                     </FlexView>
                                                     :
                                                     <FlexView column marginTop={20}>
-                                                        <Typography align="left" variant="body2" color="textSecondary">Restricted to {project.group.displayName} members.</Typography>
+                                                        <Typography align="left" variant="body2" color="textSecondary">Restricted to {project.course.displayName} members.</Typography>
                                                         <NavLink
                                                             to={
-                                                                groupUserName
+                                                                courseStudent
                                                                     ?
-                                                                    ROUTES.VIEW_GROUP_DETAILS.replace(":groupUserName", groupUserName).replace(":groupID", project.group.groupUserName)
+                                                                    ROUTES.VIEW_COURSE_DETAILS.replace(":courseStudent", courseStudent).replace(":courseID", project.course.courseStudent)
                                                                     :
-                                                                    ROUTES.VIEW_GROUP_DETAILS_INVEST_WEST_SUPER.replace(":groupID", project.group.groupUserName)
+                                                                    ROUTES.VIEW_COURSE_DETAILS_INVEST_WEST_SUPER.replace(":courseID", project.course.courseStudent)
                                                             }
                                                             style={{marginTop: 4}}>
                                                             <Typography variant="body2">Request access</Typography>
@@ -2813,7 +2813,7 @@ class ProjectDetails extends Component {
                                     null
                                     :
                                     (
-                                        user.type !== DB_CONST.TYPE_INVESTOR
+                                        student.type !== DB_CONST.TYPE_INVESTOR
                                             ?
                                             (
                                                 <Col xs={12} sm={12} md={{span: 10, offset: 1, order: 6}} lg={{span: 12, offset: 0, order: 6}} style={{marginTop: 30}}>
@@ -2834,12 +2834,12 @@ class ProjectDetails extends Component {
                                                     <Col xs={12} sm={12} md={{span: 10, offset: 1, order: 6}} lg={{span: 12, offset: 0, order: 6}} style={{marginTop: 30}}>
 
                                                         {
-                                                            user.type === DB_CONST.TYPE_INVESTOR
+                                                            student.type === DB_CONST.TYPE_INVESTOR
                                                             && !investorSelfCertificationAgreement
                                                                 ?
                                                                 <Button style={{marginBottom: 14}} className={css(sharedStyles.no_text_transform)} fullWidth variant="outlined" color="primary" size="medium"
                                                                     disabled={
-                                                                        user.type === DB_CONST.TYPE_INVESTOR
+                                                                        student.type === DB_CONST.TYPE_INVESTOR
                                                                         && !investorSelfCertificationAgreement
                                                                     }
                                                                 >
@@ -2848,9 +2848,9 @@ class ProjectDetails extends Component {
                                                                 :
                                                                 <NavLink
                                                                     to={{
-                                                                        pathname: groupUserName
+                                                                        pathname: courseStudent
                                                                             ?
-                                                                            ROUTES.PLEDGE.replace(":groupUserName", groupUserName)
+                                                                            ROUTES.PLEDGE.replace(":courseStudent", courseStudent)
                                                                             :
                                                                             ROUTES.PLEDGE_INVEST_WEST_SUPER
                                                                         ,
@@ -2886,35 +2886,35 @@ class ProjectDetails extends Component {
                         <FlexView hAlignContent="center">
                             <Tabs value={mainBody} onChange={this.onTabChanged} indicatorColor="primary" textColor="primary" variant="scrollable" scrollButtons="on">
                                 {
-                                    // user is a super admin
-                                    // or a group admin that owns the project
-                                    (user.type === DB_CONST.TYPE_ADMIN
-                                        && (user.superAdmin || (!user.superAdmin && user.anid === project.anid))
+                                    // student is a super teacher
+                                    // or a course teacher that owns the project
+                                    (student.type === DB_CONST.TYPE_PROF
+                                        && (student.superTeacher || (!student.superTeacher && student.anid === project.anid))
                                     )
                                     // project is not a draft
                                     && !utils.isDraftProject(project)
                                         ?
-                                        <Tab value={MAIN_BODY_ADMIN_OFFER_STATES} className={css(sharedStyles.tab_title)} fullWidth label="Control phases"
+                                        <Tab value={MAIN_BODY_TEACHER_OFFER_STATES} className={css(sharedStyles.tab_title)} fullWidth label="Control phases"
                                          style={{
                                                 color:
-                                                    !groupProperties
+                                                    !courseProperties
                                                         ?
                                                         colors.secondaryColor
                                                         :
-                                                        groupProperties.settings.secondaryColor
+                                                        courseProperties.settings.secondaryColor
                                             }}
                                         />
                                         :
                                         null
                                 }
                                 {/*{*/}
-                                {/*    // user is a super admin*/}
-                                {/*    // or a group admin that owns the project*/}
-                                {/*    (user.type === DB_CONST.TYPE_ADMIN*/}
-                                {/*        && (user.superAdmin || (!user.superAdmin && user.anid === project.anid))*/}
+                                {/*    // student is a super teacher*/}
+                                {/*    // or a course teacher that owns the project*/}
+                                {/*    (student.type === DB_CONST.TYPE_PROF*/}
+                                {/*        && (student.superTeacher || (!student.superTeacher && student.anid === project.anid))*/}
                                 {/*    )*/}
-                                {/*    // user is the issuer that owns the project*/}
-                                {/*    || (user.type === DB_CONST.TYPE_ISSUER && user.id === project.issuerID)*/}
+                                {/*    // student is the Teacher that owns the project*/}
+                                {/*    || (student.type === DB_CONST.TYPE_TEACHER && student.id === project.teacherID)*/}
                                 {/*        ?*/}
                                 {/*        <Tab*/}
                                 {/*            value={MAIN_BODY_INVESTORS_PLEDGED}*/}
@@ -2923,11 +2923,11 @@ class ProjectDetails extends Component {
                                 {/*            label="Pledges"*/}
                                 {/*            style={{*/}
                                 {/*                color:*/}
-                                {/*                    !groupProperties*/}
+                                {/*                    !courseProperties*/}
                                 {/*                        ?*/}
                                 {/*                        colors.secondaryColor*/}
                                 {/*                        :*/}
-                                {/*                        groupProperties.settings.secondaryColor*/}
+                                {/*                        courseProperties.settings.secondaryColor*/}
                                 {/*            }}*/}
                                 {/*        />*/}
                                 {/*        :*/}
@@ -2948,9 +2948,9 @@ class ProjectDetails extends Component {
 
                 {/** Main body */}
                 <Row noGutters className={css(styles.main_body_section)}>
-                    {/** Offer states (only visible to Admin) */}
+                    {/** Offer states (only visible to Teacher) */}
                     {
-                        mainBody !== MAIN_BODY_ADMIN_OFFER_STATES
+                        mainBody !== MAIN_BODY_TEACHER_OFFER_STATES
                             ?
                             null
                             :
@@ -2960,17 +2960,17 @@ class ProjectDetails extends Component {
 
                                     <Row>
                                         <Col xs={{span: 12, order: 1}} sm={{span: 12, order: 1}} md={{span: 8, order: 0}} lg={{span: 8, order: 0}}>
-                                            <Stepper nonLinear orientation="vertical" activeStep={adminOfferStatesActiveStep} style={{marginTop: 15}}>
+                                            <Stepper nonLinear orientation="vertical" activeStep={teacherOfferStatesActiveStep} style={{marginTop: 15}}>
                                                 {/** Publish pitch step */}
-                                                <Step key={ADMIN_OFFER_STATES_PUBLISH_PITCH} completed={!utils.isProjectWaitingToGoLive(project)}>
-                                                    <StepButton onClick={() => this.onAdminOfferStatesStepClick(ADMIN_OFFER_STATES_PUBLISH_PITCH)}>
+                                                <Step key={TEACHER_OFFER_STATES_PUBLISH_PITCH} completed={!utils.isProjectWaitingToGoLive(project)}>
+                                                    <StepButton onClick={() => this.onTeacherOfferStatesStepClick(TEACHER_OFFER_STATES_PUBLISH_PITCH)}>
                                                         <StepLabel>Publish pitch</StepLabel>
                                                     </StepButton>
                                                     <StepContent>
                                                         {
                                                             utils.isProjectWaitingToGoLive(project)
                                                                 ?
-                                                                <FlexView column width="100%" marginTop={20} className={css(styles.admin_state_control_box)}>
+                                                                <FlexView column width="100%" marginTop={20} className={css(styles.teacher_state_control_box)}>
                                                                     <Typography variant="body1" align="left" paragraph>
                                                                         Please check this offer
                                                                         carefully
@@ -2996,7 +2996,7 @@ class ProjectDetails extends Component {
                                                                             <FlexView column>
                                                                                 <TextField
                                                                                     label="Feedback"
-                                                                                    placeholder="Feedback for issuer"
+                                                                                    placeholder="Feedback for teacher"
                                                                                     name="rejectFeedback"
                                                                                     value={rejectFeedback}
                                                                                     fullWidth
@@ -3011,7 +3011,7 @@ class ProjectDetails extends Component {
 
                                                                                 <FlexView width="100%" hAlignContent="right" marginTop={10}>
                                                                                     <FlexView marginRight={6}>
-                                                                                        <Button fullWidth color="primary" variant="contained" className={css(sharedStyles.no_text_transform)} disabled={rejectFeedback.trim().length === 0} onClick={() => this.sendProjectBackToIssuer()}>
+                                                                                        <Button fullWidth color="primary" variant="contained" className={css(sharedStyles.no_text_transform)} disabled={rejectFeedback.trim().length === 0} onClick={() => this.sendProjectBackToTeacher()}>
                                                                                             {
                                                                                                 sendingProjectBack
                                                                                                     ?
@@ -3033,26 +3033,26 @@ class ProjectDetails extends Component {
                                                                             ?
                                                                             null
                                                                             :
-                                                                            isProjectCreatedByGroupAdmin(project)
+                                                                            isProjectCreatedByCourseTeacher(project)
                                                                                 ?
-                                                                                <Button fullWidth color="primary" variant="contained" className={css(sharedStyles.no_text_transform)} disabled={user.superAdmin} onClick={() => this.onMakeProjectGoLiveDecision({decision: true, projectVisibilitySetting})}>Publish pitch</Button>
+                                                                                <Button fullWidth color="primary" variant="contained" className={css(sharedStyles.no_text_transform)} disabled={student.superTeacher} onClick={() => this.onMakeProjectGoLiveDecision({decision: true, projectVisibilitySetting})}>Publish pitch</Button>
                                                                                 :
                                                                                 <FlexView>
                                                                                     <FlexView grow marginRight={10}>
-                                                                                        <Button fullWidth color="primary" variant="contained" className={css(sharedStyles.no_text_transform)} disabled={user.superAdmin} onClick={() => this.onMakeProjectGoLiveDecision({decision: true, projectVisibilitySetting})}>Publish pitch</Button>
+                                                                                        <Button fullWidth color="primary" variant="contained" className={css(sharedStyles.no_text_transform)} disabled={student.superTeacher} onClick={() => this.onMakeProjectGoLiveDecision({decision: true, projectVisibilitySetting})}>Publish pitch</Button>
                                                                                     </FlexView>
                                                                                     <FlexView grow marginLeft={10}>
-                                                                                        <Button fullWidth color="secondary" variant="outlined" className={css(sharedStyles.no_text_transform)} disabled={user.superAdmin} onClick={() => this.toggleRejectFeedback()}>Send back to issuer</Button>
+                                                                                        <Button fullWidth color="secondary" variant="outlined" className={css(sharedStyles.no_text_transform)} disabled={student.superTeacher} onClick={() => this.toggleRejectFeedback()}>Send back to teacher</Button>
                                                                                     </FlexView>
                                                                                 </FlexView>
                                                                     }
 
                                                                     {
-                                                                        !user.superAdmin
+                                                                        !student.superTeacher
                                                                             ?
                                                                             null
                                                                             :
-                                                                            <Typography variant="body1" color="error" align="left" style={{marginTop: 20}}>Only group admin can do this.</Typography>
+                                                                            <Typography variant="body1" color="error" align="left" style={{marginTop: 20}}>Only course teacher can do this.</Typography>
                                                                     }
                                                                 </FlexView>
                                                                 :
@@ -3088,7 +3088,7 @@ class ProjectDetails extends Component {
 
                                                 {/** Move Pitch to Pledge step */}
                                                 <Step
-                                                    key={ADMIN_OFFER_STATES_MOVE_TO_PLEDGE}
+                                                    key={TEACHER_OFFER_STATES_MOVE_TO_PLEDGE}
                                                     disabled={
                                                         isProjectWaitingToGoLive(project)
                                                         || isProjectRejectedToGoLive(project)
@@ -3101,7 +3101,7 @@ class ProjectDetails extends Component {
                                                         || isProjectWaitingForPledgeToBeChecked(project)
                                                     }
                                                 >
-                                                    <StepButton onClick={() => this.onAdminOfferStatesStepClick(ADMIN_OFFER_STATES_MOVE_TO_PLEDGE)}>
+                                                    <StepButton onClick={() => this.onTeacherOfferStatesStepClick(TEACHER_OFFER_STATES_MOVE_TO_PLEDGE)}>
                                                         {/*<StepLabel*/}
                                                         {/*    error={utils.isProjectRejectedToGoLive(project)}*/}
                                                         {/*>*/}
@@ -3112,7 +3112,7 @@ class ProjectDetails extends Component {
                                                     <StepContent>
                                                         {
                                                             (isProjectInLivePitchPhase(project)
-                                                                || isProjectPitchExpiredWaitingForAdminToCheck(project))
+                                                                || isProjectPitchExpiredWaitingForTeacherToCheck(project))
                                                             && !isProjectWaitingForPledgeToBeCreated(project)
                                                             && !isProjectWaitingForPledgeToBeChecked(project)
                                                                 ?
@@ -3120,11 +3120,11 @@ class ProjectDetails extends Component {
                                                                     column
                                                                 >
                                                                     {
-                                                                        !isProjectPitchExpiredWaitingForAdminToCheck(project)
+                                                                        !isProjectPitchExpiredWaitingForTeacherToCheck(project)
                                                                             ?
                                                                             null
                                                                             :
-                                                                            <FlexView column width="100%" marginTop={20} marginBottom={20} className={css(styles.admin_state_control_box)}>
+                                                                            <FlexView column width="100%" marginTop={20} marginBottom={20} className={css(styles.teacher_state_control_box)}>
                                                                                 <Typography align="left" variant="body1" style={{marginBottom: 35}}>This pitch has expired. You can bring it back to live by updating the expiry date or close it.</Typography>
 
                                                                                 <KeyboardDatePicker
@@ -3149,7 +3149,7 @@ class ProjectDetails extends Component {
                                                                                     style={{marginTop: 25}} onClick={this.bringPitchBackToLive}>Make pitch live again</Button>
 
                                                                                 <FlexView column marginTop={100}>
-                                                                                    <Button fullWidth color="secondary" className={css(sharedStyles.no_text_transform)} variant="contained" disabled={user.superAdmin} onClick={() => this.onMakeProjectGoToPledgePhaseDecision(false)}>Close pitch</Button>
+                                                                                    <Button fullWidth color="secondary" className={css(sharedStyles.no_text_transform)} variant="contained" disabled={student.superTeacher} onClick={() => this.onMakeProjectGoToPledgePhaseDecision(false)}>Close pitch</Button>
 
                                                                                     <Typography align="center" variant="body2" style={{marginTop: 12}}>
                                                                                         <b>
@@ -3169,7 +3169,7 @@ class ProjectDetails extends Component {
                                                                     {/*    column*/}
                                                                     {/*    width="100%"*/}
                                                                     {/*    marginTop={20}*/}
-                                                                    {/*    className={css(styles.admin_state_control_box)}*/}
+                                                                    {/*    className={css(styles.teacher_state_control_box)}*/}
                                                                     {/*>*/}
                                                                     {/*    <Typography*/}
                                                                     {/*        align="left"*/}
@@ -3181,7 +3181,7 @@ class ProjectDetails extends Component {
                                                                     {/*        phase. You can now move it to the pledge*/}
                                                                     {/*        phase.*/}
                                                                     {/*        The*/}
-                                                                    {/*        issuer will be notified and prompted to*/}
+                                                                    {/*        teacher will be notified and prompted to*/}
                                                                     {/*        create*/}
                                                                     {/*        their*/}
                                                                     {/*        pledge page.*/}
@@ -3217,7 +3217,7 @@ class ProjectDetails extends Component {
                                                                     {/*                color="primary"*/}
                                                                     {/*                className={css(sharedStyles.no_text_transform)}*/}
                                                                     {/*                variant="outlined"*/}
-                                                                    {/*                disabled={user.superAdmin}*/}
+                                                                    {/*                disabled={student.superTeacher}*/}
                                                                     {/*                onClick={() => this.onMakeProjectGoToPledgePhaseDecision(true)}*/}
                                                                     {/*            >*/}
                                                                     {/*                Move to pledge phase*/}
@@ -3232,7 +3232,7 @@ class ProjectDetails extends Component {
                                                                     {/*                color="secondary"*/}
                                                                     {/*                className={css(sharedStyles.no_text_transform)}*/}
                                                                     {/*                variant="outlined"*/}
-                                                                    {/*                disabled={user.superAdmin}*/}
+                                                                    {/*                disabled={student.superTeacher}*/}
                                                                     {/*                onClick={() => this.onMakeProjectGoToPledgePhaseDecision(false)}*/}
                                                                     {/*            >*/}
                                                                     {/*                Close pitch*/}
@@ -3241,7 +3241,7 @@ class ProjectDetails extends Component {
                                                                     {/*    </FlexView>*/}
 
                                                                     {/*    {*/}
-                                                                    {/*        !user.superAdmin*/}
+                                                                    {/*        !student.superTeacher*/}
                                                                     {/*            ?*/}
                                                                     {/*            null*/}
                                                                     {/*            :*/}
@@ -3253,7 +3253,7 @@ class ProjectDetails extends Component {
                                                                     {/*                    marginTop: 20*/}
                                                                     {/*                }}*/}
                                                                     {/*            >*/}
-                                                                    {/*                Only group admin can do this.*/}
+                                                                    {/*                Only course teacher can do this.*/}
                                                                     {/*            </Typography>*/}
                                                                     {/*    }*/}
                                                                     {/*</FlexView>*/}
@@ -3278,21 +3278,21 @@ class ProjectDetails extends Component {
                                                                                 :
                                                                                 project.Pitch.status === DB_CONST.PITCH_STATUS_ACCEPTED_CREATE_PRIMARY_OFFER
                                                                                     ?
-                                                                                    project.hasOwnProperty('createdByGroupAdmin')
-                                                                                    && project.createdByGroupAdmin
-                                                                                    && (groupProperties && project.anid === groupProperties.anid)
+                                                                                    project.hasOwnProperty('createdByCourseTeacher')
+                                                                                    && project.createdByCourseTeacher
+                                                                                    && (courseProperties && project.anid === courseProperties.anid)
                                                                                         ?
                                                                                         "You can create a pledge page for this offer now."
                                                                                         :
-                                                                                        "The issuer has been prompted to create their pledge page. You will then be able to check the pledge before publishing."
+                                                                                        "The teacher has been prompted to create their pledge page. You will then be able to check the pledge before publishing."
                                                                                     :
                                                                                     "This offer has moved to the pledge phase."
                                                                         }
                                                                     </Typography>
                                                                     {
-                                                                        project.hasOwnProperty('createdByGroupAdmin')
-                                                                        && project.createdByGroupAdmin
-                                                                        && (groupProperties && project.anid === groupProperties.anid)
+                                                                        project.hasOwnProperty('createdByCourseTeacher')
+                                                                        && project.createdByCourseTeacher
+                                                                        && (courseProperties && project.anid === courseProperties.anid)
                                                                         && project.Pitch.status === DB_CONST.PITCH_STATUS_ACCEPTED_CREATE_PRIMARY_OFFER
                                                                             ?
                                                                             <FlexView marginTop={20}>
@@ -3316,12 +3316,12 @@ class ProjectDetails extends Component {
 
                                                 {/*/!** Publish Pledge step *!/*/}
                                                 {/*<Step*/}
-                                                {/*    key={ADMIN_OFFER_STATES_PUBLISH_PLEDGE}*/}
+                                                {/*    key={TEACHER_OFFER_STATES_PUBLISH_PLEDGE}*/}
                                                 {/*    disabled={*/}
                                                 {/*        isProjectWaitingToGoLive(project)*/}
                                                 {/*        || isProjectRejectedToGoLive(project)*/}
                                                 {/*        || isProjectInLivePitchPhase(project)*/}
-                                                {/*        || isProjectPitchExpiredWaitingForAdminToCheck(project)*/}
+                                                {/*        || isProjectPitchExpiredWaitingForTeacherToCheck(project)*/}
                                                 {/*        || isProjectFailed(project)*/}
                                                 {/*    }*/}
                                                 {/*    completed={*/}
@@ -3331,7 +3331,7 @@ class ProjectDetails extends Component {
                                                 {/*    }*/}
                                                 {/*>*/}
                                                 {/*    <StepButton*/}
-                                                {/*        onClick={() => this.onAdminOfferStatesStepClick(ADMIN_OFFER_STATES_PUBLISH_PLEDGE)}*/}
+                                                {/*        onClick={() => this.onTeacherOfferStatesStepClick(TEACHER_OFFER_STATES_PUBLISH_PLEDGE)}*/}
                                                 {/*    >*/}
                                                 {/*        <StepLabel*/}
                                                 {/*            error={*/}
@@ -3350,14 +3350,14 @@ class ProjectDetails extends Component {
                                                 {/*                    column*/}
                                                 {/*                    width="100%"*/}
                                                 {/*                    marginTop={20}*/}
-                                                {/*                    className={css(styles.admin_state_control_box)}*/}
+                                                {/*                    className={css(styles.teacher_state_control_box)}*/}
                                                 {/*                >*/}
                                                 {/*                    <Typography*/}
                                                 {/*                        align="left"*/}
                                                 {/*                        variant="body1"*/}
                                                 {/*                        paragraph*/}
                                                 {/*                    >*/}
-                                                {/*                        The issuer has now created their pledge page.*/}
+                                                {/*                        The teacher has now created their pledge page.*/}
                                                 {/*                        Please*/}
                                                 {/*                        check this carefully before publishing as you*/}
                                                 {/*                        cannot*/}
@@ -3395,7 +3395,7 @@ class ProjectDetails extends Component {
                                                 {/*                                color="primary"*/}
                                                 {/*                                className={css(sharedStyles.no_text_transform)}*/}
                                                 {/*                                variant="outlined"*/}
-                                                {/*                                disabled={user.superAdmin}*/}
+                                                {/*                                disabled={student.superTeacher}*/}
                                                 {/*                                onClick={() => this.onMakeProjectPledgeGoLiveDecision({*/}
                                                 {/*                                    decision: true,*/}
                                                 {/*                                    projectVisibilitySetting*/}
@@ -3413,7 +3413,7 @@ class ProjectDetails extends Component {
                                                 {/*                                color="secondary"*/}
                                                 {/*                                className={css(sharedStyles.no_text_transform)}*/}
                                                 {/*                                variant="outlined"*/}
-                                                {/*                                disabled={user.superAdmin}*/}
+                                                {/*                                disabled={student.superTeacher}*/}
                                                 {/*                                onClick={() => this.onMakeProjectPledgeGoLiveDecision({decision: false})}*/}
                                                 {/*                            >*/}
                                                 {/*                                Close pledge*/}
@@ -3422,7 +3422,7 @@ class ProjectDetails extends Component {
                                                 {/*                    </FlexView>*/}
 
                                                 {/*                    {*/}
-                                                {/*                        !user.superAdmin*/}
+                                                {/*                        !student.superTeacher*/}
                                                 {/*                            ?*/}
                                                 {/*                            null*/}
                                                 {/*                            :*/}
@@ -3434,7 +3434,7 @@ class ProjectDetails extends Component {
                                                 {/*                                    marginTop: 20*/}
                                                 {/*                                }}*/}
                                                 {/*                            >*/}
-                                                {/*                                Only group admin can do this.*/}
+                                                {/*                                Only course teacher can do this.*/}
                                                 {/*                            </Typography>*/}
                                                 {/*                    }*/}
                                                 {/*                </FlexView>*/}
@@ -3478,12 +3478,12 @@ class ProjectDetails extends Component {
                                                     :
                                                     <FlexView column marginTop={30}>
                                                         <Button variant="outlined" color="primary" className={css(sharedStyles.no_text_transform)}
-                                                            onClick={() => realtimeDBUtils.toggleProjectLivelinessTemporarily(user, JSON.parse(JSON.stringify(project)))}
+                                                            onClick={() => realtimeDBUtils.toggleProjectLivelinessTemporarily(student, JSON.parse(JSON.stringify(project)))}
                                                             disabled={
-                                                                user.type !== DB_CONST.TYPE_ADMIN
+                                                                student.type !== DB_CONST.TYPE_PROF
                                                                 || (
-                                                                    user.type === DB_CONST.TYPE_ADMIN
-                                                                    && user.anid !== project.anid
+                                                                    student.type === DB_CONST.TYPE_PROF
+                                                                    && student.anid !== project.anid
                                                                 )
                                                             }
                                                         >
@@ -3496,11 +3496,11 @@ class ProjectDetails extends Component {
                                                             }
                                                         </Button>
                                                         {
-                                                            !user.superAdmin
+                                                            !student.superTeacher
                                                                 ?
                                                                 null
                                                                 :
-                                                                <Typography variant="body2" align="left" color="error" style={{marginTop: 12}}>Only group admins can do this.</Typography>
+                                                                <Typography variant="body2" align="left" color="error" style={{marginTop: 12}}>Only course teachers can do this.</Typography>
                                                         }
                                                         <Typography variant="body2" align="left" style={{marginTop: 15}}>
                                                             {
@@ -3529,23 +3529,23 @@ class ProjectDetails extends Component {
                                 ?
                                 <Col xs={12} sm={12} md={12} lg={{span: 6, offset: 3}}>
                                     {
-                                        user.type === DB_CONST.TYPE_ADMIN
+                                        student.type === DB_CONST.TYPE_PROF
                                             ?
                                             <FlexView column marginTop={30} hAlignContent="center">
-                                                <Typography align="center" variant="h5">Restricted to {project.group.displayName} members.
+                                                <Typography align="center" variant="h5">Restricted to {project.course.displayName} members.
                                                 </Typography>
                                             </FlexView>
                                             :
                                             <FlexView column marginTop={30}>
-                                                <Typography align="left" variant="h5">Restricted to {project.group.displayName} members.
+                                                <Typography align="left" variant="h5">Restricted to {project.course.displayName} members.
                                                 </Typography>
                                                 <NavLink
                                                     to={
-                                                        groupUserName
+                                                        courseStudent
                                                             ?
-                                                            ROUTES.VIEW_GROUP_DETAILS.replace(":groupUserName", groupUserName).replace(":groupID", project.group.groupUserName)
+                                                            ROUTES.VIEW_COURSE_DETAILS.replace(":courseStudent", courseStudent).replace(":courseID", project.course.courseStudent)
                                                             :
-                                                            ROUTES.VIEW_GROUP_DETAILS_INVEST_WEST_SUPER.replace(":groupID", project.group.groupUserName)
+                                                            ROUTES.VIEW_COURSE_DETAILS_INVEST_WEST_SUPER.replace(":courseID", project.course.courseStudent)
                                                     }
                                                     style={{marginTop: 10}}>
                                                     <Typography variant="body1"> Request access</Typography>
@@ -3620,23 +3620,23 @@ class ProjectDetails extends Component {
                                 ?
                                 <Col xs={12} sm={12} md={12} lg={{span: 6, offset: 3}}>
                                     {
-                                        user.type === DB_CONST.TYPE_ADMIN
+                                        student.type === DB_CONST.TYPE_PROF
                                             ?
                                             <FlexView column marginTop={30} hAlignContent="center">
-                                                <Typography align="center" variant="h5">Restricted to {project.group.displayName} members.
+                                                <Typography align="center" variant="h5">Restricted to {project.course.displayName} members.
                                                 </Typography>
                                             </FlexView>
                                             :
                                             <FlexView column marginTop={30}>
-                                                <Typography align="left" variant="h5">Restricted to {project.group.displayName} members.
+                                                <Typography align="left" variant="h5">Restricted to {project.course.displayName} members.
                                                 </Typography>
                                                 <NavLink
                                                     to={
-                                                        groupUserName
+                                                        courseStudent
                                                             ?
-                                                            ROUTES.VIEW_GROUP_DETAILS.replace(":groupUserName", groupUserName).replace(":groupID", project.group.groupUserName)
+                                                            ROUTES.VIEW_COURSE_DETAILS.replace(":courseStudent", courseStudent).replace(":courseID", project.course.courseStudent)
                                                             :
-                                                            ROUTES.VIEW_GROUP_DETAILS_INVEST_WEST_SUPER.replace(":groupID", project.group.groupUserName)
+                                                            ROUTES.VIEW_COURSE_DETAILS_INVEST_WEST_SUPER.replace(":courseID", project.course.courseStudent)
                                                     }
                                                     style={{marginTop: 10}}>
                                                     <Typography variant="body1">Request access</Typography>
@@ -3649,7 +3649,7 @@ class ProjectDetails extends Component {
                                     <Row>
                                         <Col xs={{span: 12, order: 2}} sm={{span: 12, order: 2}} md={{span: 8, order: 1}} lg={{span: 8, order: 1}} style={{marginTop: 40}}>
                                             {
-                                                user.type === DB_CONST.TYPE_INVESTOR
+                                                student.type === DB_CONST.TYPE_INVESTOR
                                                     ?
                                                     null
                                                     :
@@ -3663,11 +3663,11 @@ class ProjectDetails extends Component {
                                                     <FlexView marginTop={30} hAlignContent="center" width="100%">
                                                         <HashLoader
                                                             color={
-                                                                !groupProperties
+                                                                !courseProperties
                                                                     ?
                                                                     colors.primaryColor
                                                                     :
-                                                                    groupProperties.settings.primaryColor
+                                                                    courseProperties.settings.primaryColor
                                                             }
                                                         />
                                                     </FlexView>
@@ -3680,8 +3680,8 @@ class ProjectDetails extends Component {
                                                                     {
                                                                         sortedComments.map(comment => (
                                                                             (
-                                                                                // if the comment is from the current user
-                                                                                comment.commentedBy === user.id
+                                                                                // if the comment is from the current student
+                                                                                comment.commentedBy === student.id
                                                                                     ?
                                                                                     <FlexView key={comment.id} column marginTop={12} marginBottom={12} className={css(styles.border_box)} style={{backgroundColor: colors.white, width: "100%"}}>
                                                                                         <Typography style={{marginTop: 15, marginBottom: 10}} variant="body1" className={css(styles.gray_text)} align="left">Update your comment</Typography>
@@ -3711,34 +3711,34 @@ class ProjectDetails extends Component {
                                                                                                         {/** Reply author */}
                                                                                                         <NavLink
                                                                                                             to={
-                                                                                                                reply.author.type === DB_CONST.TYPE_ADMIN
+                                                                                                                reply.author.type === DB_CONST.TYPE_PROF
                                                                                                                     ?
-                                                                                                                    groupUserName
+                                                                                                                    courseStudent
                                                                                                                         ?
-                                                                                                                        ROUTES.VIEW_GROUP_DETAILS.replace(":groupUserName", groupUserName).replace(":groupID", reply.author.anid)
+                                                                                                                        ROUTES.VIEW_COURSE_DETAILS.replace(":courseStudent", courseStudent).replace(":courseID", reply.author.anid)
                                                                                                                         :
-                                                                                                                        ROUTES.VIEW_GROUP_DETAILS_INVEST_WEST_SUPER.replace(":groupID", reply.author.anid)
+                                                                                                                        ROUTES.VIEW_COURSE_DETAILS_INVEST_WEST_SUPER.replace(":courseID", reply.author.anid)
                                                                                                                     :
-                                                                                                                    groupUserName
+                                                                                                                    courseStudent
                                                                                                                         ?
-                                                                                                                        ROUTES.USER_PROFILE
-                                                                                                                            .replace(":groupUserName", groupUserName)
-                                                                                                                            .replace(":userID", reply.author.id)
+                                                                                                                        ROUTES.STUDENT_PROFILE
+                                                                                                                            .replace(":courseStudent", courseStudent)
+                                                                                                                            .replace(":studentID", reply.author.id)
                                                                                                                         :
-                                                                                                                        ROUTES.USER_PROFILE_INVEST_WEST_SUPER
-                                                                                                                            .replace(":userID", reply.author.id)
+                                                                                                                        ROUTES.STUDENT_PROFILE_INVEST_WEST_SUPER
+                                                                                                                            .replace(":studentID", reply.author.id)
                                                                                                             }
                                                                                                         >
                                                                                                             <Typography variant="body2" color="textSecondary" align="left">
                                                                                                                 {
-                                                                                                                    reply.author.type === DB_CONST.TYPE_ADMIN
+                                                                                                                    reply.author.type === DB_CONST.TYPE_PROF
                                                                                                                         ?
-                                                                                                                        user.type === DB_CONST.TYPE_ADMIN
-                                                                                                                        && user.superAdmin
+                                                                                                                        student.type === DB_CONST.TYPE_PROF
+                                                                                                                        && student.superTeacher
                                                                                                                             ?
-                                                                                                                            `by group admin - ${reply.author.email}`
+                                                                                                                            `by course teacher - ${reply.author.email}`
                                                                                                                             :
-                                                                                                                            "by group admin"
+                                                                                                                            "by course teacher"
                                                                                                                         :
                                                                                                                         `by ${reply.author.firstName} ${reply.author.lastName}`
                                                                                                                 }
@@ -3767,19 +3767,19 @@ class ProjectDetails extends Component {
 
                                                                                         {/** Comment author */}
                                                                                         {
-                                                                                            user.type === DB_CONST.TYPE_ADMIN
-                                                                                            && user.superAdmin
+                                                                                            student.type === DB_CONST.TYPE_PROF
+                                                                                            && student.superTeacher
                                                                                                 ?
                                                                                                 <NavLink
                                                                                                     to={
-                                                                                                        groupUserName
+                                                                                                        courseStudent
                                                                                                             ?
-                                                                                                            ROUTES.USER_PROFILE
-                                                                                                                .replace(":groupUserName", groupUserName)
-                                                                                                                .replace(":userID", comment.author.id)
+                                                                                                            ROUTES.STUDENT_PROFILE
+                                                                                                                .replace(":courseStudent", courseStudent)
+                                                                                                                .replace(":studentID", comment.author.id)
                                                                                                             :
-                                                                                                            ROUTES.USER_PROFILE_INVEST_WEST_SUPER
-                                                                                                                .replace(":userID", comment.author.id)
+                                                                                                            ROUTES.STUDENT_PROFILE_INVEST_WEST_SUPER
+                                                                                                                .replace(":studentID", comment.author.id)
                                                                                                     }
                                                                                                 >
                                                                                                     <Typography variant="body2" color="textSecondary" align="left">by {comment.author.firstName} {comment.author.lastName}</Typography>
@@ -3793,12 +3793,12 @@ class ProjectDetails extends Component {
 
                                                                                         {/** Reply button */}
                                                                                         {
-                                                                                            (user.type === DB_CONST.TYPE_ISSUER
-                                                                                                && user.id === projectIssuer.id)
+                                                                                            (student.type === DB_CONST.TYPE_TEACHER
+                                                                                                && student.id === projectTeacher.id)
                                                                                             || (
-                                                                                                user.type === DB_CONST.TYPE_ADMIN
-                                                                                                && project.hasOwnProperty('createdByGroupAdmin')
-                                                                                                && user.anid === project.anid
+                                                                                                student.type === DB_CONST.TYPE_PROF
+                                                                                                && project.hasOwnProperty('createdByCourseTeacher')
+                                                                                                && student.anid === project.anid
                                                                                             )
                                                                                                 ?
                                                                                                 <FlexView marginTop={25}>
@@ -3846,34 +3846,34 @@ class ProjectDetails extends Component {
                                                                                                         {/** Reply author */}
                                                                                                         <NavLink
                                                                                                             to={
-                                                                                                                reply.author.type === DB_CONST.TYPE_ADMIN
+                                                                                                                reply.author.type === DB_CONST.TYPE_PROF
                                                                                                                     ?
-                                                                                                                    groupUserName
+                                                                                                                    courseStudent
                                                                                                                         ?
-                                                                                                                        ROUTES.VIEW_GROUP_DETAILS.replace(":groupUserName", groupUserName).replace(":groupID", reply.author.anid)
+                                                                                                                        ROUTES.VIEW_COURSE_DETAILS.replace(":courseStudent", courseStudent).replace(":courseID", reply.author.anid)
                                                                                                                         :
-                                                                                                                        ROUTES.VIEW_GROUP_DETAILS_INVEST_WEST_SUPER.replace(":groupID", reply.author.anid)
+                                                                                                                        ROUTES.VIEW_COURSE_DETAILS_INVEST_WEST_SUPER.replace(":courseID", reply.author.anid)
                                                                                                                     :
-                                                                                                                    groupUserName
+                                                                                                                    courseStudent
                                                                                                                         ?
-                                                                                                                        ROUTES.USER_PROFILE
-                                                                                                                            .replace(":groupUserName", groupUserName)
-                                                                                                                            .replace(":userID", reply.author.id)
+                                                                                                                        ROUTES.STUDENT_PROFILE
+                                                                                                                            .replace(":courseStudent", courseStudent)
+                                                                                                                            .replace(":studentID", reply.author.id)
                                                                                                                         :
-                                                                                                                        ROUTES.USER_PROFILE_INVEST_WEST_SUPER
-                                                                                                                            .replace(":userID", reply.author.id)
+                                                                                                                        ROUTES.STUDENT_PROFILE_INVEST_WEST_SUPER
+                                                                                                                            .replace(":studentID", reply.author.id)
                                                                                                             }
                                                                                                         >
                                                                                                             <Typography variant="body2" color="textSecondary" align="left">
                                                                                                                 {
-                                                                                                                    reply.author.type === DB_CONST.TYPE_ADMIN
+                                                                                                                    reply.author.type === DB_CONST.TYPE_PROF
                                                                                                                         ?
-                                                                                                                        user.type === DB_CONST.TYPE_ADMIN
-                                                                                                                        && user.superAdmin
+                                                                                                                        student.type === DB_CONST.TYPE_PROF
+                                                                                                                        && student.superTeacher
                                                                                                                             ?
-                                                                                                                            `by group admin - ${reply.author.email}`
+                                                                                                                            `by course teacher - ${reply.author.email}`
                                                                                                                             :
-                                                                                                                            "by group admin"
+                                                                                                                            "by course teacher"
                                                                                                                         :
                                                                                                                         `by ${reply.author.firstName} ${reply.author.lastName}`
                                                                                                                 }
@@ -3887,15 +3887,15 @@ class ProjectDetails extends Component {
 
                                                                                                         {/** Delete/edit a reply */}
                                                                                                         {
-                                                                                                            // allow group admins that created this project,
-                                                                                                            // and issuer that created this project and owns this reply
+                                                                                                            // allow course teachers that created this project,
+                                                                                                            // and teacher that created this project and owns this reply
                                                                                                             // to edit/delete this reply
                                                                                                             (
-                                                                                                                user.type === DB_CONST.TYPE_ISSUER
-                                                                                                                || (user.type === DB_CONST.TYPE_ADMIN && !user.superAdmin)
+                                                                                                                student.type === DB_CONST.TYPE_TEACHER
+                                                                                                                || (student.type === DB_CONST.TYPE_PROF && !student.superTeacher)
                                                                                                             )
-                                                                                                            && user.id === projectIssuer.id
-                                                                                                            && user.id === reply.repliedBy
+                                                                                                            && student.id === projectTeacher.id
+                                                                                                            && student.id === reply.repliedBy
                                                                                                                 ?
                                                                                                                 <FlexView marginTop={16}>
                                                                                                                     <Button variant="outlined" className={css(sharedStyles.no_text_transform)} size="small" color="secondary" onClick={() => this.onDeleteCommentReply(reply)} style={{marginRight: 10}}>Delete<DeleteIcon fontSize="small" style={{marginLeft: 6}}/>
@@ -3928,7 +3928,7 @@ class ProjectDetails extends Component {
                                                                 </FlexView>
                                                             )
                                                             :
-                                                            user.type !== DB_CONST.TYPE_INVESTOR
+                                                            student.type !== DB_CONST.TYPE_INVESTOR
                                                                 ?
                                                                 <FlexView hAlignContent="center" vAlignContent="center" column style={{padding: 30, backgroundColor: colors.kick_starter_background_color}}>
                                                                     <Typography variant="body2">No comments yet</Typography>
@@ -3941,7 +3941,7 @@ class ProjectDetails extends Component {
                                                                             <Button size="small" onClick={this.onPostACommentClick} variant="outlined" color="inherit" fullWidth={false}
                                                                                 disabled={
                                                                                     utils.isProjectLive(project)
-                                                                                    && user.type === DB_CONST.TYPE_INVESTOR
+                                                                                    && student.type === DB_CONST.TYPE_INVESTOR
                                                                                     && !investorSelfCertificationAgreement
                                                                                 }
                                                                             >Post a comment</Button>
@@ -3959,13 +3959,13 @@ class ProjectDetails extends Component {
                                         <Col xs={{span: 12, order: 1}} sm={{span: 12, order: 1}} md={{span: 4, order: 2}} lg={{span: 4, order: 2}} style={{marginTop: 40}}>
 
                                             {
-                                                user.type === DB_CONST.TYPE_INVESTOR
+                                                student.type === DB_CONST.TYPE_INVESTOR
                                                     ?
                                                     (
-                                                        comments.filter(comment => comment.commentedBy === user.id).length === 0
+                                                        comments.filter(comment => comment.commentedBy === student.id).length === 0
                                                             ?
                                                             <FlexView column>
-                                                                <Typography variant="subtitle1" align="left" style={{marginBottom: 25}}>This is your space to offer support and feedback to the issuer. Your identity will not be shared.</Typography>
+                                                                <Typography variant="subtitle1" align="left" style={{marginBottom: 25}}>This is your space to offer support and feedback to the teacher. Your identity will not be shared.</Typography>
 
                                                                 {/** Post a comment - right hand side column - displayed only if there is at least one comment */}
                                                                 {
@@ -3975,7 +3975,7 @@ class ProjectDetails extends Component {
                                                                             <Button size="small" onClick={this.onPostACommentClick} variant="outlined" color="inherit"fullWidth={false}
                                                                                 disabled={
                                                                                     utils.isProjectLive(project)
-                                                                                    && user.type === DB_CONST.TYPE_INVESTOR
+                                                                                    && student.type === DB_CONST.TYPE_INVESTOR
                                                                                     && !investorSelfCertificationAgreement
                                                                                 }
                                                                             >Post a comment</Button>
@@ -4015,21 +4015,21 @@ class ProjectDetails extends Component {
                                 ?
                                 <Col xs={12} sm={12} md={12} lg={{span: 6, offset: 3}}>
                                     {
-                                        user.type === DB_CONST.TYPE_ADMIN
+                                        student.type === DB_CONST.TYPE_PROF
                                             ?
                                             <FlexView column marginTop={30} hAlignContent="center">
-                                                <Typography align="center" variant="h5">Restricted to {project.group.displayName} members.</Typography>
+                                                <Typography align="center" variant="h5">Restricted to {project.course.displayName} members.</Typography>
                                             </FlexView>
                                             :
                                             <FlexView column marginTop={30}>
-                                                <Typography align="left" variant="h5">Restricted to {project.group.displayName} members.</Typography>
+                                                <Typography align="left" variant="h5">Restricted to {project.course.displayName} members.</Typography>
                                                 <NavLink
                                                     to={
-                                                        groupUserName
+                                                        courseStudent
                                                             ?
-                                                            ROUTES.VIEW_GROUP_DETAILS.replace(":groupUserName", groupUserName).replace(":groupID", project.group.groupUserName)
+                                                            ROUTES.VIEW_COURSE_DETAILS.replace(":courseStudent", courseStudent).replace(":courseID", project.course.courseStudent)
                                                             :
-                                                            ROUTES.VIEW_GROUP_DETAILS_INVEST_WEST_SUPER.replace(":groupID", project.group.groupUserName)
+                                                            ROUTES.VIEW_COURSE_DETAILS_INVEST_WEST_SUPER.replace(":courseID", project.course.courseStudent)
                                                     }
                                                     style={{marginTop: 10}}>
                                                     <Typography variant="body1">Request access</Typography>
@@ -4061,22 +4061,22 @@ class ProjectDetails extends Component {
                                 ?
                                 <Col xs={12} sm={12} md={12} lg={{span: 6, offset: 3}}>
                                     {
-                                        user.type === DB_CONST.TYPE_ADMIN
+                                        student.type === DB_CONST.TYPE_PROF
                                             ?
                                             <FlexView column marginTop={30} hAlignContent="center">
-                                                <Typography align="center" variant="h5">Restricted to {project.group.displayName} members.</Typography>
+                                                <Typography align="center" variant="h5">Restricted to {project.course.displayName} members.</Typography>
                                             </FlexView>
                                             :
                                             <FlexView column marginTop={30}>
-                                                <Typography align="left" variant="h5">Restricted to {project.group.displayName} members.
+                                                <Typography align="left" variant="h5">Restricted to {project.course.displayName} members.
                                                 </Typography>
                                                 <NavLink
                                                     to={
-                                                        groupUserName
+                                                        courseStudent
                                                             ?
-                                                            ROUTES.VIEW_GROUP_DETAILS.replace(":groupUserName", groupUserName).replace(":groupID", project.group.groupUserName)
+                                                            ROUTES.VIEW_COURSE_DETAILS.replace(":courseStudent", courseStudent).replace(":courseID", project.course.courseStudent)
                                                             :
-                                                            ROUTES.VIEW_GROUP_DETAILS_INVEST_WEST_SUPER.replace(":groupID", project.group.groupUserName)
+                                                            ROUTES.VIEW_COURSE_DETAILS_INVEST_WEST_SUPER.replace(":courseID", project.course.courseStudent)
                                                     }
                                                     style={{marginTop: 10}}>
                                                     <Typography variant="body1">Request access</Typography>
@@ -4201,21 +4201,21 @@ class ProjectDetails extends Component {
                                         && (
                                             (
                                                 (
-                                                    groupProperties
-                                                    && groupProperties.groupUserName === "qib"
+                                                    courseProperties
+                                                    && courseProperties.courseStudent === "qib"
                                                 )
                                                 && (
-                                                    (user.type === DB_CONST.TYPE_ADMIN
-                                                        && user.anid === groupProperties.anid)
-                                                    || (user.type === DB_CONST.TYPE_ISSUER
-                                                        && user.id === project.issuerID)
+                                                    (student.type === DB_CONST.TYPE_PROF
+                                                        && student.anid === courseProperties.anid)
+                                                    || (student.type === DB_CONST.TYPE_TEACHER
+                                                        && student.id === project.teacherID)
                                                 )
                                             )
                                             ||
                                             (
-                                                !groupProperties
-                                                && user.type === DB_CONST.TYPE_ADMIN
-                                                && user.superAdmin
+                                                !courseProperties
+                                                && student.type === DB_CONST.TYPE_PROF
+                                                && student.superTeacher
                                             )
                                         )
                                             ?
@@ -4249,13 +4249,13 @@ class ProjectDetails extends Component {
      */
     renderInvestorSelfCertifyReminder = () => {
         const {
-            groupUserName,
-            user,
+            courseStudent,
+            student,
             investorSelfCertificationAgreement,
             project
         } = this.props;
 
-        if (user.type !== DB_CONST.TYPE_INVESTOR) {
+        if (student.type !== DB_CONST.TYPE_INVESTOR) {
             return null;
         }
 
@@ -4267,9 +4267,9 @@ class ProjectDetails extends Component {
                     <Typography align="left" variant="body2" color="textSecondary">You cannot interact with this offer as you have not completed your self certification.</Typography>
                     <NavLink
                         to={
-                            groupUserName
+                            courseStudent
                                 ?
-                                `${ROUTES.DASHBOARD_INVESTOR.replace(":groupUserName", groupUserName)}?tab=Profile`
+                                `${ROUTES.DASHBOARD_INVESTOR.replace(":courseStudent", courseStudent)}?tab=Profile`
                                 :
                                 `${ROUTES.DASHBOARD_INVESTOR_INVEST_WEST_SUPER}?tab=Profile`
                         }
@@ -4301,23 +4301,23 @@ class ProjectDetails extends Component {
     shouldHideInformation = () => {
         const {
             project,
-            user,
-            groupsUserIsIn
+            student,
+            coursesStudentIsIn
         } = this.props;
 
-        // user is an admin
-        if (user.type === DB_CONST.TYPE_ADMIN) {
-            // user is a super admin
-            if (user.superAdmin) {
+        // student is an teacher
+        if (student.type === DB_CONST.TYPE_PROF) {
+            // student is a super teacher
+            if (student.superTeacher) {
                 return false;
             }
 
-            // user is a group admin and is the group that owns the project
-            if (user.anid === project.anid) {
+            // student is a course teacher and is the course that owns the project
+            if (student.anid === project.anid) {
                 return false;
             }
 
-            // other group admins must go through the checks of project's visibility
+            // other course teachers must go through the checks of project's visibility
             switch (project.visibility) {
                 case DB_CONST.PROJECT_VISIBILITY_PUBLIC:
                     return false;
@@ -4329,15 +4329,15 @@ class ProjectDetails extends Component {
                     return true;
             }
         }
-        // user is not an admin
+        // student is not an teacher
         else {
-            // should not hide any information if the user is an issuer that created this offer
-            if (user.type === DB_CONST.TYPE_ISSUER && user.id === project.issuerID) {
+            // should not hide any information if the student is an teacher that created this offer
+            if (student.type === DB_CONST.TYPE_TEACHER && student.id === project.teacherID) {
                 return false;
             }
 
-            // if somehow groupsUserIsIn is null, information must be hidden
-            if (!groupsUserIsIn) {
+            // if somehow coursesStudentIsIn is null, information must be hidden
+            if (!coursesStudentIsIn) {
                 return true;
             }
 
@@ -4346,9 +4346,9 @@ class ProjectDetails extends Component {
                 return false;
             }
 
-            // user is not the member of the group that posted this offer --> hide information
+            // student is not the member of the course that posted this offer --> hide information
             // otherwise, should not hide information
-            return groupsUserIsIn.findIndex(group => group.anid === project.anid) === -1;
+            return coursesStudentIsIn.findIndex(course => course.anid === project.anid) === -1;
         }
     };
 
@@ -4423,8 +4423,8 @@ class ProjectDetails extends Component {
                     stt.text = "Offer failed as its pitch was rejected.";
                     stt.color = "error";
                     break;
-                case DB_CONST.PITCH_STATUS_WAITING_FOR_ADMIN:
-                    stt.text = "Pitch expired. Awaiting Group Admin review.";
+                case DB_CONST.PITCH_STATUS_WAITING_FOR_TEACHER:
+                    stt.text = "Pitch expired. Awaiting Course Teacher review.";
                     stt.color = "textSecondary";
                     break;
                 default:
@@ -4445,39 +4445,39 @@ class ProjectDetails extends Component {
     shouldVoteDisabled = () => {
         const {
             project,
-            user,
-            groupsUserIsIn,
+            student,
+            coursesStudentIsIn,
             investorSelfCertificationAgreement
         } = this.props;
 
         // do not let the owner of the pitch vote for themselves
-        // also, do not let the admin vote the pitch
-        if (project.issuerID === firebase.auth().currentUser.uid
-            || user.type === DB_CONST.TYPE_ADMIN
+        // also, do not let the teacher vote the pitch
+        if (project.teacherID === firebase.auth().currentStudent.uid
+            || student.type === DB_CONST.TYPE_PROF
         ) {
             return true;
         }
 
-        if (!groupsUserIsIn) {
+        if (!coursesStudentIsIn) {
             return true;
         }
 
-        // user is not in the group that posted the offer
+        // student is not in the course that posted the offer
         if (project.visibility !== DB_CONST.PROJECT_VISIBILITY_PUBLIC
-            && groupsUserIsIn.findIndex(group => group.anid === project.anid) === -1
+            && coursesStudentIsIn.findIndex(course => course.anid === project.anid) === -1
         ) {
             return true;
         }
 
         // do not let investors who haven't uploaded self-certification vote
-        if (user.type === DB_CONST.TYPE_INVESTOR) {
+        if (student.type === DB_CONST.TYPE_INVESTOR) {
             if (!investorSelfCertificationAgreement) {
                 return true;
             }
         }
 
-        // do not let issuers vote
-        if (user.type === DB_CONST.TYPE_ISSUER) {
+        // do not let teachers vote
+        if (student.type === DB_CONST.TYPE_TEACHER) {
             return true;
         }
 
@@ -4488,15 +4488,15 @@ class ProjectDetails extends Component {
     };
 
     /**
-     * Displaying votes (number or percentage depending on the type of user who is viewing it)
+     * Displaying votes (number or percentage depending on the type of student who is viewing it)
      *
      * If an investor is viewing it, percentage should be displayed.
      *
-     * If an issuer or admin is viewing it, number should be displayed.
+     * If an teacher or teacher is viewing it, number should be displayed.
      */
     displayVote = type => {
         const {
-            // user,
+            // student,
             votes
         } = this.props;
 
@@ -4526,15 +4526,15 @@ class ProjectDetails extends Component {
  * Get investor vote
  *
  * @param votes
- * @param user
+ * @param student
  * @returns {null|*}
  */
-const getInvestorVote = (votes, user) => {
+const getInvestorVote = (votes, student) => {
     if (votes.length === 0) {
         return null;
     }
 
-    let investorVoteIndex = votes.findIndex(vote => vote.investorID === user.id);
+    let investorVoteIndex = votes.findIndex(vote => vote.investorID === student.id);
     // investor has voted
     if (investorVoteIndex !== -1) {
         return votes[investorVoteIndex];
@@ -4645,7 +4645,7 @@ const styles = StyleSheet.create({
         padding: 14
     },
 
-    admin_state_control_box: {
+    teacher_state_control_box: {
         border: `1px solid ${colors.kick_starter_gray_box_border}`,
         padding: 24,
         backgroundColor: colors.gray_100

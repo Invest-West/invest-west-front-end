@@ -7,7 +7,7 @@ import {TYPE_STUDENT, TYPE_TEACHER} from "../firebase/databaseConsts";
 import Teacher from "./teacher";
 import Address from "./address";
 
-export const UserTitles = ["Ms.", "Mrs.", "Miss", "Mr.", "Dr.", "Prof."];
+export const StudentTitles = ["Ms.", "Mrs.", "Miss", "Mr.", "Dr.", "Prof."];
 
 export default interface Student {
     id: string | "none";

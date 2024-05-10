@@ -18,10 +18,10 @@ import {HashLoader} from "react-spinners";
 import {NavLink} from "react-router-dom";
 
 import {connect} from "react-redux";
-import * as manageGroupFromParamsActions from "../../../redux-store/actions/manageGroupFromParamsActions";
+import * as manageCourseFromParamsActions from "../../../redux-store/actions/manageCourseFromParamsActions";
 import * as authActions from "../../../redux-store/actions/authActions";
 import PageNotFoundWhole from "../../../shared-components/page-not-found/PageNotFoundWhole";
-import UserNotAbleToRegisterOrJoin from "./components/UserNotAbleToRegisterOrJoin";
+import StudentNotAbleToRegisterOrJoin from "./components/StudentNotAbleToRegisterOrJoin";
 
 import * as colors from "../../../values/colors";
 import * as realtimeDBUtils from "../../../firebase/realtimeDBUtils";
@@ -42,10 +42,10 @@ const ERROR_PUBLIC_REGISTRATION_EMAILS_NOT_MATCH = 5;
 
 const mapStateToProps = state => {
     return {
-        groupUserName: state.manageGroupFromParams.groupUserName,
-        groupProperties: state.manageGroupFromParams.groupProperties,
-        groupPropertiesLoaded: state.manageGroupFromParams.groupPropertiesLoaded,
-        shouldLoadOtherData: state.manageGroupFromParams.shouldLoadOtherData,
+        courseStudentName: state.manageCourseFromParams.courseStudentName,
+        courseProperties: state.manageCourseFromParams.courseProperties,
+        coursePropertiesLoaded: state.manageCourseFromParams.coursePropertiesLoaded,
+        shouldLoadOtherData: state.manageCourseFromParams.shouldLoadOtherData,
 
         clubAttributes: state.manageClubAttributes.clubAttributes
     }
@@ -53,12 +53,12 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
     return {
-        setGroupUserNameFromParams: (groupUserName) => dispatch(manageGroupFromParamsActions.setGroupUserNameFromParams(groupUserName)),
-        setExpectedAndCurrentPathsForChecking: (expectedPath, currentPath) => dispatch(manageGroupFromParamsActions.setExpectedAndCurrentPathsForChecking(expectedPath, currentPath)),
-        loadAngelNetwork: () => dispatch(manageGroupFromParamsActions.loadAngelNetwork()),
+        setCourseStudentNameFromParams: (courseStudentName) => dispatch(manageCourseFromParamsActions.setCourseStudentNameFromParams(courseStudentName)),
+        setExpectedAndCurrentPathsForChecking: (expectedPath, currentPath) => dispatch(manageCourseFromParamsActions.setExpectedAndCurrentPathsForChecking(expectedPath, currentPath)),
+        loadAngelNetwork: () => dispatch(manageCourseFromParamsActions.loadAngelNetwork()),
 
-        togglePreventValidatingUserWhenSigningUp: (shouldPrevent) => dispatch(authActions.togglePreventValidatingUserWhenSigningUp(shouldPrevent)),
-        getUserProfileAndValidateUser: (uid) => dispatch(authActions.getUserProfileAndValidateUser(uid))
+        togglePreventValidatingStudentWhenSigningUp: (shouldPrevent) => dispatch(authActions.togglePreventValidatingStudentWhenSigningUp(shouldPrevent)),
+        getStudentProfileAndValidateStudent: (uid) => dispatch(authActions.getStudentProfileAndValidateStudent(uid))
     }
 };
 
@@ -73,21 +73,21 @@ class Signup extends Component {
 
             publicRegistration: false,
             publicRegistrationType: null,
-            publicRegistrationUser: null,
+            publicRegistrationStudent: null,
 
-            // the invited user object that is loaded using the invited id specified in the URL
-            invitedUserWithSpecifiedInvitedID: null,
-            // the invited users array that is loaded using the email obtained from the invited user object above
-            invitedUsersWithTheEmailObtained: null,
+            // the invited Student object that is loaded using the invited id specified in the URL
+            invitedStudentWithSpecifiedInvitedID: null,
+            // the invited Students array that is loaded using the email obtained from the invited Student object above
+            invitedStudentsWithTheEmailObtained: null,
 
-            userWelcomeName: '',
+            studentWelcomeName: '',
 
             password: '',
             confirmPassword: '',
             marketingPreferencesChecked: false,
 
-            // check if the Create account (register of new user) button
-            // or the Join (registered user to join in another angel network) button is pressed
+            // check if the Create account (register of new student) button
+            // or the Join (registered student to join in another angel network) button is pressed
             submitted: false,
             // process the Signup or the Join event
             processingSubmission: false,
@@ -101,28 +101,28 @@ class Signup extends Component {
 
     componentDidMount() {
         const {
-            groupPropertiesLoaded,
+            coursePropertiesLoaded,
             shouldLoadOtherData,
-            setGroupUserNameFromParams,
+            setCourseStudentNameFromParams,
             setExpectedAndCurrentPathsForChecking,
             loadAngelNetwork
         } = this.props;
 
         const match = this.props.match;
 
-        setGroupUserNameFromParams(match.params.hasOwnProperty('groupUserName') ? match.params.groupUserName : null);
-        setExpectedAndCurrentPathsForChecking(match.params.hasOwnProperty('groupUserName') ? ROUTES.SIGN_UP : ROUTES.SIGN_UP_INVEST_WEST_SUPER, match.path);
+        setCourseStudentNameFromParams(match.params.hasOwnProperty('courseStudentName') ? match.params.courseStudentName : null);
+        setExpectedAndCurrentPathsForChecking(match.params.hasOwnProperty('courseStudentName') ? ROUTES.SIGN_UP : ROUTES.SIGN_UP_INVEST_WEST_SUPER, match.path);
 
         loadAngelNetwork();
 
-        if (groupPropertiesLoaded && shouldLoadOtherData) {
+        if (coursePropertiesLoaded && shouldLoadOtherData) {
             this.loadData();
         }
     }
 
     componentDidUpdate(prevProps, prevState, snapshot) {
         const {
-            groupPropertiesLoaded,
+            coursePropertiesLoaded,
             shouldLoadOtherData,
 
             loadAngelNetwork
@@ -130,7 +130,7 @@ class Signup extends Component {
 
         loadAngelNetwork();
 
-        if (groupPropertiesLoaded && shouldLoadOtherData) {
+        if (coursePropertiesLoaded && shouldLoadOtherData) {
             this.loadData();
         }
     }
@@ -147,26 +147,26 @@ class Signup extends Component {
         const invitedID = this.props.match.params.id;
 
         if (!dataLoaded && !loadingData) {
-            if (invitedID === "investor" || invitedID === "issuer") {
+            if (invitedID === "student" || invitedID === "teacher") {
                 this.setState({
                     dataLoaded: true,
                     loadingData: false,
                     publicRegistration: true,
                     publicRegistrationType:
-                        invitedID === "investor"
+                        invitedID === "student"
                             ?
-                            DB_CONST.TYPE_INVESTOR
+                            DB_CONST.TYPE_STUDENT
                             :
-                            invitedID === "issuer"
+                            invitedID === "teacher"
                                 ?
-                                DB_CONST.TYPE_ISSUER
+                                DB_CONST.TYPE_TEACHER
                                 :
                                 null
                     ,
-                    publicRegistrationUser: {
+                    publicRegistrationStudent: {
                         email: '',
                         confirmedEmail: '',
-                        title: DB_CONST.USER_TITLES[0],
+                        title: DB_CONST.STUDENT_TITLES[0],
                         firstName: '',
                         lastName: ''
                     }
@@ -176,31 +176,31 @@ class Signup extends Component {
                     loadingData: true
                 });
 
-                // load the invited user that is specified by the invited id in the URL
+                // load the invited Student that is specified by the invited id in the URL
                 realtimeDBUtils
-                    .getInvitedUserBasedOnIDOrEmail(invitedID, realtimeDBUtils.GET_INVITED_USER_BASED_ON_INVITED_ID)
-                    .then(invitedUsersByInvitedID => {
-                        // set the obtained invited user to state
+                    .getInvitedStudentBasedOnIDOrEmail(invitedID, realtimeDBUtils.GET_INVITED_STUDENT_BASED_ON_INVITED_ID)
+                    .then(invitedStudentsByInvitedID => {
+                        // set the obtained invited Student to state
                         this.setState({
-                            invitedUserWithSpecifiedInvitedID: invitedUsersByInvitedID[0],
-                            userWelcomeName: invitedUsersByInvitedID[0].firstName
+                            invitedStudentWithSpecifiedInvitedID: invitedStudentsByInvitedID[0],
+                            studentWelcomeName: invitedStudentsByInvitedID[0].firstName
                         });
 
-                        // load the invited users that share the same email
-                        // --> check if the user has been invited by other angel networks
+                        // load the invited Students that share the same email
+                        // --> check if the Student has been invited by other angel networks
                         realtimeDBUtils
-                            .getInvitedUserBasedOnIDOrEmail(invitedUsersByInvitedID[0].email, realtimeDBUtils.GET_INVITED_USER_BASED_ON_EMAIL)
-                            .then(invitedUsersByEmail => {
-                                // set the obtained invited users to state
+                            .getInvitedStudentBasedOnIDOrEmail(invitedStudentsByInvitedID[0].email, realtimeDBUtils.GET_INVITED_STUDENT_BASED_ON_EMAIL)
+                            .then(invitedStudentsByEmail => {
+                                // set the obtained invited students to state
                                 this.setState({
-                                    invitedUsersWithTheEmailObtained: invitedUsersByEmail,
+                                    invitedStudentsWithTheEmailObtained: invitedStudentsByEmail,
                                     dataLoaded: true,
                                     loadingData: false
                                 });
                             })
                             .catch(error => {
-                                // no invited users found with the email specified
-                                // --> the user was only invited by one angel network
+                                // no invited Students found with the email specified
+                                // --> the Student was only invited by one angel network
                                 this.setState({
                                     dataLoaded: true,
                                     loadingData: false
@@ -208,7 +208,7 @@ class Signup extends Component {
                             });
                     })
                     .catch(error => {
-                        // no invited user found with the invited id
+                        // no invited Student found with the invited id
                         this.setState({
                             dataLoaded: true,
                             loadingData: false
@@ -219,15 +219,15 @@ class Signup extends Component {
     };
 
     /**
-     * Sign up for new user functions
+     * Sign up for new Student functions
      */
 
     /**
-     * Handle when input changed in the SignupForNewUser component
+     * Handle when input changed in the SignupForNewStudent component
      *
      * @param event
      */
-    handleSignupForNewUserInputChanged = event => {
+    handleSignupForNewStudentInputChanged = event => {
         const {
             publicRegistration
         } = this.state;
@@ -239,15 +239,15 @@ class Signup extends Component {
             case 'text':
                 if (!publicRegistration) {
                     this.setState({
-                        invitedUserWithSpecifiedInvitedID: {
-                            ...this.state.invitedUserWithSpecifiedInvitedID,
+                        invitedStudentWithSpecifiedInvitedID: {
+                            ...this.state.invitedStudentWithSpecifiedInvitedID,
                             [name]: target.value
                         }
                     });
                 } else {
                     this.setState({
-                        publicRegistrationUser: {
-                            ...this.state.publicRegistrationUser,
+                        publicRegistrationStudent: {
+                            ...this.state.publicRegistrationStudent,
                             [name]: target.value
                         }
                     });
@@ -266,15 +266,15 @@ class Signup extends Component {
             default:
                 if (!publicRegistration) {
                     this.setState({
-                        invitedUserWithSpecifiedInvitedID: {
-                            ...this.state.invitedUserWithSpecifiedInvitedID,
+                        invitedStudentWithSpecifiedInvitedID: {
+                            ...this.state.invitedStudentWithSpecifiedInvitedID,
                             [name]: target.value
                         }
                     });
                 } else {
                     this.setState({
-                        publicRegistrationUser: {
-                            ...this.state.publicRegistrationUser,
+                        publicRegistrationStudent: {
+                            ...this.state.publicRegistrationStudent,
                             [name]: target.value
                         }
                     });
@@ -286,18 +286,18 @@ class Signup extends Component {
     /**
      * Handle when the Create account button is presses
      */
-    handleSignupForNewUserClick = async () => {
+    handleSignupForNewStudentClick = async () => {
         const {
-            groupUserName,
-            groupProperties
+            courseStudentName,
+            courseProperties
         } = this.props;
 
         const {
             publicRegistration,
             publicRegistrationType,
-            publicRegistrationUser,
+            publicRegistrationStudent,
 
-            invitedUserWithSpecifiedInvitedID,
+            invitedStudentWithSpecifiedInvitedID,
             password,
             confirmPassword,
             marketingPreferencesChecked
@@ -308,23 +308,23 @@ class Signup extends Component {
         });
 
         if ((!publicRegistration
-                && invitedUserWithSpecifiedInvitedID !== null
-                && invitedUserWithSpecifiedInvitedID !== undefined
-                && invitedUserWithSpecifiedInvitedID.title !== DB_CONST.USER_TITLES[0]
-                && invitedUserWithSpecifiedInvitedID.firstName.trim().length > 0
-                && invitedUserWithSpecifiedInvitedID.lastName.trim().length > 0
-                && invitedUserWithSpecifiedInvitedID.email.trim().length > 0
+                && invitedStudentWithSpecifiedInvitedID !== null
+                && invitedStudentWithSpecifiedInvitedID !== undefined
+                && invitedStudentWithSpecifiedInvitedID.title !== DB_CONST.Student_TITLES[0]
+                && invitedStudentWithSpecifiedInvitedID.firstName.trim().length > 0
+                && invitedStudentWithSpecifiedInvitedID.lastName.trim().length > 0
+                && invitedStudentWithSpecifiedInvitedID.email.trim().length > 0
 
                 && password.trim().length > 0
                 && confirmPassword.trim().length > 0
             )
             || (
                 publicRegistration
-                && publicRegistrationUser.title !== DB_CONST.USER_TITLES[0]
-                && publicRegistrationUser.firstName.trim().length > 0
-                && publicRegistrationUser.lastName.trim().length > 0
-                && publicRegistrationUser.email.trim().length > 0
-                && publicRegistrationUser.confirmedEmail.trim().length > 0
+                && publicRegistrationStudent.title !== DB_CONST.Student_TITLES[0]
+                && publicRegistrationStudent.firstName.trim().length > 0
+                && publicRegistrationStudent.lastName.trim().length > 0
+                && publicRegistrationStudent.email.trim().length > 0
+                && publicRegistrationStudent.confirmedEmail.trim().length > 0
 
                 && password.trim().length > 0
                 && confirmPassword.trim().length > 0
@@ -332,7 +332,7 @@ class Signup extends Component {
         ) {
             // public registration
             if (publicRegistration) {
-                if (publicRegistrationUser.email.trim().toLowerCase() !== publicRegistrationUser.confirmedEmail.trim().toLowerCase()) {
+                if (publicRegistrationStudent.email.trim().toLowerCase() !== publicRegistrationStudent.confirmedEmail.trim().toLowerCase()) {
                     this.setState({
                         errorStatus: ERROR_PUBLIC_REGISTRATION_EMAILS_NOT_MATCH
                     });
@@ -340,7 +340,7 @@ class Signup extends Component {
                 }
 
                 // check if email is valid
-                if (!utils.isValidEmailAddress(publicRegistrationUser.email)) {
+                if (!utils.isValidEmailAddress(publicRegistrationStudent.email)) {
                     this.setState({
                         errorStatus: ERROR_INVALID_EMAIL_ADDRESS
                     });
@@ -350,8 +350,8 @@ class Signup extends Component {
 
             // check if email is valid for non-public registration
             if (!publicRegistration
-                && invitedUserWithSpecifiedInvitedID
-                && !utils.isValidEmailAddress(invitedUserWithSpecifiedInvitedID.email)
+                && invitedStudentWithSpecifiedInvitedID
+                && !utils.isValidEmailAddress(invitedStudentWithSpecifiedInvitedID.email)
             ) {
                 this.setState({
                     errorStatus: ERROR_INVALID_EMAIL_ADDRESS
@@ -388,35 +388,35 @@ class Signup extends Component {
             if (publicRegistration) {
                 data = {
                     isPublicRegistration: true,
-                    userProfile: {
+                    studentProfile: {
                         id: "",
-                        email: publicRegistrationUser.email,
-                        firstName: publicRegistrationUser.firstName,
-                        lastName: publicRegistrationUser.lastName,
-                        title: publicRegistrationUser.title,
+                        email: publicRegistrationStudent.email,
+                        firstName: publicRegistrationStudent.firstName,
+                        lastName: publicRegistrationStudent.lastName,
+                        title: publicRegistrationStudent.title,
                         type: publicRegistrationType
                     },
                     password: password,
-                    groupID: groupProperties.anid
+                    courseID: courseProperties.anid
                 };
             }
             // register via invitation email
             else {
-                // ensure invitedUserWithSpecifiedInvitedID !== null
-                if (invitedUserWithSpecifiedInvitedID) {
+                // ensure invitedStudentWithSpecifiedInvitedID !== null
+                if (invitedStudentWithSpecifiedInvitedID) {
                     data = {
                         isPublicRegistration: false,
-                        invitedUserID: invitedUserWithSpecifiedInvitedID.id,
-                        userProfile: {
+                        invitedStudentID: invitedStudentWithSpecifiedInvitedID.id,
+                        studentProfile: {
                             id: "",
-                            email: invitedUserWithSpecifiedInvitedID.email,
-                            firstName: invitedUserWithSpecifiedInvitedID.firstName,
-                            lastName: invitedUserWithSpecifiedInvitedID.lastName,
-                            title: invitedUserWithSpecifiedInvitedID.title,
-                            type: invitedUserWithSpecifiedInvitedID.type
+                            email: invitedStudentWithSpecifiedInvitedID.email,
+                            firstName: invitedStudentWithSpecifiedInvitedID.firstName,
+                            lastName: invitedStudentWithSpecifiedInvitedID.lastName,
+                            title: invitedStudentWithSpecifiedInvitedID.title,
+                            type: invitedStudentWithSpecifiedInvitedID.type
                         },
                         password: password,
-                        groupID: invitedUserWithSpecifiedInvitedID.Invitor.anid
+                        courseID: invitedStudentWithSpecifiedInvitedID.Invitor.anid
                     };
                 }
             }
@@ -424,7 +424,7 @@ class Signup extends Component {
             try {
                 await new Api().request(
                     "post",
-                    ApiRoutes.createUser,
+                    ApiRoutes.createStudent,
                     {
                         queryParameters: null,
                         requestBody: data
@@ -435,9 +435,9 @@ class Signup extends Component {
                     .signInWithEmailAndPassword(
                         !publicRegistration
                             ?
-                            invitedUserWithSpecifiedInvitedID.email.trim().toLowerCase()
+                            invitedStudentWithSpecifiedInvitedID.email.trim().toLowerCase()
                             :
-                            publicRegistrationUser.email.trim().toLowerCase()
+                            publicRegistrationStudent.email.trim().toLowerCase()
                         ,
                         password
                     )
@@ -446,51 +446,51 @@ class Signup extends Component {
                             .ref(DB_CONST.MARKETING_PREFERENCES_CHILD)
                             .push()
                             .key;
-                        // create a node in MarketingPreferences to keep track of the user's preferences
+                        // create a node in MarketingPreferences to keep track of the student's preferences
                         this.firebaseDB
                             .ref(DB_CONST.MARKETING_PREFERENCES_CHILD)
                             .child(id)
                             .set({
                                 id,
-                                userID: auth.user.uid,
+                                studentID: auth.student.uid,
                                 date: utils.getCurrentDate(),
                                 accepted: marketingPreferencesChecked
                             })
                             .then(() => {
                                 if (!publicRegistration) {
-                                    if (invitedUserWithSpecifiedInvitedID.type === DB_CONST.TYPE_INVESTOR) {
+                                    if (invitedStudentWithSpecifiedInvitedID.type === DB_CONST.TYPE_STUDENT) {
                                         this.props.history.push(
-                                            groupUserName
+                                            courseStudentName
                                                 ?
-                                                `${ROUTES.DASHBOARD_INVESTOR.replace(":groupUserName", groupUserName)}?tab=Home`
+                                                `${ROUTES.DASHBOARD_STUDENT.replace(":courseStudentName", courseStudentName)}?tab=Home`
                                                 :
-                                                `${ROUTES.DASHBOARD_INVESTOR_INVEST_WEST_SUPER}?tab=Home`
+                                                `${ROUTES.DASHBOARD_STUDENT_INVEST_WEST_SUPER}?tab=Home`
                                         );
                                     } else {
                                         this.props.history.push(
-                                            groupUserName
+                                            courseStudentName
                                                 ?
-                                                `${ROUTES.DASHBOARD_ISSUER.replace(":groupUserName", groupUserName)}?tab=Home`
+                                                `${ROUTES.DASHBOARD_TEACHER.replace(":courseStudentName", courseStudentName)}?tab=Home`
                                                 :
-                                                `${ROUTES.DASHBOARD_ISSUER_INVEST_WEST_SUPER}?tab=Home`
+                                                `${ROUTES.DASHBOARD_TEACHER_INVEST_WEST_SUPER}?tab=Home`
                                         );
                                     }
                                 } else {
-                                    if (publicRegistrationType === DB_CONST.TYPE_INVESTOR) {
+                                    if (publicRegistrationType === DB_CONST.TYPE_STUDENT) {
                                         this.props.history.push(
-                                            groupUserName
+                                            courseStudentName
                                                 ?
-                                                `${ROUTES.DASHBOARD_INVESTOR.replace(":groupUserName", groupUserName)}?tab=Home`
+                                                `${ROUTES.DASHBOARD_STUDENT.replace(":courseStudentName", courseStudentName)}?tab=Home`
                                                 :
-                                                `${ROUTES.DASHBOARD_INVESTOR_INVEST_WEST_SUPER}?tab=Home`
+                                                `${ROUTES.DASHBOARD_STUDENT_INVEST_WEST_SUPER}?tab=Home`
                                         );
                                     } else {
                                         this.props.history.push(
-                                            groupUserName
+                                            courseStudentName
                                                 ?
-                                                `${ROUTES.DASHBOARD_ISSUER.replace(":groupUserName", groupUserName)}?tab=Home`
+                                                `${ROUTES.DASHBOARD_TEACHER.replace(":courseStudentName", courseStudentName)}?tab=Home`
                                                 :
-                                                `${ROUTES.DASHBOARD_ISSUER_INVEST_WEST_SUPER}?tab=Home`
+                                                `${ROUTES.DASHBOARD_TEACHER_INVEST_WEST_SUPER}?tab=Home`
                                         );
                                     }
                                 }
@@ -518,26 +518,26 @@ class Signup extends Component {
      */
 
     /**
-     * Handle when the user clicks on the Decline button
+     * Handle when the student clicks on the Decline button
      */
     handleDeclineToJoinTheAngelNetwork = () => {
         const {
-            invitedUserWithSpecifiedInvitedID
+            invitedStudentWithSpecifiedInvitedID
         } = this.state;
 
         this.firebaseDB
-            .ref(DB_CONST.INVITED_USERS_CHILD)
-            .child(invitedUserWithSpecifiedInvitedID.id)
+            .ref(DB_CONST.INVITED_STUDENTS_CHILD)
+            .child(invitedStudentWithSpecifiedInvitedID.id)
             .update({
-                id: invitedUserWithSpecifiedInvitedID.id,
-                status: DB_CONST.INVITED_USER_DECLINED_TO_REGISTER
+                id: invitedStudentWithSpecifiedInvitedID.id,
+                status: DB_CONST.INVITED_STUDENT_DECLINED_TO_REGISTER
             })
             .then(() => {
                 // don't need to have a listener here, simply update the state after changing the status
                 this.setState({
-                    invitedUserWithSpecifiedInvitedID: {
-                        ...this.state.invitedUserWithSpecifiedInvitedID,
-                        status: DB_CONST.INVITED_USER_DECLINED_TO_REGISTER
+                    invitedStudentWithSpecifiedInvitedID: {
+                        ...this.state.invitedStudentWithSpecifiedInvitedID,
+                        status: DB_CONST.INVITED_STUDENT_DECLINED_TO_REGISTER
                     }
                 });
             })
@@ -547,42 +547,42 @@ class Signup extends Component {
     };
 
     /**
-     * Handle when the user clicks on the Agree button
+     * Handle when the Student clicks on the Agree button
      */
     handleAgreeToJoinTheAngelNetwork = () => {
         const {
-            invitedUserWithSpecifiedInvitedID,
-            invitedUsersWithTheEmailObtained
+            invitedStudentWithSpecifiedInvitedID,
+            invitedStudentsWithTheEmailObtained
         } = this.state;
 
-        const invitedUsersByEmailThatHaveRegisteredIndex = invitedUsersWithTheEmailObtained.findIndex(
-            invitedUserByEmail =>
-                invitedUserByEmail.id !== invitedUserWithSpecifiedInvitedID.id && invitedUserByEmail.hasOwnProperty('officialUserID'));
+        const invitedStudentsByEmailThatHaveRegisteredIndex = invitedStudentsWithTheEmailObtained.findIndex(
+            invitedStudentByEmail =>
+                invitedStudentByEmail.id !== invitedStudentWithSpecifiedInvitedID.id && invitedStudentByEmail.hasOwnProperty('officialStudentID'));
 
-        // user has already registered (joined) before
-        if (invitedUsersByEmailThatHaveRegisteredIndex !== -1) {
-            const userOfficialID = invitedUsersWithTheEmailObtained[invitedUsersByEmailThatHaveRegisteredIndex].id;
-            const updatedInvitedUser = {
-                id: invitedUserWithSpecifiedInvitedID.id,
-                email: invitedUserWithSpecifiedInvitedID.email.toLowerCase(),
-                status: DB_CONST.INVITED_USER_STATUS_ACTIVE,
-                officialUserID: userOfficialID,
+        // Student has already registered (joined) before
+        if (invitedStudentsByEmailThatHaveRegisteredIndex !== -1) {
+            const studentOfficialID = invitedStudentsWithTheEmailObtained[invitedStudentsByEmailThatHaveRegisteredIndex].id;
+            const updatedInvitedStudent = {
+                id: invitedStudentWithSpecifiedInvitedID.id,
+                email: invitedStudentWithSpecifiedInvitedID.email.toLowerCase(),
+                status: DB_CONST.INVITED_STUDENT_STATUS_ACTIVE,
+                officialStudentID: studentOfficialID,
                 joinedDate: utils.getCurrentDate(),
-                type: invitedUserWithSpecifiedInvitedID.type,
-                invitedBy: invitedUserWithSpecifiedInvitedID.invitedBy,
-                invitedDate: invitedUserWithSpecifiedInvitedID.invitedDate
+                type: invitedStudentWithSpecifiedInvitedID.type,
+                invitedBy: invitedStudentWithSpecifiedInvitedID.invitedBy,
+                invitedDate: invitedStudentWithSpecifiedInvitedID.invitedDate
             };
 
             this.firebaseDB
-                .ref(DB_CONST.INVITED_USERS_CHILD)
-                .child(invitedUserWithSpecifiedInvitedID.id)
-                .update(updatedInvitedUser)
+                .ref(DB_CONST.INVITED_STUDENTS_CHILD)
+                .child(invitedStudentWithSpecifiedInvitedID.id)
+                .update(updatedInvitedStudent)
                 .then(() => {
                     // don't need to have a listener here, simply update the state after changing the status
                     this.setState({
-                        invitedUserWithSpecifiedInvitedID: {
-                            ...this.state.invitedUserWithSpecifiedInvitedID,
-                            status: DB_CONST.INVITED_USER_DECLINED_TO_REGISTER
+                        invitedStudentWithSpecifiedInvitedID: {
+                            ...this.state.invitedStudentWithSpecifiedInvitedID,
+                            status: DB_CONST.INVITED_STUDENT_DECLINED_TO_REGISTER
                         }
                     });
                 })
@@ -590,9 +590,9 @@ class Signup extends Component {
                     // handle error
                 });
         }
-        // user has not registered (joined) before
+        // Student has not registered (joined) before
         else {
-            // do nothing because if the user has not registered before, the register form should show up
+            // do nothing because if the Student has not registered before, the register form should show up
         }
     };
 
@@ -602,9 +602,9 @@ class Signup extends Component {
 
     render() {
         const {
-            groupUserName,
-            groupProperties,
-            groupPropertiesLoaded,
+            courseStudentName,
+            courseProperties,
+            coursePropertiesLoaded,
             shouldLoadOtherData
         } = this.props;
 
@@ -614,12 +614,12 @@ class Signup extends Component {
 
             publicRegistration,
             publicRegistrationType,
-            publicRegistrationUser,
+            publicRegistrationStudent,
 
-            invitedUserWithSpecifiedInvitedID,
-            invitedUsersWithTheEmailObtained,
+            invitedStudentWithSpecifiedInvitedID,
+            invitedStudentsWithTheEmailObtained,
 
-            userWelcomeName,
+            studentWelcomeName,
 
             password,
             confirmPassword,
@@ -630,7 +630,7 @@ class Signup extends Component {
             errorStatus
         } = this.state;
 
-        if (!groupPropertiesLoaded) {
+        if (!coursePropertiesLoaded) {
             return (
                 <FlexView
                     marginTop={30}
@@ -655,52 +655,52 @@ class Signup extends Component {
                 >
                     <HashLoader
                         color={
-                            !groupProperties
+                            !courseProperties
                                 ?
                                 colors.primaryColor
                                 :
-                                groupProperties.settings.primaryColor
+                                courseProperties.settings.primaryColor
                         }
                     />
                 </FlexView>
             );
         }
 
-        // groupProperties = null means super admin site,
-        // the user must not be allowed to signup on super admin site
-        // also, if the invitedID is not relating to any invited user in the db, display Page not found.
-        if (!groupProperties || (!publicRegistration && !invitedUserWithSpecifiedInvitedID)) {
+        // courseProperties = null means super teacher site,
+        // the Student must not be allowed to signup on super teacher site
+        // also, if the invitedID is not relating to any invited Student in the db, display Page not found.
+        if (!courseProperties || (!publicRegistration && !invitedStudentWithSpecifiedInvitedID)) {
             return <PageNotFoundWhole/>;
         }
 
         // if the URL is not for public registration,
-        // check if the user is opening the page under the correct group url.
+        // check if the Student is opening the page under the correct course url.
         // if not, display Page not found.
         if (!publicRegistration
-            && invitedUserWithSpecifiedInvitedID.invitedBy !== groupProperties.anid
+            && invitedStudentWithSpecifiedInvitedID.invitedBy !== courseProperties.anid
         ) {
             return <PageNotFoundWhole/>;
         }
 
-        // the invited user of this angel network has already registered
+        // the invited Student of this angel network has already registered
         if (!publicRegistration
-            && (invitedUserWithSpecifiedInvitedID.hasOwnProperty('officialUserID')
-                || invitedUserWithSpecifiedInvitedID.status !== DB_CONST.INVITED_USER_NOT_REGISTERED
+            && (invitedStudentWithSpecifiedInvitedID.hasOwnProperty('officialStudentID')
+                || invitedStudentWithSpecifiedInvitedID.status !== DB_CONST.INVITED_STUDENT_NOT_REGISTERED
             )
         ) {
             return (
-                <UserNotAbleToRegisterOrJoin
-                    invitedUser={invitedUserWithSpecifiedInvitedID}
+                <StudentNotAbleToRegisterOrJoin
+                    invitedStudent={invitedStudentWithSpecifiedInvitedID}
                 />
             );
         }
 
-        let invitedUsersByEmailThatHaveRegistered = [];
+        let invitedStudentsByEmailThatHaveRegistered = [];
 
         if (!publicRegistration) {
-            invitedUsersByEmailThatHaveRegistered = invitedUsersWithTheEmailObtained.filter(
-                invitedUserByEmail =>
-                    invitedUserByEmail.id !== invitedUserWithSpecifiedInvitedID.id && invitedUserByEmail.hasOwnProperty('officialUserID'));
+            invitedStudentsByEmailThatHaveRegistered = invitedStudentsWithTheEmailObtained.filter(
+                invitedStudentByEmail =>
+                    invitedStudentByEmail.id !== invitedStudentWithSpecifiedInvitedID.id && invitedStudentByEmail.hasOwnProperty('officialStudentID'));
         }
 
         return (
@@ -715,30 +715,30 @@ class Signup extends Component {
                 }}
             >
                 {
-                    // the invited user has not joined any angel network before
-                    invitedUsersByEmailThatHaveRegistered.length === 0
+                    // the invited Student has not joined any angel network before
+                    invitedStudentsByEmailThatHaveRegistered.length === 0
                         ?
-                        <SignupForNewUser
+                        <SignupForNewStudent
                             publicRegistration={publicRegistration}
                             publicRegistrationType={publicRegistrationType}
-                            publicRegistrationUser={publicRegistrationUser}
-                            groupUserName={groupUserName}
-                            groupProperties={groupProperties}
-                            invitedUser={invitedUserWithSpecifiedInvitedID}
-                            userWelcomeName={userWelcomeName}
+                            publicRegistrationStudent={publicRegistrationStudent}
+                            courseStudentName={courseStudentName}
+                            courseProperties={courseProperties}
+                            invitedStudent={invitedStudentWithSpecifiedInvitedID}
+                            studentWelcomeName={studentWelcomeName}
                             password={password}
                             confirmPassword={confirmPassword}
                             marketingPreferencesChecked={marketingPreferencesChecked}
                             submitted={submitted}
                             processingSubmission={processingSubmission}
                             errorStatus={errorStatus}
-                            handleInputChanged={this.handleSignupForNewUserInputChanged}
-                            handleSignupClick={this.handleSignupForNewUserClick}
+                            handleInputChanged={this.handleSignupForNewStudentInputChanged}
+                            handleSignupClick={this.handleSignupForNewStudentClick}
                         />
                         :
-                        <SignupForRegisteredUser
-                            groupProperties={groupProperties}
-                            invitedUser={invitedUserWithSpecifiedInvitedID}
+                        <SignupForRegisteredStudent
+                            courseProperties={courseProperties}
+                            invitedStudent={invitedStudentWithSpecifiedInvitedID}
                             handleDeclineClick={this.handleDeclineToJoinTheAngelNetwork}
                             handleAgreeClick={this.handleAgreeToJoinTheAngelNetwork}
                         />
@@ -749,9 +749,9 @@ class Signup extends Component {
 }
 
 /**
- * Signup component for a new user
+ * Signup component for a new Student
  */
-class SignupForNewUser extends Component {
+class SignupForNewStudent extends Component {
 
     handleInputChanged = event => {
         this.props.handleInputChanged(event);
@@ -765,14 +765,14 @@ class SignupForNewUser extends Component {
         const {
             publicRegistration,
             publicRegistrationType,
-            publicRegistrationUser,
+            publicRegistrationStudent,
 
-            groupUserName,
-            groupProperties,
+            courseStudentName,
+            courseProperties,
 
-            invitedUser,
+            invitedStudent,
 
-            userWelcomeName,
+            studentWelcomeName,
 
             password,
             confirmPassword,
@@ -819,11 +819,11 @@ class SignupForNewUser extends Component {
                                         ?
                                         "Sign up"
                                         :
-                                        publicRegistrationType === DB_CONST.TYPE_INVESTOR
+                                        publicRegistrationType === DB_CONST.TYPE_STUDENT
                                             ?
-                                            "Investor sign up"
+                                            "Student sign up"
                                             :
-                                            "Issuer sign up"
+                                            "Teacher sign up"
                                 }
                             </Typography>
                         </FlexView>
@@ -846,18 +846,18 @@ class SignupForNewUser extends Component {
                                 {
                                     !publicRegistration
                                         ?
-                                        `Welcome ${userWelcomeName}`
+                                        `Welcome ${studentWelcomeName}`
                                         :
-                                        `Welcome to ${groupProperties.displayName}`
+                                        `Welcome to ${courseProperties.displayName}`
                                 }
                             </Typography>
 
-                            {/** QIB issuer registration text */}
+                            {/** QIB teacher registration text */}
                             {
-                                groupUserName === "qib"
+                                courseStudentName === "qib"
                                 && (
-                                    (publicRegistration && publicRegistrationType === DB_CONST.TYPE_ISSUER)
-                                    || (!publicRegistration && invitedUser.type === DB_CONST.TYPE_ISSUER)
+                                    (publicRegistration && publicRegistrationType === DB_CONST.TYPE_TEACHER)
+                                    || (!publicRegistration && invitedStudent.type === DB_CONST.TYPE_TEACHER)
                                 )
                                     ?
                                     <Typography
@@ -868,10 +868,10 @@ class SignupForNewUser extends Component {
                                             marginBottom: 20
                                         }}
                                     >
-                                        The Quarterly Investment Briefing is an event run by TechSPARK for investors to
+                                        The Quarterly Investment Briefing is an event run by TechSPARK for Students to
                                         network, share and learn. Investment opportunities and one pagers added to this
                                         platform will be shared by the event host verbally and circulated via this
-                                        password protected website to c. 300+ investors and enablers of investment
+                                        password protected website to c. 300+ Students and enablers of investment
                                         (lawyers, accountants etc.) who have expressed interest in the region and
                                         investment opportunities here.
                                     </Typography>
@@ -892,7 +892,7 @@ class SignupForNewUser extends Component {
                                             marginTop: 8
                                         }}
                                     >
-                                        You have been invited to join the {invitedUser.Invitor.displayName} members
+                                        You have been invited to join the {invitedStudent.Invitor.displayName} members
                                         area.
                                     </Typography>
                                     :
@@ -906,9 +906,9 @@ class SignupForNewUser extends Component {
                                 error={
                                     !publicRegistration
                                         ?
-                                        invitedUser.title === DB_CONST.USER_TITLES[0] && submitted
+                                        invitedStudent.title === DB_CONST.STUDENT_TITLES[0] && submitted
                                         :
-                                        publicRegistrationUser.title === DB_CONST.USER_TITLES[0] && submitted
+                                        publicRegistrationStudent.title === DB_CONST.STUDENT_TITLES[0] && submitted
                                 }
                                 style={{
                                     marginBottom: 15,
@@ -928,9 +928,9 @@ class SignupForNewUser extends Component {
                                     value={
                                         !publicRegistration
                                             ?
-                                            invitedUser.title
+                                            invitedStudent.title
                                             :
-                                            publicRegistrationUser.title
+                                            publicRegistrationStudent.title
                                     }
                                     onChange={this.handleInputChanged}
                                     margin="dense"
@@ -939,7 +939,7 @@ class SignupForNewUser extends Component {
                                     }}
                                 >
                                     {
-                                        DB_CONST.USER_TITLES.map((title, index) => (
+                                        DB_CONST.STUDENT_TITLES.map((title, index) => (
                                             <MenuItem
                                                 key={index}
                                                 value={title}
@@ -964,9 +964,9 @@ class SignupForNewUser extends Component {
                                         value={
                                             !publicRegistration
                                                 ?
-                                                invitedUser.firstName
+                                                invitedStudent.firstName
                                                 :
-                                                publicRegistrationUser.firstName
+                                                publicRegistrationStudent.firstName
                                         }
                                         fullWidth
                                         variant="outlined"
@@ -974,9 +974,9 @@ class SignupForNewUser extends Component {
                                         error={
                                             !publicRegistration
                                                 ?
-                                                invitedUser.firstName.length === 0 && submitted
+                                                invitedStudent.firstName.length === 0 && submitted
                                                 :
-                                                publicRegistrationUser.firstName.length === 0 && submitted
+                                                publicRegistrationStudent.firstName.length === 0 && submitted
                                         }
                                         onChange={this.handleInputChanged}
                                     />
@@ -992,9 +992,9 @@ class SignupForNewUser extends Component {
                                         value={
                                             !publicRegistration
                                                 ?
-                                                invitedUser.lastName
+                                                invitedStudent.lastName
                                                 :
-                                                publicRegistrationUser.lastName
+                                                publicRegistrationStudent.lastName
                                         }
                                         fullWidth
                                         variant="outlined"
@@ -1002,9 +1002,9 @@ class SignupForNewUser extends Component {
                                         error={
                                             !publicRegistration
                                                 ?
-                                                invitedUser.lastName.length === 0 && submitted
+                                                invitedStudent.lastName.length === 0 && submitted
                                                 :
-                                                publicRegistrationUser.lastName.length === 0 && submitted
+                                                publicRegistrationStudent.lastName.length === 0 && submitted
                                         }
                                         onChange={this.handleInputChanged}
                                     />
@@ -1022,9 +1022,9 @@ class SignupForNewUser extends Component {
                                     value={
                                         !publicRegistration
                                             ?
-                                            invitedUser.email
+                                            invitedStudent.email
                                             :
-                                            publicRegistrationUser.email
+                                            publicRegistrationStudent.email
                                     }
                                     fullWidth
                                     variant="outlined"
@@ -1032,9 +1032,9 @@ class SignupForNewUser extends Component {
                                     error={
                                         !publicRegistration
                                             ?
-                                            invitedUser.email.trim().length === 0 && submitted
+                                            invitedStudent.email.trim().length === 0 && submitted
                                             :
-                                            publicRegistrationUser.email.trim().length === 0 && submitted
+                                            publicRegistrationStudent.email.trim().length === 0 && submitted
                                     }
                                     disabled={!publicRegistration}
                                     onChange={!publicRegistration ? null : this.handleInputChanged}
@@ -1057,11 +1057,11 @@ class SignupForNewUser extends Component {
                                             required
                                             label="Re-enter email"
                                             name="confirmedEmail"
-                                            value={publicRegistrationUser.confirmedEmail}
+                                            value={publicRegistrationStudent.confirmedEmail}
                                             fullWidth
                                             variant="outlined"
                                             margin="dense"
-                                            error={publicRegistrationUser.confirmedEmail.trim().length === 0 && submitted}
+                                            error={publicRegistrationStudent.confirmedEmail.trim().length === 0 && submitted}
                                             onChange={!publicRegistration ? null : this.handleInputChanged}
                                             style={{
                                                 marginTop: 10
@@ -1125,11 +1125,11 @@ class SignupForNewUser extends Component {
                                         className={css(sharedStyles.nav_link_hover)}
                                         style={{
                                             color:
-                                                !groupProperties
+                                                !courseProperties
                                                     ?
                                                     colors.primaryColor
                                                     :
-                                                    groupProperties.settings.primaryColor
+                                                    courseProperties.settings.primaryColor
                                         }}
                                     >
                                         <b>
@@ -1154,11 +1154,11 @@ class SignupForNewUser extends Component {
                                     >
                                         <HashLoader
                                             color={
-                                                !groupProperties
+                                                !courseProperties
                                                     ?
                                                     colors.primaryColor
                                                     :
-                                                    groupProperties.settings.primaryColor
+                                                    courseProperties.settings.primaryColor
                                             }
                                         />
                                     </FlexView>
@@ -1181,11 +1181,11 @@ class SignupForNewUser extends Component {
                                         ?
                                         "Create account"
                                         :
-                                        publicRegistrationType === DB_CONST.TYPE_INVESTOR
+                                        publicRegistrationType === DB_CONST.TYPE_TEACHER
                                             ?
-                                            "Create investor account"
+                                            "Create Student account"
                                             :
-                                            "Create issuer account"
+                                            "Create teacher account"
                                 }
                             </Button>
 
@@ -1200,11 +1200,11 @@ class SignupForNewUser extends Component {
                                     className={css(sharedStyles.nav_link_hover)}
                                     style={{
                                         color:
-                                            !groupProperties
+                                            !courseProperties
                                                 ?
                                                 colors.primaryColor
                                                 :
-                                                groupProperties.settings.primaryColor
+                                                courseProperties.settings.primaryColor
                                     }}
                                 >
                                     <b>
@@ -1218,11 +1218,11 @@ class SignupForNewUser extends Component {
                                     className={css(sharedStyles.nav_link_hover)}
                                     style={{
                                         color:
-                                            !groupProperties
+                                            !courseProperties
                                                 ?
                                                 colors.primaryColor
                                                 :
-                                                groupProperties.settings.primaryColor
+                                                courseProperties.settings.primaryColor
                                     }}
                                 >
                                     <b>
@@ -1242,19 +1242,19 @@ class SignupForNewUser extends Component {
                                     Already have an account?&nbsp;&nbsp;
                                     <NavLink
                                         to={
-                                            groupUserName
-                                                ? ROUTES.SIGN_IN.replace(":groupUserName", groupUserName)
+                                            courseStudentName
+                                                ? ROUTES.SIGN_IN.replace(":courseStudentName", courseStudentName)
                                                 :
                                                 ROUTES.SIGN_IN_INVEST_WEST_SUPER
                                         }
                                         className={css(sharedStyles.nav_link_hover)}
                                         style={{
                                             color:
-                                                !groupProperties
+                                                !courseProperties
                                                     ?
                                                     colors.primaryColor
                                                     :
-                                                    groupProperties.settings.primaryColor
+                                                    courseProperties.settings.primaryColor
                                         }}
                                     >
                                         Sign in
@@ -1321,16 +1321,16 @@ class SignupForNewUser extends Component {
 }
 
 /**
- * Signup component (or exactly Join component) for a registered user who is already a member of an angel network
- * but was also invited by other angel networks to join in their groups.
+ * Signup component (or exactly Join component) for a registered Student who is already a member of an angel network
+ * but was also invited by other angel networks to join in their courses.
  */
-class SignupForRegisteredUser extends Component {
+class SignupForRegisteredStudent extends Component {
 
     render() {
         const {
-            groupProperties,
+            courseProperties,
 
-            invitedUser,
+            invitedStudent,
 
             handleDeclineClick,
             handleAgreeClick
@@ -1367,7 +1367,7 @@ class SignupForRegisteredUser extends Component {
                             <Typography
                                 variant="h5"
                             >
-                                Join {invitedUser.Invitor.displayName}
+                                Join {invitedStudent.Invitor.displayName}
                             </Typography>
 
                         </FlexView>
@@ -1388,7 +1388,7 @@ class SignupForRegisteredUser extends Component {
                                     marginBottom: 10
                                 }}
                             >
-                                {`${invitedUser.Invitor.displayName} invited you to join their group as an ${invitedUser.type === DB_CONST.TYPE_INVESTOR ? 'investor' : 'issuer'}. Do you want to join their group?`}
+                                {`${invitedStudent.Invitor.displayName} invited you to join their course as an ${invitedStudent.type === DB_CONST.TYPE_STUDENT ? 'student' : 'teacher'}. Do you want to join their course?`}
                             </Typography>
 
                             <FlexView
@@ -1433,11 +1433,11 @@ class SignupForRegisteredUser extends Component {
                                     className={css(sharedStyles.nav_link_hover)}
                                     style={{
                                         color:
-                                            !groupProperties
+                                            !courseProperties
                                                 ?
                                                 colors.primaryColor
                                                 :
-                                                groupProperties.settings.primaryColor
+                                                courseProperties.settings.primaryColor
                                     }}
                                 >
                                     <b>
@@ -1451,11 +1451,11 @@ class SignupForRegisteredUser extends Component {
                                     className={css(sharedStyles.nav_link_hover)}
                                     style={{
                                         color:
-                                            !groupProperties
+                                            !courseProperties
                                                 ?
                                                 colors.primaryColor
                                                 :
-                                                groupProperties.settings.primaryColor
+                                                courseProperties.settings.primaryColor
                                     }}
                                 >
                                     <b>

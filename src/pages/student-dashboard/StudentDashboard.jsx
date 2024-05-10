@@ -17,7 +17,7 @@ import PageNotFoundWhole from "../../shared-components/page-not-found/PageNotFou
 import ChangePasswordPage from "../../shared-components/change-password/ChangePasswordPage";
 import SidebarContent, {
     CHANGE_PASSWORD_TAB,
-    EXPLORE_GROUPS_TAB,
+    EXPLORE_COURSES_TAB,
     HOME_TAB,
     MY_OFFERS_TAB,
     PROFILE_TAB,
@@ -34,57 +34,57 @@ import * as ROUTES from "../../router/routes";
 import sharedStyles from "../../shared-js-css-styles/SharedStyles";
 
 import {connect} from "react-redux";
-import * as manageGroupFromParamsActions from "../../redux-store/actions/manageGroupFromParamsActions";
+import * as manageCourseFromParamsActions from "../../redux-store/actions/manageCourseFromParamsActions";
 import * as dashboardSidebarActions from "../../redux-store/actions/dashboardSidebarActions";
-import * as editUserActions from "../../redux-store/actions/editUserActions";
+import * as editStudentActions from "../../redux-store/actions/editStudentActions";
 import * as notificationsActions from "../../redux-store/actions/notificationsActions";
 import ExploreOffers from "../../shared-components/explore-offers/ExploreOffers";
 import OffersTable from "../../shared-components/offers-table/OffersTable";
-import ExploreGroups from "../../shared-components/explore-groups/ExploreGroups";
+import ExploreCourses from "../../shared-components/explore-courses/ExploreCourses";
 import Resources from "../resources/Resources";
 
 import { safeGetItem, safeRemoveItem } from "../../utils/browser";
 
 const mapStateToProps = state => {
     return {
-        groupPropertiesLoaded: state.manageGroupFromParams.groupPropertiesLoaded,
-        groupProperties: state.manageGroupFromParams.groupProperties,
-        shouldLoadOtherData: state.manageGroupFromParams.shouldLoadOtherData,
+        coursePropertiesLoaded: state.manageCourseFromParams.coursePropertiesLoaded,
+        courseProperties: state.manageCourseFromParams.courseProperties,
+        shouldLoadOtherData: state.manageCourseFromParams.shouldLoadOtherData,
 
         sidebarDocked: state.dashboardSidebar.sidebarDocked,
         sidebarOpen: state.dashboardSidebar.sidebarOpen,
 
         authStatus: state.auth.authStatus,
         authenticating: state.auth.authenticating,
-        user: state.auth.user,
-        userLoaded: state.auth.userLoaded,
+        student: state.auth.student,
+        studentLoaded: state.auth.studentLoaded,
 
         notifications: state.manageNotifications.notifications,
         notificationsAnchorEl: state.manageNotifications.notificationsAnchorEl,
         notificationBellRef: state.manageNotifications.notificationBellRef,
 
-        editUserProfile_userEdited: state.editUser.userEdited
+        editStudentProfile_studentEdited: state.editStudent.studentEdited
     }
 };
 
 const mapDispatchToProps = dispatch => {
     return {
-        setGroupUserNameFromParams: (groupUserName) => dispatch(manageGroupFromParamsActions.setGroupUserNameFromParams(groupUserName)),
-        setExpectedAndCurrentPathsForChecking: (expectedPath, currentPath) => dispatch(manageGroupFromParamsActions.setExpectedAndCurrentPathsForChecking(expectedPath, currentPath)),
-        loadAngelNetwork: () => dispatch(manageGroupFromParamsActions.loadAngelNetwork()),
+        setCourseStudentNameFromParams: (courseStudentName) => dispatch(manageCourseFromParamsActions.setCourseStudentNameFromParams(courseStudentName)),
+        setExpectedAndCurrentPathsForChecking: (expectedPath, currentPath) => dispatch(manageCourseFromParamsActions.setExpectedAndCurrentPathsForChecking(expectedPath, currentPath)),
+        loadAngelNetwork: () => dispatch(manageCourseFromParamsActions.loadAngelNetwork()),
 
         toggleSidebar: (checkSidebarDocked) => dispatch(dashboardSidebarActions.toggleSidebar(checkSidebarDocked)),
 
-        editUserProfile_setOriginalUserAndEditedUser: (user) => dispatch(editUserActions.setOriginalUserAndEditedUser(user)),
+        editStudentProfile_setOriginalStudentAndEditedStudent: (student) => dispatch(editStudentActions.setOriginalStudentAndEditedStudent(student)),
 
-        // projectsTable_setUser: (user) => dispatch(projectsTableActions.setUser(user)),
+        // projectsTable_setStudent: (student) => dispatch(projectsTableActions.setStudent(student)),
 
         toggleNotifications: (event) => dispatch(notificationsActions.toggleNotifications(event)),
         notificationRefUpdated: (ref) => dispatch(notificationsActions.notificationRefUpdated(ref)),
     }
 };
 
-class IssuerDashboard extends Component {
+class TeacherDashboard extends Component {
 
     constructor(props) {
         super(props);
@@ -97,10 +97,10 @@ class IssuerDashboard extends Component {
 
 
         const {
-            groupPropertiesLoaded,
+            coursePropertiesLoaded,
             shouldLoadOtherData,
 
-            setGroupUserNameFromParams,
+            setCourseStudentNameFromParams,
             setExpectedAndCurrentPathsForChecking,
             loadAngelNetwork,
 
@@ -116,12 +116,12 @@ class IssuerDashboard extends Component {
             history.push(redirectTo);
         }
 
-        setGroupUserNameFromParams(match.params.hasOwnProperty('groupUserName') ? match.params.groupUserName : null);
-        setExpectedAndCurrentPathsForChecking(match.params.hasOwnProperty('groupUserName') ? ROUTES.DASHBOARD_ISSUER : ROUTES.DASHBOARD_ISSUER_INVEST_WEST_SUPER, match.path);
+        setCourseStudentNameFromParams(match.params.hasOwnProperty('courseStudentName') ? match.params.courseStudentName : null);
+        setExpectedAndCurrentPathsForChecking(match.params.hasOwnProperty('courseStudentName') ? ROUTES.DASHBOARD_TEACHER : ROUTES.DASHBOARD_TEACHER_INVEST_WEST_SUPER, match.path);
 
         loadAngelNetwork();
 
-        if (groupPropertiesLoaded && shouldLoadOtherData) {
+        if (coursePropertiesLoaded && shouldLoadOtherData) {
             this.setDataForComponents();
         }
 
@@ -130,7 +130,7 @@ class IssuerDashboard extends Component {
 
     componentDidUpdate(prevProps, prevState, snapshot) {
         const {
-            groupPropertiesLoaded,
+            coursePropertiesLoaded,
             shouldLoadOtherData,
 
             loadAngelNetwork,
@@ -140,7 +140,7 @@ class IssuerDashboard extends Component {
 
         loadAngelNetwork();
 
-        if (groupPropertiesLoaded && shouldLoadOtherData) {
+        if (coursePropertiesLoaded && shouldLoadOtherData) {
             this.setDataForComponents();
         }
 
@@ -152,24 +152,24 @@ class IssuerDashboard extends Component {
      */
     setDataForComponents = () => {
         const {
-            user,
-            editUserProfile_userEdited,
+            student,
+            editStudentProfile_studentEdited,
 
-            editUserProfile_setOriginalUserAndEditedUser,
-            // projectsTable_setUser
+            editStudentProfile_setOriginalStudentAndEditedStudent,
+            // projectsTable_setStudent
         } = this.props;
 
-        if (!user || (user && user.type !== DB_CONST.TYPE_ISSUER)) {
+        if (!student || (student && student.type !== DB_CONST.TYPE_TEACHER)) {
             return;
         }
 
-        if (!editUserProfile_userEdited) {
-            // initialize a copied instance of the user for editing
-            editUserProfile_setOriginalUserAndEditedUser(user);
+        if (!editStudentProfile_studentEdited) {
+            // initialize a copied instance of the Student for editing
+            editStudentProfile_setOriginalStudentAndEditedStudent(student);
         }
 
-        // // set user so that information can be used in the projects table component
-        // projectsTable_setUser(user);
+        // // set student so that information can be used in the projects table component
+        // projectsTable_setStudent(student);
     };
 
     /**
@@ -220,13 +220,13 @@ class IssuerDashboard extends Component {
         }
 
         /**
-         * EXPLORE GROUPS TAB
+         * EXPLORE COURSES TAB
          */
-        if (params.tab === EXPLORE_GROUPS_TAB) {
+        if (params.tab === EXPLORE_COURSES_TAB) {
             // return (
-            //     <ExploreGroupsTab/>
+            //     <ExploreCoursesTab/>
             // );
-            return <ExploreGroups/>;
+            return <ExploreCourses/>;
         }
 
         /**
@@ -254,16 +254,16 @@ class IssuerDashboard extends Component {
     render() {
         const {
             shouldLoadOtherData,
-            groupProperties,
-            groupPropertiesLoaded,
+            courseProperties,
+            coursePropertiesLoaded,
 
             sidebarDocked,
             sidebarOpen,
 
             authStatus,
             authenticating,
-            user,
-            userLoaded,
+            student,
+            studentLoaded,
 
             notifications,
             notificationsAnchorEl,
@@ -272,7 +272,7 @@ class IssuerDashboard extends Component {
             toggleNotifications
         } = this.props;
 
-        if (!groupPropertiesLoaded) {
+        if (!coursePropertiesLoaded) {
             return (
                 <FlexView marginTop={30} hAlignContent="center">
                     <HashLoader color={colors.primaryColor}/>
@@ -284,23 +284,23 @@ class IssuerDashboard extends Component {
             return <PageNotFoundWhole/>;
         }
 
-        if (authenticating || !userLoaded) {
+        if (authenticating || !studentLoaded) {
             return (
                 <FlexView marginTop={30} hAlignContent="center">
                     <HashLoader
                         color={
-                            !groupProperties
+                            !courseProperties
                                 ?
                                 colors.primaryColor
                                 :
-                                groupProperties.settings.primaryColor
+                                courseProperties.settings.primaryColor
                         }
                     />
                 </FlexView>
             );
         }
 
-        if (authStatus !== AUTH_SUCCESS || !user || (user && user.type !== DB_CONST.TYPE_ISSUER)) {
+        if (authStatus !== AUTH_SUCCESS || !student || (student && student.type !== DB_CONST.TYPE_TEACHER)) {
             return <PageNotFoundWhole/>;
         }
 
@@ -324,11 +324,11 @@ class IssuerDashboard extends Component {
                             <FlexView height={55} width="100%" vAlignContent="center"
                                 style={{
                                     backgroundColor:
-                                        !groupProperties
+                                        !courseProperties
                                             ?
                                             colors.primaryColor
                                             :
-                                            groupProperties.settings.primaryColor
+                                            courseProperties.settings.primaryColor
                                 }}>
 
                                 <Row style={{width: "100%"}} noGutters>
@@ -411,8 +411,8 @@ class IssuerDashboard extends Component {
             case CHANGE_PASSWORD_TAB:
                 title = CHANGE_PASSWORD_TAB;
                 break;
-            case EXPLORE_GROUPS_TAB:
-                title = EXPLORE_GROUPS_TAB;
+            case EXPLORE_COURSES_TAB:
+                title = EXPLORE_COURSES_TAB;
                 break;
             default:
                 return;
@@ -424,7 +424,7 @@ class IssuerDashboard extends Component {
     }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(IssuerDashboard);
+export default connect(mapStateToProps, mapDispatchToProps)(TeacherDashboard);
 
 const styles = StyleSheet.create({
     page_title: {
