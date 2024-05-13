@@ -25,7 +25,7 @@ export default class Routes {
     static groupSignIn: string = `${Routes.baseGroup}/signin`;
     static superAdminSignIn: string = "/signin/super-admin";
 
-    static nonCourseSignIn: string = "/courses/signin";
+    static nonCourseSignIn: string = "/courses/default/signin";
     static courseSignIn: string = `${Routes.baseCourse}/signin`;
     static superTeacherSignIn: string = "/signin/super-teacher";
 

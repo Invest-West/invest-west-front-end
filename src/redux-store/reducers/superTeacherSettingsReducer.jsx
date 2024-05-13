@@ -1,4 +1,4 @@
-import * as superAdminSettingsActions from '../actions/superAdminSettingsActions';
+import * as superTeacherSettingsActions from '../actions/superTeacherSettingsActions';
 import * as clubAttributesActions from '../actions/clubAttributesActions';
 import * as DB_CONST from '../../firebase/databaseConsts';
 
@@ -14,9 +14,9 @@ const initState = {
     editedPledgeAnswer: ''
 };
 
-const superAdminSettingsReducer = (state = initState, action) => {
+const superTeacherSettingsReducer = (state = initState, action) => {
     switch (action.type) {
-        case superAdminSettingsActions.SUPER_ADMIN_SETTINGS_INITIALIZE_CLUB_ATTRIBUTES_EDITED:
+        case superTeacherSettingsActions.SUPER_TEACHER_SETTINGS_INITIALIZE_CLUB_ATTRIBUTES_EDITED:
             return {
                 ...state,
                 clubAttributesEdited: JSON.parse(JSON.stringify(action.clubAttributes))
@@ -51,7 +51,7 @@ const superAdminSettingsReducer = (state = initState, action) => {
                                         :
                                         action.value[action.value.findIndex(faq => faq.id === state.expandedPledgeFAQ.id)]
             };
-        case superAdminSettingsActions.SUPER_ADMIN_SETTINGS_INPUT_CHANGED:
+        case superTeacherSettingsActions.SUPER_TEACHER_SETTINGS_INPUT_CHANGED:
             const isPropertyOfClubAttributes = action.isPropertyOfClubAttributes;
 
             if (isPropertyOfClubAttributes) {
@@ -68,7 +68,7 @@ const superAdminSettingsReducer = (state = initState, action) => {
                     [action.name]: action.value
                 };
             }
-        case superAdminSettingsActions.SUPER_ADMIN_SETTINGS_QUILL_EDITOR_CHANGED:
+        case superTeacherSettingsActions.SUPER_TEACHER_SETTINGS_QUILL_EDITOR_CHANGED:
             return {
                 ...state,
                 clubAttributesEdited: {
@@ -76,20 +76,20 @@ const superAdminSettingsReducer = (state = initState, action) => {
                     [action.fieldName]: action.value
                 }
             };
-        case superAdminSettingsActions.SUPER_ADMIN_SETTINGS_PLEDGE_FAQ_PANEL_EXPANSION_CHANGED:
+        case superTeacherSettingsActions.SUPER_TEACHER_SETTINGS_PLEDGE_FAQ_PANEL_EXPANSION_CHANGED:
             return {
                 ...state,
                 expandedPledgeFAQ: action.expandedPledgeFAQ,
                 editExpandedPledgeFAQ: action.editExpandedPledgeFAQ
             };
-        case superAdminSettingsActions.SUPER_ADMIN_SETTINGS_TOGGLE_ADD_NEW_PLEDGE_FAQ:
+        case superTeacherSettingsActions.SUPER_TEACHER_SETTINGS_TOGGLE_ADD_NEW_PLEDGE_FAQ:
             return {
                 ...state,
                 addNewPledgeFAQ: !state.addNewPledgeFAQ,
                 addedPledgeQuestion: '',
                 addedPledgeAnswer: ''
             };
-        case superAdminSettingsActions.SUPER_ADMIN_SETTINGS_TOGGLE_EDIT_EXPANDED_PLEDGE_FAQ:
+        case superTeacherSettingsActions.SUPER_TEACHER_SETTINGS_TOGGLE_EDIT_EXPANDED_PLEDGE_FAQ:
             return {
                 ...state,
                 editExpandedPledgeFAQ: !state.editExpandedPledgeFAQ,
@@ -101,4 +101,4 @@ const superAdminSettingsReducer = (state = initState, action) => {
     }
 };
 
-export default superAdminSettingsReducer;
+export default superTeacherSettingsReducer;

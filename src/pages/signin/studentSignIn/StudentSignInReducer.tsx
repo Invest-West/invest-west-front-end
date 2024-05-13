@@ -3,7 +3,7 @@ import {
     SignInAction,
     SignInEvents,
     TextChangedAction
-} from "./SignInActions";
+} from "./StudentSignInActions";
 import Error from "../../../models/error";
 
 export interface SignInState {

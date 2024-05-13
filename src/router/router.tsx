@@ -22,9 +22,12 @@ import PageNotFound from "../shared-components/page-not-found/PageNotFoundNew";
 import ErrorBoundary from './ErrorBoundary';
 import Routes from "./routes";
 import GroupRoute from "./GroupRoute";
+import CourseRoute from "./CourseRoute";
 import ResetPassword from "../pages/reset-password/ResetPassword";
 import ResourceDetail from "../pages/resources/pages/ResourceDetail";
 import SignUpNew from "../pages/signup/SignUpNew";
+import SignUpStudentNew from "../pages/signup/StudentSignup/StudentSignUpNew";
+
 import {colors} from "@material-ui/core";
 
 /**
@@ -207,6 +210,163 @@ const AppRouter = () => (
                 // @ts-ignore
                 render={props => <GroupRoute {...props} showHeader={true}
                                              component={<PageNotFound {...props}/>}/>}/>
+
+            <Route path={Routes.courseSignUp} exact
+                            // @ts-ignore
+                            render={props => <CourseRoute {...props} showHeader={true} backgroundColor={colors.grey["200"]}
+                                // @ts-ignore
+                                                            component={<SignUpStudentNew {...props}/>}/>}/>
+
+            <Route path={Routes.nonCourseSignUp} exact
+                            // @ts-ignore
+                            render={props => <CourseRoute {...props} showHeader={true} backgroundColor={colors.grey["200"]}
+                                // @ts-ignore
+                                                            component={<SignUpStudentNew {...props}/>}/>}/>
+
+            <Route path={Routes.nonCourseFront} exact
+                // @ts-ignore
+                   render={props => <CourseRoute {...props} showHeader={false} component={<Front {...props}/>}/>}/>
+            <Route path={Routes.courseFront} exact
+                // @ts-ignore
+                   render={props => <CourseRoute {...props} showHeader={false} component={<Front {...props}/>}/>}/>
+
+            <Route path={Routes.nonCourseSignIn} exact
+                // @ts-ignore
+                   render={props => <CourseRoute {...props} showHeader={true} backgroundColor={colors.grey["200"]}
+                       // @ts-ignore
+                                                component={<SignIn {...props}/>}/>}/>
+            <Route path={Routes.courseSignIn} exact
+                // @ts-ignore
+                   render={props => <CourseRoute {...props} showHeader={true} backgroundColor={colors.grey["200"]}
+                       // @ts-ignore
+                                                component={<SignIn {...props}/>}/>}/>
+            <Route path={Routes.superAdminSignIn} exact
+                // @ts-ignore
+                   render={props => <CourseRoute {...props} showHeader={true} backgroundColor={colors.grey["200"]}
+                       // @ts-ignore
+                                                component={<SignIn {...props}/>}/>}/>
+
+            <Route path={Routes.nonCourseTeacherDashboard} exact
+                // @ts-ignore
+                   render={props => <CourseRoute {...props} showHeader={false}
+                                                component={<TeacherDashboard {...props}/>}/>}/>
+            <Route path={Routes.courseTeacherDashboard} exact
+                // @ts-ignore
+                   render={props => <CourseRoute {...props} showHeader={false}
+                                                component={<TeacherDashboard {...props}/>}/>}/>
+
+            <Route path={Routes.courseStudentDashboard} exact
+                // @ts-ignore
+                   render={props => <CourseRoute {...props} showHeader={false}
+                                                component={<StudentDashboard {...props}/>}/>}/>
+
+            <Route path={Routes.courseStudentViewerDashboard} exact
+                // @ts-ignore
+                   render={props => <CourseRoute {...props} showHeader={false}
+                                                component={<StudentViewerDashboard {...props}/>}/>}/>
+
+            <Route path={Routes.nonCourseViewOffer} exact
+                // @ts-ignore
+                   render={props => <CourseRoute {...props} showHeader={true}
+                                                component={<ProjectDetails {...props}/>}/>}/>
+            <Route path={Routes.courseViewOffer} exact
+                // @ts-ignore
+                   render={props => <CourseRoute {...props} showHeader={true}
+                                                component={<ProjectDetails {...props}/>}/>}/>
+
+            <Route path={Routes.nonCourseCreateOffer} exact
+                // @ts-ignore
+                   render={props => <CourseRoute {...props} showHeader={true}
+                                                component={<CreatePitchPage {...props}/>}/>}/>
+            <Route path={Routes.courseCreateOffer} exact
+                // @ts-ignore
+                   render={props => <CourseRoute {...props} showHeader={true}
+                                                component={<CreatePitchPage {...props}/>}/>}/>
+
+            <Route path={Routes.nonCourseViewCourse} exact
+                // @ts-ignore
+                   render={props => <CourseRoute {...props} showHeader={true} backgroundColor={colors.grey["200"]}
+                       // @ts-ignore
+                                                component={<CourseDetails {...props}/>}/>}/>
+            <Route path={Routes.courseViewCourse} exact
+                // @ts-ignore
+                   render={props => <CourseRoute {...props} showHeader={true} backgroundColor={colors.grey["200"]}
+                       // @ts-ignore
+                                                component={<CourseDetails {...props}/>}/>}/>
+
+            <Route path={Routes.nonCourseViewStudentProfile} exact
+                // @ts-ignore
+                   render={props => <CourseRoute {...props} showHeader={true}
+                                                component={<StudentProfile {...props}/>}/>}/>
+            <Route path={Routes.courseViewStudentProfile} exact
+                // @ts-ignore
+                   render={props => <CourseRoute {...props} showHeader={true}
+                                                component={<StudentProfile {...props}/>}/>}/>
+
+            <Route path={Routes.nonCourseViewResourceDetail} exact
+                // @ts-ignore
+                   render={props => <CourseRoute {...props} showHeader={true}
+                                                component={<ResourceDetail {...props}/>}/>}/>
+            <Route path={Routes.courseViewResourceDetail} exact
+                // @ts-ignore
+                   render={props => <CourseRoute {...props} showHeader={true}
+                                                component={<ResourceDetail {...props}/>}/>}/>
+
+            <Route path={Routes.nonCourseEditUserProfile} exact
+                // @ts-ignore
+                   render={props => <CourseRoute {...props} showHeader={true}
+                                                component={<ProfilePageEditable {...props}/>}/>}/>
+            <Route path={Routes.courseEditUserProfile} exact
+                // @ts-ignore
+                   render={props => <CourseRoute {...props} showHeader={true}
+                                                component={<ProfilePageEditable {...props}/>}/>}/>
+
+            <Route path={Routes.courseHelp} exact
+                // @ts-ignore
+                   render={props => <CourseRoute {...props} showHeader={true}
+                                                component={<HelpPage {...props}/>}/>}/>
+
+            <Route path={Routes.nonCourseContactUs} exact
+                // @ts-ignore
+                   render={props => <CourseRoute {...props} showHeader={true}
+                                                component={<ContactUs {...props}/>}/>}/>
+            <Route path={Routes.courseContactUs} exact
+                // @ts-ignore
+                   render={props => <CourseRoute {...props} showHeader={true}
+                                                component={<ContactUs {...props}/>}/>}/>
+
+
+
+            <Route path={Routes.nonCoursePrivacyPolicy} exact
+                // @ts-ignore
+                   render={props => <CourseRoute {...props} showHeader={true}
+                                                component={<PrivacyPolicyPage {...props}/>}/>}/>
+
+            <Route path={Routes.nonCourseTermsOfUse} exact
+                // @ts-ignore
+                   render={props => <CourseRoute {...props} showHeader={true}
+                                                component={<TermsOfUsePage {...props}/>}/>}/>
+
+            <Route path={Routes.nonCourseRiskWarning} exact
+                // @ts-ignore
+                   render={props => <CourseRoute {...props} showHeader={true}
+                                                component={<RiskWarningPage {...props}/>}/>}/>
+
+            <Route path={Routes.nonCourseCreatePitchTermsAndConditions} exact
+                // @ts-ignore
+                   render={props => <CourseRoute {...props} showHeader={true}
+                                                component={<CreatePitchTermsAndConditionsPage {...props}/>}/>}/>
+
+            <Route path={Routes.nonCourseMarketingPreferences} exact
+                // @ts-ignore
+                   render={props => <CourseRoute {...props} showHeader={true}
+                                                component={<MarketingPreferencesPage {...props}/>}/>}/>
+
+            <Route path={Routes.nonCourseAuthAction} exact
+                // @ts-ignore
+                   render={props => <CourseRoute {...props} showHeader={true}
+                       // @ts-ignore
+                                                component={<ResetPassword {...props}/>}/>}/>
 
         </Switch>
         </ErrorBoundary>

@@ -68,7 +68,7 @@ const mapDispatchToProps = (dispatch: ThunkDispatch<any, any, AnyAction>) => {
     }
 }
 
-class SignUpNew extends Component<SignUpProps & Readonly<RouteComponentProps<RouteParams>>, {}> {
+class SignUpStudentNew extends Component<SignUpProps & Readonly<RouteComponentProps<RouteParams>>, {}> {
     // invited user id (optional parameter from the url)
     // if invitedUserId = undefined --> public registration
     private invitedUserId: string | undefined;
@@ -652,4 +652,4 @@ class SignUpNew extends Component<SignUpProps & Readonly<RouteComponentProps<Rou
     }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(SignUpNew);
+export default connect(mapStateToProps, mapDispatchToProps)(SignUpStudentNew);

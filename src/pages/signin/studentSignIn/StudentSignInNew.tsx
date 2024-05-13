@@ -38,21 +38,21 @@ import {
     onTextChanged,
     togglePasswordVisibility,
     toggleResetPasswordDialog
-} from "./SignInActions";
+} from "./StudentSignInActions";
 import {
     AuthenticationState,
     hasAuthenticationError,
     isAuthenticating
-} from "../../redux-store/reducers/authenticationReducer";
+} from "../../../redux-store/reducers/authenticationReducer";
 import {
     signIn
-} from "../../redux-store/actions/authenticationActions";
+} from "../../../redux-store/actions/authenticationActions";
 import HashLoader from "react-spinners/HashLoader";
-import * as appColors from "../../values/colors";
-import {MediaQueryState} from "../../redux-store/reducers/mediaQueryReducer";
+import * as appColors from "../../../values/colors";
+import {MediaQueryState} from "../../../redux-store/reducers/mediaQueryReducer";
 import {Close} from "@material-ui/icons";
-import CustomLink from "../../shared-js-css-styles/CustomLink";
-import Footer from "../../shared-components/footer/Footer";
+import CustomLink from "../../../shared-js-css-styles/CustomLink";
+import Footer from "../../../shared-components/footer/Footer";
 import '../../shared-js-css-styles/sharedStyles.scss';
 
 interface SignInProps {
@@ -88,7 +88,7 @@ const mapDispatchToProps = (dispatch: ThunkDispatch<any, any, AnyAction>) => {
     }
 }
 
-class SignInNew extends Component<SignInProps & Readonly<RouteComponentProps<RouteParams>>, {}> {
+class SignInNewStudent extends Component<SignInProps & Readonly<RouteComponentProps<RouteParams>>, {}> {
           
     render() {
         const {
@@ -227,7 +227,7 @@ class SignInNew extends Component<SignInProps & Readonly<RouteComponentProps<Rou
     }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(SignInNew);
+export default connect(mapStateToProps, mapDispatchToProps)(SignInNewStudent);
 
 class ResetPasswordDialog extends Component<SignInProps, {}> {
     render() {
