@@ -14,10 +14,10 @@ import firebase from '../../firebase/firebaseApp';
 
 import SidebarContent, {
     CHANGE_PASSWORD_TAB,
-    EXPLORE_GROUPS_TAB,
+    EXPLORE_COURSES_TAB,
     EXPLORE_OFFERS_TAB,
     RESOURCES_TAB,
-    GROUP_ACTIVITIES_TAB,
+    COURSE_ACTIVITIES_TAB,
     HOME_TAB,
     MY_ACTIVITIES_TAB,
     SETTINGS_TAB
@@ -26,15 +26,15 @@ import {AUTH_SUCCESS} from '../signin/Signin';
 import InvitationDialog from './components/InvitationDialog';
 import PageNotFoundWhole from '../../shared-components/page-not-found/PageNotFoundWhole';
 import SuperAdminSettings from './components/SuperAdminSettings';
-import GroupAdminSettings from './components/GroupAdminSettings';
-import InvitedUsers from './components/InvitedUsers';
+import CourseAdminSettings from './components/CourseAdminSettings';
+import InvitedStudents from './components/InvitedStudents';
 import AngelNetWorks from './components/AngelNetworks';
 import AddAngelNetWorkDialog from './components/AddAngelNetWorkDialog';
 import NotificationsBox from '../../shared-components/notifications/NotificationsBox';
 import ChangePasswordPage from '../../shared-components/change-password/ChangePasswordPage';
 import JoinRequests from './components/JoinRequests';
 import ActivitiesTable from '../../shared-components/activities-components/ActivitiesTable';
-import GroupAdminsTable from './components/GroupAdminsTable';
+import CourseAdminsTable from './components/CourseAdminsTable';
 
 import * as colors from '../../values/colors';
 import * as ROUTES from '../../router/routes';
@@ -43,15 +43,15 @@ import sharedStyles from '../../shared-js-css-styles/SharedStyles';
 
 import {connect} from 'react-redux';
 import * as dashboardSidebarActions from '../../redux-store/actions/dashboardSidebarActions';
-import * as manageGroupFromParamsActions from '../../redux-store/actions/manageGroupFromParamsActions';
+import * as manageCourseFromParamsActions from '../../redux-store/actions/manageCourseFromParamsActions';
 import * as notificationsActions from '../../redux-store/actions/notificationsActions';
 import * as activitiesTableActions from '../../redux-store/actions/activitiesTableActions';
-import * as groupAdminsTableActions from '../../redux-store/actions/groupAdminsTableActions';
+import * as courseAdminsTableActions from '../../redux-store/actions/courseAdminsTableActions';
 import ExploreOffers from "../../shared-components/explore-offers/ExploreOffers";
 import OffersTable from "../../shared-components/offers-table/OffersTable";
 import {successfullyFetchedOffers} from "../../shared-components/offers-table/OffersTableReducer";
 import {isProjectWaitingToGoLive} from "../../models/project";
-import ExploreGroups from "../../shared-components/explore-groups/ExploreGroups";
+import ExploreCourses from "../../shared-components/explore-courses/ExploreCourses";
 import Resources from "../resources/Resources";
 
 import { safeGetItem, safeRemoveItem } from "../../utils/browser";
@@ -64,10 +64,10 @@ const mapStateToProps = state => {
         OffersTableLocalState: state.OffersTableLocalState,
 
         // --- old states ----------------------------------------------------------------------------------------------
-        groupUserName: state.manageGroupFromParams.groupUserName,
-        groupPropertiesLoaded: state.manageGroupFromParams.groupPropertiesLoaded,
-        groupProperties: state.manageGroupFromParams.groupProperties,
-        shouldLoadOtherData: state.manageGroupFromParams.shouldLoadOtherData,
+        courseStudent: state.manageCourseFromParams.courseStudent,
+        coursePropertiesLoaded: state.manageCourseFromParams.coursePropertiesLoaded,
+        courseProperties: state.manageCourseFromParams.courseProperties,
+        shouldLoadOtherData: state.manageCourseFromParams.shouldLoadOtherData,
 
         sidebarDocked: state.dashboardSidebar.sidebarDocked,
         sidebarOpen: state.dashboardSidebar.sidebarOpen,
@@ -77,8 +77,8 @@ const mapStateToProps = state => {
 
         authStatus: state.auth.authStatus,
         authenticating: state.auth.authenticating,
-        currentUser: state.auth.user,
-        currentUserLoaded: state.auth.userLoaded,
+        currentStudent: state.auth.student,
+        currentStudentLoaded: state.auth.studentLoaded,
 
         notifications: state.manageNotifications.notifications,
         notificationsAnchorEl: state.manageNotifications.notificationsAnchorEl,
@@ -91,15 +91,15 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
     return {
-        setGroupUserNameFromParams: (groupUserName) => dispatch(manageGroupFromParamsActions.setGroupUserNameFromParams(groupUserName)),
-        setExpectedAndCurrentPathsForChecking: (expectedPath, currentPath) => dispatch(manageGroupFromParamsActions.setExpectedAndCurrentPathsForChecking(expectedPath, currentPath)),
-        loadAngelNetwork: () => dispatch(manageGroupFromParamsActions.loadAngelNetwork()),
+        setCourseStudentFromParams: (courseStudent) => dispatch(manageCourseFromParamsActions.setCourseStudentFromParams(courseStudent)),
+        setExpectedAndCurrentPathsForChecking: (expectedPath, currentPath) => dispatch(manageCourseFromParamsActions.setExpectedAndCurrentPathsForChecking(expectedPath, currentPath)),
+        loadAngelNetwork: () => dispatch(manageCourseFromParamsActions.loadAngelNetwork()),
 
         toggleSidebar: (checkSidebarDocked) => dispatch(dashboardSidebarActions.toggleSidebar(checkSidebarDocked)),
 
-        activitiesTable_setUser: (user) => dispatch(activitiesTableActions.setTableUser(user)),
+        activitiesTable_setStudent: (student) => dispatch(activitiesTableActions.setTableStudent(student)),
 
-        groupAdminsTable_setGroup: (group) => dispatch(groupAdminsTableActions.setGroup(group)),
+        courseAdminsTable_setCourse: (course) => dispatch(courseAdminsTableActions.setCourse(course)),
 
         toggleNotifications: (event) => dispatch(notificationsActions.toggleNotifications(event)),
         notificationRefUpdated: (ref) => dispatch(notificationsActions.notificationRefUpdated(ref)),
@@ -120,34 +120,34 @@ class AdminDashboard extends Component {
      */
     setDataForComponents = () => {
         const {
-            currentUser,
-            groupProperties,
+            currentStudent,
+            courseProperties,
 
-            // projectsTable_setUser,
-            activitiesTable_setUser,
-            groupAdminsTable_setGroup
+            // projectsTable_setStudent,
+            activitiesTable_setStudent,
+            courseAdminsTable_setCourse
         } = this.props;
 
-        if (!currentUser
-            || (currentUser && currentUser.type !== DB_CONST.TYPE_ADMIN)
+        if (!currentStudent
+            || (currentStudent && currentStudent.type !== DB_CONST.TYPE_PROF)
         ) {
             return;
         }
 
-        // // set user so that information can be used in the projects table component
-        // projectsTable_setUser(currentUser);
+        // // set student so that information can be used in the projects table component
+        // projectsTable_setStudent(currentStudent);
 
-        // set user so that information can be used in the activities table component
-        activitiesTable_setUser(
-            currentUser.superAdmin
+        // set student so that information can be used in the activities table component
+        activitiesTable_setStudent(
+            currentStudent.superAdmin
                 ?
-                currentUser
+                currentStudent
                 :
-                groupProperties
+                courseProperties
         );
 
-        // set group so that information can be used in the group admins table component
-        groupAdminsTable_setGroup(groupProperties);
+        // set course so that information can be used in the course teachers table component
+        courseAdminsTable_setCourse(courseProperties);
     };
 
     /**
@@ -155,10 +155,10 @@ class AdminDashboard extends Component {
      */
     componentDidMount() {
         const {
-            groupPropertiesLoaded,
+            coursePropertiesLoaded,
             shouldLoadOtherData,
 
-            setGroupUserNameFromParams,
+            setCourseStudentFromParams,
             setExpectedAndCurrentPathsForChecking,
             loadAngelNetwork,
 
@@ -174,12 +174,12 @@ class AdminDashboard extends Component {
             history.push(redirectTo);
         }
 
-        setGroupUserNameFromParams(match.params.hasOwnProperty('groupUserName') ? match.params.groupUserName : null);
-        setExpectedAndCurrentPathsForChecking(match.params.hasOwnProperty('groupUserName') ? ROUTES.ADMIN : ROUTES.ADMIN_INVEST_WEST_SUPER, match.path);
+        setCourseStudentFromParams(match.params.hasOwnProperty('courseStudent') ? match.params.courseStudent : null);
+        setExpectedAndCurrentPathsForChecking(match.params.hasOwnProperty('courseStudent') ? ROUTES.PROF : ROUTES.TEACHER_INVEST_WEST_SUPER, match.path);
 
         loadAngelNetwork();
 
-        if (groupPropertiesLoaded && shouldLoadOtherData) {
+        if (coursePropertiesLoaded && shouldLoadOtherData) {
             this.setDataForComponents();
         }
 
@@ -188,7 +188,7 @@ class AdminDashboard extends Component {
 
     componentDidUpdate(prevProps, prevState, snapshot) {
         const {
-            groupPropertiesLoaded,
+            coursePropertiesLoaded,
             shouldLoadOtherData,
 
             loadAngelNetwork,
@@ -198,7 +198,7 @@ class AdminDashboard extends Component {
 
         loadAngelNetwork();
 
-        if (groupPropertiesLoaded && shouldLoadOtherData) {
+        if (coursePropertiesLoaded && shouldLoadOtherData) {
             this.setDataForComponents();
         }
 
@@ -213,7 +213,7 @@ class AdminDashboard extends Component {
             AuthenticationState,
             OffersTableLocalState,
 
-            currentUser,
+            currentStudent,
 
             joinRequests,
             joinRequestsLoaded
@@ -222,8 +222,8 @@ class AdminDashboard extends Component {
         const params = queryString.parse(this.props.location.search);
 
         let projectsAwaitingDecision = 0;
-        // only do this if the table user is also set to the current admin
-        if (OffersTableLocalState.tableUser && OffersTableLocalState.tableUser.id === AuthenticationState.currentUser.id) {
+        // only do this if the table student is also set to the current teacher
+        if (OffersTableLocalState.tableStudent && OffersTableLocalState.tableStudent.id === AuthenticationState.currentStudent.id) {
             if (successfullyFetchedOffers(OffersTableLocalState)) {
                 OffersTableLocalState.offerInstances.forEach(offerInstance => {
                     if (isProjectWaitingToGoLive(offerInstance.projectDetail)) {
@@ -239,9 +239,9 @@ class AdminDashboard extends Component {
         if (params.tab === HOME_TAB) {
             return (
                 <Row noGutters style={{marginBottom: 30}}>
-                    {/* Manage groups */}
+                    {/* Manage courses */}
                     {
-                        !currentUser.superAdmin
+                        !currentStudent.superAdmin
                             ?
                             null
                             :
@@ -249,8 +249,8 @@ class AdminDashboard extends Component {
                                 <Accordion className={css(styles.card_style)}>
                                     <AccordionSummary expandIcon={<ExpandMoreIcon/>}>
                                         <FlexView column>
-                                            <Typography paragraph variant="h6" color="primary" align="left">Manage groups</Typography>
-                                            <Typography paragraph variant="body1" align="left">Manage groups that have joined the system.</Typography>
+                                            <Typography paragraph variant="h6" color="primary" align="left">Manage courses</Typography>
+                                            <Typography paragraph variant="body1" align="left">Manage courses that have joined the system.</Typography>
                                         </FlexView>
                                     </AccordionSummary>
                                     <AccordionDetails>
@@ -262,40 +262,40 @@ class AdminDashboard extends Component {
                             </Col>
                     }
 
-                    {/* Manage group members (group admins) / system users (super admins) */}
+                    {/* Manage course members (course teachers) / system students (super teachers) */}
                     <Col xs={12} md={12} lg={12}>
                         <Accordion className={css(styles.card_style)}>
                             <AccordionSummary expandIcon={<ExpandMoreIcon/>}>
                                 <FlexView column>
                                     <Typography paragraph variant="h6" color="primary" align="left">
                                         {
-                                            currentUser.superAdmin
+                                            currentStudent.superAdmin
                                                 ?
-                                                "Manage system users"
+                                                "Manage system students"
                                                 :
-                                                "Manage group members"
+                                                "Manage course members"
                                         }
                                     </Typography>
                                     <Typography paragraph variant="body1" align="left">
                                         {
-                                            currentUser.superAdmin
+                                            currentStudent.superAdmin
                                                 ?
-                                                "Manage all the system users (investors and issuers) including those who have been invited but not yet registered."
+                                                "Manage all the system students (students and teachers) including those who have been invited but not yet registered."
                                                 :
-                                                "Manage all the group members (investors and issuers) including those who have been invited but not yet registered and those who joined this group from another group."
+                                                "Manage all the course members (students and teachers) including those who have been invited but not yet registered and those who joined this course from another course."
                                         }
                                     </Typography>
                                 </FlexView>
                             </AccordionSummary>
                             <AccordionDetails className={css(styles.card_details_expansion)}>
-                                <InvitedUsers/>
+                                <InvitedStudents/>
                             </AccordionDetails>
                         </Accordion>
                     </Col>
 
                     {/* Manage access requests */}
                     {
-                        currentUser.superAdmin
+                        currentStudent.superAdmin
                             ?
                             null
                             :
@@ -325,9 +325,9 @@ class AdminDashboard extends Component {
                                                 </FlexView>
                                             </FlexView>
                                             <Typography paragraph variant="body1" align="left">
-                                                Manage access requests from other groups' investors who would like
+                                                Manage access requests from other courses' students who would like
                                                 to
-                                                join this group.
+                                                join this course.
                                             </Typography>
                                         </FlexView>
                                     </AccordionSummary>
@@ -352,9 +352,9 @@ class AdminDashboard extends Component {
                                                         id={`tooltip-top`}
                                                     >
                                                         {
-                                                            currentUser.superAdmin
+                                                            currentStudent.superAdmin
                                                                 ?
-                                                                `${projectsAwaitingDecision} offers are awaiting group admins' review. Select "Awaiting review" from the "Phase" dropdown to see details.`
+                                                                `${projectsAwaitingDecision} offers are awaiting course teachers' review. Select "Awaiting review" from the "Phase" dropdown to see details.`
                                                                 :
                                                                 `${projectsAwaitingDecision} offers are awaiting your review. Select "Awaiting review" from the "Phase" dropdown to see details.`
                                                         }
@@ -367,11 +367,11 @@ class AdminDashboard extends Component {
                                     </FlexView>
                                     <Typography paragraph variant="body1" align="left">
                                         {
-                                            currentUser.superAdmin
+                                            currentStudent.superAdmin
                                                 ?
-                                                "Manage all the offers created by all the issuers and group admins in the system."
+                                                "Manage all the offers created by all the teachers and course teachers in the system."
                                                 :
-                                                "Manage all the offers created by the issuers and group admins of this group."
+                                                "Manage all the offers created by the teachers and course teachers of this course."
                                         }
                                     </Typography>
                                 </FlexView>
@@ -385,9 +385,9 @@ class AdminDashboard extends Component {
                         </Accordion>
                     </Col>
 
-                    {/* Manage group admins */}
+                    {/* Manage course teachers */}
                     {
-                        currentUser.superAdmin
+                        currentStudent.superAdmin
                             ?
                             null
                             :
@@ -395,14 +395,14 @@ class AdminDashboard extends Component {
                                 <Accordion className={css(styles.card_style)}>
                                     <AccordionSummary expandIcon={<ExpandMoreIcon/>}>
                                         <FlexView column>
-                                            <Typography paragraph variant="h6" color="primary" align="left">Manage group admins</Typography>
-                                            <Typography paragraph variant="body1" align="left">Manage group admins. Only super group admin can add a new group
-                                                admin.</Typography>
+                                            <Typography paragraph variant="h6" color="primary" align="left">Manage course teachers</Typography>
+                                            <Typography paragraph variant="body1" align="left">Manage course teachers. Only super course teacher can add a new course
+                                                teacher.</Typography>
                                         </FlexView>
                                     </AccordionSummary>
                                     <AccordionDetails>
                                         <FlexView column width="100%">
-                                            <GroupAdminsTable/>
+                                            <CourseAdminsTable/>
                                         </FlexView>
                                     </AccordionDetails>
                                 </Accordion>
@@ -418,11 +418,11 @@ class AdminDashboard extends Component {
          */
         if (params.tab === SETTINGS_TAB) {
             return (
-                currentUser.superAdmin
+                currentStudent.superAdmin
                     ?
                     <SuperAdminSettings/>
                     :
-                    <GroupAdminSettings/>
+                    <CourseAdminSettings/>
             );
         }
 
@@ -454,9 +454,9 @@ class AdminDashboard extends Component {
         }
 
         /**
-         * GROUP ACTIVITIES TAB
+         * COURSE ACTIVITIES TAB
          */
-        if (params.tab === GROUP_ACTIVITIES_TAB || params.tab === MY_ACTIVITIES_TAB) {
+        if (params.tab === COURSE_ACTIVITIES_TAB || params.tab === MY_ACTIVITIES_TAB) {
             return (
                 <div
                     style={{
@@ -476,29 +476,29 @@ class AdminDashboard extends Component {
         }
 
         /**
-         * EXPLORE GROUPS TAB
+         * EXPLORE COURSES TAB
          */
-        if (params.tab === EXPLORE_GROUPS_TAB) {
+        if (params.tab === EXPLORE_COURSES_TAB) {
             // return (
-            //     <ExploreGroups/>
+            //     <ExploreCourses/>
             // );
-            return <ExploreGroups/>;
+            return <ExploreCourses/>;
         }
     };
 
     render() {
         const {
             shouldLoadOtherData,
-            groupPropertiesLoaded,
-            groupProperties,
+            coursePropertiesLoaded,
+            courseProperties,
 
             sidebarDocked,
             sidebarOpen,
 
             authStatus,
             authenticating,
-            currentUser,
-            currentUserLoaded,
+            currentStudent,
+            currentStudentLoaded,
 
             notifications,
             notificationsAnchorEl,
@@ -507,7 +507,7 @@ class AdminDashboard extends Component {
             toggleNotifications
         } = this.props;
 
-        if (!groupPropertiesLoaded) {
+        if (!coursePropertiesLoaded) {
             return (
                 <FlexView marginTop={30} hAlignContent="center">
                     <HashLoader color={colors.primaryColor}/>
@@ -519,16 +519,16 @@ class AdminDashboard extends Component {
             return <PageNotFoundWhole/>;
         }
 
-        if (authenticating || !currentUserLoaded) {
+        if (authenticating || !currentStudentLoaded) {
             return (
                 <FlexView marginTop={30} hAlignContent="center">
                     <HashLoader
                         color={
-                            !groupProperties
+                            !courseProperties
                                 ?
                                 colors.primaryColor
                                 :
-                                groupProperties.settings.primaryColor
+                                courseProperties.settings.primaryColor
                         }
                     />
                 </FlexView>
@@ -536,8 +536,8 @@ class AdminDashboard extends Component {
         }
 
         if (authStatus !== AUTH_SUCCESS
-            || !currentUser
-            || (currentUser && currentUser.type !== DB_CONST.TYPE_ADMIN)
+            || !currentStudent
+            || (currentStudent && currentStudent.type !== DB_CONST.TYPE_PROF)
         ) {
             return <PageNotFoundWhole/>;
         }
@@ -566,11 +566,11 @@ class AdminDashboard extends Component {
                     <Col xs={12} sm={12} md={12} lg={12}>
                         <FlexView height={55} width="100%" vAlignContent="center"
                          style={{backgroundColor:
-                                    !groupProperties
+                                    !courseProperties
                                         ?
                                         colors.primaryColor
                                         :
-                                        groupProperties.settings.primaryColor
+                                        courseProperties.settings.primaryColor
                             }}>
                             <Row style={{width: "100%"}} noGutters>
                                 {/** Page title */}
@@ -608,17 +608,17 @@ class AdminDashboard extends Component {
                     <Col xs={12} sm={12} md={12} lg={12}>
                         <Typography variant="body1" align="center" style={{paddingTop: 16,paddingBottom: 16}}>
                             {
-                                currentUser.superAdmin
+                                currentStudent.superAdmin
                                     ?
-                                    "System admin"
+                                    "System teacher"
                                     :
-                                    currentUser.superGroupAdmin
+                                    currentStudent.superCourseAdmin
                                         ?
-                                        "Super group admin"
+                                        "Super course teacher"
                                         :
-                                        "Group admin"
+                                        "Course teacher"
                             }
-                            : <b>{currentUser.email}</b>
+                            : <b>{currentStudent.email}</b>
                         </Typography>
                     </Col>
 
@@ -637,7 +637,7 @@ class AdminDashboard extends Component {
                 <NotificationsBox/>
             }
 
-            {/** User invitation dialog */}
+            {/** Student invitation dialog */}
             <InvitationDialog/>
 
             {/** Add angel network dialog */}
@@ -671,11 +671,11 @@ class AdminDashboard extends Component {
             case RESOURCES_TAB:
                 title = RESOURCES_TAB;
                 break;
-            case GROUP_ACTIVITIES_TAB:
-                title = GROUP_ACTIVITIES_TAB;
+            case COURSE_ACTIVITIES_TAB:
+                title = COURSE_ACTIVITIES_TAB;
                 break;
-            case EXPLORE_GROUPS_TAB:
-                title = EXPLORE_GROUPS_TAB;
+            case EXPLORE_COURSES_TAB:
+                title = EXPLORE_COURSES_TAB;
                 break;
             case EXPLORE_OFFERS_TAB:
                 title = EXPLORE_OFFERS_TAB;

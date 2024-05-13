@@ -47,7 +47,7 @@ import * as feedbackSnackbarActions from "../../redux-store/actions/feedbackSnac
 import "./ProjectDetails.scss";
 import firebase from "../../firebase/firebaseApp";
 import * as DB_CONST from "../../firebase/databaseConsts";
-import {TYPE_INVESTOR} from "../../firebase/databaseConsts";
+import {TYPE_STUDENT} from "../../firebase/databaseConsts";
 import * as realtimeDBUtils from "../../firebase/realtimeDBUtils";
 import sharedStyles from "../../shared-js-css-styles/SharedStyles";
 import * as ROUTES from "../../router/routes";
@@ -86,7 +86,7 @@ const MAIN_BODY_CAMPAIGN = 1;
 const MAIN_BODY_DOCUMENTS = 2;
 const MAIN_BODY_COMMENTS = 3;
 const MAIN_BODY_NOTES = 4;
-const MAIN_BODY_INVESTORS_PLEDGED = 5; // only available for teacher and teacher
+const MAIN_BODY_STUDENTS_PLEDGED = 5; // only available for teacher and teacher
 
 const MAX_COVER_HEIGHT_IN_MOBILE_MODE = 240;
 const MAX_COVER_HEIGHT_IN_BIG_SCREEN_MODE = 550;
@@ -334,7 +334,7 @@ class ProjectDetailsMain extends Component {
                 }
 
                 if (student) {
-                    if (!investorSelfCertificationAgreement_studentID && student.type === DB_CONST.TYPE_INVESTOR) {
+                    if (!investorSelfCertificationAgreement_studentID && student.type === DB_CONST.TYPE_STUDENT) {
                         investorSelfCertificationAgreement_setStudent(student.id);
                     }
                 }
@@ -345,7 +345,7 @@ class ProjectDetailsMain extends Component {
                 // if self-certification agreement has not been loaded
                 if (!investorSelfCertificationAgreementLoaded
                     && !investorSelfCertificationAgreementBeingLoaded
-                    && student.type === DB_CONST.TYPE_INVESTOR
+                    && student.type === DB_CONST.TYPE_STUDENT
                 ) {
                     loadInvestorSelfCertificationAgreement();
                 }
@@ -452,7 +452,7 @@ class ProjectDetailsMain extends Component {
             .loadAParticularProject(projectID)
             .then(project => {
                 // track activity for investors only
-                if (student.type === DB_CONST.TYPE_INVESTOR) {
+                if (student.type === DB_CONST.TYPE_STUDENT) {
                     realtimeDBUtils
                         .trackActivity({
                             studentID: student.id,
@@ -519,7 +519,7 @@ class ProjectDetailsMain extends Component {
                             .then(pledges => {
 
                                 // if the current student is an investor, check if they pledged this project
-                                if (student.type === DB_CONST.TYPE_INVESTOR) {
+                                if (student.type === DB_CONST.TYPE_STUDENT) {
                                     let currentStudentPledgeIndex = pledges.findIndex(pledge => pledge.investorID === student.id && pledge.amount !== '');
                                     // this investor has pledges this project before
                                     if (currentStudentPledgeIndex !== -1) {
@@ -844,7 +844,7 @@ class ProjectDetailsMain extends Component {
         }
 
         // if the student clicks on the Pledges tab
-        if (mainBody === MAIN_BODY_INVESTORS_PLEDGED) {
+        if (mainBody === MAIN_BODY_STUDENTS_PLEDGED) {
             if (project) {
                 pledgesTable_setProject(project);
             }
@@ -2284,7 +2284,7 @@ class ProjectDetails extends Component {
             // the student is an investor/teacher that is not in the course that owns this project
             || (
                 project.visibility === DB_CONST.PROJECT_VISIBILITY_PRIVATE
-                && (student.type === DB_CONST.TYPE_INVESTOR || student.type === DB_CONST.TYPE_TEACHER)
+                && (student.type === DB_CONST.TYPE_STUDENT || student.type === DB_CONST.TYPE_TEACHER)
                 && (coursesStudentIsIn !== null && coursesStudentIsIn.findIndex(course => course.anid === project.anid) === -1)
             )
         ) {
@@ -2303,7 +2303,7 @@ class ProjectDetails extends Component {
         if (utils.isProjectTemporarilyClosed(project)
             && (
                 (student.type === DB_CONST.TYPE_TEACHER && student.id !== project.teacherID)
-                || (student.type === DB_CONST.TYPE_INVESTOR)
+                || (student.type === DB_CONST.TYPE_STUDENT)
                 || (student.type === DB_CONST.TYPE_PROF && !student.superTeacher && student.anid !== project.anid)
             )
         ) {
@@ -2727,7 +2727,7 @@ class ProjectDetails extends Component {
                                     : <Col xs={12} sm={12} md={{span: 10, offset: 1, order: 5}} lg={{span: 12, offset: 0, order: 7}} style={{marginTop: 15}}>
                                         <FlexView column hAlignContent="left">
                                             <FlexView hAlignContent="center" vAlignContent="center">
-                                                <Button color="primary" variant="contained" className={css(sharedStyles.no_text_transform)} disabled={this.shouldHideInformation() || (student.type === TYPE_INVESTOR && !investorSelfCertificationAgreement)} onClick={() => this.toggleContactPitchOwnerDialog()}>Contact us</Button>
+                                                <Button color="primary" variant="contained" className={css(sharedStyles.no_text_transform)} disabled={this.shouldHideInformation() || (student.type === TYPE_STUDENT && !investorSelfCertificationAgreement)} onClick={() => this.toggleContactPitchOwnerDialog()}>Contact us</Button>
                                                 {/*<Button*/}
                                                 {/*    size="medium"*/}
                                                 {/*    variant={getInvestorVote(votes, student) && getInvestorVote(votes, student).voted ? "contained" : "outlined"}*/}
@@ -2813,7 +2813,7 @@ class ProjectDetails extends Component {
                                     null
                                     :
                                     (
-                                        student.type !== DB_CONST.TYPE_INVESTOR
+                                        student.type !== DB_CONST.TYPE_STUDENT
                                             ?
                                             (
                                                 <Col xs={12} sm={12} md={{span: 10, offset: 1, order: 6}} lg={{span: 12, offset: 0, order: 6}} style={{marginTop: 30}}>
@@ -2834,12 +2834,12 @@ class ProjectDetails extends Component {
                                                     <Col xs={12} sm={12} md={{span: 10, offset: 1, order: 6}} lg={{span: 12, offset: 0, order: 6}} style={{marginTop: 30}}>
 
                                                         {
-                                                            student.type === DB_CONST.TYPE_INVESTOR
+                                                            student.type === DB_CONST.TYPE_STUDENT
                                                             && !investorSelfCertificationAgreement
                                                                 ?
                                                                 <Button style={{marginBottom: 14}} className={css(sharedStyles.no_text_transform)} fullWidth variant="outlined" color="primary" size="medium"
                                                                     disabled={
-                                                                        student.type === DB_CONST.TYPE_INVESTOR
+                                                                        student.type === DB_CONST.TYPE_STUDENT
                                                                         && !investorSelfCertificationAgreement
                                                                     }
                                                                 >
@@ -3649,7 +3649,7 @@ class ProjectDetails extends Component {
                                     <Row>
                                         <Col xs={{span: 12, order: 2}} sm={{span: 12, order: 2}} md={{span: 8, order: 1}} lg={{span: 8, order: 1}} style={{marginTop: 40}}>
                                             {
-                                                student.type === DB_CONST.TYPE_INVESTOR
+                                                student.type === DB_CONST.TYPE_STUDENT
                                                     ?
                                                     null
                                                     :
@@ -3928,7 +3928,7 @@ class ProjectDetails extends Component {
                                                                 </FlexView>
                                                             )
                                                             :
-                                                            student.type !== DB_CONST.TYPE_INVESTOR
+                                                            student.type !== DB_CONST.TYPE_STUDENT
                                                                 ?
                                                                 <FlexView hAlignContent="center" vAlignContent="center" column style={{padding: 30, backgroundColor: colors.kick_starter_background_color}}>
                                                                     <Typography variant="body2">No comments yet</Typography>
@@ -3941,7 +3941,7 @@ class ProjectDetails extends Component {
                                                                             <Button size="small" onClick={this.onPostACommentClick} variant="outlined" color="inherit" fullWidth={false}
                                                                                 disabled={
                                                                                     utils.isProjectLive(project)
-                                                                                    && student.type === DB_CONST.TYPE_INVESTOR
+                                                                                    && student.type === DB_CONST.TYPE_STUDENT
                                                                                     && !investorSelfCertificationAgreement
                                                                                 }
                                                                             >Post a comment</Button>
@@ -3959,7 +3959,7 @@ class ProjectDetails extends Component {
                                         <Col xs={{span: 12, order: 1}} sm={{span: 12, order: 1}} md={{span: 4, order: 2}} lg={{span: 4, order: 2}} style={{marginTop: 40}}>
 
                                             {
-                                                student.type === DB_CONST.TYPE_INVESTOR
+                                                student.type === DB_CONST.TYPE_STUDENT
                                                     ?
                                                     (
                                                         comments.filter(comment => comment.commentedBy === student.id).length === 0
@@ -3975,7 +3975,7 @@ class ProjectDetails extends Component {
                                                                             <Button size="small" onClick={this.onPostACommentClick} variant="outlined" color="inherit"fullWidth={false}
                                                                                 disabled={
                                                                                     utils.isProjectLive(project)
-                                                                                    && student.type === DB_CONST.TYPE_INVESTOR
+                                                                                    && student.type === DB_CONST.TYPE_STUDENT
                                                                                     && !investorSelfCertificationAgreement
                                                                                 }
                                                                             >Post a comment</Button>
@@ -4255,7 +4255,7 @@ class ProjectDetails extends Component {
             project
         } = this.props;
 
-        if (student.type !== DB_CONST.TYPE_INVESTOR) {
+        if (student.type !== DB_CONST.TYPE_STUDENT) {
             return null;
         }
 
@@ -4269,9 +4269,9 @@ class ProjectDetails extends Component {
                         to={
                             courseStudent
                                 ?
-                                `${ROUTES.DASHBOARD_INVESTOR.replace(":courseStudent", courseStudent)}?tab=Profile`
+                                `${ROUTES.DASHBOARD_STUDENT.replace(":courseStudent", courseStudent)}?tab=Profile`
                                 :
-                                `${ROUTES.DASHBOARD_INVESTOR_INVEST_WEST_SUPER}?tab=Profile`
+                                `${ROUTES.DASHBOARD_STUDENT_INVEST_WEST_SUPER}?tab=Profile`
                         }
                         style={{
                             marginTop: 4
@@ -4470,7 +4470,7 @@ class ProjectDetails extends Component {
         }
 
         // do not let investors who haven't uploaded self-certification vote
-        if (student.type === DB_CONST.TYPE_INVESTOR) {
+        if (student.type === DB_CONST.TYPE_STUDENT) {
             if (!investorSelfCertificationAgreement) {
                 return true;
             }

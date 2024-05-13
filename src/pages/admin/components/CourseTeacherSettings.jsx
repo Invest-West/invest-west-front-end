@@ -22,7 +22,7 @@ import {css} from "aphrodite";
 import {NavLink} from "react-router-dom";
 
 import {connect} from "react-redux";
-import * as courseAdminSettingsActions from "../../../redux-store/actions/courseAdminSettingsActions";
+import * as courseAdminSettingsActions from "../../../redux-store/actions/courseTeacherSettingsActions";
 
 import sharedStyles from "../../../shared-js-css-styles/SharedStyles";
 import * as DB_CONST from "../../../firebase/databaseConsts";
