@@ -1,110 +1,110 @@
 import {Action, ActionCreator, Dispatch} from "redux";
-import GroupProperties from "../../models/group_properties";
+import CourseProperties from "../../models/course_properties";
 import {AppState} from "../../redux-store/reducers";
-import GroupRepository from "../../api/repositories/GroupRepository";
+import CourseRepository from "../../api/repositories/CourseRepository";
 import AccessRequest, {AccessRequestInstance} from "../../models/access_request";
 import AccessRequestRepository from "../../api/repositories/AccessRequestRepository";
-import Admin, {isAdmin} from "../../models/admin";
+import Teacher, {isTeacher} from "../../models/teacher";
 import React from "react";
 
-export enum ExploreGroupsEvents {
-    FetchingGroups = "ExploreGroupsEvents.FetchingGroups",
-    CompleteFetchingGroups = "ExploreGroupsEvents.CompleteFetchingGroups",
-    FilterChanged = "ExploreGroupsEvents.FilterChanged",
-    FilterGroupsByName = "ExploreGroupsEvents.FilterGroupsByName",
-    CancelFilterGroupsByName = "ExploreGroupsEvents.CancelFilterGroupsByName",
-    FilterGroupsByGroupFilter = "ExploreGroupsEvents.FilterGroupsByGroupFilter",
-    PaginationChanged = "ExploreGroupsEvents.PaginationChanged",
-    SendingAccessRequest = "ExploreGroupsEvents.SendingAccessRequest",
-    CompleteSendingAccessRequest = "ExploreGroupsEvents.CompleteSendingAccessRequest",
-    RemovingAccessRequest = "ExploreGroupsEvents.RemovingAccessRequest",
-    CompleteRemovingAccessRequest = "ExploreGroupsEvents.CompleteRemovingAccessRequest"
+export enum ExploreCoursesEvents {
+    FetchingCourses = "ExploreCoursesEvents.FetchingCourses",
+    CompleteFetchingCourses = "ExploreCoursesEvents.CompleteFetchingCourses",
+    FilterChanged = "ExploreCoursesEvents.FilterChanged",
+    FilterCoursesByName = "ExploreCoursesEvents.FilterCoursesByName",
+    CancelFilterCoursesByName = "ExploreCoursesEvents.CancelFilterCoursesByName",
+    FilterCoursesByCourseFilter = "ExploreCoursesEvents.FilterCoursesByCourseFilter",
+    PaginationChanged = "ExploreCoursesEvents.PaginationChanged",
+    SendingAccessRequest = "ExploreCoursesEvents.SendingAccessRequest",
+    CompleteSendingAccessRequest = "ExploreCoursesEvents.CompleteSendingAccessRequest",
+    RemovingAccessRequest = "ExploreCoursesEvents.RemovingAccessRequest",
+    CompleteRemovingAccessRequest = "ExploreCoursesEvents.CompleteRemovingAccessRequest"
 }
 
-export interface ExploreGroupsAction extends Action {
+export interface ExploreCoursesAction extends Action {
 
 }
 
-export interface CompleteFetchingGroupsAction extends ExploreGroupsAction {
-    groups: GroupProperties[];
+export interface CompleteFetchingCoursesAction extends ExploreCoursesAction {
+    courses: CourseProperties[];
     accessRequestInstances?: AccessRequestInstance[];
     error?: string;
 }
 
-export interface FilterChangedAction extends ExploreGroupsAction {
+export interface FilterChangedAction extends ExploreCoursesAction {
     name: string;
     value: any;
 }
 
-export interface FilterGroupsByGroupFilterAction extends ExploreGroupsAction {
-    groupsFiltered: GroupProperties[];
+export interface FilterCoursesByCourseFilterAction extends ExploreCoursesAction {
+    coursesFiltered: CourseProperties[];
 }
 
-export interface PaginationChangedAction extends ExploreGroupsAction {
+export interface PaginationChangedAction extends ExploreCoursesAction {
     page: number;
 }
 
-export interface SendingAccessRequestAction extends ExploreGroupsAction {
-    groupID: string;
+export interface SendingAccessRequestAction extends ExploreCoursesAction {
+    courseID: string;
 }
 
-export interface CompleteSendingAccessRequestAction extends ExploreGroupsAction {
+export interface CompleteSendingAccessRequestAction extends ExploreCoursesAction {
     error?: string;
     updatedAccessRequestInstances?: AccessRequestInstance[]
 }
 
-export interface RemovingAccessRequestAction extends ExploreGroupsAction {
-    groupID: string;
+export interface RemovingAccessRequestAction extends ExploreCoursesAction {
+    courseID: string;
 }
 
-export interface CompleteRemovingAccessRequestAction extends ExploreGroupsAction {
+export interface CompleteRemovingAccessRequestAction extends ExploreCoursesAction {
     error?: string;
     updatedAccessRequestInstances?: AccessRequestInstance[]
 }
 
-export const fetchGroups: ActionCreator<any> = () => {
+export const fetchCourses: ActionCreator<any> = () => {
     return async (dispatch: Dispatch, getState: () => AppState) => {
         const {
             accessRequestsInstances,
             nameFilter
-        } = getState().ExploreGroupsLocalState;
+        } = getState().ExploreCoursesLocalState;
 
         dispatch({
-            type: ExploreGroupsEvents.FetchingGroups
+            type: ExploreCoursesEvents.FetchingCourses
         });
 
-        const currentUser = getState().AuthenticationState.currentUser;
+        const currentStudent = getState().AuthenticationState.currentStudent;
 
-        const completeAction: CompleteFetchingGroupsAction = {
-            type: ExploreGroupsEvents.CompleteFetchingGroups,
-            groups: []
+        const completeAction: CompleteFetchingCoursesAction = {
+            type: ExploreCoursesEvents.CompleteFetchingCourses,
+            courses: []
         };
 
-        if (!currentUser) {
-            completeAction.error = "Unauthenticated user.";
+        if (!currentStudent) {
+            completeAction.error = "Unauthenticated student.";
             return dispatch(completeAction);
         }
 
         try {
-            const groupsResponse = await new GroupRepository().fetchGroups(
+            const coursesResponse = await new CourseRepository().fetchCourses(
                 nameFilter.trim().length === 0 ? undefined : {name: nameFilter}
             );
-            completeAction.groups = groupsResponse.data;
+            completeAction.courses = coursesResponse.data;
 
-            const admin: Admin | null = isAdmin(currentUser);
-            if (!admin || (admin && !admin.superAdmin)) {
-                // user is an issuer, investor, or group admin
+            const teacher: Teacher | null = isTeacher(currentStudent);
+            if (!teacher || (teacher && !teacher.superTeacher)) {
+                // student is an issuer, investor, or course teacher
                 // and access requests have not been fetched
                 if (!accessRequestsInstances) {
                     const accessRequestInstancesResponse = await new AccessRequestRepository().fetchAccessRequests({
-                        user: currentUser.id,
-                        orderBy: "user"
+                        student: currentStudent.id,
+                        orderBy: "student"
                     });
                     completeAction.accessRequestInstances = accessRequestInstancesResponse.data;
                 }
             }
             dispatch(completeAction);
-            return dispatch(filterGroupsByGroupFilter());
+            return dispatch(filterCoursesByCourseFilter());
         } catch (error) {
             completeAction.error = error.toString();
             return dispatch(completeAction);
@@ -118,90 +118,90 @@ export const filterChanged: ActionCreator<any> = (event: any) => {
         const value = event.target.value;
 
         const action: FilterChangedAction = {
-            type: ExploreGroupsEvents.FilterChanged,
+            type: ExploreCoursesEvents.FilterChanged,
             name: name,
             value: value
         }
 
         dispatch(action);
 
-        if (name === "groupFilter") {
-            dispatch(filterGroupsByGroupFilter());
+        if (name === "courseFilter") {
+            dispatch(filterCoursesByCourseFilter());
         }
     }
 }
 
-export const filterGroupsByName: ActionCreator<any> = () => {
+export const filterCoursesByName: ActionCreator<any> = () => {
     return async (dispatch: Dispatch, getState: () => AppState) => {
         dispatch({
-            type: ExploreGroupsEvents.FilterGroupsByName
+            type: ExploreCoursesEvents.FilterCoursesByName
         });
-        return dispatch(fetchGroups());
+        return dispatch(fetchCourses());
     }
 }
 
-export const cancelFilteringGroupsByName: ActionCreator<any> = () => {
+export const cancelFilteringCoursesByName: ActionCreator<any> = () => {
     return async (dispatch: Dispatch, getState: () => AppState) => {
         dispatch({
-            type: ExploreGroupsEvents.CancelFilterGroupsByName
+            type: ExploreCoursesEvents.CancelFilterCoursesByName
         });
-        return dispatch(fetchGroups());
+        return dispatch(fetchCourses());
     }
 }
 
-const filterGroupsByGroupFilter: ActionCreator<any> = () => {
+const filterCoursesByCourseFilter: ActionCreator<any> = () => {
     return async (dispatch: Dispatch, getState: () => AppState) => {
         const {
-            groupFilter,
+            courseFilter,
             accessRequestsInstances,
-            groups
-        } = getState().ExploreGroupsLocalState;
+            courses
+        } = getState().ExploreCoursesLocalState;
 
         const AuthenticationState = getState().AuthenticationState;
-        const currentUser = AuthenticationState.currentUser;
+        const currentStudent = AuthenticationState.currentStudent;
 
-        if (!currentUser) {
+        if (!currentStudent) {
             return;
         }
 
-        const groupsFiltered: GroupProperties[] = [];
+        const coursesFiltered: CourseProperties[] = [];
 
-        groups.map(group => {
+        courses.map(course => {
             let satisfiedFilter = false;
-            switch (groupFilter) {
+            switch (courseFilter) {
                 case "all":
-                    const admin: Admin | null = isAdmin(currentUser);
-                    if (admin && admin.superAdmin) {
+                    const teacher: Teacher | null = isTeacher(currentStudent);
+                    if (teacher && teacher.superTeacher) {
                         satisfiedFilter = true;
                     } else {
-                        satisfiedFilter = AuthenticationState.groupsOfMembership.findIndex(
-                            groupOfMembership => groupOfMembership.group.anid === group.anid) === -1
+                        satisfiedFilter = AuthenticationState.coursesOfMembership.findIndex(
+                            courseOfMembership => courseOfMembership.course.anid === course.anid) === -1
                             && accessRequestsInstances !== undefined
                             && accessRequestsInstances.findIndex(
-                                accessRequestInstance => accessRequestInstance.group.anid === group.anid) === -1;
+                                accessRequestInstance => accessRequestInstance.course.anid === course.anid) === -1;
                     }
                     break;
-                case "groupsOfMembership":
-                    satisfiedFilter = AuthenticationState.groupsOfMembership.findIndex(
-                        groupOfMembership => groupOfMembership.group.anid === group.anid) !== -1;
+                case "coursesOfMembership":
+                    satisfiedFilter = AuthenticationState.coursesOfMembership.findIndex(
+                        courseOfMembership => courseOfMembership.course.anid === course.anid) !== -1;
                     break;
-                case "groupsOfPendingRequest":
+                case "coursesOfPendingRequest":
                     satisfiedFilter = accessRequestsInstances !== undefined
                         && accessRequestsInstances.findIndex(
-                            accessRequestInstance => accessRequestInstance.group.anid === group.anid) !== -1;
+                            accessRequestInstance => accessRequestInstance.course.anid === course.anid) !== -1;
                     break;
                 default:
                     break;
             }
             if (satisfiedFilter) {
-                groupsFiltered.push(group);
+                coursesFiltered.push(course);
             }
             return null;
         });
 
-        const action: FilterGroupsByGroupFilterAction = {
-            type: ExploreGroupsEvents.FilterGroupsByGroupFilter,
-            groupsFiltered: groupsFiltered
+        const action: FilterCoursesByCourseFilterAction = {
+            type: ExploreCoursesEvents.FilterCoursesByCourseFilter,
+            coursesFiltered: coursesFiltered
         }
         return dispatch(action);
     }
@@ -210,34 +210,34 @@ const filterGroupsByGroupFilter: ActionCreator<any> = () => {
 export const paginationChanged: ActionCreator<any> = (event: React.ChangeEvent<unknown>, page: number) => {
     return (dispatch: Dispatch, getState: () => AppState) => {
         const action: PaginationChangedAction = {
-            type: ExploreGroupsEvents.PaginationChanged,
+            type: ExploreCoursesEvents.PaginationChanged,
             page: page
         }
         return dispatch(action);
     }
 }
 
-export const sendAccessRequest: ActionCreator<any> = (groupID: string) => {
+export const sendAccessRequest: ActionCreator<any> = (courseID: string) => {
     return async (dispatch: Dispatch, getState: () => AppState) => {
-        const currentUser = getState().AuthenticationState.currentUser;
-        if (!currentUser) {
+        const currentStudent = getState().AuthenticationState.currentStudent;
+        if (!currentStudent) {
             return;
         }
 
         const sendingAction: SendingAccessRequestAction = {
-            type: ExploreGroupsEvents.SendingAccessRequest,
-            groupID
+            type: ExploreCoursesEvents.SendingAccessRequest,
+            courseID
         };
         dispatch(sendingAction);
 
         const completeAction: CompleteSendingAccessRequestAction = {
-            type: ExploreGroupsEvents.CompleteSendingAccessRequest
+            type: ExploreCoursesEvents.CompleteSendingAccessRequest
         };
 
         try {
-            const response = await new AccessRequestRepository().createAccessRequest(currentUser.id, groupID);
+            const response = await new AccessRequestRepository().createAccessRequest(currentStudent.id, courseID);
             const accessRequestInstance: AccessRequestInstance = response.data;
-            const currentAccessRequestInstances: AccessRequestInstance[] | undefined = getState().ExploreGroupsLocalState.accessRequestsInstances;
+            const currentAccessRequestInstances: AccessRequestInstance[] | undefined = getState().ExploreCoursesLocalState.accessRequestsInstances;
             if (currentAccessRequestInstances !== undefined) {
                 completeAction.updatedAccessRequestInstances = [
                     ...currentAccessRequestInstances,
@@ -247,7 +247,7 @@ export const sendAccessRequest: ActionCreator<any> = (groupID: string) => {
                 completeAction.updatedAccessRequestInstances = [accessRequestInstance];
             }
             dispatch(completeAction);
-            return dispatch(filterGroupsByGroupFilter());
+            return dispatch(filterCoursesByCourseFilter());
         } catch (error) {
             completeAction.error = error.toString();
             return dispatch(completeAction);
@@ -255,30 +255,30 @@ export const sendAccessRequest: ActionCreator<any> = (groupID: string) => {
     }
 }
 
-export const removeAccessRequest: ActionCreator<any> = (groupID: string) => {
+export const removeAccessRequest: ActionCreator<any> = (courseID: string) => {
     return async (dispatch: Dispatch, getState: () => AppState) => {
-        const currentUser = getState().AuthenticationState.currentUser;
-        if (!currentUser) {
+        const currentStudent = getState().AuthenticationState.currentStudent;
+        if (!currentStudent) {
             return;
         }
 
         const removingAction: RemovingAccessRequestAction = {
-            type: ExploreGroupsEvents.RemovingAccessRequest,
-            groupID
+            type: ExploreCoursesEvents.RemovingAccessRequest,
+            courseID
         };
         dispatch(removingAction);
 
         const completeAction: CompleteRemovingAccessRequestAction = {
-            type: ExploreGroupsEvents.CompleteRemovingAccessRequest
+            type: ExploreCoursesEvents.CompleteRemovingAccessRequest
         };
 
         try {
-            const currentAccessRequestInstances: AccessRequestInstance[] | undefined = getState().ExploreGroupsLocalState.accessRequestsInstances;
+            const currentAccessRequestInstances: AccessRequestInstance[] | undefined = getState().ExploreCoursesLocalState.accessRequestsInstances;
             if (!currentAccessRequestInstances) {
                 return dispatch(completeAction);
             }
             const accessRequestIndex = currentAccessRequestInstances.findIndex(
-                accessRequestInstance => accessRequestInstance.group.anid === groupID && accessRequestInstance.user.id === currentUser.id);
+                accessRequestInstance => accessRequestInstance.course.anid === courseID && accessRequestInstance.student.id === currentStudent.id);
             if (accessRequestIndex === -1) {
                 return dispatch(completeAction);
             }
@@ -289,7 +289,7 @@ export const removeAccessRequest: ActionCreator<any> = (groupID: string) => {
 
             completeAction.updatedAccessRequestInstances = updatedAccessRequestInstances;
             dispatch(completeAction);
-            return dispatch(filterGroupsByGroupFilter());
+            return dispatch(filterCoursesByCourseFilter());
         } catch (error) {
             completeAction.error = error.toString();
             return dispatch(completeAction);

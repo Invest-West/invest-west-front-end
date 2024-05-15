@@ -2,9 +2,9 @@ import Api, {ApiRoutes} from "../Api";
 
 export enum FetchStudentProjectsOrderByOptions {
     Visibility = "visibility",
-    Group = "group",
-    Investor = "investor",
-    Issuer = "issuer",
+    Course = "course",
+    Student = "student",
+    Teacher = "Teacher",
     Sector = "sector",
     Phase = "phase"
 }
@@ -19,7 +19,7 @@ export enum FetchStudentProjectsPhaseOptions {
     ExpiredPitch = "ExpiredPitch"
 }
 
-export interface FetchProjectsOptions {
+export interface FetchStudentProjectsOptions {
     search?: string; // filter projects by either name, course name, or issuer company name
     name?: string; // filter projects by name
     visibility?: number | "all"; // filter projects by their visibility: PRIVATE, RESTRICTED, or PUBLIC
@@ -33,14 +33,14 @@ export interface FetchProjectsOptions {
     orderBy?: FetchStudentProjectsOrderByOptions; // mode to use orderByChild
 }
 
-export default class OfferRepository {
+export default class StudentOfferRepository {
 
     /**
      * Fetch offers
      *
      * @param options
      */
-    public async fetchOffers(options: FetchProjectsOptions) {
+    public async fetchStudentOffers(options: FetchStudentProjectsOptions) {
         //console.log("Fetching offers with options:", options);
         const fetchOptions = { ...options, orderBy: options.orderBy || FetchStudentProjectsOrderByOptions.Phase };
         try {
@@ -65,7 +65,7 @@ export default class OfferRepository {
      *
      * @param options
      */
-    public async exportCsv(options?: FetchProjectsOptions) {
+    public async exportCsv(options?: FetchStudentProjectsOptions) {
         return new Promise<void>(async (resolve, reject) => {
             try {
                 const response = await new Api()

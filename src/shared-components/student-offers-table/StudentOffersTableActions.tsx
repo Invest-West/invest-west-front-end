@@ -1,19 +1,19 @@
 import {Action, ActionCreator, Dispatch} from "redux";
 import {ProjectInstance} from "../../models/project";
 import {AppState} from "../../redux-store/reducers";
-import User, {isInvestor, isIssuer} from "../../models/user";
-import Admin, {isAdmin} from "../../models/admin";
-import OfferRepository, {
-    FetchProjectsOptions,
-    FetchProjectsOrderByOptions
-} from "../../api/repositories/OfferRepository";
-import GroupOfMembership from "../../models/group_of_membership";
-import GroupProperties from "../../models/group_properties";
-import GroupRepository from "../../api/repositories/GroupRepository";
+import Student, {isStudent, isTeacher} from "../../models/student";
+import Teacher, {isProf} from "../../models/teacher";
+import StudentOfferRepository, {
+    FetchStudentProjectsOptions,
+    FetchStudentProjectsOrderByOptions
+} from "../../api/repositories/StudentOfferRepository";
+import CourseOfMembership from "../../models/course_of_membership";
+import CourseProperties from "../../models/course_properties";
+import CourseRepository from "../../api/repositories/CourseRepository";
 import Api, {ApiRoutes} from "../../api/Api";
 
 export enum OffersTableEvents {
-    SetTableUser = "OffersTableEvents.SetTableUser",
+    SetTableStudent = "OffersTableEvents.SetTableStudent",
     FetchingOffers = "OffersTableEvents.FetchingOffers",
     CompleteFetchingOffers = "OffersTableEvents.CompleteFetchingOffers",
     FilterChanged = "OffersTableEvents.FilterChanged",
@@ -29,10 +29,10 @@ export interface OffersTableAction extends Action {
 
 }
 
-export interface SetTableUserAction extends OffersTableAction {
-    user: User | Admin | undefined;
-    groupsOfMembership: GroupOfMembership[] | undefined;
-    groupsSelect: GroupProperties[] | undefined;
+export interface SetTableStudentAction extends OffersTableAction {
+    student: Student | Teacher | undefined;
+    coursesOfMembership: CourseOfMembership[] | undefined;
+    coursesSelect: CourseProperties[] | undefined;
     error?: string;
 }
 
@@ -63,46 +63,46 @@ export interface CompleteExportingCsvAction extends OffersTableAction {
     error?: string;
 }
 
-export const setUser: ActionCreator<any> = (user?: User | Admin) => {
+export const setStudent: ActionCreator<any> = (student?: Student | Teacher) => {
     return async (dispatch: Dispatch, getState: () => AppState) => {
-        const currentTableUser = getState().OffersTableLocalState.tableUser;
-        let shouldSetTableUser: boolean = false;
-        if (currentTableUser === undefined) {
-            if (user !== undefined) {
-                shouldSetTableUser = true;
+        const currentTableStudent = getState().OffersTableLocalState.tableStudent;
+        let shouldSetTableStudent: boolean = false;
+        if (currentTableStudent === undefined) {
+            if (student !== undefined) {
+                shouldSetTableStudent = true;
             }
         } else {
-            if (user !== undefined) {
-                if (currentTableUser.id !== user.id) {
-                    shouldSetTableUser = true;
+            if (student !== undefined) {
+                if (currentTableStudent.id !== student.id) {
+                    shouldSetTableStudent = true;
                 }
             } else {
-                shouldSetTableUser = true;
+                shouldSetTableStudent = true;
             }
         }
 
-        if (shouldSetTableUser) {
-            const action: SetTableUserAction = {
-                type: OffersTableEvents.SetTableUser,
-                user: user,
-                groupsOfMembership: undefined,
-                groupsSelect: undefined
+        if (shouldSetTableStudent) {
+            const action: SetTableStudentAction = {
+                type: OffersTableEvents.SetTableStudent,
+                student: student,
+                coursesOfMembership: undefined,
+                coursesSelect: undefined
             }
 
             try {
-                if (user) {
-                    const groupsOfMembershipResponse = await new Api().request("get",
-                        ApiRoutes.listGroupsOfMembership.replace(":uid", user.id));
-                    const groupsOfMembership: GroupOfMembership[] = groupsOfMembershipResponse.data;
-                    action.groupsOfMembership = groupsOfMembership;
+                if (student) {
+                    const coursesOfMembershipResponse = await new Api().request("get",
+                        ApiRoutes.listCoursesOfMembership.replace(":uid", student.id));
+                    const coursesOfMembership: CourseOfMembership[] = coursesOfMembershipResponse.data;
+                    action.coursesOfMembership = coursesOfMembership;
 
-                    const isTableAdminUser: Admin | null = isAdmin(user);
+                    const isTableTeacherStudent: Teacher | null = isProf(student);
 
-                    if (isTableAdminUser && isTableAdminUser.superAdmin) {
-                        const allGroupsResponse = await new GroupRepository().fetchGroups();
-                        action.groupsSelect = allGroupsResponse.data;
+                    if (isTableTeacherStudent && isTableTeacherStudent.superTeacher) {
+                        const allCoursesResponse = await new CourseRepository().fetchCourses();
+                        action.coursesSelect = allCoursesResponse.data;
                     } else {
-                        action.groupsSelect = groupsOfMembership.map(groupOfMembership => groupOfMembership.group);
+                        action.coursesSelect = coursesOfMembership.map(courseOfMembership => courseOfMembership.course);
                     }
                 }
                 dispatch(action);
@@ -118,24 +118,24 @@ export const setUser: ActionCreator<any> = (user?: User | Admin) => {
 export const fetchOffers: ActionCreator<any> = () => {
     return async (dispatch: Dispatch, getState: () => AppState) => {
         const {
-            tableUser,
-            tableUserGroupsOfMembership,
+            tableStudent,
+            tableStudentCoursesOfMembership,
             visibilityFilter,
-            groupFilter,
+            courseFilter,
             phaseFilter
         } = getState().OffersTableLocalState;
 
-        const currentUser = getState().AuthenticationState.currentUser;
+        const currentStudent = getState().AuthenticationState.currentStudent;
 
-        if (!currentUser || !tableUser) {
+        if (!currentStudent || !tableStudent) {
             return;
         }
 
-        const currentAdmin: Admin | null = isAdmin(currentUser);
+        const currentTeacher: Teacher | null = isProf(currentStudent);
 
-        const fetchOffersOptions: FetchProjectsOptions = {
+        const fetchOffersOptions: FetchStudentProjectsOptions = {
             visibility: visibilityFilter,
-            group: groupFilter,
+            course: courseFilter,
             phase: phaseFilter
         };
 
@@ -146,21 +146,21 @@ export const fetchOffers: ActionCreator<any> = () => {
 
         let shouldFetchOffers: boolean = false;
 
-        // currentUser = tableUser --> issuer/investor/admin is viewing their own offers table
-        if (currentUser.id === tableUser.id) {
+        // currentStudent = tableStudent --> issuer/investor/admin is viewing their own offers table
+        if (currentStudent.id === tableStudent.id) {
             shouldFetchOffers = true;
         }
-        // currentUser != tableUser --> admin is viewing issuer/investor/admin offers table
-        else if (currentAdmin) {
+        // currentStudent != tableStudent --> admin is viewing issuer/investor/admin offers table
+        else if (currentTeacher) {
             // super admin is viewing issuer/investor/admin offers table
-            if (currentAdmin.superAdmin) {
+            if (currentTeacher.superTeacher) {
                 shouldFetchOffers = true;
             }
-            // group admin is viewing issuer/investor offers table
+            // course admin is viewing issuer/investor offers table
             else {
-                if (tableUserGroupsOfMembership !== undefined
-                    && tableUserGroupsOfMembership.findIndex(groupOfMembership => groupOfMembership.group.anid === currentAdmin.anid) !== -1
-                    && !isAdmin(tableUser)
+                if (tableStudentCoursesOfMembership !== undefined
+                    && tableStudentCoursesOfMembership.findIndex(courseOfMembership => courseOfMembership.course.anid === currentTeacher.anid) !== -1
+                    && !isProf(tableStudent)
                 ) {
                     shouldFetchOffers = true;
                 }
@@ -168,19 +168,19 @@ export const fetchOffers: ActionCreator<any> = () => {
         }
 
         if (shouldFetchOffers) {
-            if (isIssuer(tableUser)) {
-                fetchOffersOptions.issuer = tableUser.id;
-                fetchOffersOptions.orderBy = FetchProjectsOrderByOptions.Issuer;
-            } else if (isInvestor(tableUser)) {
-                fetchOffersOptions.investor = tableUser.id;
-                fetchOffersOptions.orderBy = FetchProjectsOrderByOptions.Investor;
-            } else if (currentAdmin) {
-                if (!currentAdmin.superAdmin) {
-                    fetchOffersOptions.group = currentAdmin.anid;
-                    fetchOffersOptions.orderBy = FetchProjectsOrderByOptions.Group;
+            if (isTeacher(tableStudent)) {
+                fetchOffersOptions.issuer = tableStudent.id;
+                fetchOffersOptions.orderBy = FetchStudentProjectsOrderByOptions.Teacher;
+            } else if (isStudent(tableStudent)) {
+                fetchOffersOptions.investor = tableStudent.id;
+                fetchOffersOptions.orderBy = FetchStudentProjectsOrderByOptions.Student;
+            } else if (currentTeacher) {
+                if (!currentTeacher.superTeacher) {
+                    fetchOffersOptions.course = currentTeacher.anid;
+                    fetchOffersOptions.orderBy = FetchStudentProjectsOrderByOptions.Course;
                 }
             } else {
-                completeAction.error = "Invalid user reference.";
+                completeAction.error = "Invalid student reference.";
                 return dispatch(completeAction);
             }
         } else {
@@ -193,7 +193,7 @@ export const fetchOffers: ActionCreator<any> = () => {
         });
 
         try {
-            const response = await new OfferRepository().fetchOffers(fetchOffersOptions);
+            const response = await new StudentOfferRepository().fetchOffers(fetchOffersOptions);
             completeAction.offerInstances = response.data;
             dispatch(completeAction);
             return dispatch(filterOffersByName());
@@ -273,16 +273,16 @@ export const changeRowsPerPage: ActionCreator<any> = (event: any) => {
 
 export const exportCsv: ActionCreator<any> = () => {
     return async (dispatch: Dispatch, getState: () => AppState) => {
-        const currentUser = getState().AuthenticationState.currentUser;
+        const currentStudent = getState().AuthenticationState.currentStudent;
         const exportingCsv = getState().OffersTableLocalState.exportingCsv;
 
-        if (!currentUser) {
+        if (!currentStudent) {
             return;
         }
 
-        const currentAdmin: Admin | null = isAdmin(currentUser);
+        const currentTeacher: Teacher | null = isProf(currentStudent);
 
-        if (!currentAdmin) {
+        if (!currentTeacher) {
             return;
         }
 
@@ -299,10 +299,10 @@ export const exportCsv: ActionCreator<any> = () => {
         };
 
         try {
-            await new OfferRepository().exportCsv(
-                currentAdmin.superAdmin
+            await new StudentOfferRepository().exportCsv(
+                currentTeacher.superTeacher
                     ? undefined
-                    : {group: currentAdmin.anid, orderBy: FetchProjectsOrderByOptions.Group}
+                    : {course: currentTeacher.anid, orderBy: FetchStudentProjectsOrderByOptions.Course}
             );
             return dispatch(completeAction);
         } catch (error) {

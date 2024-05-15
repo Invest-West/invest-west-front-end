@@ -19,7 +19,7 @@ export default interface Teacher {
  *
  * @param student
  */
-export const isTeacher = (student: Student | Teacher): Teacher | null => {
+export const isProf = (student: Student | Teacher): Teacher | null => {
     if ("anid" in student) {
         return JSON.parse(JSON.stringify(student));
     }

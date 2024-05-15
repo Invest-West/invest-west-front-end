@@ -3,86 +3,86 @@ import {ProjectInstance} from "../../models/project";
 import React, {FormEvent} from "react";
 import {AppState} from "../../redux-store/reducers";
 import {PROJECT_VISIBILITY_PUBLIC, PROJECT_VISIBILITY_RESTRICTED} from "../../firebase/databaseConsts";
-import OfferRepository, {
-    FetchProjectsOptions,
-    FetchProjectsOrderByOptions,
-    FetchProjectsPhaseOptions
-} from "../../api/repositories/OfferRepository";
+import StudentOfferRepository, {
+    FetchStudentProjectsOptions,
+    FetchStudentProjectsOrderByOptions,
+    FetchStudentProjectsPhaseOptions
+} from "../../api/repositories/StudentOfferRepository";
 
-export enum ExploreOffersEvents {
-    FetchingOffers = "ExploreOffersEvents.FetchingOffers",
-    CompleteFetchingOffers = "ExploreOffersEvents.CompleteFetchingOffers",
-    FilterChanged = "ExploreOffersEvents.FilterChanged",
-    ClearSearchFilter = "ExploreOffersEvents.ClearSearchFilter",
-    PaginationChanged = "ExploreOffersEvents.PaginationChanged"
+export enum ExploreStudentOffersEvents {
+    FetchingOffers = "ExploreStudentOffersEvents.FetchingOffers",
+    CompleteFetchingOffers = "ExploreStudentOffersEvents.CompleteFetchingOffers",
+    FilterChanged = "ExploreStudentOffersEvents.FilterChanged",
+    ClearSearchFilter = "ExploreStudentOffersEvents.ClearSearchFilter",
+    PaginationChanged = "ExploreStudentOffersEvents.PaginationChanged"
 }
 
-export interface ExploreOffersAction extends Action {
+export interface ExploreStudentOffersAction extends Action {
 
 }
 
-export interface CompleteFetchingOffersAction extends ExploreOffersAction {
-    offerInstances: ProjectInstance[];
+export interface CompleteFetchingStudentOffersAction extends ExploreStudentOffersAction {
+    offerStudentInstances: ProjectInstance[];
     error?: string;
 }
 
-export interface FilterChangedAction extends ExploreOffersAction {
+export interface FilterChangedAction extends ExploreStudentOffersAction {
     name: string;
     value: any;
 }
 
-export interface PaginationChangedAction extends ExploreOffersAction {
+export interface PaginationChangedAction extends ExploreStudentOffersAction {
     page: number;
 }
 
 export const onSearchEnter: ActionCreator<any> = (event: FormEvent) => {
     return (dispatch: Dispatch, getState: () => AppState) => {
         event.preventDefault();
-        return dispatch(fetchOffers(FetchProjectsOrderByOptions.Phase))
+        return dispatch(fetchStudentOffers(FetchStudentProjectsOrderByOptions.Phase))
     }
 }
 
-export const fetchOffers: ActionCreator<any> = () => {
+export const fetchStudentOffers: ActionCreator<any> = () => {
     return async (dispatch: Dispatch, getState: () => AppState) => {
         const {
             searchFilter,
             visibilityFilter,
             sectorFilter,
             phaseFilter,
-            groupFilter,
-        } = getState().ExploreOffersLocalState;
+            courseFilter,
+        } = getState().ExploreStudentOffersLocalState;
 
         // Determine orderBy based on phaseFilter and potentially other conditions
         let orderBy;
-        if (groupFilter === "all") {
-            orderBy = phaseFilter === FetchProjectsPhaseOptions.ExpiredPitch ? FetchProjectsOrderByOptions.Group : FetchProjectsOrderByOptions.Phase;
+        if (courseFilter === "all") {
+            orderBy = phaseFilter === FetchStudentProjectsPhaseOptions.ExpiredPitch ? FetchStudentProjectsOrderByOptions.Course : FetchStudentProjectsOrderByOptions.Phase;
         } else {
-            // If not 'all' groups, maintain existing logic
-            orderBy = phaseFilter === FetchProjectsPhaseOptions.ExpiredPitch ? FetchProjectsOrderByOptions.Group : FetchProjectsOrderByOptions.Phase;
+            // If not 'all' courses, maintain existing logic
+            orderBy = phaseFilter === FetchStudentProjectsPhaseOptions.ExpiredPitch ? FetchStudentProjectsOrderByOptions.Course : FetchStudentProjectsOrderByOptions.Phase;
         }
 
-        const fetchOffersOptions: FetchProjectsOptions = {
+        const fetchStudentOffersOptions: FetchStudentProjectsOptions = {
             search: searchFilter.trim().length === 0 ? undefined : searchFilter,
             visibility: visibilityFilter,
-            group: groupFilter === "all" ? undefined : groupFilter,
+            course: courseFilter === "all" ? undefined : courseFilter,
             sector: sectorFilter === "all" ? undefined : sectorFilter,
             phase: phaseFilter,
             orderBy,
         };
 
-        dispatch({ type: ExploreOffersEvents.FetchingOffers });
+        dispatch({ type: ExploreStudentOffersEvents.FetchingOffers });
 
         try {
-            const response = await new OfferRepository().fetchOffers(fetchOffersOptions);
+            const response = await new StudentOfferRepository().fetchStudentOffers(fetchStudentOffersOptions);
             dispatch({
-                type: ExploreOffersEvents.CompleteFetchingOffers,
-                offerInstances: response.data,
+                type: ExploreStudentOffersEvents.CompleteFetchingOffers,
+                offerStudentInstances: response.data,
             });
         } catch (error) {
             dispatch({
-                type: ExploreOffersEvents.CompleteFetchingOffers,
+                type: ExploreStudentOffersEvents.CompleteFetchingOffers,
                 error: error.toString(),
-                offerInstances: [],
+                offerStudentInstances: [],
             });
         }
     };
@@ -94,7 +94,7 @@ export const filterChanged: ActionCreator<any> = (event: React.ChangeEvent<HTMLI
         const value = event.target.value;
 
         const action: FilterChangedAction = {
-            type: ExploreOffersEvents.FilterChanged,
+            type: ExploreStudentOffersEvents.FilterChanged,
             name: name,
             value: value
         }
@@ -105,15 +105,15 @@ export const filterChanged: ActionCreator<any> = (event: React.ChangeEvent<HTMLI
                 return;
             case "visibilityFilter":
                 if (value === "all" || value.toString() === PROJECT_VISIBILITY_PUBLIC.toString() || value.toString() === PROJECT_VISIBILITY_RESTRICTED.toString()) {
-                    return dispatch(fetchOffers(FetchProjectsOrderByOptions.Visibility));
+                    return dispatch(fetchStudentOffers(FetchStudentProjectsOrderByOptions.Visibility));
                 }
-                return dispatch(fetchOffers(FetchProjectsOrderByOptions.Group));
+                return dispatch(fetchStudentOffers(FetchStudentProjectsOrderByOptions.Course));
             case "sectorFilter":
-                return dispatch(fetchOffers(FetchProjectsOrderByOptions.Sector));
+                return dispatch(fetchStudentOffers(FetchStudentProjectsOrderByOptions.Sector));
             case "phaseFilter":
-                return dispatch(fetchOffers(FetchProjectsOrderByOptions.Phase));
-            case "groupFilter":
-                return dispatch(fetchOffers(value === "all" ? undefined : FetchProjectsOrderByOptions.Group));
+                return dispatch(fetchStudentOffers(FetchStudentProjectsOrderByOptions.Phase));
+            case "courseFilter":
+                return dispatch(fetchStudentOffers(value === "all" ? undefined : FetchStudentProjectsOrderByOptions.Course));
             default:
                 return;
         }
@@ -123,16 +123,16 @@ export const filterChanged: ActionCreator<any> = (event: React.ChangeEvent<HTMLI
 export const clearSearchFilter: ActionCreator<any> = () => {
     return (dispatch: Dispatch, getState: () => AppState) => {
         dispatch({
-            type: ExploreOffersEvents.ClearSearchFilter
+            type: ExploreStudentOffersEvents.ClearSearchFilter
         });
-        return dispatch(fetchOffers(FetchProjectsOrderByOptions.Phase))
+        return dispatch(fetchStudentOffers(FetchStudentProjectsOrderByOptions.Phase))
     }
 }
 
 export const paginationChanged: ActionCreator<any> = (event: React.ChangeEvent<unknown>, page: number) => {
     return (dispatch: Dispatch, getState: () => AppState) => {
         const action: PaginationChangedAction = {
-            type: ExploreOffersEvents.PaginationChanged,
+            type: ExploreStudentOffersEvents.PaginationChanged,
             page: page
         }
         return dispatch(action);

@@ -7,29 +7,29 @@ import {
     FilterOffersByNameAction,
     OffersTableAction,
     OffersTableEvents,
-    SetTableUserAction
+    SetTableStudentAction
 } from "./StudentOffersTableActions";
 import {ProjectInstance} from "../../models/project";
-import User from "../../models/user";
-import Admin from "../../models/admin";
+import Student from "../../models/student";
+import Teacher from "../../models/teacher";
 import Error from "../../models/error";
-import GroupOfMembership from "../../models/group_of_membership";
-import GroupProperties from "../../models/group_properties";
+import CourseOfMembership from "../../models/course_of_membership";
+import CourseProperties from "../../models/course_properties";
 import {AuthenticationEvents} from "../../redux-store/actions/authenticationActions";
 
-export interface OffersTableStates {
+export interface OffersStudentTableStates {
     offerInstances: ProjectInstance[];
     offerInstancesFilteredByName: ProjectInstance[];
     fetchingOffers: boolean;
     offersFetched: boolean;
 
-    tableUser?: User | Admin;
-    tableUserGroupsOfMembership?: GroupOfMembership[];
+    tableStudent?: Student | Teacher;
+    tableStudentCoursesOfMembership?: CourseOfMembership[];
 
     nameFilter: string;
     visibilityFilter: number | "all";
-    groupFilter: string | "all";
-    groupsSelect?: GroupProperties[];
+    courseFilter: string | "all";
+    coursesSelect?: CourseProperties[];
     phaseFilter: string | number | "all";
     filteringOffersByName: boolean;
 
@@ -42,7 +42,7 @@ export interface OffersTableStates {
     error?: Error
 }
 
-const initialState: OffersTableStates = {
+const initialState: OffersStudentTableStates = {
     offerInstances: [],
     offerInstancesFilteredByName: [],
     fetchingOffers: false,
@@ -50,7 +50,7 @@ const initialState: OffersTableStates = {
 
     nameFilter: "",
     visibilityFilter: "all",
-    groupFilter: "all",
+    courseFilter: "all",
     phaseFilter: "all",
     filteringOffersByName: false,
 
@@ -60,56 +60,56 @@ const initialState: OffersTableStates = {
     exportingCsv: false
 }
 
-export const isFetchingOffers = (state: OffersTableStates) => {
+export const isFetchingOffers = (state: OffersStudentTableStates) => {
     return !state.offersFetched && state.fetchingOffers;
 }
 
-export const successfullyFetchedOffers = (state: OffersTableStates) => {
+export const successfullyFetchedOffers = (state: OffersStudentTableStates) => {
     return state.offersFetched && !state.fetchingOffers && state.error === undefined;
 }
 
-export const hasOffersForCurrentFilters = (state: OffersTableStates) => {
+export const hasOffersForCurrentFilters = (state: OffersStudentTableStates) => {
     return successfullyFetchedOffers(state) && state.offerInstancesFilteredByName.length > 0;
 }
 
-export const isFilteringOffersByName = (state: OffersTableStates) => {
+export const isFilteringOffersByName = (state: OffersStudentTableStates) => {
     return state.filteringOffersByName;
 }
 
-export const hasErrorFetchingOffers = (state: OffersTableStates) => {
+export const hasErrorFetchingOffers = (state: OffersStudentTableStates) => {
     return state.error !== undefined;
 }
 
-export const isExportingCsv = (state: OffersTableStates) => {
+export const isExportingCsv = (state: OffersStudentTableStates) => {
     return state.exportingCsv;
 }
 
-export const hasErrorExportingCsv = (state: OffersTableStates) => {
+export const hasErrorExportingCsv = (state: OffersStudentTableStates) => {
     return state.errorExportingCsv !== undefined;
 }
 
-export const hasGroupsSelect = (state: OffersTableStates) => {
-    return state.groupsSelect !== undefined && state.groupsSelect.length > 0;
+export const hasCoursesSelect = (state: OffersStudentTableStates) => {
+    return state.coursesSelect !== undefined && state.coursesSelect.length > 0;
 }
 
 const offersTableReducer = (state = initialState, action: OffersTableAction) => {
     switch (action.type) {
         case AuthenticationEvents.SignOut:
             return initialState;
-        case OffersTableEvents.SetTableUser:
-            const setTableUserAction: SetTableUserAction = action as SetTableUserAction;
+        case OffersTableEvents.SetTableStudent:
+            const setTableStudentAction: SetTableStudentAction = action as SetTableStudentAction;
             return {
                 ...initialState,
-                tableUser: setTableUserAction.user !== undefined
-                    ? JSON.parse(JSON.stringify(setTableUserAction.user))
+                tableStudent: setTableStudentAction.student !== undefined
+                    ? JSON.parse(JSON.stringify(setTableStudentAction.student))
                     : undefined,
-                tableUserGroupsOfMembership: setTableUserAction.groupsOfMembership !== undefined
-                    ? [...setTableUserAction.groupsOfMembership]
+                tableStudentCoursesOfMembership: setTableStudentAction.coursesOfMembership !== undefined
+                    ? [...setTableStudentAction.coursesOfMembership]
                     : undefined,
-                groupsSelect: setTableUserAction.groupsSelect !== undefined
-                    ? [...setTableUserAction.groupsSelect]
+                coursesSelect: setTableStudentAction.coursesSelect !== undefined
+                    ? [...setTableStudentAction.coursesSelect]
                     : undefined,
-                error: setTableUserAction.error !== undefined ? {detail: setTableUserAction.error} : state.error,
+                error: setTableStudentAction.error !== undefined ? {detail: setTableStudentAction.error} : state.error,
             }
         case OffersTableEvents.FetchingOffers:
             return {

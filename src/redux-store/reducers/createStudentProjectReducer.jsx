@@ -1,4 +1,4 @@
-import * as createProjectActions from '../actions/createProjectActions';
+import * as createStudentProjectActions from '../actions/createStudentProjectActions';
 import * as authActions from '../actions/authActions';
 import {
     STEP_PITCH_GENERAL_INFORMATION,
@@ -33,16 +33,6 @@ const initState = {
         pitchProjectDescription: '',
         pitchExpiredDate: null,
 
-        pitchAmountRaisedToDate: '',
-        pitchRaiseRequired: '',
-        pitchPostMoneyValuation: '',
-        pitchInvestorsCommitted: '',
-
-        hasRaisedMoneyBefore: '',
-
-        hasEIS: '',
-        hasSEIS: '',
-
         // pitch cover (image or video) --- 1 file
         pitchCover: [],
         // pitch cover - video URL
@@ -52,12 +42,12 @@ const initState = {
         // ------------------------------------------------------
         // pitch supporting documents --- max 10 files
         pitchSupportingDocuments: [],
-        // pitch presentation file (user uploads a file for pitch presentation) --- 1 file
+        // pitch presentation file (student uploads a file for pitch presentation) --- 1 file
         pitchPresentationDocument: [],
-        // pitch presentation text (user uses the provided text editor to make pitch presentation)
+        // pitch presentation text (student uses the provided text editor to make pitch presentation)
         pitchPresentationText: {ops: []},
 
-        // check for missing fields (or invalid inputs) when the user hits the Next button
+        // check for missing fields (or invalid inputs) when the student hits the Next button
         pitchPublishCheck: PITCH_PUBLISH_CHECK_NONE,
 
         // these 2 states are used to display popover error message when the Publish button is clicked
@@ -78,21 +68,21 @@ const initState = {
     }
 };
 
-const createProjectReducer = (state = initState, action) => {
+const createStudentProjectReducer = (state = initState, action) => {
     switch (action.type) {
         case authActions.LOG_OUT:
             return initState;
-        case createProjectActions.CREATE_PROJECT_SET_COMPONENT_PROPS:
+        case createStudentProjectActions.CREATE_PROJECT_SET_COMPONENT_PROPS:
             return {
                 ...state,
                 componentContext: action.context
             }
-        case createProjectActions.CREATE_PROJECT_LOADING_DATA:
+        case createStudentProjectActions.CREATE_PROJECT_LOADING_DATA:
             return {
                 ...state,
                 requestToLoadData: false
             };
-        case createProjectActions.CREATE_PROJECT_FINISHED_LOADING_DATA: {
+        case createStudentProjectActions.CREATE_PROJECT_FINISHED_LOADING_DATA: {
             if (action.hasOwnProperty('error')) {
                 return {
                     ...state,
@@ -107,7 +97,7 @@ const createProjectReducer = (state = initState, action) => {
                 }
 
                 switch (action.mode) {
-                    case createProjectActions.CREATE_PROJECT_MODE_EDIT: {
+                    case createStudentProjectActions.CREATE_PROJECT_MODE_EDIT: {
                         const project = JSON.parse(JSON.stringify(action.projectEdited));
 
                         return {
@@ -142,56 +132,12 @@ const createProjectReducer = (state = initState, action) => {
                                         :
                                         ''
                                 ,
-                                hasEIS: project.hasOwnProperty('hasEIS') ? project.hasEIS : false,
-                                hasSEIS: project.hasOwnProperty('hasSEIS') ? project.hasSEIS : false,
                                 pitchExpiredDate:
                                     project.Pitch.hasOwnProperty('expiredDate')
                                         ?
                                         project.Pitch.expiredDate
                                         :
                                         null
-                                ,
-                                pitchAmountRaisedToDate:
-                                    project.Pitch.hasOwnProperty('amountRaised')
-                                        ?
-                                        Number(project.Pitch.amountRaised.toFixed(2)).toLocaleString()
-                                        :
-                                        ''
-                                ,
-                                pitchRaiseRequired:
-                                    project.Pitch.hasOwnProperty('fundRequired')
-                                        ?
-                                        Number(project.Pitch.fundRequired.toFixed(2)).toLocaleString()
-                                        :
-                                        ''
-                                ,
-                                pitchPostMoneyValuation:
-                                    project.Pitch.hasOwnProperty('postMoneyValuation')
-                                        ?
-                                        Number(project.Pitch.postMoneyValuation.toFixed(2)).toLocaleString()
-                                        :
-                                        ''
-                                ,
-                                pitchInvestorsCommitted:
-                                    project.Pitch.hasOwnProperty('investorsCommitted')
-                                        ?
-                                        project.Pitch.investorsCommitted
-                                        :
-                                        ''
-                                ,
-
-                                hasRaisedMoneyBefore:
-                                    project.Pitch.hasOwnProperty('amountRaised')
-                                        ?
-                                        (
-                                            project.Pitch.amountRaised > 0
-                                                ?
-                                                "true"
-                                                :
-                                                "false"
-                                        )
-                                        :
-                                        ''
                                 ,
 
                                 pitchPresentationText:
@@ -203,7 +149,7 @@ const createProjectReducer = (state = initState, action) => {
                             }
                         };
                     }
-                    case createProjectActions.CREATE_PROJECT_MODE_CREATE_NEW:
+                    case createStudentProjectActions.CREATE_PROJECT_MODE_CREATE_NEW:
                         return {
                             ...state,
                             projectEditedLoaded: true,
@@ -214,7 +160,7 @@ const createProjectReducer = (state = initState, action) => {
                 }
             }
         }
-        case createProjectActions.CREATE_PROJECT_DRAFT_PROJECT_CHANGED:
+        case createStudentProjectActions.CREATE_PROJECT_DRAFT_PROJECT_CHANGED:
             return {
                 ...state,
                 projectEdited: JSON.parse(JSON.stringify(action.projectChanged))
@@ -224,4 +170,4 @@ const createProjectReducer = (state = initState, action) => {
     }
 }
 
-export default createProjectReducer;
+export default createStudentProjectReducer;

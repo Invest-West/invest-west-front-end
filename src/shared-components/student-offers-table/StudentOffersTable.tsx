@@ -25,21 +25,21 @@ import {
 import {Close, CreateOutlined, ImportExportOutlined, Refresh, Search} from "@material-ui/icons";
 import {MediaQueryState} from "../../redux-store/reducers/mediaQueryReducer";
 import {ManageSystemAttributesState} from "../../redux-store/reducers/manageSystemAttributesReducer";
-import {getGroupRouteTheme, ManageGroupUrlState} from "../../redux-store/reducers/manageGroupUrlReducer";
+import {getCourseRouteTheme, ManageCourseUrlState} from "../../redux-store/reducers/manageCourseUrlReducer";
 import {AuthenticationState} from "../../redux-store/reducers/authenticationReducer";
 import {
     hasErrorExportingCsv,
     hasErrorFetchingOffers,
-    hasGroupsSelect,
+    hasCoursesSelect,
     hasOffersForCurrentFilters,
     isExportingCsv,
     isFetchingOffers,
     isFilteringOffersByName,
-    OffersTableStates,
+    OffersStudentTableStates,
     successfullyFetchedOffers
 } from "./StudentOffersTableReducer";
-import User, {isInvestor, isIssuer} from "../../models/user";
-import Admin, {isAdmin} from "../../models/admin";
+import Student, {isStudent, isTeacher} from "../../models/student";
+import Teacher, {isProf} from "../../models/teacher";
 import CustomLink from "../../shared-js-css-styles/CustomLink";
 import {css} from "aphrodite";
 import sharedStyles from "../../shared-js-css-styles/SharedStyles";
@@ -53,7 +53,7 @@ import {
     fetchOffers,
     filterChanged,
     filterOffersByName,
-    setUser
+    setStudent
 } from "./StudentOffersTableActions";
 import {Col, Row} from "react-bootstrap";
 import {BeatLoader} from "react-spinners";
@@ -62,12 +62,12 @@ import RestrictedIcon from "@material-ui/icons/VpnLock";
 import PrivateIcon from "@material-ui/icons/LockOutlined";
 import {
     isDraftProject,
-    isProjectPitchExpiredWaitingForAdminToCheck,
+    isProjectPitchExpiredWaitingForTeacherToCheck,
     isProjectPublic,
     isProjectRestricted,
     isProjectTemporarilyClosed,
     isProjectWaitingToGoLive
-} from "../../models/project";
+} from "../../models/studentProject";
 import Routes from "../../router/routes";
 import {dateInReadableFormat, isProjectInLivePitchPhase} from "../../utils/utils";
 import {FetchProjectsPhaseOptions} from "../../api/repositories/OfferRepository";
@@ -81,15 +81,15 @@ import {
 import {toRGBWithOpacity} from "../../utils/colorUtils";
 
 interface OffersTableProps {
-    // table user set by passing this prop to the OffersTable component when used
-    directTableUser?: User | Admin;
+    // table student set by passing this prop to the OffersTable component when used
+    directTableStudent?: Student | Teacher;
 
     MediaQueryState: MediaQueryState;
     ManageSystemAttributesState: ManageSystemAttributesState;
-    ManageGroupUrlState: ManageGroupUrlState;
+    ManageCourseUrlState: ManageCourseUrlState;
     AuthenticationState: AuthenticationState;
-    OffersTableLocalState: OffersTableStates;
-    setUser: (user?: User | Admin) => any;
+    OffersTableLocalState: OffersStudentTableStates;
+    setStudent: (student?: Student | Teacher) => any;
     fetchOffers: () => any;
     filterChanged: (event: any) => any;
     filterOffersByName: () => any;
@@ -103,7 +103,7 @@ const mapStateToProps = (state: AppState) => {
     return {
         MediaQueryState: state.MediaQueryState,
         ManageSystemAttributesState: state.ManageSystemAttributesState,
-        ManageGroupUrlState: state.ManageGroupUrlState,
+        ManageCourseUrlState: state.ManageCourseUrlState,
         AuthenticationState: state.AuthenticationState,
         OffersTableLocalState: state.OffersTableLocalState
     }
@@ -111,7 +111,7 @@ const mapStateToProps = (state: AppState) => {
 
 const mapDispatchToProps = (dispatch: ThunkDispatch<any, any, AnyAction>) => {
     return {
-        setUser: (user?: User | Admin) => dispatch(setUser(user)),
+        setStudent: (student?: Student | Teacher) => dispatch(setStudent(student)),
         fetchOffers: () => dispatch(fetchOffers()),
         filterChanged: (event: any) => dispatch(filterChanged(event)),
         filterOffersByName: () => dispatch(filterOffersByName()),
@@ -126,16 +126,16 @@ class OffersTable extends Component<OffersTableProps, any> {
 
     componentDidMount() {
         const {
-            directTableUser,
+            directTableStudent,
             AuthenticationState,
-            setUser
+            setStudent
         } = this.props;
-        setUser(directTableUser ?? AuthenticationState.currentUser ?? undefined);
+        setStudent(directTableStudent ?? AuthenticationState.currentStudent ?? undefined);
     }
 
     render() {
         const {
-            ManageGroupUrlState,
+            ManageCourseUrlState,
             AuthenticationState,
             OffersTableLocalState,
             fetchOffers,
@@ -147,19 +147,19 @@ class OffersTable extends Component<OffersTableProps, any> {
             exportCsv
         } = this.props;
 
-        if (!AuthenticationState.currentUser) {
+        if (!AuthenticationState.currentStudent) {
             return null;
         }
 
-        const currentUser: User | Admin = AuthenticationState.currentUser;
-        const tableUser: User | Admin | undefined = OffersTableLocalState.tableUser;
+        const currentStudent: Student | Teacher = AuthenticationState.currentStudent;
+        const tableStudent: Student | Teacher | undefined = OffersTableLocalState.tableStudent;
 
-        if (!currentUser || !tableUser) {
+        if (!currentStudent || !tableStudent) {
             return null;
         }
 
-        const currentAdmin: Admin | null = isAdmin(currentUser);
-        const tableAdmin: Admin | null = isAdmin(tableUser);
+        const currentTeacher: Teacher | null = isProf(currentStudent);
+        const tableTeacher: Teacher | null = isProf(tableStudent);
 
         return <TableContainer
             component={Paper}
@@ -171,7 +171,7 @@ class OffersTable extends Component<OffersTableProps, any> {
                 <TableHead>
                     {/** Export csv button (only available for admin */}
                     {
-                        !(currentAdmin && tableAdmin && currentAdmin.id === tableAdmin.id)
+                        !(currentTeacher && tableTeacher && currentTeacher.id === tableTeacher.id)
                             ? null
                             : <TableRow>
                                 <TableCell colSpan={5} >
@@ -202,7 +202,7 @@ class OffersTable extends Component<OffersTableProps, any> {
 
                     {/** Create new offer button (only available for issuers and admins) */}
                     {
-                        isInvestor(currentUser) || (currentAdmin && currentAdmin.superAdmin)
+                        isStudent(currentStudent) || (currentTeacher && currentTeacher.superTeacher)
                             ? null
                             : <TableRow>
                                 <TableCell
@@ -210,15 +210,15 @@ class OffersTable extends Component<OffersTableProps, any> {
                                 >
                                     <CustomLink
                                         url={
-                                            isIssuer(currentUser) || (currentAdmin && tableAdmin && currentAdmin.id === tableAdmin.id)
+                                            isTeacher(currentStudent) || (currentTeacher && tableTeacher && currentTeacher.id === tableTeacher.id)
                                                 // issuer creates offer for themselves
-                                                // group admin creates offer for their own group
-                                                ? Routes.constructCreateProjectRoute(ManageGroupUrlState.groupNameFromUrl ?? null)
-                                                : (currentAdmin && isIssuer(tableUser))
-                                                // group admin creates offer for an issuer in their group
-                                                ? Routes.constructCreateProjectRoute(ManageGroupUrlState.groupNameFromUrl ?? null, {
-                                                    admin: currentAdmin.id,
-                                                    issuer: tableUser.id
+                                                // course admin creates offer for their own course
+                                                ? Routes.constructCreateProjectRoute(ManageCourseUrlState.courseNameFromUrl ?? null)
+                                                : (currentTeacher && isTeacher(tableStudent))
+                                                // course admin creates offer for an issuer in their course
+                                                ? Routes.constructCreateProjectRoute(ManageCourseUrlState.courseNameFromUrl ?? null, {
+                                                    admin: currentTeacher.id,
+                                                    issuer: tableStudent.id
                                                 })
                                                 : ""
                                         }                                        
@@ -250,7 +250,7 @@ class OffersTable extends Component<OffersTableProps, any> {
                                         bgcolor={
                                             !isFilteringOffersByName(OffersTableLocalState)
                                                 ? colors.grey["200"]
-                                                : toRGBWithOpacity(getGroupRouteTheme(ManageGroupUrlState).palette.primary.main, 0.18)
+                                                : toRGBWithOpacity(getCourseRouteTheme(ManageCourseUrlState).palette.primary.main, 0.18)
                                         }
                                         borderRadius="10px"
                                     >
@@ -329,15 +329,15 @@ class OffersTable extends Component<OffersTableProps, any> {
                                     </Box>
                                 </Col>
 
-                                {/** Group filter */}
+                                {/** Course filter */}
                                 <Col xs={12} sm={12} md={6} lg={4} >
                                     <Box paddingY="4px" >
-                                        <Typography variant="body2" >Group:</Typography>
+                                        <Typography variant="body2" >Course:</Typography>
                                         <Box height="8px" />
                                         <Select
                                             fullWidth
-                                            name="groupFilter"
-                                            value={OffersTableLocalState.groupFilter}
+                                            name="courseFilter"
+                                            value={OffersTableLocalState.courseFilter}
                                             variant="outlined"
                                             margin="dense"
                                             input={<OutlinedInput/>}
@@ -346,15 +346,15 @@ class OffersTable extends Component<OffersTableProps, any> {
                                         >
                                             <MenuItem key="all" value="all" >All</MenuItem>
                                             {
-                                                !hasGroupsSelect(OffersTableLocalState)
-                                                || !OffersTableLocalState.groupsSelect
+                                                !hasCoursesSelect(OffersTableLocalState)
+                                                || !OffersTableLocalState.coursesSelect
                                                     ? null
-                                                    : OffersTableLocalState.groupsSelect.map(group =>
+                                                    : OffersTableLocalState.coursesSelect.map(course =>
                                                         <MenuItem
-                                                            key={group.anid}
-                                                            value={group.anid}
+                                                            key={course.anid}
+                                                            value={course.anid}
                                                         >
-                                                            {group.displayName}
+                                                            {course.displayName}
                                                         </MenuItem>
                                                     )
                                             }
@@ -415,11 +415,11 @@ class OffersTable extends Component<OffersTableProps, any> {
                             ? <TableRow>
                                 <TableCell colSpan={5} >
                                     <Box display="flex" justifyContent="center" alignItems="center" height="120px" >
-                                        <BeatLoader color={getGroupRouteTheme(ManageGroupUrlState).palette.primary.main} />
+                                        <BeatLoader color={getCourseRouteTheme(ManageCourseUrlState).palette.primary.main} />
                                     </Box>
                                 </TableCell>
                             </TableRow>
-                            // Error setting table user / fetching offers
+                            // Error setting table student / fetching offers
                             : hasErrorFetchingOffers(OffersTableLocalState)
                             ? <TableRow>
                                 <TableCell colSpan={5} >
@@ -464,8 +464,8 @@ class OffersTable extends Component<OffersTableProps, any> {
                                                             <CustomLink
                                                                 url={
                                                                     isDraftProject(offerInstance.projectDetail)
-                                                                        ? Routes.constructCreateProjectRoute(ManageGroupUrlState.groupNameFromUrl ?? null, {edit: offerInstance.projectDetail.id})
-                                                                        : Routes.constructProjectDetailRoute(ManageGroupUrlState.groupNameFromUrl ?? null, offerInstance.projectDetail.id)
+                                                                        ? Routes.constructCreateProjectRoute(ManageCourseUrlState.courseNameFromUrl ?? null, {edit: offerInstance.projectDetail.id})
+                                                                        : Routes.constructProjectDetailRoute(ManageCourseUrlState.courseNameFromUrl ?? null, offerInstance.projectDetail.id)
                                                                 }
                                                                 target={
                                                                     isDraftProject(offerInstance.projectDetail)
@@ -473,7 +473,7 @@ class OffersTable extends Component<OffersTableProps, any> {
                                                                         : ""
                                                                 }
                                                                 color="black"
-                                                                activeColor={getGroupRouteTheme(ManageGroupUrlState).palette.primary.main}
+                                                                activeColor={getCourseRouteTheme(ManageCourseUrlState).palette.primary.main}
                                                                 activeUnderline={false}
                                                                 component="nav-link"
                                                                 childComponent={
@@ -489,17 +489,17 @@ class OffersTable extends Component<OffersTableProps, any> {
 
                                                         {/** Created by (not available for issuers who are looking at their own offers table) */}
                                                         {
-                                                            isIssuer(currentUser)
-                                                            && OffersTableLocalState.tableUser !== undefined
-                                                            && currentUser.id === OffersTableLocalState.tableUser.id
+                                                            isTeacher(currentStudent)
+                                                            && OffersTableLocalState.tableStudent !== undefined
+                                                            && currentStudent.id === OffersTableLocalState.tableStudent.id
                                                                 ? null
                                                                 : <Box marginTop="10px" >
                                                                     <Typography variant="body2" align="left" color="textSecondary" >
                                                                         <i>
                                                                             {
-                                                                                offerInstance.projectDetail.createdByGroupAdmin
-                                                                                    ? `Created by ${offerInstance.group.displayName} admin`
-                                                                                    : `Created by ${(offerInstance.issuer as User).firstName} ${(offerInstance.issuer as User).lastName}`
+                                                                                offerInstance.projectDetail.createdByCourseTeacher
+                                                                                    ? `Created by ${offerInstance.course.displayName} admin`
+                                                                                    : `Created by ${(offerInstance.issuer as Student).firstName} ${(offerInstance.issuer as Student).lastName}`
                                                                             }
                                                                         </i>
                                                                     </Typography>
@@ -508,14 +508,14 @@ class OffersTable extends Component<OffersTableProps, any> {
 
                                                         {/** Edit button (only available for draft project) */}
                                                         {
-                                                            isInvestor(currentUser)
+                                                            isStudent(currentStudent)
                                                                 ? null
                                                                 : !isDraftProject(offerInstance.projectDetail)
                                                                 ? null
                                                                 : <Box marginTop="18px" >
                                                                     <CustomLink
                                                                         url={
-                                                                            Routes.constructCreateProjectRoute(ManageGroupUrlState.groupNameFromUrl ?? null, {edit: offerInstance.projectDetail.id})
+                                                                            Routes.constructCreateProjectRoute(ManageCourseUrlState.courseNameFromUrl ?? null, {edit: offerInstance.projectDetail.id})
                                                                         }
                                                                         target="_blank"
                                                                         color="none"
@@ -570,13 +570,13 @@ class OffersTable extends Component<OffersTableProps, any> {
                                                             isDraftProject(offerInstance.projectDetail)
                                                                 ? "Draft"
                                                                 : isProjectWaitingToGoLive(offerInstance.projectDetail)
-                                                                ? "Submitted. Awaiting group admin review"
+                                                                ? "Submitted. Awaiting course admin review"
                                                                 : isProjectInLivePitchPhase(offerInstance.projectDetail)
                                                                     ? isProjectTemporarilyClosed(offerInstance.projectDetail)
                                                                         ? "Temporarily closed"
                                                                         : "Live"
-                                                                    : isProjectPitchExpiredWaitingForAdminToCheck(offerInstance.projectDetail)
-                                                                        ? "Expired. Awaiting group admin review"
+                                                                    : isProjectPitchExpiredWaitingForTeacherToCheck(offerInstance.projectDetail)
+                                                                        ? "Expired. Awaiting course admin review"
                                                                         : "Closed"
                                                         }
                                                     </Typography>

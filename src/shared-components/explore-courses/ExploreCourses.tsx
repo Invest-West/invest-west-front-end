@@ -5,13 +5,13 @@ import {AuthenticationState} from "../../redux-store/reducers/authenticationRedu
 import {
     calculatePaginationIndices,
     calculatePaginationPages,
-    ExploreGroupsState,
-    hasGroupsForCurrentFilters,
-    hasNotFetchedGroups,
-    isFetchingGroups,
-    isFilteringGroupsByName,
-    successfullyFetchedGroups
-} from "./ExploreGroupsReducer";
+    ExploreCoursesState,
+    hasCoursesForCurrentFilters,
+    hasNotFetchedCourses,
+    isFetchingCourses,
+    isFilteringCoursesByName,
+    successfullyFetchedCourses
+} from "./ExploreCoursesReducer";
 import {
     Box,
     Card,
@@ -24,81 +24,81 @@ import {
     Typography
 } from "@material-ui/core";
 import {Col, Row} from "react-bootstrap";
-import {getGroupRouteTheme, ManageGroupUrlState} from "../../redux-store/reducers/manageGroupUrlReducer";
+import {getCourseRouteTheme, ManageCourseUrlState} from "../../redux-store/reducers/manageCourseUrlReducer";
 import {ThunkDispatch} from "redux-thunk";
 import {AnyAction} from "redux";
 import {Close, Refresh, Search} from "@material-ui/icons";
 import {
-    cancelFilteringGroupsByName,
-    fetchGroups,
+    cancelFilteringCoursesByName,
+    fetchCourses,
     filterChanged,
-    filterGroupsByName,
+    filterCoursesByName,
     paginationChanged
 } from "./ExploreCoursesActions";
 import {BeatLoader} from "react-spinners";
-import GroupItem from "./GroupItem";
-import {isAdmin} from "../../models/admin";
+import CourseItem from "./CourseItem";
+import {isTeacher} from "../../models/teacher";
 import {MediaQueryState} from "../../redux-store/reducers/mediaQueryReducer";
 import {Pagination} from "@material-ui/lab";
 
-interface ExploreGroupsProps {
+interface ExploreCoursesProps {
     MediaQueryState: MediaQueryState;
-    ManageGroupUrlState: ManageGroupUrlState;
+    ManageCourseUrlState: ManageCourseUrlState;
     AuthenticationState: AuthenticationState;
-    ExploreGroupsLocalState: ExploreGroupsState;
-    fetchGroups: () => any;
+    ExploreCoursesLocalState: ExploreCoursesState;
+    fetchCourses: () => any;
     filterChanged: (event: any) => any;
-    filterGroupsByName: () => any;
-    cancelFilteringGroupsByName: () => any;
+    filterCoursesByName: () => any;
+    cancelFilteringCoursesByName: () => any;
     paginationChanged: (event: React.ChangeEvent<unknown>, page: number) => any;
 }
 
 const mapStateToProps = (state: AppState) => {
     return {
         MediaQueryState: state.MediaQueryState,
-        ManageGroupUrlState: state.ManageGroupUrlState,
+        ManageCourseUrlState: state.ManageCourseUrlState,
         AuthenticationState: state.AuthenticationState,
-        ExploreGroupsLocalState: state.ExploreGroupsLocalState
+        ExploreCoursesLocalState: state.ExploreCoursesLocalState
     }
 }
 
 const mapDispatchToProps = (dispatch: ThunkDispatch<any, any, AnyAction>) => {
     return {
-        fetchGroups: () => dispatch(fetchGroups()),
+        fetchCourses: () => dispatch(fetchCourses()),
         filterChanged: (event: any) => dispatch(filterChanged(event)),
-        filterGroupsByName: () => dispatch(filterGroupsByName()),
-        cancelFilteringGroupsByName: () => dispatch(cancelFilteringGroupsByName()),
+        filterCoursesByName: () => dispatch(filterCoursesByName()),
+        cancelFilteringCoursesByName: () => dispatch(cancelFilteringCoursesByName()),
         paginationChanged: (event: React.ChangeEvent<unknown>, page: number) => dispatch(paginationChanged(event, page))
     }
 }
 
-class ExploreGroups extends Component<ExploreGroupsProps, any> {
+class ExploreCourses extends Component<ExploreCoursesProps, any> {
 
     componentDidMount() {
-        if (hasNotFetchedGroups(this.props.ExploreGroupsLocalState)) {
-            this.props.fetchGroups();
+        if (hasNotFetchedCourses(this.props.ExploreCoursesLocalState)) {
+            this.props.fetchCourses();
         }
     }
 
     render() {
         const {
             MediaQueryState,
-            ManageGroupUrlState,
+            ManageCourseUrlState,
             AuthenticationState,
-            ExploreGroupsLocalState,
-            fetchGroups,
+            ExploreCoursesLocalState,
+            fetchCourses,
             filterChanged,
-            filterGroupsByName,
-            cancelFilteringGroupsByName,
+            filterCoursesByName,
+            cancelFilteringCoursesByName,
             paginationChanged
         } = this.props;
 
-        if (!AuthenticationState.currentUser) {
+        if (!AuthenticationState.currentStudent) {
             return null;
         }
 
-        const paginationPages = calculatePaginationPages(ExploreGroupsLocalState);
-        const paginationIndices = calculatePaginationIndices(ExploreGroupsLocalState);
+        const paginationPages = calculatePaginationPages(ExploreCoursesLocalState);
+        const paginationIndices = calculatePaginationIndices(ExploreCoursesLocalState);
 
         return <Box paddingX={MediaQueryState.isMobile ? "20px" : "56px"} paddingY={MediaQueryState.isMobile ? "15px" : "40px"} >
             <Row noGutters >
@@ -108,11 +108,11 @@ class ExploreGroups extends Component<ExploreGroupsProps, any> {
                             display="flex"
                             flexDirection="column"
                             alignItems="center"
-                            bgcolor={getGroupRouteTheme(ManageGroupUrlState).palette.primary.main}
+                            bgcolor={getCourseRouteTheme(ManageCourseUrlState).palette.primary.main}
                             color="white"
                             paddingY="28px"
                         >
-                            <Typography variant="h6" align="center">Groups on Invest West network</Typography>
+                            <Typography variant="h6" align="center">Courses on Invest West network</Typography>
 
                             <Box height="28px" />
 
@@ -120,25 +120,25 @@ class ExploreGroups extends Component<ExploreGroupsProps, any> {
                                 <InputBase
                                     fullWidth
                                     name="nameFilter"
-                                    value={ExploreGroupsLocalState.nameFilter}
-                                    placeholder="Search group by name"
+                                    value={ExploreCoursesLocalState.nameFilter}
+                                    placeholder="Search course by name"
                                     onChange={filterChanged}
-                                    disabled={!successfullyFetchedGroups(ExploreGroupsLocalState)}
+                                    disabled={!successfullyFetchedCourses(ExploreCoursesLocalState)}
                                     startAdornment={
                                         <InputAdornment position="start" >
                                             <IconButton
-                                                onClick={() => filterGroupsByName()}
-                                                disabled={!successfullyFetchedGroups(ExploreGroupsLocalState)}
+                                                onClick={() => filterCoursesByName()}
+                                                disabled={!successfullyFetchedCourses(ExploreCoursesLocalState)}
                                             >
                                                 <Search fontSize="small"/>
                                             </IconButton>
                                         </InputAdornment>
                                     }
                                     endAdornment={
-                                        !isFilteringGroupsByName(ExploreGroupsLocalState)
+                                        !isFilteringCoursesByName(ExploreCoursesLocalState)
                                             ? null
                                             : <InputAdornment position="end" >
-                                                <IconButton onClick={() => cancelFilteringGroupsByName()} >
+                                                <IconButton onClick={() => cancelFilteringCoursesByName()} >
                                                     <Close fontSize="small"/>
                                                 </IconButton>
                                             </InputAdornment>
@@ -150,31 +150,31 @@ class ExploreGroups extends Component<ExploreGroupsProps, any> {
                 </Col>
             </Row>
 
-            {/** Filters (only available for issuer and investor) */}
+            {/** Filters (only available for teacher and investor) */}
             {
-                isAdmin(AuthenticationState.currentUser)
+                isTeacher(AuthenticationState.currentStudent)
                     ? null
                     : <Row noGutters >
                         <Col xs={8} sm={8} md={3} lg={2} >
                             <Box display="flex" flexDirection="row" marginTop="48px" >
                                 <Select
                                     fullWidth
-                                    name="groupFilter"
-                                    value={ExploreGroupsLocalState.groupFilter}
+                                    name="courseFilter"
+                                    value={ExploreCoursesLocalState.courseFilter}
                                     variant="outlined"
                                     margin="dense"
                                     input={<OutlinedInput/>}
                                     onChange={filterChanged}
-                                    disabled={!successfullyFetchedGroups(ExploreGroupsLocalState)}
+                                    disabled={!successfullyFetchedCourses(ExploreCoursesLocalState)}
                                 >
-                                    <MenuItem key="all" value="all">All groups</MenuItem>
-                                    <MenuItem key="groupsOfMembership" value="groupsOfMembership">My groups</MenuItem>
-                                    <MenuItem key="groupsOfPendingRequest" value="groupsOfPendingRequest">Pending requests</MenuItem>
+                                    <MenuItem key="all" value="all">All courses</MenuItem>
+                                    <MenuItem key="coursesOfMembership" value="coursesOfMembership">My courses</MenuItem>
+                                    <MenuItem key="coursesOfPendingRequest" value="coursesOfPendingRequest">Pending requests</MenuItem>
                                 </Select>
 
                                 <Box width="15px" />
 
-                                <IconButton onClick={() => fetchGroups()} >
+                                <IconButton onClick={() => fetchCourses()} >
                                     <Refresh/>
                                 </IconButton>
                             </Box>
@@ -184,35 +184,35 @@ class ExploreGroups extends Component<ExploreGroupsProps, any> {
 
             {/** Loader */}
             {
-                !isFetchingGroups(ExploreGroupsLocalState)
+                !isFetchingCourses(ExploreCoursesLocalState)
                     ? null
                     : <Row noGutters >
                         <Col xs={12} sm={12} md={12} lg={12} >
                             <Box display="flex" marginY="80px" justifyContent="center" >
-                                <BeatLoader color={getGroupRouteTheme(ManageGroupUrlState).palette.primary.main} />
+                                <BeatLoader color={getCourseRouteTheme(ManageCourseUrlState).palette.primary.main} />
                             </Box>
                         </Col>
                     </Row>
             }
 
-            {/** Groups area */}
+            {/** Courses area */}
             {
-                !successfullyFetchedGroups(ExploreGroupsLocalState)
+                !successfullyFetchedCourses(ExploreCoursesLocalState)
                     ? null
-                    : !hasGroupsForCurrentFilters(ExploreGroupsLocalState)
+                    : !hasCoursesForCurrentFilters(ExploreCoursesLocalState)
                     ? <Box marginY="80px" >
-                        <Typography align="center" variant="h5" > There are no groups available using your current filter criteria </Typography>
+                        <Typography align="center" variant="h5" > There are no courses available using your current filter criteria </Typography>
                     </Box>
                     : <Box marginTop="30px" >
                         <Row noGutters >
                             <Col xs={12} sm={12} md={12} lg={12} >
                                 <Row>
                                     {
-                                        ExploreGroupsLocalState.groupsFiltered
+                                        ExploreCoursesLocalState.coursesFiltered
                                             .slice(paginationIndices.startIndex, paginationIndices.endIndex + 1)
-                                            .map(group =>
-                                                <Col key={group.anid} xs={12} sm={12} md={4} lg={3} xl={2} >
-                                                    <GroupItem group={group} />
+                                            .map(course =>
+                                                <Col key={course.anid} xs={12} sm={12} md={4} lg={3} xl={2} >
+                                                    <CourseItem course={course} />
                                                 </Col>
                                             )
                                     }
@@ -224,14 +224,14 @@ class ExploreGroups extends Component<ExploreGroupsProps, any> {
 
             {/** Pagination */}
             {
-                !successfullyFetchedGroups(ExploreGroupsLocalState)
+                !successfullyFetchedCourses(ExploreCoursesLocalState)
                     ? null
                     : paginationPages === 1
                     ? null
                     : <Row noGutters >
                         <Col xs={12} sm={12} md={12} lg={12} >
                             <Box display="flex" justifyContent="center" marginTop="55px" >
-                                <Pagination count={paginationPages} page={ExploreGroupsLocalState.currentPage} color="primary" onChange={paginationChanged} />
+                                <Pagination count={paginationPages} page={ExploreCoursesLocalState.currentPage} color="primary" onChange={paginationChanged} />
                             </Box>
                         </Col>
                     </Row>
@@ -240,4 +240,4 @@ class ExploreGroups extends Component<ExploreGroupsProps, any> {
     }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(ExploreGroups);
+export default connect(mapStateToProps, mapDispatchToProps)(ExploreCourses);

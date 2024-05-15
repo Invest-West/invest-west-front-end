@@ -1,83 +1,83 @@
 import Error from "../../models/error";
 import {
-    CompleteFetchingOffersAction,
-    ExploreOffersAction,
-    ExploreOffersEvents,
+    CompleteFetchingStudentOffersAction,
+    ExploreStudentOffersAction,
+    ExploreStudentOffersEvents,
     FilterChangedAction,
     PaginationChangedAction
 } from "./ExploreStudentOffersActions";
-import {ProjectInstance} from "../../models/project";
-import GroupProperties from "../../models/group_properties";
-import {FetchProjectsPhaseOptions} from "../../api/repositories/OfferRepository";
+import {StudentProjectInstance} from "../../models/studentProject";
+import CourseProperties from "../../models/course_properties";
+import {FetchStudentProjectsPhaseOptions} from "../../api/repositories/StudentOfferRepository";
 
 export const maxOffersPerPage: number = 12;
 
-export interface ExploreOffersState {
-    offerInstances: ProjectInstance[];
+export interface ExploreStudentOffersState {
+    offerStudentInstances: StudentProjectInstance[];
     fetchingOffers: boolean;
     offersFetched: boolean;
 
-    groups: GroupProperties[];
+    courses: CourseProperties[];
 
     searchFilter: string;
     visibilityFilter: number | "all";
     sectorFilter: string | "all";
-    phaseFilter: FetchProjectsPhaseOptions;
-    groupFilter: string | "all";
+    phaseFilter: FetchStudentProjectsPhaseOptions;
+    courseFilter: string | "all";
     currentPage: number;
 
     error?: Error;
 }
 
-const initialState: ExploreOffersState = {
-    offerInstances: [],
+const initialState: ExploreStudentOffersState = {
+    offerStudentInstances: [],
     fetchingOffers: false,
     offersFetched: false,
-    groups: [],
+    courses: [],
     searchFilter: "",
     visibilityFilter: "all",
     sectorFilter: "all",
-    phaseFilter: FetchProjectsPhaseOptions.Live,
-    groupFilter: "all",
+    phaseFilter: FetchStudentProjectsPhaseOptions.Live,
+    courseFilter: "all",
     currentPage: 1
 }
 
-export const hasNotFetchedOffers = (state: ExploreOffersState) => {
+export const hasNotFetchedOffers = (state: ExploreStudentOffersState) => {
     return !state.fetchingOffers && !state.offersFetched;
 }
 
-export const isFetchingOffers = (state: ExploreOffersState) => {
+export const isFetchingOffers = (state: ExploreStudentOffersState) => {
     return state.fetchingOffers;
 }
 
-export const successfullyFetchedOffers = (state: ExploreOffersState) => {
+export const successfullyFetchedOffers = (state: ExploreStudentOffersState) => {
     return state.offersFetched && !state.fetchingOffers && state.error === undefined;
 }
 
-export const hasOffersForCurrentFilters = (state: ExploreOffersState) => {
-    return successfullyFetchedOffers(state) && state.offerInstances.length > 0;
+export const hasOffersForCurrentFilters = (state: ExploreStudentOffersState) => {
+    return successfullyFetchedOffers(state) && state.offerStudentInstances.length > 0;
 }
 
-export const isSearchFilterActive = (state: ExploreOffersState) =>  {
+export const isSearchFilterActive = (state: ExploreStudentOffersState) =>  {
     return state.searchFilter.trim().length > 0;
 }
 
-export const calculatePaginationPages = (state: ExploreOffersState) => {
-    if (state.offerInstances.length <= maxOffersPerPage) {
+export const calculatePaginationPages = (state: ExploreStudentOffersState) => {
+    if (state.offerStudentInstances.length <= maxOffersPerPage) {
         return 1;
     }
-    if (state.offerInstances.length % maxOffersPerPage === 0) {
-        return (state.offerInstances.length / maxOffersPerPage) | 0;
+    if (state.offerStudentInstances.length % maxOffersPerPage === 0) {
+        return (state.offerStudentInstances.length / maxOffersPerPage) | 0;
     }
-    return ((state.offerInstances.length / maxOffersPerPage) | 0) + 1;
+    return ((state.offerStudentInstances.length / maxOffersPerPage) | 0) + 1;
 }
 
-export const calculatePaginationIndices = (state: ExploreOffersState) => {
+export const calculatePaginationIndices = (state: ExploreStudentOffersState) => {
     let startIndex, endIndex;
     startIndex = (state.currentPage - 1) * maxOffersPerPage;
     endIndex = startIndex + maxOffersPerPage - 1;
-    if (endIndex > state.offerInstances.length - 1) {
-        endIndex = state.offerInstances.length - 1;
+    if (endIndex > state.offerStudentInstances.length - 1) {
+        endIndex = state.offerStudentInstances.length - 1;
     }
     return {
         startIndex,
@@ -85,46 +85,46 @@ export const calculatePaginationIndices = (state: ExploreOffersState) => {
     };
 }
 
-const exploreOffersReducer = (state: ExploreOffersState = initialState, action: ExploreOffersAction) => {
+const exploreOffersReducer = (state: ExploreStudentOffersState = initialState, action: ExploreStudentOffersAction) => {
     //console.log("Current state:", state);
     //console.log("Received action:", action);
     switch (action.type) {
-        case ExploreOffersEvents.FetchingOffers:
+        case ExploreStudentOffersEvents.FetchingOffers:
             return {
                 ...state,
-                offerInstances: [],
+                offerStudentInstances: [],
                 fetchingOffers: true,
                 offersFetched: false,
                 error: undefined
             }
-        case ExploreOffersEvents.CompleteFetchingOffers:
-            const completeFetchingOffersAction: CompleteFetchingOffersAction = action as CompleteFetchingOffersAction;
+        case ExploreStudentOffersEvents.CompleteFetchingOffers:
+            const CompleteFetchingStudentOffersAction: CompleteFetchingStudentOffersAction = action as CompleteFetchingStudentOffersAction;
             return {
                 ...state,
-                offerInstances: [...completeFetchingOffersAction.offerInstances],
+                offerStudentInstances: [...CompleteFetchingStudentOffersAction.offerStudentInstances],
                 fetchingOffers: false,
                 offersFetched: true,
                 currentPage: 1,
-                error: completeFetchingOffersAction.error !== undefined
-                    ? {detail: completeFetchingOffersAction.error} : state.error
+                error: CompleteFetchingStudentOffersAction.error !== undefined
+                    ? {detail: CompleteFetchingStudentOffersAction.error} : state.error
             }
-        case ExploreOffersEvents.FilterChanged:
+        case ExploreStudentOffersEvents.FilterChanged:
             const filterChangedAction: FilterChangedAction = action as FilterChangedAction;
             return {
                 ...state,
                 [filterChangedAction.name]: filterChangedAction.value,
-                offerInstances: [],
+                offerStudentInstances: [],
                 fetchingOffers: false,
                 offersFetched: false,
                 currentPage: 1,
                 error: undefined
             };
-        case ExploreOffersEvents.ClearSearchFilter:
+        case ExploreStudentOffersEvents.ClearSearchFilter:
             return {
                 ...state,
                 searchFilter: ""
             }
-        case ExploreOffersEvents.PaginationChanged:
+        case ExploreStudentOffersEvents.PaginationChanged:
             const paginationChangedAction: PaginationChangedAction = action as PaginationChangedAction;
             return {
                 ...state,

@@ -1,11 +1,11 @@
-import * as groupAdminSettingsActions from "../actions/groupAdminSettingsActions";
-import * as manageANIDFromParamsActions from "../actions/manageGroupFromParamsActions";
+import * as courseTeacherSettingsActions from "../actions/courseTeacherSettingsActions";
+import * as manageANIDFromParamsActions from "../actions/manageCourseFromParamsActions";
 import * as authActions from "../actions/authActions";
 import * as DB_CONST from "../../firebase/databaseConsts";
 import * as utils from "../../utils/utils"
 
 const initState = {
-    groupAttributesEdited: null,
+    courseAttributesEdited: null,
 
     website: '',
     description: '',
@@ -21,35 +21,35 @@ const initState = {
     editedPledgeAnswer: ''
 };
 
-const groupAdminSettingsReducer = (state = initState, action) => {
+const courseTeacherSettingsReducer = (state = initState, action) => {
     switch (action.type) {
         case authActions.LOG_OUT:
             return initState;
-        case groupAdminSettingsActions.GROUP_ADMIN_SETTINGS_INITIALIZE_GROUP_ATTRIBUTES_EDITED:
+        case courseTeacherSettingsActions.COURSE_TEACHER_SETTINGS_INITIALIZE_COURSE_ATTRIBUTES_EDITED:
 
-            let groupSettings = JSON.parse(JSON.stringify(action.group.settings));
+            let courseSettings = JSON.parse(JSON.stringify(action.course.settings));
             // if the defaultPitchExpiryDate property does not exist,
             // assign it with an initial value
-            if (!groupSettings.hasOwnProperty('defaultPitchExpiryDate')) {
-                groupSettings.defaultPitchExpiryDate = utils.getDateWithDaysFurtherThanToday(1);
+            if (!courseSettings.hasOwnProperty('defaultPitchExpiryDate')) {
+                courseSettings.defaultPitchExpiryDate = utils.getDateWithDaysFurtherThanToday(1);
             }
 
             return {
                 ...state,
-                groupAttributesEdited: groupSettings,
-                website:  action.group.hasOwnProperty('website') ? action.group.website : '',
-                description: action.group.hasOwnProperty('description') ? action.group.description : '',
-                primaryColor: action.group.settings.primaryColor,
-                secondaryColor: action.group.settings.secondaryColor
+                courseAttributesEdited: courseSettings,
+                website:  action.course.hasOwnProperty('website') ? action.course.website : '',
+                description: action.course.hasOwnProperty('description') ? action.course.description : '',
+                primaryColor: action.course.settings.primaryColor,
+                secondaryColor: action.course.settings.secondaryColor
             };
-        case groupAdminSettingsActions.GROUP_ADMIN_SETTINGS_CHANGED:
-            const isPropertyOfGroupAttributes = action.isPropertyOfGroupAttributes;
+        case courseTeacherSettingsActions.COURSE_TEACHER_SETTINGS_CHANGED:
+            const isPropertyOfCourseAttributes = action.isPropertyOfCourseAttributes;
 
-            if (isPropertyOfGroupAttributes) {
+            if (isPropertyOfCourseAttributes) {
                 return {
                     ...state,
-                    groupAttributesEdited: {
-                        ...state.groupAttributesEdited,
+                    courseAttributesEdited: {
+                        ...state.courseAttributesEdited,
                         [action.name]: action.value
                     }
                 };
@@ -64,7 +64,7 @@ const groupAdminSettingsReducer = (state = initState, action) => {
             if (action.key === 'settings') {
                 return {
                     ...state,
-                    groupAttributesEdited: JSON.parse(JSON.stringify(action.value)),
+                    courseAttributesEdited: JSON.parse(JSON.stringify(action.value)),
                     primaryColor: action.value.primaryColor,
                     secondaryColor: action.value.secondaryColor,
                     expandedPledgeFAQ:
@@ -89,32 +89,32 @@ const groupAdminSettingsReducer = (state = initState, action) => {
                     [action.key]: action.value
                 }
             }
-        case groupAdminSettingsActions.GROUP_ADMIN_SETTINGS_PLEDGE_FAQ_PANEL_EXPANSION_CHANGED:
+        case courseTeacherSettingsActions.COURSE_TEACHER_SETTINGS_PLEDGE_FAQ_PANEL_EXPANSION_CHANGED:
             return {
                 ...state,
                 expandedPledgeFAQ: action.expandedPledgeFAQ,
                 editExpandedPledgeFAQ: action.editExpandedPledgeFAQ
             };
-        case groupAdminSettingsActions.GROUP_ADMIN_SETTINGS_TOGGLE_ADD_NEW_PLEDGE_FAQ:
+        case courseTeacherSettingsActions.COURSE_TEACHER_SETTINGS_TOGGLE_ADD_NEW_PLEDGE_FAQ:
             return {
                 ...state,
                 addNewPledgeFAQ: !state.addNewPledgeFAQ,
                 addedPledgeQuestion: '',
                 addedPledgeAnswer: ''
             };
-        case groupAdminSettingsActions.GROUP_ADMIN_SETTINGS_TOGGLE_EDIT_EXPANDED_PLEDGE_FAQ:
+        case courseTeacherSettingsActions.COURSE_TEACHER_SETTINGS_TOGGLE_EDIT_EXPANDED_PLEDGE_FAQ:
             return {
                 ...state,
                 editExpandedPledgeFAQ: !state.editExpandedPledgeFAQ,
                 editedPledgeQuestion: !state.editExpandedPledgeFAQ ? state.expandedPledgeFAQ.question : '',
                 editedPledgeAnswer: !state.editExpandedPledgeFAQ ? state.expandedPledgeFAQ.answer : ''
             };
-        case groupAdminSettingsActions.GROUP_ADMIN_SETTINGS_CANCEL_EDITING_GROUP_DETAILS:
+        case courseTeacherSettingsActions.COURSE_TEACHER_SETTINGS_CANCEL_EDITING_COURSE_DETAILS:
             return {
                 ...state,
                 [action.name]: action.value
             };
-        case groupAdminSettingsActions.GROUP_ADMIN_SETTINGS_CANCEL_EDITING_COLOR:
+        case courseTeacherSettingsActions.COURSE_TEACHER_SETTINGS_CANCEL_EDITING_COLOR:
             return {
                 ...state,
                 primaryColor: action.field === "primaryColor" ? action.color : state.primaryColor,
@@ -125,4 +125,4 @@ const groupAdminSettingsReducer = (state = initState, action) => {
     }
 };
 
-export default groupAdminSettingsReducer;
+export default courseTeacherSettingsReducer;

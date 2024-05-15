@@ -2,77 +2,77 @@ import React, {Component} from "react";
 import {connect} from "react-redux";
 import {AppState} from "../../redux-store/reducers";
 import {Box, Button, Card, CardActionArea, CardActions, colors, Typography} from "@material-ui/core";
-import GroupProperties, {getGroupLogo} from "../../models/group_properties";
+import CourseProperties, {getCourseLogo} from "../../models/course_properties";
 import {Image} from "react-bootstrap";
 import {AuthenticationState} from "../../redux-store/reducers/authenticationReducer";
 import {css} from "aphrodite";
 import sharedStyles from "../../shared-js-css-styles/SharedStyles";
-import {isAdmin} from "../../models/admin";
+import {isTeacher} from "../../models/teacher";
 import {
-    ExploreGroupsState,
+    ExploreCoursesState,
     hasAccessRequestsBeenSatisfied,
     isRemovingAccessRequest,
     isSendingAccessRequest
 } from "./ExploreCoursesReducer";
-import GroupOfMembership, {getHomeGroup} from "../../models/group_of_membership";
+import CourseOfMembership, {getHomeCourse} from "../../models/course_of_membership";
 import {CheckCircle} from "@material-ui/icons";
 import {ThunkDispatch} from "redux-thunk";
 import {AnyAction} from "redux";
 import {removeAccessRequest, sendAccessRequest} from "./ExploreCoursesActions";
 import CustomLink from "../../shared-js-css-styles/CustomLink";
 import Routes from "../../router/routes";
-import {ManageGroupUrlState} from "../../redux-store/reducers/manageGroupUrlReducer";
+import {ManageCourseUrlState} from "../../redux-store/reducers/manageCourseUrlReducer";
 import * as realtimeDBUtils from "../../firebase/realtimeDBUtils";
 import * as DB_CONST from "../../firebase/databaseConsts";
 
-interface GroupItemProps {
-    group: GroupProperties;
-    ManageGroupUrlState: ManageGroupUrlState;
+interface CourseItemProps {
+    course: CourseProperties;
+    ManageCourseUrlState: ManageCourseUrlState;
     AuthenticationState: AuthenticationState;
-    ExploreGroupsLocalState: ExploreGroupsState;
-    sendAccessRequest: (groupID: string) => any;
-    removeAccessRequest: (groupID: string) => any;
+    ExploreCoursesLocalState: ExploreCoursesState;
+    sendAccessRequest: (courseID: string) => any;
+    removeAccessRequest: (courseID: string) => any;
 }
 
 const mapStateToProps = (state: AppState) => {
     return {
-        ManageGroupUrlState: state.ManageGroupUrlState,
+        ManageCourseUrlState: state.ManageCourseUrlState,
         AuthenticationState: state.AuthenticationState,
-        ExploreGroupsLocalState: state.ExploreGroupsLocalState
+        ExploreCoursesLocalState: state.ExploreCoursesLocalState
     }
 }
 
 const mapDispatchToProps = (dispatch: ThunkDispatch<any, any, AnyAction>) => {
     return {
-        sendAccessRequest: (groupID: string) => dispatch(sendAccessRequest(groupID)),
-        removeAccessRequest: (groupID: string) => dispatch(removeAccessRequest(groupID))
+        sendAccessRequest: (courseID: string) => dispatch(sendAccessRequest(courseID)),
+        removeAccessRequest: (courseID: string) => dispatch(removeAccessRequest(courseID))
     }
 }
 
-class GroupItem extends Component<GroupItemProps, any> {
+class CourseItem extends Component<CourseItemProps, any> {
     render() {
         const {
-            group,
-            ManageGroupUrlState,
+            course,
+            ManageCourseUrlState,
             AuthenticationState,
-            ExploreGroupsLocalState,
+            ExploreCoursesLocalState,
             sendAccessRequest,
             removeAccessRequest
         } = this.props;
 
-        const currentUser = AuthenticationState.currentUser;
+        const currentStudent = AuthenticationState.currentStudent;
 
-        if (!currentUser) {
+        if (!currentStudent) {
             return null;
         }
 
-        let groupMember: GroupOfMembership | undefined = AuthenticationState.groupsOfMembership.find(
-            groupOfMembership => groupOfMembership.group.anid === group.anid);
+        let courseMember: CourseOfMembership | undefined = AuthenticationState.coursesOfMembership.find(
+            courseOfMembership => courseOfMembership.course.anid === course.anid);
 
-        let hasRequestedToAccessGroup: boolean = false;
-        if (hasAccessRequestsBeenSatisfied(ExploreGroupsLocalState)) {
-            hasRequestedToAccessGroup = ExploreGroupsLocalState.accessRequestsInstances
-                ?.findIndex(accessRequestInstance => accessRequestInstance.group.anid === group.anid) !== -1;
+        let hasRequestedToAccessCourse: boolean = false;
+        if (hasAccessRequestsBeenSatisfied(ExploreCoursesLocalState)) {
+            hasRequestedToAccessCourse = ExploreCoursesLocalState.accessRequestsInstances
+                ?.findIndex(accessRequestInstance => accessRequestInstance.course.anid === course.anid) !== -1;
         }
 
         return <Box
@@ -80,7 +80,7 @@ class GroupItem extends Component<GroupItemProps, any> {
         >
             <Card>
                 <CustomLink
-                    url={Routes.constructGroupDetailRoute(ManageGroupUrlState.groupNameFromUrl ?? null, group.groupUserName)}
+                    url={Routes.constructCourseDetailRoute(ManageCourseUrlState.courseNameFromUrl ?? null, course.courseStudentName)}
                     color="black"
                     activeColor="none"
                     activeUnderline={false}
@@ -89,14 +89,14 @@ class GroupItem extends Component<GroupItemProps, any> {
                         <CardActionArea
                             onClick={
                                 () => {
-                                    if (!isAdmin(currentUser)) {
+                                    if (!isTeacher(currentStudent)) {
                                         realtimeDBUtils.trackActivity({
-                                            userID: currentUser.id,
+                                            studentID: currentStudent.id,
                                             activityType: DB_CONST.ACTIVITY_TYPE_CLICK,
                                             interactedObjectLocation: DB_CONST.GROUP_PROPERTIES_CHILD,
-                                            interactedObjectID: group.anid,
-                                            activitySummary: realtimeDBUtils.ACTIVITY_SUMMARY_TEMPLATE_CLICKED_ON_GROUP_ITEM.replace("%group%", group.displayName),
-                                            action: Routes.nonGroupViewGroup.replace(":groupID", group.anid)
+                                            interactedObjectID: course.anid,
+                                            activitySummary: realtimeDBUtils.ACTIVITY_SUMMARY_TEMPLATE_CLICKED_ON_GROUP_ITEM.replace("%course%", course.displayName),
+                                            action: Routes.nonCourseViewCourse.replace(":courseID", course.anid)
                                         });
                                     }
                                 }
@@ -105,8 +105,8 @@ class GroupItem extends Component<GroupItemProps, any> {
                             <Box>
                                 <Box display="flex" height="220px" justifyContent="center" bgcolor={colors.grey["200"]} >
                                     <Image
-                                        alt={`${group.displayName} logo`}
-                                        src={getGroupLogo(group) ?? undefined}
+                                        alt={`${course.displayName} logo`}
+                                        src={getCourseLogo(course) ?? undefined}
                                         height="auto"
                                         width="100%"
                                         style={{ padding: 40, objectFit: "scale-down" }}
@@ -114,17 +114,17 @@ class GroupItem extends Component<GroupItemProps, any> {
                                 </Box>
 
                                 <Box paddingX="18px" paddingY="20px" >
-                                    <Typography variant="subtitle1" align="center" noWrap ><b>{group.displayName}</b></Typography>
+                                    <Typography variant="subtitle1" align="center" noWrap ><b>{course.displayName}</b></Typography>
 
                                     {
-                                        !groupMember
+                                        !courseMember
                                             ? null
                                             : <Box display="flex" flexDirection="row" marginTop="15px" alignItems="center" justifyContent="center" >
                                                 <CheckCircle fontSize="small" color="primary" />
                                                 <Box width="6px" />
                                                 <Typography variant="body1" align="center" noWrap color="textSecondary" >
                                                     {
-                                                        getHomeGroup(AuthenticationState.groupsOfMembership)?.group.anid === groupMember.group.anid
+                                                        getHomeCourse(AuthenticationState.coursesOfMembership)?.course.anid === courseMember.course.anid
                                                             ? "Home member"
                                                             : "Platform member"
                                                     }
@@ -138,35 +138,35 @@ class GroupItem extends Component<GroupItemProps, any> {
                 />
 
                 {
-                    isAdmin(currentUser)
+                    isTeacher(currentStudent)
                         ? null
-                        : groupMember
+                        : courseMember
                         ? null
                         : <CardActions style={{ padding: 0 }} >
                             <Box display="flex" width="100%" padding="18px" justifyContent="center" >
                                 {
-                                    !hasRequestedToAccessGroup
+                                    !hasRequestedToAccessCourse
                                         ? <Button
                                             fullWidth
                                             variant="outlined"
                                             className={css(sharedStyles.no_text_transform)}
-                                            onClick={() => sendAccessRequest(group.anid)}
-                                            disabled={isSendingAccessRequest(ExploreGroupsLocalState, group.anid)}
+                                            onClick={() => sendAccessRequest(course.anid)}
+                                            disabled={isSendingAccessRequest(ExploreCoursesLocalState, course.anid)}
                                         >
                                             {
-                                                isSendingAccessRequest(ExploreGroupsLocalState, group.anid)
+                                                isSendingAccessRequest(ExploreCoursesLocalState, course.anid)
                                                     ? "Sending request ..."
-                                                    : "Join Group"
+                                                    : "Join Course"
                                             }
                                         </Button>
                                         : <Button
                                             variant="outlined"
                                             className={css(sharedStyles.no_text_transform)}
-                                            onClick={() => removeAccessRequest(group.anid)}
-                                            disabled={isRemovingAccessRequest(ExploreGroupsLocalState, group.anid)}
+                                            onClick={() => removeAccessRequest(course.anid)}
+                                            disabled={isRemovingAccessRequest(ExploreCoursesLocalState, course.anid)}
                                         >
                                             {
-                                                isRemovingAccessRequest(ExploreGroupsLocalState, group.anid)
+                                                isRemovingAccessRequest(ExploreCoursesLocalState, course.anid)
                                                     ? "Cancelling ..."
                                                     : "Cancel request"
                                             }
@@ -180,4 +180,4 @@ class GroupItem extends Component<GroupItemProps, any> {
     }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(GroupItem);
+export default connect(mapStateToProps, mapDispatchToProps)(CourseItem);

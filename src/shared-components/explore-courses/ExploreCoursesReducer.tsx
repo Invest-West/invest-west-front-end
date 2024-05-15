@@ -1,94 +1,94 @@
 import {
-    CompleteFetchingGroupsAction,
+    CompleteFetchingCoursesAction,
     CompleteRemovingAccessRequestAction,
     CompleteSendingAccessRequestAction,
-    ExploreGroupsAction,
-    ExploreGroupsEvents,
+    ExploreCoursesAction,
+    ExploreCoursesEvents,
     FilterChangedAction,
-    FilterGroupsByGroupFilterAction,
+    FilterCoursesByCourseFilterAction,
     PaginationChangedAction, RemovingAccessRequestAction, SendingAccessRequestAction
 } from "./ExploreCoursesActions";
-import GroupProperties from "../../models/group_properties";
+import CourseProperties from "../../models/course_properties";
 import Error from "../../models/error";
 import {AccessRequestInstance} from "../../models/access_request";
 
-export const maxGroupsPerPage: number = 12;
+export const maxCoursesPerPage: number = 12;
 
-export interface ExploreGroupsState {
-    groups: GroupProperties[];
+export interface ExploreCoursesState {
+    courses: CourseProperties[];
     accessRequestsInstances?: AccessRequestInstance[]; // only available for issuer or investor
-    fetchingGroups: boolean;
-    groupsFetched: boolean;
+    fetchingCourses: boolean;
+    coursesFetched: boolean;
 
-    filteringGroupsByName: boolean;
+    filteringCoursesByName: boolean;
     nameFilter: string;
-    groupFilter: "all" | "groupsOfMembership" | "groupsOfPendingRequest";
-    groupsFiltered: GroupProperties[];
+    courseFilter: "all" | "coursesOfMembership" | "coursesOfPendingRequest";
+    coursesFiltered: CourseProperties[];
 
     currentPage: number;
 
     error?: Error;
 
-    sendingAccessRequestToGroup?: string;
+    sendingAccessRequestToCourse?: string;
     errorSendingAccessRequest?: Error;
 
-    removingAccessRequestFromGroup?: string;
+    removingAccessRequestFromCourse?: string;
     errorRemovingAccessRequest?: Error;
 }
 
-const initialState: ExploreGroupsState = {
-    groups: [],
-    fetchingGroups: false,
-    groupsFetched: false,
+const initialState: ExploreCoursesState = {
+    courses: [],
+    fetchingCourses: false,
+    coursesFetched: false,
 
-    filteringGroupsByName: false,
+    filteringCoursesByName: false,
     nameFilter: "",
-    groupFilter: "all",
-    groupsFiltered: [],
+    courseFilter: "all",
+    coursesFiltered: [],
 
     currentPage: 1
 }
 
-export const hasNotFetchedGroups = (state: ExploreGroupsState) => {
-    return !state.groupsFetched && !state.fetchingGroups;
+export const hasNotFetchedCourses = (state: ExploreCoursesState) => {
+    return !state.coursesFetched && !state.fetchingCourses;
 }
 
-export const isFetchingGroups = (state: ExploreGroupsState) => {
-    return !state.groupsFetched && state.fetchingGroups;
+export const isFetchingCourses = (state: ExploreCoursesState) => {
+    return !state.coursesFetched && state.fetchingCourses;
 }
 
-export const successfullyFetchedGroups = (state: ExploreGroupsState) => {
-    return state.groupsFetched && !state.fetchingGroups && state.error === undefined;
+export const successfullyFetchedCourses = (state: ExploreCoursesState) => {
+    return state.coursesFetched && !state.fetchingCourses && state.error === undefined;
 }
 
-export const isFilteringGroupsByName = (state: ExploreGroupsState) => {
-    return state.filteringGroupsByName;
+export const isFilteringCoursesByName = (state: ExploreCoursesState) => {
+    return state.filteringCoursesByName;
 }
 
-export const hasGroupsForCurrentFilters = (state: ExploreGroupsState) => {
-    return successfullyFetchedGroups(state) && state.groupsFiltered.length > 0;
+export const hasCoursesForCurrentFilters = (state: ExploreCoursesState) => {
+    return successfullyFetchedCourses(state) && state.coursesFiltered.length > 0;
 }
 
-export const hasAccessRequestsBeenSatisfied = (state: ExploreGroupsState) => {
-    return successfullyFetchedGroups(state) && state.accessRequestsInstances !== undefined;
+export const hasAccessRequestsBeenSatisfied = (state: ExploreCoursesState) => {
+    return successfullyFetchedCourses(state) && state.accessRequestsInstances !== undefined;
 }
 
-export const calculatePaginationPages = (state: ExploreGroupsState) => {
-    if (state.groupsFiltered.length <= maxGroupsPerPage) {
+export const calculatePaginationPages = (state: ExploreCoursesState) => {
+    if (state.coursesFiltered.length <= maxCoursesPerPage) {
         return 1;
     }
-    if (state.groupsFiltered.length % maxGroupsPerPage === 0) {
-        return (state.groupsFiltered.length / maxGroupsPerPage) | 0;
+    if (state.coursesFiltered.length % maxCoursesPerPage === 0) {
+        return (state.coursesFiltered.length / maxCoursesPerPage) | 0;
     }
-    return ((state.groupsFiltered.length / maxGroupsPerPage) | 0) + 1;
+    return ((state.coursesFiltered.length / maxCoursesPerPage) | 0) + 1;
 }
 
-export const calculatePaginationIndices = (state: ExploreGroupsState) => {
+export const calculatePaginationIndices = (state: ExploreCoursesState) => {
     let startIndex, endIndex;
-    startIndex = (state.currentPage - 1) * maxGroupsPerPage;
-    endIndex = startIndex + maxGroupsPerPage - 1;
-    if (endIndex > state.groupsFiltered.length - 1) {
-        endIndex = state.groupsFiltered.length - 1;
+    startIndex = (state.currentPage - 1) * maxCoursesPerPage;
+    endIndex = startIndex + maxCoursesPerPage - 1;
+    if (endIndex > state.coursesFiltered.length - 1) {
+        endIndex = state.coursesFiltered.length - 1;
     }
     return {
         startIndex,
@@ -96,106 +96,106 @@ export const calculatePaginationIndices = (state: ExploreGroupsState) => {
     };
 }
 
-export const isSendingAccessRequest = (state: ExploreGroupsState, groupID: string) => {
-    return state.sendingAccessRequestToGroup !== undefined && state.sendingAccessRequestToGroup === groupID;
+export const isSendingAccessRequest = (state: ExploreCoursesState, courseID: string) => {
+    return state.sendingAccessRequestToCourse !== undefined && state.sendingAccessRequestToCourse === courseID;
 }
 
-export const hasErrorSendingAccessRequest = (state: ExploreGroupsState, groupID: string) => {
-    return !isSendingAccessRequest(state, groupID) && state.errorSendingAccessRequest !== undefined;
+export const hasErrorSendingAccessRequest = (state: ExploreCoursesState, courseID: string) => {
+    return !isSendingAccessRequest(state, courseID) && state.errorSendingAccessRequest !== undefined;
 }
 
-export const isRemovingAccessRequest = (state: ExploreGroupsState, groupID: string) => {
-    return state.removingAccessRequestFromGroup !== undefined && state.removingAccessRequestFromGroup === groupID;
+export const isRemovingAccessRequest = (state: ExploreCoursesState, courseID: string) => {
+    return state.removingAccessRequestFromCourse !== undefined && state.removingAccessRequestFromCourse === courseID;
 }
 
-export const hasErrorRemovingAccessRequest = (state: ExploreGroupsState, groupID: string) => {
-    return !isRemovingAccessRequest(state, groupID) && state.errorRemovingAccessRequest !== undefined;
+export const hasErrorRemovingAccessRequest = (state: ExploreCoursesState, courseID: string) => {
+    return !isRemovingAccessRequest(state, courseID) && state.errorRemovingAccessRequest !== undefined;
 }
 
-const exploreGroupsReducer = (state = initialState, action: ExploreGroupsAction) => {
+const exploreCoursesReducer = (state = initialState, action: ExploreCoursesAction) => {
     switch (action.type) {
-        case ExploreGroupsEvents.FetchingGroups:
+        case ExploreCoursesEvents.FetchingCourses:
             return {
                 ...state,
-                groups: [],
-                fetchingGroups: true,
-                groupsFetched: false,
+                courses: [],
+                fetchingCourses: true,
+                coursesFetched: false,
                 error: undefined
             }
-        case ExploreGroupsEvents.CompleteFetchingGroups:
-            const completeFetchingGroupsAction: CompleteFetchingGroupsAction = action as CompleteFetchingGroupsAction;
+        case ExploreCoursesEvents.CompleteFetchingCourses:
+            const completeFetchingCoursesAction: CompleteFetchingCoursesAction = action as CompleteFetchingCoursesAction;
             return {
                 ...state,
-                groups: [...completeFetchingGroupsAction.groups],
-                accessRequestsInstances: completeFetchingGroupsAction.accessRequestInstances !== undefined
-                    ? [...completeFetchingGroupsAction.accessRequestInstances]
+                courses: [...completeFetchingCoursesAction.courses],
+                accessRequestsInstances: completeFetchingCoursesAction.accessRequestInstances !== undefined
+                    ? [...completeFetchingCoursesAction.accessRequestInstances]
                     : state.accessRequestsInstances,
-                fetchingGroups: false,
-                groupsFetched: true,
+                fetchingCourses: false,
+                coursesFetched: true,
                 currentPage: 1,
-                error: completeFetchingGroupsAction.error !== undefined
-                    ? {detail: completeFetchingGroupsAction.error} : state.error
+                error: completeFetchingCoursesAction.error !== undefined
+                    ? {detail: completeFetchingCoursesAction.error} : state.error
             }
-        case ExploreGroupsEvents.FilterChanged:
+        case ExploreCoursesEvents.FilterChanged:
             const filterChangedAction: FilterChangedAction = action as FilterChangedAction;
             return {
                 ...state,
                 [filterChangedAction.name]: filterChangedAction.value
             }
-        case ExploreGroupsEvents.FilterGroupsByName:
+        case ExploreCoursesEvents.FilterCoursesByName:
             return {
                 ...state,
-                filteringGroupsByName: true
+                filteringCoursesByName: true
             }
-        case ExploreGroupsEvents.CancelFilterGroupsByName:
+        case ExploreCoursesEvents.CancelFilterCoursesByName:
             return {
                 ...state,
                 nameFilter: "",
-                filteringGroupsByName: false
+                filteringCoursesByName: false
             }
-        case ExploreGroupsEvents.FilterGroupsByGroupFilter:
-            const filterGroupsByGroupFilterAction: FilterGroupsByGroupFilterAction = action as FilterGroupsByGroupFilterAction;
+        case ExploreCoursesEvents.FilterCoursesByCourseFilter:
+            const filterCoursesByCourseFilterAction: FilterCoursesByCourseFilterAction = action as FilterCoursesByCourseFilterAction;
             return {
                 ...state,
-                groupsFiltered: [...filterGroupsByGroupFilterAction.groupsFiltered],
+                coursesFiltered: [...filterCoursesByCourseFilterAction.coursesFiltered],
                 currentPage: 1
             }
-        case ExploreGroupsEvents.PaginationChanged:
+        case ExploreCoursesEvents.PaginationChanged:
             const paginationChangedAction: PaginationChangedAction = action as PaginationChangedAction;
             return {
                 ...state,
                 currentPage: paginationChangedAction.page
             }
-        case ExploreGroupsEvents.SendingAccessRequest:
+        case ExploreCoursesEvents.SendingAccessRequest:
             const sendingAccessRequestAction: SendingAccessRequestAction = action as SendingAccessRequestAction;
             return {
                 ...state,
-                sendingAccessRequestToGroup: sendingAccessRequestAction.groupID,
+                sendingAccessRequestToCourse: sendingAccessRequestAction.courseID,
                 errorSendingAccessRequest: undefined
             }
-        case ExploreGroupsEvents.CompleteSendingAccessRequest:
+        case ExploreCoursesEvents.CompleteSendingAccessRequest:
             const completeSendingAccessRequestAction: CompleteSendingAccessRequestAction = action as CompleteSendingAccessRequestAction;
             return {
                 ...state,
-                sendingAccessRequestToGroup: undefined,
+                sendingAccessRequestToCourse: undefined,
                 accessRequestsInstances: completeSendingAccessRequestAction.updatedAccessRequestInstances !== undefined
                     ? [...completeSendingAccessRequestAction.updatedAccessRequestInstances]
                     : state.accessRequestsInstances,
                 errorSendingAccessRequest: completeSendingAccessRequestAction.error !== undefined
                     ? {detail: completeSendingAccessRequestAction.error} : state.errorSendingAccessRequest
             }
-        case ExploreGroupsEvents.RemovingAccessRequest:
+        case ExploreCoursesEvents.RemovingAccessRequest:
             const removingAccessRequestAction: RemovingAccessRequestAction = action as RemovingAccessRequestAction;
             return {
                 ...state,
-                removingAccessRequestFromGroup: removingAccessRequestAction.groupID,
+                removingAccessRequestFromCourse: removingAccessRequestAction.courseID,
                 errorRemovingAccessRequest: undefined
             }
-        case ExploreGroupsEvents.CompleteRemovingAccessRequest:
+        case ExploreCoursesEvents.CompleteRemovingAccessRequest:
             const completeRemovingAccessRequestAction: CompleteRemovingAccessRequestAction = action as CompleteRemovingAccessRequestAction;
             return {
                 ...state,
-                removingAccessRequestFromGroup: undefined,
+                removingAccessRequestFromCourse: undefined,
                 accessRequestsInstances: completeRemovingAccessRequestAction.updatedAccessRequestInstances !== undefined
                     ? [...completeRemovingAccessRequestAction.updatedAccessRequestInstances]
                     : state.accessRequestsInstances,
@@ -207,4 +207,4 @@ const exploreGroupsReducer = (state = initialState, action: ExploreGroupsAction)
     }
 }
 
-export default exploreGroupsReducer;
+export default exploreCoursesReducer;

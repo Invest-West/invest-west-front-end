@@ -1,5 +1,7 @@
 import User from "../../models/user";
+import Student from "../../models/student";
 import Admin from "../../models/admin";
+import Teacher from "../../models/teacher";
 import {
     AuthenticationAction,
     AuthenticationEvents,
@@ -8,6 +10,7 @@ import {
 } from "../actions/authenticationActions";
 import Error from "../../models/error";
 import GroupOfMembership from "../../models/group_of_membership";
+import CourseOfMembership from "../../models/course_of_membership";
 import InvestorSelfCertification from "../../models/investor_self_certification";
 
 export enum AuthenticationStatus {
@@ -25,10 +28,25 @@ export interface AuthenticationState {
     error?: Error
 }
 
+export interface StudentAuthenticationState {
+    status: AuthenticationStatus;
+    currentStudent: Student | Teacher | null;
+    coursesOfMembership: CourseOfMembership[];
+    error?: Error
+}
+
 const initialState: AuthenticationState = {
     status: AuthenticationStatus.NotInitialized,
     currentUser: null,
     groupsOfMembership: []
+}
+
+
+// Student path
+const startState: StudentAuthenticationState = {
+    status: AuthenticationStatus.NotInitialized,
+    currentStudent: null,
+    coursesOfMembership: []
 }
 
 export const authIsNotInitialized = (state: AuthenticationState) => {
@@ -46,6 +64,25 @@ export const successfullyAuthenticated = (state: AuthenticationState) => {
 export const hasAuthenticationError = (state: AuthenticationState) => {
     return state.error !== undefined;
 }
+
+//Student path
+export const authStudentIsNotInitialized = (state: StudentAuthenticationState) => {
+    return state.status === AuthenticationStatus.NotInitialized;
+}
+
+export const isStudentAuthenticating = (state: StudentAuthenticationState) => {
+    return state.status === AuthenticationStatus.Authenticating;
+}
+
+export const successfullyStudentAuthenticated = (state: StudentAuthenticationState) => {
+    return state.status === AuthenticationStatus.Authenticated && state.currentStudent && state.error === undefined;
+}
+
+export const hasStudentAuthenticationError = (state: StudentAuthenticationState) => {
+    return state.error !== undefined;
+}
+
+
 
 const authenticationReducer = (state = initialState, action: AuthenticationAction) => {
     switch (action.type) {

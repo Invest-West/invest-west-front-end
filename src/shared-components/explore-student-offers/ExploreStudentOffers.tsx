@@ -4,8 +4,8 @@ import {AppState} from "../../redux-store/reducers";
 import {ThunkDispatch} from "redux-thunk";
 import {AnyAction} from "redux";
 import {Col, Row} from "react-bootstrap";
-import GroupRepository from "../../api/repositories/GroupRepository";
-import GroupProperties from "../../models/group_properties";
+import CourseRepository from "../../api/repositories/CourseRepository";
+import CourseProperties from "../../models/course_properties";
 import {
     Box,
     Button, colors,
@@ -21,40 +21,40 @@ import {
 import {
     calculatePaginationIndices,
     calculatePaginationPages,
-    ExploreOffersState,
+    ExploreStudentOffersState,
     hasNotFetchedOffers,
     hasOffersForCurrentFilters,
     isFetchingOffers,
     isSearchFilterActive,
     successfullyFetchedOffers
-} from "./ExploreOffersReducer";
+} from "./ExploreStudentOffersReducer";
 import {MediaQueryState} from "../../redux-store/reducers/mediaQueryReducer";
-import {getGroupRouteTheme, ManageGroupUrlState} from "../../redux-store/reducers/manageGroupUrlReducer";
+import {getCourseRouteTheme, ManageCourseUrlState} from "../../redux-store/reducers/manageCourseUrlReducer";
 import {AuthenticationState} from "../../redux-store/reducers/authenticationReducer";
-import {clearSearchFilter, fetchOffers, filterChanged, onSearchEnter, paginationChanged} from "./ExploreStudentOffersActions";
+import {clearSearchFilter, fetchStudentOffers, filterChanged, onSearchEnter, paginationChanged} from "./ExploreStudentOffersActions";
 import {ManageSystemAttributesState} from "../../redux-store/reducers/manageSystemAttributesReducer";
 import {BeatLoader} from "react-spinners";
 import OfferItem from "./OfferStudentItem";
 import {Pagination} from "@material-ui/lab";
 import RiskWarning from "../risk-warning/RiskWarning";
-import {isIssuer} from "../../models/user";
+import {isTeacher} from "../../models/student";
 import CustomLink from "../../shared-js-css-styles/CustomLink";
 import Routes from "../../router/routes";
 import CreateIcon from "@material-ui/icons/CreateOutlined";
 import RefreshIcon from "@material-ui/icons/Refresh";
 import {css} from "aphrodite";
 import sharedStyles from "../../shared-js-css-styles/SharedStyles";
-import {FetchProjectsOrderByOptions, FetchProjectsPhaseOptions} from "../../api/repositories/OfferRepository";
+import {FetchStudentProjectsOrderByOptions, FetchStudentProjectsPhaseOptions} from "../../api/repositories/StudentOfferRepository";
 import {Close, Search} from "@material-ui/icons";
 
-interface ExploreOffersProps {
+interface ExploreStudentOffersProps {
     MediaQueryState: MediaQueryState;
     ManageSystemAttributesState: ManageSystemAttributesState;
-    ManageGroupUrlState: ManageGroupUrlState;
+    ManageCourseUrlState: ManageCourseUrlState;
     AuthenticationState: AuthenticationState;
-    ExploreOffersLocalState: ExploreOffersState;
+    ExploreStudentOffersLocalState: ExploreStudentOffersState;
     onSearchEnter: (event: FormEvent) => any;
-    fetchOffers: (orderBy?: string) => any;
+    fetchStudentOffers: (orderBy?: string) => any;
     filterChanged: (event: any) => any;
     clearSearchFilter: () => any;
     paginationChanged: (event: React.ChangeEvent<unknown>, page: number) => any;
@@ -64,47 +64,47 @@ const mapStateToProps = (state: AppState) => {
     return {
         MediaQueryState: state.MediaQueryState,
         ManageSystemAttributesState: state.ManageSystemAttributesState,
-        ManageGroupUrlState: state.ManageGroupUrlState,
+        ManageCourseUrlState: state.ManageCourseUrlState,
         AuthenticationState: state.AuthenticationState,
-        ExploreOffersLocalState: state.ExploreOffersLocalState,
+        ExploreStudentOffersLocalState: state.ExploreStudentOffersLocalState,
     }
 }
 
 const mapDispatchToProps = (dispatch: ThunkDispatch<any, any, AnyAction>) => {
     return {
         onSearchEnter: (event: FormEvent) => dispatch(onSearchEnter(event)),
-        fetchOffers: (orderBy?: string) => dispatch(fetchOffers(orderBy)),
+        fetchStudentOffers: (orderBy?: string) => dispatch(fetchStudentOffers(orderBy)),
         filterChanged: (event: any) => dispatch(filterChanged(event)),
         clearSearchFilter: () => dispatch(clearSearchFilter()),
         paginationChanged: (event: React.ChangeEvent<unknown>, page: number) => dispatch(paginationChanged(event, page))
     }
 }
 
-interface ExploreOffersComponentState {
-    groups: GroupProperties[];
+interface ExploreStudentOffersComponentState {
+    courses: CourseProperties[];
   }
 
-  class ExploreOffers extends Component<ExploreOffersProps, ExploreOffersComponentState> {
-    constructor(props: ExploreOffersProps) {
+  class ExploreStudentOffers extends Component<ExploreStudentOffersProps, ExploreStudentOffersComponentState> {
+    constructor(props: ExploreStudentOffersProps) {
       super(props);
       this.state = {
-        groups: [],
+        courses: [],
       };
     }
   
     componentDidMount() {
-        if (hasNotFetchedOffers(this.props.ExploreOffersLocalState)) {
-          this.props.fetchOffers(FetchProjectsOrderByOptions.Phase);
+        if (hasNotFetchedOffers(this.props.ExploreStudentOffersLocalState)) {
+          this.props.fetchStudentOffers(FetchStudentProjectsOrderByOptions.Phase);
         }
-        this.fetchGroups();
+        this.fetchCourses();
       }
   
-      fetchGroups = async () => {
+      fetchCourses = async () => {
         try {
-          const response = await new GroupRepository().fetchGroups();
-          this.setState({ groups: response.data });
+          const response = await new CourseRepository().fetchCourses();
+          this.setState({ courses: response.data });
         } catch (error) {
-          console.error("Error fetching groups:", error);
+          console.error("Error fetching courses:", error);
         }
       };
   
@@ -112,45 +112,45 @@ interface ExploreOffersComponentState {
         const {
             MediaQueryState,
             ManageSystemAttributesState,
-            ManageGroupUrlState,
+            ManageCourseUrlState,
             AuthenticationState,
-            ExploreOffersLocalState,
-            fetchOffers,
+            ExploreStudentOffersLocalState,
+            fetchStudentOffers,
             filterChanged,
             clearSearchFilter,
             paginationChanged,
             onSearchEnter,
         } = this.props;
 
-        const paginationPages = calculatePaginationPages(ExploreOffersLocalState);
-        const paginationIndices = calculatePaginationIndices(ExploreOffersLocalState);
+        const paginationPages = calculatePaginationPages(ExploreStudentOffersLocalState);
+        const paginationIndices = calculatePaginationIndices(ExploreStudentOffersLocalState);
 
         return <Box
             paddingX={MediaQueryState.isMobile ? "20px" : "56px"}
             paddingY={MediaQueryState.isMobile ? "15px" : "40px"}
         >
             <Row>
-                {/** Group filter for Explore offers */}
+                {/** Course filter for Explore offers */}
                 <Col xs={12} sm={12} md={6} lg={4}>
                     <Box paddingY="6px">
-                    <Typography variant="body1">Group:</Typography>
+                    <Typography variant="body1">Course:</Typography>
                     <Box height="8px" />
                     <Paper>
                         <Select
                         fullWidth
                         variant="outlined"
-                        name="groupFilter"
-                        value={ExploreOffersLocalState.groupFilter}
+                        name="courseFilter"
+                        value={ExploreStudentOffersLocalState.courseFilter}
                         onChange={filterChanged}
                         input={<OutlinedInput />}
-                        /* disabled={!successfullyFetchedOffers(ExploreOffersLocalState)}  */
+                        /* disabled={!successfullyFetchedOffers(ExploreStudentOffersLocalState)}  */
                         >
                         <MenuItem key="all" value="all">
                             All
                         </MenuItem>
-                        {this.state.groups.map((group) => (
-                            <MenuItem key={group.anid} value={group.anid}>
-                            {group.displayName}
+                        {this.state.courses.map((course) => (
+                            <MenuItem key={course.anid} value={course.anid}>
+                            {course.displayName}
                             </MenuItem>
                         ))}
                         </Select>
@@ -169,9 +169,9 @@ interface ExploreOffersComponentState {
                                 fullWidth
                                 variant="outlined"
                                 name="sectorFilter"
-                                value={ExploreOffersLocalState.sectorFilter}
+                                value={ExploreStudentOffersLocalState.sectorFilter}
                                 onChange={filterChanged}
-                               /* disabled={!successfullyFetchedOffers(ExploreOffersLocalState)} */
+                               /* disabled={!successfullyFetchedOffers(ExploreStudentOffersLocalState)} */
                                 input={<OutlinedInput/>}
                             >
                                 <MenuItem key="all" value="all">All sectors</MenuItem>
@@ -198,14 +198,14 @@ interface ExploreOffersComponentState {
                             fullWidth
                             variant="outlined"
                             name="phaseFilter"
-                            value={ExploreOffersLocalState.phaseFilter}
+                            value={ExploreStudentOffersLocalState.phaseFilter}
                             onChange={filterChanged}
                             input={<OutlinedInput />}
                         >
-                            <MenuItem key={FetchProjectsPhaseOptions.Live} value={FetchProjectsPhaseOptions.Live}>
+                            <MenuItem key={FetchStudentProjectsPhaseOptions.Live} value={FetchStudentProjectsPhaseOptions.Live}>
                                 Live
                             </MenuItem>
-                            <MenuItem key={FetchProjectsPhaseOptions.ExpiredPitch} value={FetchProjectsPhaseOptions.ExpiredPitch}>
+                            <MenuItem key={FetchStudentProjectsPhaseOptions.ExpiredPitch} value={FetchStudentProjectsPhaseOptions.ExpiredPitch}>
                                 Expired
                             </MenuItem>
                         </Select>
@@ -231,23 +231,23 @@ interface ExploreOffersComponentState {
                             <InputBase
                                 fullWidth
                                 name="searchFilter"
-                                value={ExploreOffersLocalState.searchFilter}
-                                placeholder="Search name, group or issuer"
+                                value={ExploreStudentOffersLocalState.searchFilter}
+                                placeholder="Search name, course or teacher"
                                 onChange={filterChanged}
-                                disabled={!successfullyFetchedOffers(ExploreOffersLocalState)}
+                                disabled={!successfullyFetchedOffers(ExploreStudentOffersLocalState)}
                                 startAdornment={
                                     <InputAdornment position="start" >
                                         <IconButton
                                             type="submit"
-                                            onClick={() => fetchOffers(FetchProjectsOrderByOptions.Phase)}
-                                            disabled={!successfullyFetchedOffers(ExploreOffersLocalState)}
+                                            onClick={() => fetchStudentOffers(FetchStudentProjectsOrderByOptions.Phase)}
+                                            disabled={!successfullyFetchedOffers(ExploreStudentOffersLocalState)}
                                         >
                                             <Search fontSize="small"/>
                                         </IconButton>
                                     </InputAdornment>
                                 }
                                 endAdornment={
-                                    !isSearchFilterActive(ExploreOffersLocalState)
+                                    !isSearchFilterActive(ExploreStudentOffersLocalState)
                                         ? null
                                         : <InputAdornment position="end" >
                                             <IconButton onClick={() => clearSearchFilter()} >
@@ -263,12 +263,12 @@ interface ExploreOffersComponentState {
 
             {/** Loader */}
             {
-                !isFetchingOffers(ExploreOffersLocalState)
+                !isFetchingOffers(ExploreStudentOffersLocalState)
                     ? null
                     : <Row noGutters >
                         <Col xs={12} sm={12} md={12} lg={12} >
                             <Box display="flex" marginY="50px" justifyContent="center" >
-                                <BeatLoader color={getGroupRouteTheme(ManageGroupUrlState).palette.primary.main} />
+                                <BeatLoader color={getCourseRouteTheme(ManageCourseUrlState).palette.primary.main} />
                             </Box>
                         </Col>
                     </Row>
@@ -276,12 +276,12 @@ interface ExploreOffersComponentState {
 
             {/** Offers */}
             {
-                !successfullyFetchedOffers(ExploreOffersLocalState)
+                !successfullyFetchedOffers(ExploreStudentOffersLocalState)
                     ? null
                     : <Row noGutters >
                         <Col xs={12} sm={12} md={12} lg={12} >
                             {
-                                !hasOffersForCurrentFilters(ExploreOffersLocalState)
+                                !hasOffersForCurrentFilters(ExploreStudentOffersLocalState)
                                     ? <Box marginY="80px" >
                                         <Typography align="center" variant="h5" >There are no offers available using your current filter criteria</Typography>
                                     </Box>
@@ -295,9 +295,9 @@ interface ExploreOffersComponentState {
                                             marginBottom="25px"
                                         >
                                             <Typography variant="h6">Explore</Typography>
-                                            <Typography variant="h6" color="primary">&nbsp;<b>{ExploreOffersLocalState.offerInstances.length} offers</b></Typography>
+                                            <Typography variant="h6" color="primary">&nbsp;<b>{ExploreStudentOffersLocalState.offerStudentInstances.length} projects</b></Typography>
                                             <Box marginLeft="8px" >
-                                                <IconButton onClick={() => fetchOffers(FetchProjectsOrderByOptions.Phase)} >
+                                                <IconButton onClick={() => fetchStudentOffers(FetchStudentProjectsOrderByOptions.Phase)} >
                                                     <RefreshIcon/>
                                                 </IconButton>
                                             </Box>
@@ -305,13 +305,13 @@ interface ExploreOffersComponentState {
 
                                         {/** Create offer button (only available for issuers) */}
                                         {
-                                            !AuthenticationState.currentUser
+                                            !AuthenticationState.currentStudent
                                                 ? null
-                                                : !isIssuer(AuthenticationState.currentUser)
+                                                : !isTeacher(AuthenticationState.currentStudent)
                                                 ? null
                                                 : <Box marginBottom="40px" >
                                                     <CustomLink
-                                                        url={Routes.constructCreateProjectRoute(ManageGroupUrlState.groupNameFromUrl ?? null)}                                                  
+                                                        url={Routes.constructCreateProjectRoute(ManageCourseUrlState.courseNameFromUrl ?? null)}                                                  
                                                         color="none"
                                                         activeColor="none"
                                                         activeUnderline={false}
@@ -330,12 +330,12 @@ interface ExploreOffersComponentState {
                                         {/** Offers area */}
                                         <Row>
                                             {
-                                                ExploreOffersLocalState.offerInstances
+                                                ExploreStudentOffersLocalState.offerStudentInstances
                                                     .slice(paginationIndices.startIndex, paginationIndices.endIndex + 1)
-                                                    .map(offerInstance => (
-                                                        <Col key={offerInstance.projectDetail.id} xs={12} sm={12} md={6} lg={3} >
+                                                    .map(offerStudentInstance => (
+                                                        <Col key={offerStudentInstance.projectDetail.id} xs={12} sm={12} md={6} lg={3} >
                                                             <Box margin="16px" >
-                                                                <OfferItem offerInstance={offerInstance} />
+                                                                <OfferItem offerStudentInstance={offerStudentInstance} />
                                                             </Box>
                                                         </Col>
                                                     ))
@@ -349,14 +349,14 @@ interface ExploreOffersComponentState {
 
             {/** Pagination */}
             {
-                !successfullyFetchedOffers(ExploreOffersLocalState)
+                !successfullyFetchedOffers(ExploreStudentOffersLocalState)
                     ? null
                     : paginationPages === 1
                     ? null
                     : <Row noGutters >
                         <Col xs={12} sm={12} md={12} lg={12} >
                             <Box display="flex" justifyContent="center" marginTop="55px" >
-                                <Pagination count={paginationPages} page={ExploreOffersLocalState.currentPage} color="primary" onChange={paginationChanged} />
+                                <Pagination count={paginationPages} page={ExploreStudentOffersLocalState.currentPage} color="primary" onChange={paginationChanged} />
                             </Box>
                         </Col>
                     </Row>
@@ -374,4 +374,4 @@ interface ExploreOffersComponentState {
     }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(ExploreOffers);
+export default connect(mapStateToProps, mapDispatchToProps)(ExploreStudentOffers);

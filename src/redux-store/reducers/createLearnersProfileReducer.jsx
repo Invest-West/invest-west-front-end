@@ -1,11 +1,11 @@
-import * as createBusinessProfileActions from '../actions/createBusinessProfileActions';
-import * as editUserActions from '../actions/editUserActions';
+import * as createLearnersProfileActions from '../actions/createLearnersProfileActions';
+import * as editStudentActions from '../actions/editStudentActions';
 import * as editImageActions from '../actions/editImageActions';
 import * as editVideoActions from '../actions/editVideoActions';
 import * as authActions from '../actions/authActions';
 
 const initState = {
-    BusinessProfile: {
+    LearnersProfile: {
         companyName: '',
         registrationNo: '',
         sector: 'None',
@@ -33,62 +33,62 @@ const initState = {
     logoToBeUploaded: null,
     videoToBeUploaded: null,
 
-    registeredOfficeSearchPostcode: '', // field for user to fill in with postcode
+    registeredOfficeSearchPostcode: '', // field for student to fill in with postcode
     registeredOfficeEnterAddressManually: false,
     registeredOfficeRecommendedAddresses: null, // searched addresses from entered postcode
 
     tradingAddressSameAsRegisteredOffice: true,
-    tradingAddressSearchPostcode: '', // field for user to fill in with postcode
+    tradingAddressSearchPostcode: '', // field for student to fill in with postcode
     tradingAddressEnterAddressManually: false,
     tradingAddressRecommendedAddresses: null, // searched addresses from entered postcode
 
-    expandBusinessProfileFilling: false // this field is only available for investor
+    expandLearnersProfileFilling: false // this field is only available for investor
 };
 
-const createBusinessProfileReducer = (state = initState, action) => {
+const createLearnersProfileReducer = (state = initState, action) => {
     switch (action.type) {
         case authActions.LOG_OUT:
             return initState;
-        case createBusinessProfileActions.ORDINARY_BUSINESS_PROFILE_FIELDS_CHANGED:
+        case createLearnersProfileActions.ORDINARY_LEARNERS_PROFILE_FIELDS_CHANGED:
             return {
                 ...state,
-                BusinessProfile: {
-                    ...state.BusinessProfile,
+                LearnersProfile: {
+                    ...state.LearnersProfile,
                     [action.fieldName]: action.fieldValue
                 }
             };
-        case createBusinessProfileActions.REGISTERED_OFFICE_BUSINESS_PROFILE_FIELDS_CHANGED:
+        case createLearnersProfileActions.REGISTERED_OFFICE_LEARNERS_PROFILE_FIELDS_CHANGED:
             return {
                 ...state,
-                BusinessProfile: {
-                    ...state.BusinessProfile,
+                LearnersProfile: {
+                    ...state.LearnersProfile,
                     registeredOffice: {
-                        ...state.BusinessProfile.registeredOffice,
+                        ...state.LearnersProfile.registeredOffice,
                         [action.fieldName]: action.fieldValue
                     }
                 }
             };
-        case createBusinessProfileActions.TRADING_ADDRESS_BUSINESS_PROFILE_FIELDS_CHANGED:
+        case createLearnersProfileActions.TRADING_ADDRESS_LEARNERS_PROFILE_FIELDS_CHANGED:
             return {
                 ...state,
-                BusinessProfile: {
-                    ...state.BusinessProfile,
+                LearnersProfile: {
+                    ...state.LearnersProfile,
                     tradingAddress: {
-                        ...state.BusinessProfile.tradingAddress,
+                        ...state.LearnersProfile.tradingAddress,
                         [action.fieldName]: action.fieldValue
                     }
                 }
             };
-        case createBusinessProfileActions.BUSINESS_PROFILE_CONTROL_FIELDS_CHANGED:
+        case createLearnersProfileActions.LEARNERS_PROFILE_CONTROL_FIELDS_CHANGED:
             return {
                 ...state,
                 [action.fieldName]: action.fieldValue,
-                BusinessProfile: {
-                    ...state.BusinessProfile,
+                LearnersProfile: {
+                    ...state.LearnersProfile,
                     registeredOffice:
                         action.fieldName !== "registeredOfficeSearchPostcode"
                             ?
-                            state.BusinessProfile.registeredOffice
+                            state.LearnersProfile.registeredOffice
                             :
                             {
                                 address1: '',
@@ -100,7 +100,7 @@ const createBusinessProfileReducer = (state = initState, action) => {
                     tradingAddress:
                         action.fieldName !== "tradingAddressSearchPostcode"
                             ?
-                            state.BusinessProfile.tradingAddress
+                            state.LearnersProfile.tradingAddress
                             :
                             {
                                 address1: '',
@@ -119,27 +119,27 @@ const createBusinessProfileReducer = (state = initState, action) => {
                 tradingAddressRecommendedAddresses:
                     action.fieldName !== "tradingAddressSearchPostcode" ? state.tradingAddressRecommendedAddresses : null,
             };
-        case createBusinessProfileActions.SEARCHING_REGISTERED_OFFICE_ADDRESSES:
+        case createLearnersProfileActions.SEARCHING_REGISTERED_OFFICE_ADDRESSES:
             return state;
-        case createBusinessProfileActions.DONE_SEARCHING_REGISTERED_OFFICE_ADDRESSES:
+        case createLearnersProfileActions.DONE_SEARCHING_REGISTERED_OFFICE_ADDRESSES:
             return {
                 ...state,
                 registeredOfficeRecommendedAddresses: action.results
             };
-        case createBusinessProfileActions.SEARCHING_TRADING_ADDRESSES:
+        case createLearnersProfileActions.SEARCHING_TRADING_ADDRESSES:
             return state;
-        case createBusinessProfileActions.DONE_SEARCHING_TRADING_ADDRESSES:
+        case createLearnersProfileActions.DONE_SEARCHING_TRADING_ADDRESSES:
             return {
                 ...state,
                 tradingAddressRecommendedAddresses: action.results
             };
-        case createBusinessProfileActions.SELECT_REGISTERED_OFFICE_RECOMMENDED_ADDRESS:
+        case createLearnersProfileActions.SELECT_REGISTERED_OFFICE_RECOMMENDED_ADDRESS:
             return {
                 ...state,
-                BusinessProfile: {
-                    ...state.BusinessProfile,
+                LearnersProfile: {
+                    ...state.LearnersProfile,
                     registeredOffice: {
-                        ...state.BusinessProfile.registeredOffice,
+                        ...state.LearnersProfile.registeredOffice,
                         address1: action.selectedAddress[0],
                         address2: action.selectedAddress[1],
                         address3: action.selectedAddress[2],
@@ -151,13 +151,13 @@ const createBusinessProfileReducer = (state = initState, action) => {
                 registeredOfficeSearchPostcode: '',
                 registeredOfficeRecommendedAddresses: null
             };
-        case createBusinessProfileActions.SELECT_TRADING_ADDRESS_RECOMMENDED_ADDRESS:
+        case createLearnersProfileActions.SELECT_TRADING_ADDRESS_RECOMMENDED_ADDRESS:
             return {
                 ...state,
-                BusinessProfile: {
-                    ...state.BusinessProfile,
+                LearnersProfile: {
+                    ...state.LearnersProfile,
                     tradingAddress: {
-                        ...state.BusinessProfile.tradingAddress,
+                        ...state.LearnersProfile.tradingAddress,
                         address1: action.selectedAddress[0],
                         address2: action.selectedAddress[1],
                         address3: action.selectedAddress[2],
@@ -169,29 +169,29 @@ const createBusinessProfileReducer = (state = initState, action) => {
                 tradingAddressSearchPostcode: '',
                 tradingAddressRecommendedAddresses: null
             };
-        case createBusinessProfileActions.TOGGLE_REGISTERED_OFFICE_ENTER_ADDRESS_MANUALLY:
+        case createLearnersProfileActions.TOGGLE_REGISTERED_OFFICE_ENTER_ADDRESS_MANUALLY:
             return {
                 ...state,
                 registeredOfficeEnterAddressManually: !state.registeredOfficeEnterAddressManually,
                 registeredOfficeSearchPostcode: '',
                 registeredOfficeRecommendedAddresses: null
             };
-        case createBusinessProfileActions.TOGGLE_TRADING_ADDRESS_ENTER_ADDRESS_MANUALLY:
+        case createLearnersProfileActions.TOGGLE_TRADING_ADDRESS_ENTER_ADDRESS_MANUALLY:
             return {
                 ...state,
                 tradingAddressEnterAddressManually: !state.tradingAddressEnterAddressManually,
                 tradingAddressSearchPostcode: '',
                 tradingAddressRecommendedAddresses: null
             };
-        case createBusinessProfileActions.TOGGLE_TRADING_ADDRESS_SAME_AS_REGISTERED_OFFICE:
+        case createLearnersProfileActions.TOGGLE_TRADING_ADDRESS_SAME_AS_REGISTERED_OFFICE:
             return {
                 ...state,
                 tradingAddressSameAsRegisteredOffice: action.checked,
                 tradingAddressSearchPostcode: '',
                 tradingAddressRecommendedAddresses: null,
                 tradingAddressEnterAddressManually: false,
-                BusinessProfile: {
-                    ...state.BusinessProfile,
+                LearnersProfile: {
+                    ...state.LearnersProfile,
                     tradingAddress: {
                         address1: '',
                         address2: '',
@@ -201,54 +201,54 @@ const createBusinessProfileReducer = (state = initState, action) => {
                     }
                 }
             };
-        case editUserActions.ADD_NEW_DIRECTOR_TEMPORARILY:
+        case editStudentActions.ADD_NEW_DIRECTOR_TEMPORARILY:
             // update this state only when creating a new business profile
-            if (!action.isEditingExistingBusinessProfile) {
+            if (!action.isEditingExistingLearnersProfile) {
                 return {
                     ...state,
-                    BusinessProfile: {
-                        ...state.BusinessProfile,
-                        directors: [...state.BusinessProfile.directors, action.director]
+                    LearnersProfile: {
+                        ...state.LearnersProfile,
+                        directors: [...state.LearnersProfile.directors, action.director]
                     }
                 };
             }
             return state;
-        case editUserActions.DELETE_DIRECTOR_TEMPORARILY:
-            if (!action.isEditingExistingBusinessProfile) {
-                let editedDirectors = JSON.parse(JSON.stringify(state.BusinessProfile.directors));
+        case editStudentActions.DELETE_DIRECTOR_TEMPORARILY:
+            if (!action.isEditingExistingLearnersProfile) {
+                let editedDirectors = JSON.parse(JSON.stringify(state.LearnersProfile.directors));
                 editedDirectors.splice(action.index, 1);
                 return {
                     ...state,
-                    BusinessProfile: {
-                        ...state.BusinessProfile,
+                    LearnersProfile: {
+                        ...state.LearnersProfile,
                         directors: editedDirectors
                     }
                 };
             }
             return state;
-        case editImageActions.CREATE_BUSINESS_PROFILE_SAVE_EDITED_IMAGE:
+        case editImageActions.CREATE_LEARNERS_PROFILE_SAVE_EDITED_IMAGE:
             return {
                 ...state,
                 logoToBeUploaded: action.blob
             };
-        case editVideoActions.CREATE_BUSINESS_PROFILE_SAVE_VIDEO:
+        case editVideoActions.CREATE_LEARNERS_PROFILE_SAVE_VIDEO:
             return {
                 ...state,
                 videoToBeUploaded: action.video
             };
-        case createBusinessProfileActions.CLEAR_FILLED_BUSINESS_PROFILE_INFORMATION:
+        case createLearnersProfileActions.CLEAR_FILLED_LEARNERS_PROFILE_INFORMATION:
             return {
                 ...initState,
-                expandBusinessProfileFilling: state.expandBusinessProfileFilling
+                expandLearnersProfileFilling: state.expandLearnersProfileFilling
             };
-        case createBusinessProfileActions.TOGGLE_EXPAND_BUSINESS_PROFILE_FILLING_FOR_INVESTOR:
+        case createLearnersProfileActions.TOGGLE_EXPAND_LEARNERS_PROFILE_FILLING_FOR_INVESTOR:
             return {
                 ...initState,
-                expandBusinessProfileFilling: !state.expandBusinessProfileFilling
+                expandLearnersProfileFilling: !state.expandLearnersProfileFilling
             };
         default:
             return state;
     }
 };
 
-export default createBusinessProfileReducer;
+export default createLearnersProfileReducer;

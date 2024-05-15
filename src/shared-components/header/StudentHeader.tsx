@@ -1,12 +1,12 @@
 import React, {Component} from "react";
 import {connect} from "react-redux";
 import {
-    getGroupRouteTheme,
-    isValidatingGroupUrl,
-    ManageGroupUrlState,
-    routeContainsGroupName,
-    successfullyValidatedGroupUrl
-} from "../../redux-store/reducers/manageGroupUrlReducer";
+    getCourseRouteTheme,
+    isValidatingCourseUrl,
+    ManageCourseUrlState,
+    routeContainsCourseName,
+    successfullyValidatedCourseUrl
+} from "../../redux-store/reducers/manageCourseUrlReducer";
 import {
     AuthenticationState,
     isAuthenticating,
@@ -18,14 +18,14 @@ import * as appColors from "../../values/colors";
 import {Box, Button, Divider, Typography} from "@material-ui/core";
 import CustomLink from "../../shared-js-css-styles/CustomLink";
 import {MediaQueryState} from "../../redux-store/reducers/mediaQueryReducer";
-import {getGroupLogo} from "../../models/group_properties";
+import {getCourseLogo} from "../../models/course_properties";
 import Routes from "../../router/routes";
 import {css} from "aphrodite";
 import sharedStyles from "../../shared-js-css-styles/SharedStyles";
 
 interface HeaderProps extends HeaderLocalProps {
     MediaQueryState: MediaQueryState;
-    ManageGroupUrlState: ManageGroupUrlState;
+    ManageCourseUrlState: ManageCourseUrlState;
     AuthenticationState: AuthenticationState;
 }
 
@@ -39,7 +39,7 @@ interface HeaderLocalProps {
 const mapStateToProps = (state: AppState) => {
     return {
         MediaQueryState: state.MediaQueryState,
-        ManageGroupUrlState: state.ManageGroupUrlState,
+        ManageCourseUrlState: state.ManageCourseUrlState,
         AuthenticationState: state.AuthenticationState
     }
 }
@@ -48,7 +48,7 @@ class Header extends Component<HeaderProps, {}> {
     render() {
         const {
             MediaQueryState,
-            ManageGroupUrlState,
+            ManageCourseUrlState,
             AuthenticationState,
             routePath,
             homUrl,
@@ -69,7 +69,7 @@ class Header extends Component<HeaderProps, {}> {
                                     activeColor={
                                         Routes.isErrorRoute(routePath) || Routes.isSystemPublicRoute(routePath)
                                             ? appColors.primaryColor
-                                            : getGroupRouteTheme(ManageGroupUrlState).palette.primary.main
+                                            : getCourseRouteTheme(ManageCourseUrlState).palette.primary.main
                                     }
                                     activeUnderline={false}
                                     url={homUrl}
@@ -90,7 +90,7 @@ class Header extends Component<HeaderProps, {}> {
                                     activeColor={
                                         Routes.isErrorRoute(routePath) || Routes.isSystemPublicRoute(routePath)
                                             ? appColors.primaryColor
-                                            : getGroupRouteTheme(ManageGroupUrlState).palette.primary.main
+                                            : getCourseRouteTheme(ManageCourseUrlState).palette.primary.main
                                     }
                                     activeUnderline={false}
                                     url={dashboardUrl}
@@ -119,12 +119,12 @@ class Header extends Component<HeaderProps, {}> {
                                         src={
                                             Routes.isErrorRoute(routePath) || Routes.isSystemPublicRoute(routePath)
                                                 ? require("../../img/logo.png").default
-                                                : isValidatingGroupUrl(ManageGroupUrlState)
+                                                : isValidatingCourseUrl(ManageCourseUrlState)
                                                 ? null
-                                                : !routeContainsGroupName(ManageGroupUrlState)
+                                                : !routeContainsCourseName(ManageCourseUrlState)
                                                     ? require("../../img/logo.png").default
-                                                    : successfullyValidatedGroupUrl(ManageGroupUrlState)
-                                                        ? getGroupLogo(ManageGroupUrlState.group)
+                                                    : successfullyValidatedCourseUrl(ManageCourseUrlState)
+                                                        ? getCourseLogo(ManageCourseUrlState.course)
                                                         : null
                                         }
                                         style={{ width: "auto", height: 36, objectFit: "contain" }}
@@ -142,11 +142,11 @@ class Header extends Component<HeaderProps, {}> {
                                             {
                                                 Routes.isErrorRoute(routePath) || Routes.isSystemPublicRoute(routePath)
                                                     ? "Invest West"
-                                                    : isValidatingGroupUrl(ManageGroupUrlState)
+                                                    : isValidatingCourseUrl(ManageCourseUrlState)
                                                     ? ""
-                                                    : !routeContainsGroupName(ManageGroupUrlState)
+                                                    : !routeContainsCourseName(ManageCourseUrlState)
                                                         ? "Invest West"
-                                                        : ManageGroupUrlState.group?.displayName
+                                                        : ManageCourseUrlState.course?.displayName
                                             }
                                         </Typography>
                                     </Box>
