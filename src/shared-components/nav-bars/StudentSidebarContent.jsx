@@ -38,21 +38,21 @@ export const CHANGE_PASSWORD_TAB = "Change password";
 export const CONTACT_US_TAB = "Contact us";
 export const GUIDELINE_TAB = "Help";
 export const RESOURCES_TAB = "Resources";
-export const EXPLORE_GROUPS_TAB = "Explore groups";
+export const EXPLORE_COURSES_TAB = "Explore courses";
 export const EXPLORE_OFFERS_TAB = "Explore offers";
 export const MY_ACTIVITIES_TAB = "My activities";
-export const GROUP_ACTIVITIES_TAB = "Audit Log";
+export const COURSE_ACTIVITIES_TAB = "Audit Log";
 
 const mapStateToProps = state => {
     return {
-        ManageGroupUrlState: state.ManageGroupUrlState,
+        ManageCourseUrlState: state.ManageCourseUrlState,
         AuthenticationState: state.AuthenticationState,
 
-        groupUserName: state.manageGroupFromParams.groupUserName,
-        groupProperties: state.manageGroupFromParams.groupProperties,
-        groupPropertiesLoaded: state.manageGroupFromParams.groupPropertiesLoaded,
+        courseStudent: state.manageCourseFromParams.courseStudent,
+        courseProperties: state.manageCourseFromParams.courseProperties,
+        coursePropertiesLoaded: state.manageCourseFromParams.coursePropertiesLoaded,
 
-        user: state.auth.user
+        student: state.auth.student
     };
 };
 
@@ -74,13 +74,13 @@ class SidebarContent extends Component {
             dashboardProps,
             logout,
 
-            ManageGroupUrlState,
+            ManageCourseUrlState,
             AuthenticationState,
             signOutNew
         } = this.props;
 
         await signOutNew();
-        dashboardProps.history.push(Routes.constructHomeRoute(dashboardProps.match.params, ManageGroupUrlState, AuthenticationState));
+        dashboardProps.history.push(Routes.constructHomeRoute(dashboardProps.match.params, ManageCourseUrlState, AuthenticationState));
 
         logout(); // logout old
     };
@@ -92,17 +92,17 @@ class SidebarContent extends Component {
 
     render() {
         const {
-            groupUserName,
-            groupPropertiesLoaded,
-            groupProperties,
+            courseStudent,
+            coursePropertiesLoaded,
+            courseProperties,
 
-            user,
+            student,
             dashboardProps,
 
             toggleSidebar
         } = this.props;
 
-        if (!groupPropertiesLoaded) {
+        if (!coursePropertiesLoaded) {
             return null;
         }
 
@@ -114,15 +114,15 @@ class SidebarContent extends Component {
             >
                 {/** Sidebar header */}
                 <FlexView column height={65} vAlignContent="center" hAlignContent="center" style={{ padding: 8 }} >
-                    <Link href={groupProperties.website ?? ""} target="_blank">
+                    <Link href={courseProperties.website ?? ""} target="_blank">
                         <Image
                             style={{ width: "auto", height: 65, margin: 0, padding: 10, objectFit: "scale-down" }}
                             src={
-                                !groupProperties
+                                !courseProperties
                                     ?
                                     require('../../img/logo.png').default
                                     :
-                                    utils.getLogoFromGroup(utils.GET_PLAIN_LOGO, groupProperties)
+                                    utils.getLogoFromCourse(utils.GET_PLAIN_LOGO, courseProperties)
                             }
                         />
                     </Link>
@@ -148,11 +148,11 @@ class SidebarContent extends Component {
 
                         {/** Offers table */}
                         {
-                            !user
+                            !student
                                 ?
                                 null
                                 :
-                                // user.type === DB_CONST.TYPE_INVESTOR
+                                // student.type === DB_CONST.TYPE_INVESTOR
                                 //     ?
                                 //     <NavLink
                                 //         to={{
@@ -176,7 +176,7 @@ class SidebarContent extends Component {
                                 //         </ListItem>
                                 //     </NavLink>
                                 //     :
-                                user.type === DB_CONST.TYPE_ISSUER
+                                student.type === DB_CONST.TYPE_ISSUER
                                     ?
                                     <NavLink
                                         to={{ pathname: dashboardProps.match.pathname, search: `?tab=${MY_OFFERS_TAB}` }}
@@ -198,7 +198,7 @@ class SidebarContent extends Component {
 
                         {/** Explore offers tab */}
                         {
-                            user.type !== DB_CONST.TYPE_ADMIN
+                            student.type !== DB_CONST.TYPE_ADMIN
                                 ?
                                 null
                                 :
@@ -218,11 +218,11 @@ class SidebarContent extends Component {
                                 </NavLink>
                         }
 
-                        {/** Explore groups tab */}
+                        {/** Explore courses tab */}
                         <NavLink
                             to={{
                                 pathname: dashboardProps.match.pathname,
-                                search: `?tab=${EXPLORE_GROUPS_TAB}`
+                                search: `?tab=${EXPLORE_COURSES_TAB}`
                             }}
                             className={css(sharedStyles.nav_link_white_text_hover_without_changing_text_color)}
                         >
@@ -230,7 +230,7 @@ class SidebarContent extends Component {
                                 <ListItemIcon>
                                     <BubbleChartIcon/>
                                 </ListItemIcon>
-                                <ListItemText className={css(sharedStyles.black_text)}>{EXPLORE_GROUPS_TAB}</ListItemText>
+                                <ListItemText className={css(sharedStyles.black_text)}>{EXPLORE_COURSES_TAB}</ListItemText>
                             </ListItem>
                         </NavLink>
 
@@ -255,13 +255,13 @@ class SidebarContent extends Component {
                 {/** Footer navigation */}
                 <FlexView column height='100%' vAlignContent="bottom" >
                     <List>
-                        {/** Profile tab (for normal users) || Settings tab (for admins) */}
+                        {/** Profile tab (for normal students) || Settings tab (for admins) */}
                         {
-                            !user
+                            !student
                                 ?
                                 null
                                 :
-                                user.type !== DB_CONST.TYPE_ADMIN
+                                student.type !== DB_CONST.TYPE_ADMIN
                                     ?
                                     <NavLink
                                         to={{
@@ -294,16 +294,16 @@ class SidebarContent extends Component {
                                     </NavLink>
                         }
 
-                        {/** My/Group activities tab */}
+                        {/** My/Course activities tab */}
                         {
-                            user.type !== DB_CONST.TYPE_ADMIN
+                            student.type !== DB_CONST.TYPE_ADMIN
                                 ?
                                 null
                                 :
                                 <NavLink
                                     to={{
                                         pathname: dashboardProps.match.pathname,
-                                        search: `?tab=${(user.type === DB_CONST.TYPE_ADMIN && !user.superAdmin) ? GROUP_ACTIVITIES_TAB : MY_ACTIVITIES_TAB}`
+                                        search: `?tab=${(student.type === DB_CONST.TYPE_ADMIN && !student.superAdmin) ? COURSE_ACTIVITIES_TAB : MY_ACTIVITIES_TAB}`
                                     }}
                                     className={css(sharedStyles.nav_link_white_text_hover_without_changing_text_color)}
                                 >
@@ -313,7 +313,7 @@ class SidebarContent extends Component {
                                         </ListItemIcon>
                                         <ListItemText className={css(sharedStyles.black_text)} >
                                             {
-                                                GROUP_ACTIVITIES_TAB
+                                                COURSE_ACTIVITIES_TAB
                                             }
                                         </ListItemText>
                                     </ListItem>
@@ -322,7 +322,7 @@ class SidebarContent extends Component {
 
                         {/** Change password tab */}
                         {
-                            !user
+                            !student
                                 ?
                                 null
                                 :
@@ -365,15 +365,15 @@ class SidebarContent extends Component {
                         {/*    </ListItem>*/}
                         {/*</NavLink>*/}
                         {
-                            user.type === DB_CONST.TYPE_ADMIN
+                            student.type === DB_CONST.TYPE_ADMIN
                                 ?
                                 null
                                 :
                                 <NavLink
                                     to={
-                                        groupUserName
+                                        courseStudent
                                             ?
-                                            ROUTES.CONTACT_US.replace(':groupUserName', groupUserName)
+                                            ROUTES.CONTACT_US.replace(':courseStudent', courseStudent)
                                             :
                                             ROUTES.CONTACT_US_INVEST_WEST_SUPER
                                     }
@@ -391,16 +391,16 @@ class SidebarContent extends Component {
                         {/** Help tab */}
                         {
                             // don't need to show this tab to super admin
-                            user.type === DB_CONST.TYPE_ADMIN
-                            && user.superAdmin
+                            student.type === DB_CONST.TYPE_ADMIN
+                            && student.superAdmin
                                 ?
                                 null
                                 :
                                 <NavLink
                                     to={
-                                        groupUserName
+                                        courseStudent
                                             ?
-                                            ROUTES.HELP.replace(':groupUserName', groupUserName)
+                                            ROUTES.HELP.replace(':courseStudent', courseStudent)
                                             :
                                             ROUTES.HELP_INVEST_WEST_SUPER
                                     }
