@@ -15,17 +15,17 @@ import firebase from '../../firebase/firebaseApp';
 import SidebarContent, {
     CHANGE_PASSWORD_TAB,
     EXPLORE_COURSES_TAB,
-    EXPLORE_OFFERS_TAB,
+    EXPLORE_STUDENT_OFFERS_TAB,
     RESOURCES_TAB,
     COURSE_ACTIVITIES_TAB,
     HOME_TAB,
     MY_ACTIVITIES_TAB,
     SETTINGS_TAB
-} from '../../shared-components/nav-bars/SidebarContent';
-import {AUTH_SUCCESS} from '../signin/Signin';
+} from '../../shared-components/nav-bars/StudentSidebarContent';
+import {STUDENT_AUTH_SUCCESS} from '../signin/studentSignIn/Studentsignin';
 import InvitationDialog from './components/InvitationDialog';
 import PageNotFoundWhole from '../../shared-components/page-not-found/PageNotFoundWhole';
-import SuperAdminSettings from './components/SuperAdminSettings';
+import SuperTeacherSettings from './components/SuperTeacherSettings';
 import CourseAdminSettings from './components/CourseAdminSettings';
 import InvitedStudents from './components/InvitedStudents';
 import AngelNetWorks from './components/AngelNetworks';
@@ -139,7 +139,7 @@ class AdminDashboard extends Component {
 
         // set student so that information can be used in the activities table component
         activitiesTable_setStudent(
-            currentStudent.superAdmin
+            currentStudent.superTeacher
                 ?
                 currentStudent
                 :
@@ -241,7 +241,7 @@ class AdminDashboard extends Component {
                 <Row noGutters style={{marginBottom: 30}}>
                     {/* Manage courses */}
                     {
-                        !currentStudent.superAdmin
+                        !currentStudent.superTeacher
                             ?
                             null
                             :
@@ -269,7 +269,7 @@ class AdminDashboard extends Component {
                                 <FlexView column>
                                     <Typography paragraph variant="h6" color="primary" align="left">
                                         {
-                                            currentStudent.superAdmin
+                                            currentStudent.superTeacher
                                                 ?
                                                 "Manage system students"
                                                 :
@@ -278,7 +278,7 @@ class AdminDashboard extends Component {
                                     </Typography>
                                     <Typography paragraph variant="body1" align="left">
                                         {
-                                            currentStudent.superAdmin
+                                            currentStudent.superTeacher
                                                 ?
                                                 "Manage all the system students (students and teachers) including those who have been invited but not yet registered."
                                                 :
@@ -295,7 +295,7 @@ class AdminDashboard extends Component {
 
                     {/* Manage access requests */}
                     {
-                        currentStudent.superAdmin
+                        currentStudent.superTeacher
                             ?
                             null
                             :
@@ -352,7 +352,7 @@ class AdminDashboard extends Component {
                                                         id={`tooltip-top`}
                                                     >
                                                         {
-                                                            currentStudent.superAdmin
+                                                            currentStudent.superTeacher
                                                                 ?
                                                                 `${projectsAwaitingDecision} offers are awaiting course teachers' review. Select "Awaiting review" from the "Phase" dropdown to see details.`
                                                                 :
@@ -367,7 +367,7 @@ class AdminDashboard extends Component {
                                     </FlexView>
                                     <Typography paragraph variant="body1" align="left">
                                         {
-                                            currentStudent.superAdmin
+                                            currentStudent.superTeacher
                                                 ?
                                                 "Manage all the offers created by all the teachers and course teachers in the system."
                                                 :
@@ -387,7 +387,7 @@ class AdminDashboard extends Component {
 
                     {/* Manage course teachers */}
                     {
-                        currentStudent.superAdmin
+                        currentStudent.superTeacher
                             ?
                             null
                             :
@@ -418,9 +418,9 @@ class AdminDashboard extends Component {
          */
         if (params.tab === SETTINGS_TAB) {
             return (
-                currentStudent.superAdmin
+                currentStudent.superTeacher
                     ?
-                    <SuperAdminSettings/>
+                    <SuperTeacherSettings/>
                     :
                     <CourseAdminSettings/>
             );
@@ -471,7 +471,7 @@ class AdminDashboard extends Component {
         /**
          * EXPLORE OFFERS TAB
          */
-        if (params.tab === EXPLORE_OFFERS_TAB) {
+        if (params.tab === EXPLORE_STUDENT_OFFERS_TAB) {
             return <ExploreOffers/>;
         }
 
@@ -535,7 +535,7 @@ class AdminDashboard extends Component {
             );
         }
 
-        if (authStatus !== AUTH_SUCCESS
+        if (authStatus !== STUDENT_AUTH_SUCCESS
             || !currentStudent
             || (currentStudent && currentStudent.type !== DB_CONST.TYPE_PROF)
         ) {
@@ -608,7 +608,7 @@ class AdminDashboard extends Component {
                     <Col xs={12} sm={12} md={12} lg={12}>
                         <Typography variant="body1" align="center" style={{paddingTop: 16,paddingBottom: 16}}>
                             {
-                                currentStudent.superAdmin
+                                currentStudent.superTeacher
                                     ?
                                     "System teacher"
                                     :
@@ -677,8 +677,8 @@ class AdminDashboard extends Component {
             case EXPLORE_COURSES_TAB:
                 title = EXPLORE_COURSES_TAB;
                 break;
-            case EXPLORE_OFFERS_TAB:
-                title = EXPLORE_OFFERS_TAB;
+            case EXPLORE_STUDENT_OFFERS_TAB:
+                title = EXPLORE_STUDENT_OFFERS_TAB;
                 break;
             default:
                 return;

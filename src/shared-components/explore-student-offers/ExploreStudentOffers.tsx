@@ -30,7 +30,7 @@ import {
 } from "./ExploreStudentOffersReducer";
 import {MediaQueryState} from "../../redux-store/reducers/mediaQueryReducer";
 import {getCourseRouteTheme, ManageCourseUrlState} from "../../redux-store/reducers/manageCourseUrlReducer";
-import {AuthenticationState} from "../../redux-store/reducers/authenticationReducer";
+import {StudentAuthenticationState} from "../../redux-store/reducers/authenticationReducer";
 import {clearSearchFilter, fetchStudentOffers, filterChanged, onSearchEnter, paginationChanged} from "./ExploreStudentOffersActions";
 import {ManageSystemAttributesState} from "../../redux-store/reducers/manageSystemAttributesReducer";
 import {BeatLoader} from "react-spinners";
@@ -51,7 +51,7 @@ interface ExploreStudentOffersProps {
     MediaQueryState: MediaQueryState;
     ManageSystemAttributesState: ManageSystemAttributesState;
     ManageCourseUrlState: ManageCourseUrlState;
-    AuthenticationState: AuthenticationState;
+    AuthenticationState: StudentAuthenticationState;
     ExploreStudentOffersLocalState: ExploreStudentOffersState;
     onSearchEnter: (event: FormEvent) => any;
     fetchStudentOffers: (orderBy?: string) => any;
@@ -65,7 +65,7 @@ const mapStateToProps = (state: AppState) => {
         MediaQueryState: state.MediaQueryState,
         ManageSystemAttributesState: state.ManageSystemAttributesState,
         ManageCourseUrlState: state.ManageCourseUrlState,
-        AuthenticationState: state.AuthenticationState,
+        AuthenticationState: state.StudentAuthenticationState,
         ExploreStudentOffersLocalState: state.ExploreStudentOffersLocalState,
     }
 }
@@ -333,7 +333,7 @@ interface ExploreStudentOffersComponentState {
                                                 ExploreStudentOffersLocalState.offerStudentInstances
                                                     .slice(paginationIndices.startIndex, paginationIndices.endIndex + 1)
                                                     .map(offerStudentInstance => (
-                                                        <Col key={offerStudentInstance.projectDetail.id} xs={12} sm={12} md={6} lg={3} >
+                                                        <Col key={offerStudentInstance.studentProjectDetail.id} xs={12} sm={12} md={6} lg={3} >
                                                             <Box margin="16px" >
                                                                 <OfferItem offerStudentInstance={offerStudentInstance} />
                                                             </Box>

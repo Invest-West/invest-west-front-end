@@ -25,13 +25,13 @@ import * as ROUTES from "../../router/routes";
 import Routes from "../../router/routes";
 import * as utils from "../../utils/utils";
 import sharedStyles from "../../shared-js-css-styles/SharedStyles";
-import {signOut} from "../../redux-store/actions/authenticationActions";
+import {studentSignOut} from "../../redux-store/actions/authenticationActions";
 import {School} from "@material-ui/icons";
 
 export const HOME_TAB = "Home";
 export const PROFILE_TAB = "Profile";
 export const FORUMS_TAB = "Forums";
-export const MY_OFFERS_TAB = "My offers";
+export const MY_STUDENT_OFFERS_TAB = "My offers";
 // export const MY_PLEDGES_TAB = "My pledges";
 export const SETTINGS_TAB = "Settings";
 export const CHANGE_PASSWORD_TAB = "Change password";
@@ -39,7 +39,7 @@ export const CONTACT_US_TAB = "Contact us";
 export const GUIDELINE_TAB = "Help";
 export const RESOURCES_TAB = "Resources";
 export const EXPLORE_COURSES_TAB = "Explore courses";
-export const EXPLORE_OFFERS_TAB = "Explore offers";
+export const EXPLORE_STUDENT_OFFERS_TAB = "Explore offers";
 export const MY_ACTIVITIES_TAB = "My activities";
 export const COURSE_ACTIVITIES_TAB = "Audit Log";
 
@@ -58,7 +58,7 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
     return {
-        signOutNew: async () => dispatch(signOut()),
+        studentSignOutNew: async () => dispatch(studentSignOut()),
 
         logout: () => dispatch(authActions.logout()),
         toggleSidebar: (checkSidebarDocked) => dispatch(dashboardSidebarActions.toggleSidebar(checkSidebarDocked)),
@@ -76,10 +76,10 @@ class SidebarContent extends Component {
 
             ManageCourseUrlState,
             AuthenticationState,
-            signOutNew
+            studentSignOutNew
         } = this.props;
 
-        await signOutNew();
+        await studentSignOutNew();
         dashboardProps.history.push(Routes.constructHomeRoute(dashboardProps.match.params, ManageCourseUrlState, AuthenticationState));
 
         logout(); // logout old
@@ -176,10 +176,10 @@ class SidebarContent extends Component {
                                 //         </ListItem>
                                 //     </NavLink>
                                 //     :
-                                student.type === DB_CONST.TYPE_ISSUER
+                                student.type === DB_CONST.TYPE_TEACHER
                                     ?
                                     <NavLink
-                                        to={{ pathname: dashboardProps.match.pathname, search: `?tab=${MY_OFFERS_TAB}` }}
+                                        to={{ pathname: dashboardProps.match.pathname, search: `?tab=${MY_STUDENT_OFFERS_TAB}` }}
                                         className={css(sharedStyles.nav_link_white_text_hover_without_changing_text_color)}
                                     >
                                         <ListItem
@@ -189,7 +189,7 @@ class SidebarContent extends Component {
                                             <ListItemIcon>
                                                 <ProjectIcon/>
                                             </ListItemIcon>
-                                            <ListItemText className={css(sharedStyles.black_text)}>{MY_OFFERS_TAB}</ListItemText>
+                                            <ListItemText className={css(sharedStyles.black_text)}>{MY_STUDENT_OFFERS_TAB}</ListItemText>
                                         </ListItem>
                                     </NavLink>
                                     :
@@ -198,14 +198,14 @@ class SidebarContent extends Component {
 
                         {/** Explore offers tab */}
                         {
-                            student.type !== DB_CONST.TYPE_ADMIN
+                            student.type !== DB_CONST.TYPE_PROF
                                 ?
                                 null
                                 :
                                 <NavLink
                                     to={{
                                         pathname: dashboardProps.match.pathname,
-                                        search: `?tab=${EXPLORE_OFFERS_TAB}`
+                                        search: `?tab=${EXPLORE_STUDENT_OFFERS_TAB}`
                                     }}
                                     className={css(sharedStyles.nav_link_white_text_hover_without_changing_text_color)}
                                 >
@@ -213,7 +213,7 @@ class SidebarContent extends Component {
                                         <ListItemIcon>
                                             <ProjectIcon/>
                                         </ListItemIcon>
-                                        <ListItemText className={css(sharedStyles.black_text)}>{EXPLORE_OFFERS_TAB}</ListItemText>
+                                        <ListItemText className={css(sharedStyles.black_text)}>{EXPLORE_STUDENT_OFFERS_TAB}</ListItemText>
                                     </ListItem>
                                 </NavLink>
                         }
@@ -261,7 +261,7 @@ class SidebarContent extends Component {
                                 ?
                                 null
                                 :
-                                student.type !== DB_CONST.TYPE_ADMIN
+                                student.type !== DB_CONST.TYPE_PROF
                                     ?
                                     <NavLink
                                         to={{
@@ -296,14 +296,14 @@ class SidebarContent extends Component {
 
                         {/** My/Course activities tab */}
                         {
-                            student.type !== DB_CONST.TYPE_ADMIN
+                            student.type !== DB_CONST.TYPE_PROF
                                 ?
                                 null
                                 :
                                 <NavLink
                                     to={{
                                         pathname: dashboardProps.match.pathname,
-                                        search: `?tab=${(student.type === DB_CONST.TYPE_ADMIN && !student.superAdmin) ? COURSE_ACTIVITIES_TAB : MY_ACTIVITIES_TAB}`
+                                        search: `?tab=${(student.type === DB_CONST.TYPE_PROF && !student.superAdmin) ? COURSE_ACTIVITIES_TAB : MY_ACTIVITIES_TAB}`
                                     }}
                                     className={css(sharedStyles.nav_link_white_text_hover_without_changing_text_color)}
                                 >
@@ -365,7 +365,7 @@ class SidebarContent extends Component {
                         {/*    </ListItem>*/}
                         {/*</NavLink>*/}
                         {
-                            student.type === DB_CONST.TYPE_ADMIN
+                            student.type === DB_CONST.TYPE_PROF
                                 ?
                                 null
                                 :
@@ -391,7 +391,7 @@ class SidebarContent extends Component {
                         {/** Help tab */}
                         {
                             // don't need to show this tab to super admin
-                            student.type === DB_CONST.TYPE_ADMIN
+                            student.type === DB_CONST.TYPE_PROF
                             && student.superAdmin
                                 ?
                                 null

@@ -66,7 +66,7 @@ export const isTradingAddressSameAsRegisteredOffice = (student: Student) => {
 
 */
 
-export const getProfilePicture = (student: Student): string | null => {
+export const getStudentProfilePicture = (student: Student): string | null => {
     if (!student.profilePicture) {
         return null;
     }

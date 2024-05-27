@@ -5,7 +5,7 @@ import Student from "./student";
 import CourseProperties from "./course_properties";
 import StudentProject from "./studentProject";
 import CourseOfMembership from "./course_of_membership";
-import Pledge from "./pledge";
+import StudentPledge from "./student_pledge";
 
 export default interface InvitedStudent {
     id: string;
@@ -79,8 +79,8 @@ export interface InvitedStudentWithProfile extends InvitedStudent {
     profile?: Student;
     uniGroup: CourseProperties;
     coursesOfMembership: CourseOfMembership[];
-    offersCreated?: StudentProject[]; // for issuers
-    pledges?: Pledge[]; // for investors
+    studentOffersCreated?: StudentProject[]; // for issuers
+    studentPledges?: StudentPledge[]; // for investors
 }
 
 /**
@@ -91,11 +91,11 @@ export interface InvitedStudentCsv {
     email: string;
     eduType: "student" | "teacher";
     memberType: "home" | "platform";
-    uniGroup?: string; // specified only when exporting to csv for super admins
+    uniCourse?: string; // specified only when exporting to csv for super admins
     statusInUni: "unregistered" | "active"; // this list will be expanded more in the future
     joinedDate: string | undefined;
-    offersCreated: string | "none" | "not applicable"; // none if the issuer has not created any offers, not applicable if the student is not an issuer
-    pledges: number | "not applicable"; // number of pledges for investor, not applicable if the student is not an issuer
+    studentOffersCreated: string | "none" | "not applicable"; // none if the issuer has not created any offers, not applicable if the student is not an issuer
+    studentPledges: number | "not applicable"; // number of pledges for investor, not applicable if the student is not an issuer
 }
 
 /**

@@ -331,7 +331,7 @@ class TeacherDashboard extends Component {
                                                 </FlexView>
                                             </FlexView>
                                             <Typography paragraph variant="body1" align="left">
-                                                Manage access requests from other courses' investors who would like
+                                                Manage access requests from other courses' students who would like
                                                 to
                                                 join this course.
                                             </Typography>
@@ -350,7 +350,7 @@ class TeacherDashboard extends Component {
                             <AccordionSummary expandIcon={<ExpandMoreIcon/>}>
                                 <FlexView column>
                                     <FlexView width="100%">
-                                        <Typography paragraph variant="h6" color="primary" align="left">Manage offers</Typography>
+                                        <Typography paragraph variant="h6" color="primary" align="left">Manage projects</Typography>
                                         <FlexView marginLeft={28} marginTop={8}>
                                             <OverlayTrigger trigger={['hover', 'focus']} placement="top-start" flip
                                                 overlay={
@@ -360,9 +360,9 @@ class TeacherDashboard extends Component {
                                                         {
                                                             currentStudent.superTeacher
                                                                 ?
-                                                                `${projectsAwaitingDecision} offers are awaiting course teachers' review. Select "Awaiting review" from the "Phase" dropdown to see details.`
+                                                                `${projectsAwaitingDecision} projects are awaiting course teachers' review. Select "Awaiting review" from the "Phase" dropdown to see details.`
                                                                 :
-                                                                `${projectsAwaitingDecision} offers are awaiting your review. Select "Awaiting review" from the "Phase" dropdown to see details.`
+                                                                `${projectsAwaitingDecision} projects are awaiting your review. Select "Awaiting review" from the "Phase" dropdown to see details.`
                                                         }
                                                     </Tooltip>
                                                 }>
@@ -375,9 +375,9 @@ class TeacherDashboard extends Component {
                                         {
                                             currentStudent.superTeacher
                                                 ?
-                                                "Manage all the offers created by all the issuers and course teachers in the system."
+                                                "Manage all the offers created by all the students and course teachers in the system."
                                                 :
-                                                "Manage all the offers created by the issuers and course teachers of this course."
+                                                "Manage all the offers created by the students and course teachers of this course."
                                         }
                                     </Typography>
                                 </FlexView>

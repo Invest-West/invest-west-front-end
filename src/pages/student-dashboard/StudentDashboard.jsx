@@ -38,7 +38,7 @@ import * as manageCourseFromParamsActions from "../../redux-store/actions/manage
 import * as dashboardSidebarActions from "../../redux-store/actions/dashboardSidebarActions";
 import * as editStudentActions from "../../redux-store/actions/editStudentActions";
 import * as notificationsActions from "../../redux-store/actions/notificationsActions";
-import ExploreOffers from "../../shared-components/explore-offers/ExploreOffers";
+import ExploreStudentOffers from "../../shared-components/explore-student-offers/ExploreStudentOffers";
 import OffersTable from "../../shared-components/offers-table/OffersTable";
 import ExploreCourses from "../../shared-components/explore-courses/ExploreCourses";
 import Resources from "../resources/Resources";
@@ -183,7 +183,7 @@ class TeacherDashboard extends Component {
          * HOME TAB
          */
         if (params.tab === HOME_TAB) {
-            return <ExploreOffers/>;
+            return <ExploreStudentOffers/>;
         }
 
         /**

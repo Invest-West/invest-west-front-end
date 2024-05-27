@@ -10,7 +10,7 @@ import StudentProjectAgreement from "./create_pitch_agreement";
 import GroupProperties from "./group_properties";
 import Student, {isStudent} from "./student";
 import Pledge from "./pledge";
-import Teacher, {isTeacher} from "./teacher";
+import Teacher, {isProf} from "./teacher";
 import CourseOfMembership from "./course_of_membership";
 
 /**
@@ -342,7 +342,7 @@ export const isProjectPrivate = (studentProject: StudentProject) => {
  * @param studentProject
  */
 export const shouldHideProjectInformationFromStudent = (studnet: Student | Teacher, coursesOfMembership: CourseOfMembership[], studentProject: StudentProject) => {
-    const teacher: Teacher | null = isTeacher(studnet);
+    const teacher: Teacher | null = isProf(studnet);
     // studnet is an teacher
     if (teacher) {
         // studnet is a super teacher
@@ -400,7 +400,7 @@ export const shouldHideProjectInformationFromStudent = (studnet: Student | Teach
  * @param studentProject
  */
 export const isProjectOwner = (studnet: Student | Teacher, studentProject: StudentProject) => {
-    const teacher: Teacher | null = isTeacher(studnet);
+    const teacher: Teacher | null = isProf(studnet);
     // super admin does not own a project
     if (teacher && teacher.superTeacher) {
         return false;

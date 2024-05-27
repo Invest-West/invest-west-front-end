@@ -39,43 +39,43 @@ import InfoOverlay from "../../shared-components/info_overlay/InfoOverlay";
 import {connect} from "react-redux";
 import * as manageCourseFromParamsActions from "../../redux-store/actions/manageCourseFromParamsActions";
 import * as pledgesTableActions from "../../redux-store/actions/pledgesTableActions";
-import * as investorSelfCertificationAgreementsActions
-    from "../../redux-store/actions/investorSelfCertificationAgreementsActions";
+import * as studentSelfCertificationAgreementsActions
+    from "../../redux-store/actions/studentSelfCertificationAgreementsActions";
 import * as createPledgeDialogActions from "../../redux-store/actions/createPledgeDialogActions";
 import * as selectProjectVisibilityActions from "../../redux-store/actions/selectProjectVisibilityActions";
 import * as feedbackSnackbarActions from "../../redux-store/actions/feedbackSnackbarActions";
-import "./ProjectDetails.scss";
+import "./StudentProjectDetails.scss";
 import firebase from "../../firebase/firebaseApp";
 import * as DB_CONST from "../../firebase/databaseConsts";
 import {TYPE_STUDENT} from "../../firebase/databaseConsts";
 import * as realtimeDBUtils from "../../firebase/realtimeDBUtils";
 import sharedStyles from "../../shared-js-css-styles/SharedStyles";
 import * as ROUTES from "../../router/routes";
-import {AUTH_SUCCESS} from "../signin/Signin";
+import {STUDENT_AUTH_SUCCESS} from "../signin/studentSignIn/Studentsignin";
 import {KeyboardDatePicker} from "@material-ui/pickers";
 import Api, {ApiRoutes} from "../../api/Api";
 import {
-    isDraftProject,
-    isProjectCreatedByCourseTeacher,
-    isProjectFailed,
-    isProjectInLivePitchPhase,
-    isProjectInLivePledgePhase,
-    isProjectLive,
-    isProjectOwner,
-    isProjectPitchExpiredWaitingForTeacherToCheck,
-    isProjectRejectedToGoLive,
-    isProjectSuccessful,
-    isProjectTemporarilyClosed,
-    isProjectWaitingForPledgeToBeChecked,
-    isProjectWaitingForPledgeToBeCreated,
-    isProjectWaitingToGoLive
-} from "../../models/studentProjectproject";
+    isStudentDraftProject,
+    isStudentProjectCreatedByCourseTeacher,
+    isStudentProjectFailed,
+    isStudentProjectInLivePitchPhase,
+    isStudentProjectInLivePledgePhase,
+    isStudentProjectLive,
+    isStudentProjectOwner,
+    isStudentProjectPitchExpiredWaitingForTeacherToCheck,
+    isStudentProjectRejectedToGoLive,
+    isStudentProjectSuccessful,
+    isStudentProjectTemporarilyClosed,
+    isStudentProjectWaitingForPledgeToBeChecked,
+    isStudentProjectWaitingForPledgeToBeCreated,
+    isStudentProjectWaitingToGoLive
+} from "../../models/studentProject";
 import DocumentsDownload from "../../shared-components/documents-download/DocumentsDownload";
 import RiskWarning from "../../shared-components/risk-warning/RiskWarning";
 import {toggleContactPitchOwnerDialog} from "./components/contact-pitch-owner-dialog/ContactPitchOwnerDialogActions";
 import ContactPitchOwnerDialog from "./components/contact-pitch-owner-dialog/ContactPitchOwnerDialog";
 import FeedbackSnackbarNew from "../../shared-components/feedback-snackbar/FeedbackSnackbarNew";
-import {hasAuthenticationError, isAuthenticating} from "../../redux-store/reducers/authenticationReducer";
+import {hasStudentAuthenticationError, isStudentAuthenticating} from "../../redux-store/reducers/authenticationReducer";
 
 const TEACHER_OFFER_STATES_PUBLISH_PITCH = 0;
 const TEACHER_OFFER_STATES_MOVE_TO_PLEDGE = 1;
@@ -93,7 +93,7 @@ const MAX_COVER_HEIGHT_IN_BIG_SCREEN_MODE = 550;
 
 const mapStateToProps = (state) => {
     return {
-        AuthenticationState: state.AuthenticationState,
+        StudentAuthenticationState: state.StudentAuthenticationState,
 
         isMobile: state.MediaQueryState.isMobile,
 
@@ -109,11 +109,11 @@ const mapStateToProps = (state) => {
         studentBeingLoaded: state.auth.studentBeingLoaded,
         coursesStudentIsIn: state.auth.coursesStudentIsIn,
 
-        // Investor self-certification agreement (for investor only) ----------------------------------------------------
-        investorSelfCertificationAgreement_studentID: state.manageInvestorSelfCertificationAgreement.studentID,
-        investorSelfCertificationAgreement: state.manageInvestorSelfCertificationAgreement.investorSelfCertificationAgreement,
-        investorSelfCertificationAgreementLoaded: state.manageInvestorSelfCertificationAgreement.investorSelfCertificationAgreementLoaded,
-        investorSelfCertificationAgreementBeingLoaded: state.manageInvestorSelfCertificationAgreement.investorSelfCertificationAgreementBeingLoaded,
+        // Student self-certification agreement (for student only) ----------------------------------------------------
+        studentSelfCertificationAgreement_studentID: state.manageStudentSelfCertificationAgreement.studentID,
+        studentSelfCertificationAgreement: state.manageStudentSelfCertificationAgreement.studentSelfCertificationAgreement,
+        studentSelfCertificationAgreementLoaded: state.manageStudentSelfCertificationAgreement.studentSelfCertificationAgreementLoaded,
+        studentSelfCertificationAgreementBeingLoaded: state.manageStudentSelfCertificationAgreement.studentSelfCertificationAgreementBeingLoaded,
         //--------------------------------------------------------------------------------------------------------------
 
         projectVisibilitySetting: state.manageSelectProjectVisibility.projectVisibilitySetting
@@ -126,40 +126,40 @@ const mapDispatchToProps = (dispatch) => {
         setExpectedAndCurrentPathsForChecking: (expectedPath, currentPath) => dispatch(manageCourseFromParamsActions.setExpectedAndCurrentPathsForChecking(expectedPath, currentPath)),
         loadAngelNetwork: () => dispatch(manageCourseFromParamsActions.loadAngelNetwork()),
 
-        // Investor self-certification agreement functions --------------------------------------------------------------
-        investorSelfCertificationAgreement_setStudent: (uid) => dispatch(investorSelfCertificationAgreementsActions.setStudent(uid)),
-        loadInvestorSelfCertificationAgreement: () => dispatch(investorSelfCertificationAgreementsActions.loadInvestorSelfCertificationAgreement()),
+        // Student self-certification agreement functions --------------------------------------------------------------
+        studentSelfCertificationAgreement_setStudent: (uid) => dispatch(studentSelfCertificationAgreementsActions.setStudent(uid)),
+        loadStudentSelfCertificationAgreement: () => dispatch(studentSelfCertificationAgreementsActions.loadStudentSelfCertificationAgreement()),
         //--------------------------------------------------------------------------------------------------------------
 
-        pledgesTable_setProject: (project) => dispatch(pledgesTableActions.setProject(project)),
+        pledgesTable_setStudentProject: (studentProject) => dispatch(pledgesTableActions.setStudentProject(studentProject)),
         pledgesTable_stopListeningForPledgesChanged: () => dispatch(pledgesTableActions.stopListeningForPledgesChanged()),
 
         createPledgeDialog_toggleDialog: () => dispatch(createPledgeDialogActions.toggleCreatePledgeDialog()),
-        createPledgeDialog_setProject: (project) => dispatch(createPledgeDialogActions.setProject(project)),
+        createPledgeDialog_setStudentProject: (studentProject) => dispatch(createPledgeDialogActions.setStudentProject(studentProject)),
 
-        selectProjectVisibility_setProject: (project) => dispatch(selectProjectVisibilityActions.setProject(project)),
+        selectStudentProjectVisibility_setStudentProject: (studentProject) => dispatch(selectProjectVisibilityActions.setStudentProject(studentProject)),
 
         setFeedbackSnackbarContent: (message, color, position) => dispatch(feedbackSnackbarActions.setFeedbackSnackbarContent(message, color, position)),
 
-        toggleContactPitchOwnerDialog: (projectName, projectOwnerEmail) => dispatch(toggleContactPitchOwnerDialog(projectName, projectOwnerEmail))
+        toggleContactPitchOwnerDialog: (studentProjectName, projectOwnerEmail) => dispatch(toggleContactPitchOwnerDialog(studentProjectName, projectOwnerEmail))
     }
 };
 
-class ProjectDetailsMain extends Component {
+class StudentProjectDetailsMain extends Component {
 
     constructor(props) {
         super(props);
 
         this.database = firebase.database();
 
-        // project changed listener
-        this.projectListener = null;
+        // studentProject changed listener
+        this.studentProjectListener = null;
         // comments changed listener
         this.commentsListener = null;
         // comments replies changed listener
         this.commentsRepliesListener = null;
-        // pledges changed listener
-        this.pledgesListener = null;
+        // Studentpledges changed listener
+        this.studentPledgesListener = null;
         // votes changed listener
         this.votesListener = null;
 
@@ -168,8 +168,8 @@ class ProjectDetailsMain extends Component {
             dataLoaded: false,
             dataBeingLoaded: false,
 
-            investorPledge: null,
-            investorPledgeLoaded: false,
+            studentPledge: null,
+            studentPledgeLoaded: false,
 
             mainBody: MAIN_BODY_CAMPAIGN,
             teacherOfferStatesActiveStep: TEACHER_OFFER_STATES_PUBLISH_PITCH,
@@ -177,19 +177,19 @@ class ProjectDetailsMain extends Component {
             comments: [],
             commentsLoaded: false,
 
-            // states for an investor to post a NEW comment
+            // states for an student to post a NEW comment
             commentDialogOpen: false,
             commentText: "",
             commentSubmitClick: false,
             // ---------------------------------
 
-            // existing comment of the current investor
+            // existing comment of the current student
             currentComment: null,
             currentCommentText: "",
             // -------------------------------------------
 
-            // available for the teacher/course teachers who own the project only
-            // allow the owners to reply to the investor's comments
+            // available for the teacher/course teachers who own the studentProject only
+            // allow the owners to reply to the student's comments
             replyingToComment: null,
             replyText: "",
             replyEdited: null,
@@ -207,11 +207,11 @@ class ProjectDetailsMain extends Component {
             // pitch's details
             projectDetail: {
                 // the pitch object
-                project: null,
-                projectLoaded: false,
+                studentProject: null,
+                studentProjectLoaded: false,
 
-                pledges: [],
-                pledgesLoaded: false,
+                Studentpledges: [],
+                studentPledgesLoaded: false,
 
                 votes: [],
                 votesLoaded: false,
@@ -232,15 +232,15 @@ class ProjectDetailsMain extends Component {
             studentLoaded,
             studentBeingLoaded,
 
-            investorSelfCertificationAgreement_studentID,
-            investorSelfCertificationAgreementLoaded,
-            investorSelfCertificationAgreementBeingLoaded,
+            studentSelfCertificationAgreement_studentID,
+            studentSelfCertificationAgreementLoaded,
+            studentSelfCertificationAgreementBeingLoaded,
 
             setCourseStudentFromParams,
             setExpectedAndCurrentPathsForChecking,
             loadAngelNetwork,
-            investorSelfCertificationAgreement_setStudent,
-            loadInvestorSelfCertificationAgreement,
+            studentSelfCertificationAgreement_setStudent,
+            loadStudentSelfCertificationAgreement,
         } = this.props;
 
         const {
@@ -259,9 +259,9 @@ class ProjectDetailsMain extends Component {
         setExpectedAndCurrentPathsForChecking(
             match.params.hasOwnProperty("courseStudent")
                 ?
-                ROUTES.PROJECT_DETAILS
+                ROUTES.STUDENT_PROJECT_DETAILS
                 :
-                ROUTES.PROJECT_DETAILS_INVEST_WEST_SUPER, match.path
+                ROUTES.STUDENT_PROJECT_DETAILS_INVEST_WEST_SUPER, match.path
         );
 
         loadAngelNetwork();
@@ -274,25 +274,25 @@ class ProjectDetailsMain extends Component {
                 }
 
                 if (student) {
-                    if (!investorSelfCertificationAgreement_studentID && student.type === DB_CONST.TYPE_INVESTOR) {
-                        investorSelfCertificationAgreement_setStudent(student.id);
+                    if (!studentSelfCertificationAgreement_studentID && student.type === DB_CONST.TYPE_STUDENT) {
+                        studentSelfCertificationAgreement_setStudent(student.id);
                     }
                 }
             }
 
             // if student id for reference in self-certification agreement has been set
-            if (investorSelfCertificationAgreement_studentID) {
+            if (studentSelfCertificationAgreement_studentID) {
                 // if self-certification agreement has not been loaded
-                if (!investorSelfCertificationAgreementLoaded
-                    && !investorSelfCertificationAgreementBeingLoaded
-                    && student.type === DB_CONST.TYPE_INVESTOR
+                if (!studentSelfCertificationAgreementLoaded
+                    && !studentSelfCertificationAgreementBeingLoaded
+                    && student.type === DB_CONST.TYPE_STUDENT
                 ) {
-                    loadInvestorSelfCertificationAgreement();
+                    loadStudentSelfCertificationAgreement();
                 }
             }
         }
-        console.log('Page loaded. Authentication status:', this.props.AuthenticationState.isAuthenticated ? 'Authenticated' : 'Not Authenticated');
-        console.log('Current student on page load:', this.props.AuthenticationState.currentStudent);
+        console.log('Page loaded. Authentication status:', this.props.StudentAuthenticationState.isAuthenticated ? 'Authenticated' : 'Not Authenticated');
+        console.log('Current student on page load:', this.props.StudentAuthenticationState.currentStudent);
     }
 
     componentDidUpdate(prevProps, prevState, snapshot) {
@@ -304,12 +304,12 @@ class ProjectDetailsMain extends Component {
             studentLoaded,
             studentBeingLoaded,
 
-            investorSelfCertificationAgreement_studentID,
-            investorSelfCertificationAgreementLoaded,
-            investorSelfCertificationAgreementBeingLoaded,
+            studentSelfCertificationAgreement_studentID,
+            studentSelfCertificationAgreementLoaded,
+            studentSelfCertificationAgreementBeingLoaded,
 
-            investorSelfCertificationAgreement_setStudent,
-            loadInvestorSelfCertificationAgreement,
+            studentSelfCertificationAgreement_setStudent,
+            loadStudentSelfCertificationAgreement,
 
             loadAngelNetwork
         } = this.props;
@@ -320,8 +320,8 @@ class ProjectDetailsMain extends Component {
         } = this.state;
 
         const {
-            project,
-            projectLoaded
+            studentProject,
+            studentProjectLoaded
         } = this.state.projectDetail;
 
         loadAngelNetwork();
@@ -334,25 +334,25 @@ class ProjectDetailsMain extends Component {
                 }
 
                 if (student) {
-                    if (!investorSelfCertificationAgreement_studentID && student.type === DB_CONST.TYPE_STUDENT) {
-                        investorSelfCertificationAgreement_setStudent(student.id);
+                    if (!studentSelfCertificationAgreement_studentID && student.type === DB_CONST.TYPE_STUDENT) {
+                        studentSelfCertificationAgreement_setStudent(student.id);
                     }
                 }
             }
 
             // if student id for reference in self-certification agreement has been set
-            if (investorSelfCertificationAgreement_studentID) {
+            if (studentSelfCertificationAgreement_studentID) {
                 // if self-certification agreement has not been loaded
-                if (!investorSelfCertificationAgreementLoaded
-                    && !investorSelfCertificationAgreementBeingLoaded
+                if (!studentSelfCertificationAgreementLoaded
+                    && !studentSelfCertificationAgreementBeingLoaded
                     && student.type === DB_CONST.TYPE_STUDENT
                 ) {
-                    loadInvestorSelfCertificationAgreement();
+                    loadStudentSelfCertificationAgreement();
                 }
             }
 
-            // attach project changed listener
-            if (projectLoaded && project) {
+            // attach studentProject changed listener
+            if (studentProjectLoaded && studentProject) {
                 this.attachProjectChangedListener();
             }
 
@@ -375,11 +375,11 @@ class ProjectDetailsMain extends Component {
             this.votesListener.off("child_removed");
         }
 
-        // detach listener for pledges
-        if (this.pledgesListener) {
-            this.pledgesListener.off("child_added");
-            this.pledgesListener.off("child_changed");
-            this.pledgesListener.off("child_removed");
+        // detach listener for Studentpledges
+        if (this.studentPledgesListener) {
+            this.studentPledgesListener.off("child_added");
+            this.studentPledgesListener.off("child_changed");
+            this.studentPledgesListener.off("child_removed");
         }
 
         // detach listener for comments
@@ -394,7 +394,7 @@ class ProjectDetailsMain extends Component {
             this.commentsRepliesListener.off("child_changed");
         }
 
-        // detach listener for pledges changed in pledges table
+        // detach listener for Studentpledges changed in Studentpledges table
         pledgesTable_stopListeningForPledgesChanged();
     }
 
@@ -406,7 +406,7 @@ class ProjectDetailsMain extends Component {
             student,
             studentLoaded,
 
-            selectProjectVisibility_setProject
+            selectStudentProjectVisibility_setStudentProject
         } = this.props;
 
         const {
@@ -423,13 +423,13 @@ class ProjectDetailsMain extends Component {
                 this.setState({
                     dataLoaded: true,
                     dataBeingLoaded: false,
-                    investorPledgeLoaded: true,
+                    studentPledgeLoaded: true,
                     projectDetail: {
                         ...this.state.projectDetail,
-                        projectLoaded: true, // project is null
-                        projectTeacherLoaded: true, // project teacher is null
+                        studentProjectLoaded: true, // studentProject is null
+                        projectTeacherLoaded: true, // studentProject teacher is null
                         votesLoaded: true,
-                        pledgesLoaded: true
+                        studentPledgesLoaded: true
                     }
                 });
                 return;
@@ -446,37 +446,37 @@ class ProjectDetailsMain extends Component {
             dataBeingLoaded: true
         });
 
-        // load the requested project
-        const projectID = this.props.match.params.projectID;
+        // load the requested studentProject
+        const studentProjectID = this.props.match.params.studentProjectID;
         realtimeDBUtils
-            .loadAParticularProject(projectID)
-            .then(project => {
-                // track activity for investors only
+            .loadAParticularProject(studentProjectID)
+            .then(studentProject => {
+                // track activity for students only
                 if (student.type === DB_CONST.TYPE_STUDENT) {
                     realtimeDBUtils
                         .trackActivity({
                             studentID: student.id,
                             activityType: DB_CONST.ACTIVITY_TYPE_VIEW,
-                            interactedObjectLocation: DB_CONST.PROJECTS_CHILD,
-                            interactedObjectID: project.id,
-                            activitySummary: realtimeDBUtils.ACTIVITY_SUMMARY_TEMPLATE_VIEWED_PROJECT_DETAILS.replace("%project%", project.projectName),
-                            action: ROUTES.PROJECT_DETAILS_INVEST_WEST_SUPER.replace(":projectID", project.id)
+                            interactedObjectLocation: DB_CONST.STUDENT_PROJECTS_CHILD,
+                            interactedObjectID: studentProject.id,
+                            activitySummary: realtimeDBUtils.ACTIVITY_SUMMARY_TEMPLATE_VIEWED_STUDENT_PROJECT_DETAILS.replace("%studentProject%", studentProject.studentProjectName),
+                            action: ROUTES.STUDENT_PROJECT_DETAILS_INVEST_WEST_SUPER.replace(":studentProjectID", studentProject.id)
                         });
                 }
 
-                // set project for the Select component that is used to choose the project visibility
-                selectProjectVisibility_setProject(project);
+                // set studentProject for the Select component that is used to choose the studentProject visibility
+                selectStudentProjectVisibility_setStudentProject(studentProject);
 
                 this.setState({
                     projectDetail: {
                         ...this.state.projectDetail,
-                        project: project,
-                        projectLoaded: true
+                        studentProject: studentProject,
+                        studentProjectLoaded: true
                     },
                     mainBody:
                         student.type === DB_CONST.TYPE_PROF
                             ?
-                            student.anid === project.anid
+                            student.anid === studentProject.anid
                                 ?
                                 MAIN_BODY_TEACHER_OFFER_STATES
                                 :
@@ -485,15 +485,15 @@ class ProjectDetailsMain extends Component {
                             MAIN_BODY_CAMPAIGN
                     ,
                     teacherOfferStatesActiveStep:
-                        project.status === DB_CONST.PROJECT_STATUS_BEING_CHECKED
+                        studentProject.status === DB_CONST.STUDENT_PROJECT_STATUS_BEING_CHECKED
                             ?
                             TEACHER_OFFER_STATES_PUBLISH_PITCH
                             :
-                            (project.status === DB_CONST.PROJECT_STATUS_PITCH_PHASE || project.status === DB_CONST.PROJECT_STATUS_PITCH_PHASE_EXPIRED_WAITING_TO_BE_CHECKED)
+                            (studentProject.status === DB_CONST.STUDENT_PROJECT_STATUS_PITCH_PHASE || studentProject.status === DB_CONST.STUDENT_PROJECT_STATUS_PITCH_PHASE_EXPIRED_WAITING_TO_BE_CHECKED)
                                 ?
                                 TEACHER_OFFER_STATES_MOVE_TO_PLEDGE
                                 :
-                                (project.status === DB_CONST.PROJECT_STATUS_PRIMARY_OFFER_CREATED_WAITING_TO_BE_CHECKED || project.status === DB_CONST.PROJECT_STATUS_PRIMARY_OFFER_PHASE)
+                                (studentProject.status === DB_CONST.STUDENT_PROJECT_STATUS_PRIMARY_OFFER_CREATED_WAITING_TO_BE_CHECKED || studentProject.status === DB_CONST.STUDENT_PROJECT_STATUS_PRIMARY_OFFER_PHASE)
                                     ?
                                     TEACHER_OFFER_STATES_PUBLISH_PLEDGE
                                     :
@@ -502,7 +502,7 @@ class ProjectDetailsMain extends Component {
 
                 // load votes
                 realtimeDBUtils
-                    .loadVotes(project.id, null, realtimeDBUtils.LOAD_VOTES_ORDER_BY_PROJECT)
+                    .loadVotes(studentProject.id, null, realtimeDBUtils.LOAD_VOTES_ORDER_BY_STUDENT_PROJECT)
                     .then(votes => {
 
                         this.setState({
@@ -513,18 +513,18 @@ class ProjectDetailsMain extends Component {
                             }
                         });
 
-                        // load pledges
+                        // load Studentpledges
                         realtimeDBUtils
-                            .loadPledges(project.id, null, realtimeDBUtils.LOAD_PLEDGES_ORDER_BY_PROJECT)
-                            .then(pledges => {
+                            .loadPledges(studentProject.id, null, realtimeDBUtils.LOAD_PLEDGES_ORDER_BY_STUDENT_PROJECT)
+                            .then(Studentpledges => {
 
-                                // if the current student is an investor, check if they pledged this project
+                                // if the current student is an student, check if they pledged this studentProject
                                 if (student.type === DB_CONST.TYPE_STUDENT) {
-                                    let currentStudentPledgeIndex = pledges.findIndex(pledge => pledge.investorID === student.id && pledge.amount !== '');
-                                    // this investor has pledges this project before
+                                    let currentStudentPledgeIndex = Studentpledges.findIndex(pledge => pledge.studentID === student.id && pledge.amount !== '');
+                                    // this student has Studentpledges this studentProject before
                                     if (currentStudentPledgeIndex !== -1) {
                                         this.setState({
-                                            investorPledge: pledges[currentStudentPledgeIndex]
+                                            studentPledge: Studentpledges[currentStudentPledgeIndex]
                                         });
                                     }
                                 }
@@ -532,20 +532,20 @@ class ProjectDetailsMain extends Component {
                                 this.setState({
                                     dataLoaded: true,
                                     dataBeingLoaded: false,
-                                    investorPledgeLoaded: true,
+                                    studentPledgeLoaded: true,
                                     projectDetail: {
                                         ...this.state.projectDetail,
-                                        pledges: pledges,
-                                        pledgesLoaded: true
+                                        Studentpledges: Studentpledges,
+                                        studentPledgesLoaded: true
                                     }
                                 });
 
-                                // load the profile of the teacher or the course teacher created this project
+                                // load the profile of the teacher or the course teacher created this studentProject
                                 // this student can be the teacher who created the offer themselves
                                 // or the course teacher who created this offer on behalf of an unknown teacher
                                 // or the teacher who got the course teacher create this offer for
                                 realtimeDBUtils
-                                    .getStudentBasedOnID(project.teacherID)
+                                    .getStudentBasedOnID(studentProject.teacherID)
                                     .then(projectTeacher => {
                                         this.setState({
                                             projectDetail: {
@@ -559,13 +559,13 @@ class ProjectDetailsMain extends Component {
                                         this.setState({
                                             dataLoaded: true,
                                             dataBeingLoaded: false,
-                                            investorPledgeLoaded: true,
+                                            studentPledgeLoaded: true,
                                             projectDetail: {
                                                 ...this.state.projectDetail,
-                                                projectLoaded: true, // project is null
-                                                projectTeacherLoaded: true, // project Teacher is null
+                                                studentProjectLoaded: true, // studentProject is null
+                                                projectTeacherLoaded: true, // studentProject Teacher is null
                                                 votesLoaded: true,
-                                                pledgesLoaded: true
+                                                studentPledgesLoaded: true
                                             }
                                         });
                                     });
@@ -574,13 +574,13 @@ class ProjectDetailsMain extends Component {
                                 this.setState({
                                     dataLoaded: true,
                                     dataBeingLoaded: false,
-                                    investorPledgeLoaded: true,
+                                    studentPledgeLoaded: true,
                                     projectDetail: {
                                         ...this.state.projectDetail,
-                                        projectLoaded: true, // project is null
-                                        projectTeacherLoaded: true, // project Teacher is null
+                                        studentProjectLoaded: true, // studentProject is null
+                                        projectTeacherLoaded: true, // studentProject Teacher is null
                                         votesLoaded: true,
-                                        pledgesLoaded: true
+                                        studentPledgesLoaded: true
                                     }
                                 });
                             });
@@ -589,30 +589,30 @@ class ProjectDetailsMain extends Component {
                         this.setState({
                             dataLoaded: true,
                             dataBeingLoaded: false,
-                            investorPledgeLoaded: true,
+                            studentPledgeLoaded: true,
                             projectDetail: {
                                 ...this.state.projectDetail,
-                                projectLoaded: true, // project is null
-                                projectTeacherLoaded: true, // project Teacher is null
+                                studentProjectLoaded: true, // studentProject is null
+                                projectTeacherLoaded: true, // studentProject Teacher is null
                                 votesLoaded: true,
-                                pledgesLoaded: true
+                                studentPledgesLoaded: true
                             }
                         });
                     });
             })
             .catch(error => {
-                // error happens when loading the requested project
+                // error happens when loading the requested studentProject
                 // we'll stop the loading process for all others
                 this.setState({
                     dataLoaded: true,
                     dataBeingLoaded: false,
-                    investorPledgeLoaded: true,
+                    studentPledgeLoaded: true,
                     projectDetail: {
                         ...this.state.projectDetail,
-                        projectLoaded: true, // project is null
-                        projectTeacherLoaded: true, // project Teacher is null
+                        studentProjectLoaded: true, // studentProject is null
+                        projectTeacherLoaded: true, // studentProject Teacher is null
                         votesLoaded: true,
-                        pledgesLoaded: true
+                        studentPledgesLoaded: true
                     }
                 });
             });
@@ -625,7 +625,7 @@ class ProjectDetailsMain extends Component {
         const {
             student,
 
-            pledgesTable_setProject
+            pledgesTable_setStudentProject
         } = this.props;
 
         const {
@@ -634,25 +634,25 @@ class ProjectDetailsMain extends Component {
         } = this.state;
 
         const {
-            project,
-            projectLoaded,
+            studentProject,
+            studentProjectLoaded,
 
-            pledges,
-            pledgesLoaded,
+            Studentpledges,
+            studentPledgesLoaded,
 
             votes,
             votesLoaded
         } = this.state.projectDetail;
 
         // attach votes changed listener
-        if (votes && votesLoaded && project && projectLoaded) {
-            // votes can only happen if the project is in Pitch phase
-            if (project.status === DB_CONST.PROJECT_STATUS_PITCH_PHASE) {
+        if (votes && votesLoaded && studentProject && studentProjectLoaded) {
+            // votes can only happen if the studentProject is in Pitch phase
+            if (studentProject.status === DB_CONST.STUDENT_PROJECT_STATUS_PITCH_PHASE) {
                 if (!this.votesListener) {
                     this.votesListener = this.database
                         .ref(DB_CONST.VOTES_CHILD)
-                        .orderByChild("projectID")
-                        .equalTo(project.id);
+                        .orderByChild("studentProjectID")
+                        .equalTo(studentProject.id);
 
                     // vote added
                     this.votesListener
@@ -663,9 +663,9 @@ class ProjectDetailsMain extends Component {
                             let voteIndex = votes.findIndex(existingVote => existingVote.id === vote.id);
                             if (voteIndex === -1) {
                                 realtimeDBUtils
-                                    .getStudentBasedOnID(vote.investorID)
-                                    .then(investor => {
-                                        vote.investor = investor;
+                                    .getStudentBasedOnID(vote.studentID)
+                                    .then(student => {
+                                        vote.student = student;
                                         this.setState({
                                             projectDetail: {
                                                 ...this.state.projectDetail,
@@ -687,7 +687,7 @@ class ProjectDetailsMain extends Component {
                             if (voteIndex !== -1) {
                                 let updatedVotes = votes;
 
-                                vote.investor = updatedVotes[voteIndex].investor;
+                                vote.student = updatedVotes[voteIndex].student;
                                 updatedVotes[voteIndex] = vote;
 
                                 this.setState({
@@ -723,35 +723,35 @@ class ProjectDetailsMain extends Component {
             }
         }
 
-        // attach pledges changed listener
-        if (pledges && pledgesLoaded && projectLoaded && project) {
-            // pledges can only happen if the project is in Primary offer phase
-            if (project.status !== DB_CONST.PROJECT_STATUS_BEING_CHECKED
-                && project.status !== DB_CONST.PROJECT_STATUS_FAILED
-                && project.status !== DB_CONST.PROJECT_STATUS_PITCH_PHASE
+        // attach Studentpledges changed listener
+        if (Studentpledges && studentPledgesLoaded && studentProjectLoaded && studentProject) {
+            // Studentpledges can only happen if the studentProject is in Primary offer phase
+            if (studentProject.status !== DB_CONST.STUDENT_PROJECT_STATUS_BEING_CHECKED
+                && studentProject.status !== DB_CONST.STUDENT_PROJECT_STATUS_FAILED
+                && studentProject.status !== DB_CONST.STUDENT_PROJECT_STATUS_PITCH_PHASE
             ) {
-                if (!this.pledgesListener) {
-                    this.pledgesListener = this.database
+                if (!this.studentPledgesListener) {
+                    this.studentPledgesListener = this.database
                         .ref(DB_CONST.PLEDGES_CHILD)
-                        .orderByChild("projectID")
-                        .equalTo(project.id);
+                        .orderByChild("studentProjectID")
+                        .equalTo(studentProject.id);
 
                     // new pledge added
-                    this.pledgesListener
+                    this.studentPledgesListener
                         .on("child_added", snapshot => {
                             let pledge = snapshot.val();
 
-                            let pledges = [...this.state.projectDetail.pledges];
-                            let pledgeIndex = pledges.findIndex(existingPledge => existingPledge.id === pledge.id);
+                            let Studentpledges = [...this.state.projectDetail.Studentpledges];
+                            let pledgeIndex = Studentpledges.findIndex(existingPledge => existingPledge.id === pledge.id);
                             if (pledgeIndex === -1) {
                                 realtimeDBUtils
-                                    .getStudentBasedOnID(pledge.investorID)
-                                    .then(investor => {
-                                        pledge.investor = investor;
+                                    .getStudentBasedOnID(pledge.studentID)
+                                    .then(student => {
+                                        pledge.student = student;
                                         this.setState({
                                             projectDetail: {
                                                 ...this.state.projectDetail,
-                                                pledges: [...pledges, pledge]
+                                                Studentpledges: [...Studentpledges, pledge]
                                             }
                                         });
                                     });
@@ -759,23 +759,23 @@ class ProjectDetailsMain extends Component {
                         });
 
                     // pledge changed
-                    this.pledgesListener
+                    this.studentPledgesListener
                         .on("child_changed", snapshot => {
                             let pledge = snapshot.val();
 
-                            let pledges = [...this.state.projectDetail.pledges];
-                            let pledgeIndex = pledges.findIndex(existingPledge => existingPledge.id === pledge.id);
+                            let Studentpledges = [...this.state.projectDetail.Studentpledges];
+                            let pledgeIndex = Studentpledges.findIndex(existingPledge => existingPledge.id === pledge.id);
 
                             if (pledgeIndex !== -1) {
-                                let updatedPledges = pledges;
+                                let updatedPledges = Studentpledges;
 
-                                pledge.investor = updatedPledges[pledgeIndex].investor;
+                                pledge.student = updatedPledges[pledgeIndex].student;
                                 updatedPledges[pledgeIndex] = pledge;
 
-                                const currentPledge = JSON.parse(JSON.stringify(this.state.investorPledge));
+                                const currentPledge = JSON.parse(JSON.stringify(this.state.studentPledge));
 
                                 this.setState({
-                                    investorPledge:
+                                    studentPledge:
                                     // current pledge is not null
                                         currentPledge !== null
                                             ?
@@ -790,7 +790,7 @@ class ProjectDetailsMain extends Component {
                                                 currentPledge
                                             :
                                             // current pledge is null
-                                            pledge.investorID === student.id
+                                            pledge.studentID === student.id
                                                 ?
                                                 pledge.amount === ""
                                                     ?
@@ -802,38 +802,38 @@ class ProjectDetailsMain extends Component {
                                     ,
                                     projectDetail: {
                                         ...this.state.projectDetail,
-                                        pledges: updatedPledges
+                                        Studentpledges: updatedPledges
                                     }
                                 });
                             }
                         });
 
                     // pledge removed
-                    this.pledgesListener
+                    this.studentPledgesListener
                         .on("child_removed", snapshot => {
                             let pledgeRemovedID = snapshot.key;
 
-                            let pledges = [...this.state.projectDetail.pledges];
-                            let pledgeIndex = pledges.findIndex(existingPledge => existingPledge.id === pledgeRemovedID);
+                            let Studentpledges = [...this.state.projectDetail.Studentpledges];
+                            let pledgeIndex = Studentpledges.findIndex(existingPledge => existingPledge.id === pledgeRemovedID);
 
                             if (pledgeIndex !== -1) {
-                                let updatedPledges = pledges;
+                                let updatedPledges = Studentpledges;
                                 updatedPledges.splice(pledgeIndex, 1);
 
-                                const currentPledge = this.state.investorPledge;
+                                const currentPledge = this.state.studentPledge;
                                 if (!currentPledge && currentPledge.id === pledgeRemovedID) {
                                     this.setState({
-                                        investorPledge: null,
+                                        studentPledge: null,
                                         projectDetail: {
                                             ...this.state.projectDetail,
-                                            pledges: updatedPledges
+                                            Studentpledges: updatedPledges
                                         }
                                     });
                                 } else {
                                     this.setState({
                                         projectDetail: {
                                             ...this.state.projectDetail,
-                                            pledges: updatedPledges
+                                            Studentpledges: updatedPledges
                                         }
                                     });
                                 }
@@ -845,8 +845,8 @@ class ProjectDetailsMain extends Component {
 
         // if the student clicks on the Pledges tab
         if (mainBody === MAIN_BODY_STUDENTS_PLEDGED) {
-            if (project) {
-                pledgesTable_setProject(project);
+            if (studentProject) {
+                pledgesTable_setStudentProject(studentProject);
             }
         }
 
@@ -856,7 +856,7 @@ class ProjectDetailsMain extends Component {
             if (!commentsLoaded) {
                 // load comments
                 realtimeDBUtils
-                    .loadComments(project.id)
+                    .loadComments(studentProject.id)
                     .then(returnedComments => {
 
                         realtimeDBUtils
@@ -872,8 +872,8 @@ class ProjectDetailsMain extends Component {
                                 if (!this.commentsListener) {
                                     this.commentsListener = this.database
                                         .ref(DB_CONST.COMMENTS_CHILD)
-                                        .orderByChild("projectID")
-                                        .equalTo(project.id);
+                                        .orderByChild("studentProjectID")
+                                        .equalTo(studentProject.id);
 
                                     // new comment added
                                     this.commentsListener
@@ -881,7 +881,7 @@ class ProjectDetailsMain extends Component {
                                             let comment = snapshot.val();
                                             comment.replies = [];
 
-                                            // assign comment to currentComment object if it belongs to the current investor
+                                            // assign comment to currentComment object if it belongs to the current student
                                             if (comment.commentedBy === student.id) {
                                                 const currentComment = this.state.currenComment;
                                                 if (!currentComment) {
@@ -943,8 +943,8 @@ class ProjectDetailsMain extends Component {
                                 if (!this.commentsRepliesListener) {
                                     this.commentsRepliesListener = this.database
                                         .ref(DB_CONST.COMMENT_REPLIES_CHILD)
-                                        .orderByChild("projectID")
-                                        .equalTo(project.id);
+                                        .orderByChild("studentProjectID")
+                                        .equalTo(studentProject.id);
 
                                     this.commentsRepliesListener
                                         .on("child_added", snapshot => {
@@ -1053,28 +1053,28 @@ class ProjectDetailsMain extends Component {
         } = this.props;
 
         const {
-            project,
+            studentProject,
             votes
         } = this.state.projectDetail;
 
-        let currentVoteObj = getInvestorVote(votes, student);
+        let currentVoteObj = getStudentVote(votes, student);
         if (currentVoteObj) {
-            currentVoteObj.investor = null;
+            currentVoteObj.student = null;
         }
 
         let newVoteObj = {};
 
-        // investor has already voted before or voted and cancelled
-        // when an investor cancelled their vote, the vote value will be ''
+        // student has already voted before or voted and cancelled
+        // when an student cancelled their vote, the vote value will be ''
         if (currentVoteObj) {
 
             newVoteObj = JSON.parse(JSON.stringify(currentVoteObj));
 
-            // the investor cancelled their vote
+            // the student cancelled their vote
             if (newVoteObj.voted === '') {
                 newVoteObj.voted = voteVal;
             }
-            // the investor now clicks to cancel their vote
+            // the student now clicks to cancel their vote
             else {
                 newVoteObj.voted = ''; // update vote to void
             }
@@ -1087,7 +1087,7 @@ class ProjectDetailsMain extends Component {
                 .child(newVoteObj.id)
                 .update(newVoteObj)
                 .then(() => {
-                    // record the investor's activity
+                    // record the student's activity
                     realtimeDBUtils
                         .trackActivity({
                             studentID: student.id,
@@ -1095,12 +1095,12 @@ class ProjectDetailsMain extends Component {
                             interactedObjectLocation: DB_CONST.VOTES_CHILD,
                             interactedObjectID: newVoteObj.id,
                             activitySummary: realtimeDBUtils
-                                .ACTIVITY_SUMMARY_TEMPLATE_EDITED_VOTE_FOR_PROJECT
-                                .replace("%project%", project.projectName)
+                                .ACTIVITY_SUMMARY_TEMPLATE_EDITED_VOTE_FOR_STUDENT_PROJECT
+                                .replace("%studentProject%", studentProject.studentProjectName)
                             ,
                             action: ROUTES
-                                .PROJECT_DETAILS_INVEST_WEST_SUPER
-                                .replace(":projectID", project.id)
+                                .STUDENT_PROJECT_DETAILS_INVEST_WEST_SUPER
+                                .replace(":studentProjectID", studentProject.id)
                             ,
                             value: {
                                 before: currentVoteObj,
@@ -1109,7 +1109,7 @@ class ProjectDetailsMain extends Component {
                         });
                 });
         }
-        // investor has not voted before
+        // student has not voted before
         else {
             const id = this.database
                 .ref(DB_CONST.VOTES_CHILD)
@@ -1118,8 +1118,8 @@ class ProjectDetailsMain extends Component {
 
             newVoteObj.id = id;
             newVoteObj.anid = courseProperties ? courseProperties.anid : null;
-            newVoteObj.investorID = student.id;
-            newVoteObj.projectID = project.id;
+            newVoteObj.studentID = student.id;
+            newVoteObj.studentProjectID = studentProject.id;
             newVoteObj.voted = voteVal;
             newVoteObj.date = utils.getCurrentDate();
 
@@ -1128,7 +1128,7 @@ class ProjectDetailsMain extends Component {
                 .child(id)
                 .set(newVoteObj)
                 .then(() => {
-                    // record the investor's activity for first time voting
+                    // record the student's activity for first time voting
                     realtimeDBUtils
                         .trackActivity({
                             studentID: student.id,
@@ -1136,12 +1136,12 @@ class ProjectDetailsMain extends Component {
                             interactedObjectLocation: DB_CONST.VOTES_CHILD,
                             interactedObjectID: id,
                             activitySummary: realtimeDBUtils
-                                .ACTIVITY_SUMMARY_TEMPLATE_MADE_A_VOTE_FOR_PROJECT
-                                .replace("%project%", project.projectName)
+                                .ACTIVITY_SUMMARY_TEMPLATE_MADE_A_VOTE_FOR_STUDENT_PROJECT
+                                .replace("%studentProject%", studentProject.studentProjectName)
                             ,
                             action: ROUTES
-                                .PROJECT_DETAILS_INVEST_WEST_SUPER
-                                .replace(":projectID", project.id)
+                                .STUDENT_PROJECT_DETAILS_INVEST_WEST_SUPER
+                                .replace(":studentProjectID", studentProject.id)
                             ,
                             value: newVoteObj
                         });
@@ -1150,11 +1150,11 @@ class ProjectDetailsMain extends Component {
                     realtimeDBUtils
                         .sendNotification({
                             title: "Someone liked your pitch",
-                            message: "Congratulations. A new investor has showed interest in your pitch.",
-                            studentID: project.teacherID,
+                            message: "Congratulations. A new student has showed interest in your pitch.",
+                            studentID: studentProject.teacherID,
                             action: ROUTES
-                                .PROJECT_DETAILS_INVEST_WEST_SUPER
-                                .replace(":projectID", project.id)
+                                .STUDENT_PROJECT_DETAILS_INVEST_WEST_SUPER
+                                .replace(":studentProjectID", studentProject.id)
                         })
                         .then(() => {
                             // do something
@@ -1173,37 +1173,37 @@ class ProjectDetailsMain extends Component {
     attachProjectChangedListener = () => {
 
         const {
-            project
+            studentProject
         } = this.state.projectDetail;
 
-        if (this.projectListener === null) {
-            this.projectListener = this.database
-                .ref(DB_CONST.PROJECTS_CHILD)
-                .child(project.id);
+        if (this.studentProjectListener === null) {
+            this.studentProjectListener = this.database
+                .ref(DB_CONST.STUDENT_PROJECTS_CHILD)
+                .child(studentProject.id);
 
-            this.projectListener
+            this.studentProjectListener
                 .on("value", snapshot => {
-                    const project = snapshot.val();
-                    project.course = this.state.projectDetail.project.course;
-                    project.teacher = this.state.projectDetail.project.teacher;
+                    const studentProject = snapshot.val();
+                    studentProject.course = this.state.projectDetail.studentProject.course;
+                    studentProject.teacher = this.state.projectDetail.studentProject.teacher;
 
                     this.setState({
                         projectDetail: {
                             ...this.state.projectDetail,
-                            project: project,
+                            studentProject: studentProject,
                         },
                         teacherOfferStatesActiveStep:
-                            project.status === DB_CONST.PROJECT_STATUS_BEING_CHECKED
+                            studentProject.status === DB_CONST.STUDENT_PROJECT_STATUS_BEING_CHECKED
                                 ?
                                 TEACHER_OFFER_STATES_PUBLISH_PITCH
                                 :
-                                project.status === DB_CONST.PROJECT_STATUS_PITCH_PHASE
-                                || project.status === DB_CONST.PROJECT_STATUS_PITCH_PHASE_EXPIRED_WAITING_TO_BE_CHECKED
+                                studentProject.status === DB_CONST.STUDENT_PROJECT_STATUS_PITCH_PHASE
+                                || studentProject.status === DB_CONST.STUDENT_PROJECT_STATUS_PITCH_PHASE_EXPIRED_WAITING_TO_BE_CHECKED
                                     ?
                                     TEACHER_OFFER_STATES_MOVE_TO_PLEDGE
                                     :
-                                    project.status === DB_CONST.PROJECT_STATUS_PRIMARY_OFFER_CREATED_WAITING_TO_BE_CHECKED
-                                    || project.status === DB_CONST.PROJECT_STATUS_PRIMARY_OFFER_PHASE
+                                    studentProject.status === DB_CONST.STUDENT_PROJECT_STATUS_PRIMARY_OFFER_CREATED_WAITING_TO_BE_CHECKED
+                                    || studentProject.status === DB_CONST.STUDENT_PROJECT_STATUS_PRIMARY_OFFER_PHASE
                                         ?
                                         TEACHER_OFFER_STATES_PUBLISH_PLEDGE
                                         :
@@ -1217,8 +1217,8 @@ class ProjectDetailsMain extends Component {
      * Detach changes listener for this pitch
      */
     detachProjectChangedListener = () => {
-        if (this.projectListener) {
-            this.projectListener.off("value");
+        if (this.studentProjectListener) {
+            this.studentProjectListener.off("value");
         }
     };
 
@@ -1232,7 +1232,7 @@ class ProjectDetailsMain extends Component {
     };
 
     /**
-     * Handle when the Super student decides whether the project can go live or not
+     * Handle when the Super student decides whether the studentProject can go live or not
      *
      * @param decision
      */
@@ -1241,11 +1241,11 @@ class ProjectDetailsMain extends Component {
             student
         } = this.props;
         const {
-            project
+            studentProject
         } = this.state.projectDetail;
 
         realtimeDBUtils
-            .makeProjectGoLiveDecision(student, JSON.parse(JSON.stringify(project)), decision)
+            .makeProjectGoLiveDecision(student, JSON.parse(JSON.stringify(studentProject)), decision)
             .then(() => {
                 // success
             })
@@ -1255,7 +1255,7 @@ class ProjectDetailsMain extends Component {
     };
 
     /**
-     * Handle when the Super student decides whether the project can go to the Pledge phase
+     * Handle when the Super student decides whether the studentProject can go to the Pledge phase
      *
      * @param decision
      */
@@ -1264,17 +1264,17 @@ class ProjectDetailsMain extends Component {
             student
         } = this.props;
         const {
-            project
+            studentProject
         } = this.state.projectDetail;
 
-        if (project.Pitch.status !== DB_CONST.PITCH_STATUS_ON_GOING
-            && project.Pitch.status !== DB_CONST.PITCH_STATUS_WAITING_FOR_TEACHER
+        if (studentProject.Pitch.status !== DB_CONST.PITCH_STATUS_ON_GOING
+            && studentProject.Pitch.status !== DB_CONST.PITCH_STATUS_WAITING_FOR_TEACHER
         ) {
             return;
         }
 
         realtimeDBUtils
-            .makeProjectGoToPledgePhaseDecision(student, JSON.parse(JSON.stringify(project)), decision)
+            .makeProjectGoToPledgePhaseDecision(student, JSON.parse(JSON.stringify(studentProject)), decision)
             .then(() => {
                 // success
             })
@@ -1284,7 +1284,7 @@ class ProjectDetailsMain extends Component {
     };
 
     /**
-     * Handle when the Super student decides whether the project's Pledge can go live
+     * Handle when the Super student decides whether the studentProject's Pledge can go live
      *
      * @param decision
      */
@@ -1293,11 +1293,11 @@ class ProjectDetailsMain extends Component {
             student
         } = this.props;
         const {
-            project
+            studentProject
         } = this.state.projectDetail;
 
         realtimeDBUtils
-            .makeProjectPledgeGoLiveDecision(student, JSON.parse(JSON.stringify(project)), decision)
+            .makeProjectPledgeGoLiveDecision(student, JSON.parse(JSON.stringify(studentProject)), decision)
             .then(() => {
                 // success
             })
@@ -1319,7 +1319,7 @@ class ProjectDetailsMain extends Component {
     };
 
     /**
-     * Handle when the Post a comment button clicked (open a dialog for the Investors to write their comment)
+     * Handle when the Post a comment button clicked (open a dialog for the Students to write their comment)
      */
     handlePostACommentClick = () => {
         this.setState({
@@ -1376,7 +1376,7 @@ class ProjectDetailsMain extends Component {
     }
 
     /**
-     * Handle when the Investor clicks to submit their comment
+     * Handle when the Student clicks to submit their comment
      */
     handleSubmitCommentClick = () => {
         const {
@@ -1391,7 +1391,7 @@ class ProjectDetailsMain extends Component {
         } = this.state;
 
         const {
-            project
+            studentProject
         } = this.state.projectDetail;
 
         this.setState({
@@ -1410,7 +1410,7 @@ class ProjectDetailsMain extends Component {
         const comment = {
             id,
             commenterANID: courseProperties ? courseProperties.anid : null,
-            projectID: project.id,
+            studentProjectID: studentProject.id,
             commentedBy: student.id,
             status: DB_CONST.COMMENT_STATUS_POSTED,
             commentedDate: utils.getCurrentDate(),
@@ -1422,15 +1422,15 @@ class ProjectDetailsMain extends Component {
             .child(id)
             .set(comment)
             .then(() => {
-                // track investor's activity for posting a new comment
+                // track student's activity for posting a new comment
                 realtimeDBUtils
                     .trackActivity({
                         studentID: student.id,
                         activityType: DB_CONST.ACTIVITY_TYPE_POST,
                         interactedObjectLocation: DB_CONST.COMMENTS_CHILD,
                         interactedObjectID: id,
-                        activitySummary: realtimeDBUtils.ACTIVITY_SUMMARY_TEMPLATE_COMMENTED_IN_PROJECT.replace("%project%", project.projectName),
-                        action: ROUTES.PROJECT_DETAILS_INVEST_WEST_SUPER.replace(":projectID", project.id),
+                        activitySummary: realtimeDBUtils.ACTIVITY_SUMMARY_TEMPLATE_COMMENTED_IN_STUDENT_PROJECT.replace("%studentProject%", studentProject.studentProjectName),
+                        action: ROUTES.STUDENT_PROJECT_DETAILS_INVEST_WEST_SUPER.replace(":studentProjectID", studentProject.id),
                         value: comment
                     });
 
@@ -1438,9 +1438,9 @@ class ProjectDetailsMain extends Component {
                 realtimeDBUtils
                     .sendNotification({
                         title: "Someone commented on your pitch",
-                        message: "An investor has commented on your pitch. Go and see what they said.",
-                        studentID: project.teacherID,
-                        action: ROUTES.PROJECT_DETAILS_INVEST_WEST_SUPER.replace(":projectID", project.id)
+                        message: "An student has commented on your pitch. Go and see what they said.",
+                        studentID: studentProject.teacherID,
+                        action: ROUTES.STUDENT_PROJECT_DETAILS_INVEST_WEST_SUPER.replace(":studentProjectID", studentProject.id)
                     })
                     .then(() => {
                         this.handleCloseCommentDialog();
@@ -1467,7 +1467,7 @@ class ProjectDetailsMain extends Component {
     };
 
     /**
-     * Handle when the student (investor) cancels the update for their comment
+     * Handle when the student (student) cancels the update for their comment
      */
     handleCancelUpdateCurrentComment = () => {
         const {
@@ -1480,7 +1480,7 @@ class ProjectDetailsMain extends Component {
     };
 
     /**
-     * Handle when the student (investor) submits the update for their comment
+     * Handle when the student (student) submits the update for their comment
      */
     handleSubmitUpdateCurrentComment = () => {
         const {
@@ -1489,7 +1489,7 @@ class ProjectDetailsMain extends Component {
         } = this.state;
 
         const {
-            project
+            studentProject
         } = this.state.projectDetail;
 
         const {
@@ -1512,15 +1512,15 @@ class ProjectDetailsMain extends Component {
             .child(newComment.id)
             .update(newComment)
             .then(() => {
-                // track investor's activity
+                // track student's activity
                 realtimeDBUtils
                     .trackActivity({
                         studentID: currentComment.commentedBy,
                         activityType: DB_CONST.ACTIVITY_TYPE_POST,
                         interactedObjectLocation: DB_CONST.COMMENTS_CHILD,
                         interactedObjectID: currentComment.id,
-                        activitySummary: realtimeDBUtils.ACTIVITY_SUMMARY_TEMPLATE_EDITED_COMMENT_IN_PROJECT.replace("%project%", project.projectName),
-                        action: ROUTES.PROJECT_DETAILS_INVEST_WEST_SUPER.replace(":projectID", project.id),
+                        activitySummary: realtimeDBUtils.ACTIVITY_SUMMARY_TEMPLATE_EDITED_COMMENT_IN_STUDENT_PROJECT.replace("%studentProject%", studentProject.studentProjectName),
+                        action: ROUTES.STUDENT_PROJECT_DETAILS_INVEST_WEST_SUPER.replace(":studentProjectID", studentProject.id),
                         value: {
                             before: JSON.parse(JSON.stringify(currentComment)),
                             after: newComment
@@ -1536,7 +1536,7 @@ class ProjectDetailsMain extends Component {
     };
 
     /**
-     * Handle to toggle the input area to allow the project's owners to reply to investor's comments
+     * Handle to toggle the input area to allow the studentProject's owners to reply to student's comments
      *
      * @param comment
      * @param replyEdited
@@ -1560,7 +1560,7 @@ class ProjectDetailsMain extends Component {
         } = this.state;
 
         const {
-            project
+            studentProject
         } = this.state.projectDetail;
 
         const {
@@ -1572,7 +1572,7 @@ class ProjectDetailsMain extends Component {
             const commentReply = {
                 text: replyText,
                 repliedDate: utils.getCurrentDate(),
-                projectID: project.id,
+                studentProjectID: studentProject.id,
                 commentID: replyingToComment.id,
                 repliedBy: student.id,
                 status: DB_CONST.COMMENT_REPLY_STATUS_POSTED
@@ -1590,11 +1590,11 @@ class ProjectDetailsMain extends Component {
                             interactedObjectID: replyID,
                             activitySummary: realtimeDBUtils
                                 .ACTIVITY_SUMMARY_TEMPLATE_REPLIED_TO_A_COMMENT
-                                .replace("%projectName%", project.projectName)
+                                .replace("%studentProjectName%", studentProject.studentProjectName)
                             ,
                             action: ROUTES
-                                .PROJECT_DETAILS_INVEST_WEST_SUPER
-                                .replace(":projectID", project.id)
+                                .STUDENT_PROJECT_DETAILS_INVEST_WEST_SUPER
+                                .replace(":studentProjectID", studentProject.id)
                             ,
                             value: {
                                 ...commentReply,
@@ -1640,11 +1640,11 @@ class ProjectDetailsMain extends Component {
                             interactedObjectID: replyAfterUpdating.id,
                             activitySummary: realtimeDBUtils
                                 .ACTIVITY_SUMMARY_TEMPLATE_EDITED_A_REPLY_OF_A_COMMENT
-                                .replace("%projectName%", project.projectName)
+                                .replace("%studentProjectName%", studentProject.studentProjectName)
                             ,
                             action: ROUTES
-                                .PROJECT_DETAILS_INVEST_WEST_SUPER
-                                .replace(":projectID", project.id)
+                                .STUDENT_PROJECT_DETAILS_INVEST_WEST_SUPER
+                                .replace(":studentProjectID", studentProject.id)
                             ,
                             value: {
                                 before: replyBeforeUpdating,
@@ -1685,7 +1685,7 @@ class ProjectDetailsMain extends Component {
         } = this.props;
 
         const {
-            project
+            studentProject
         } = this.state.projectDetail;
 
         realtimeDBUtils
@@ -1700,11 +1700,11 @@ class ProjectDetailsMain extends Component {
                         interactedObjectID: reply.id,
                         activitySummary: realtimeDBUtils
                             .ACTIVITY_SUMMARY_TEMPLATE_DELETED_A_REPLY_OF_A_COMMENT
-                            .replace("%projectName%", project.projectName)
+                            .replace("%studentProjectName%", studentProject.studentProjectName)
                         ,
                         action: ROUTES
-                            .PROJECT_DETAILS_INVEST_WEST_SUPER
-                            .replace(":projectID", project.id)
+                            .STUDENT_PROJECT_DETAILS_INVEST_WEST_SUPER
+                            .replace(":studentProjectID", studentProject.id)
                         ,
                         value: {
                             before: {
@@ -1753,7 +1753,7 @@ class ProjectDetailsMain extends Component {
      */
     bringPitchBackToLive = async () => {
         const {
-            project
+            studentProject
         } = this.state.projectDetail;
 
         const {
@@ -1772,7 +1772,7 @@ class ProjectDetailsMain extends Component {
         try {
             await realtimeDBUtils
                 .bringPitchBackToLive({
-                    project: JSON.parse(JSON.stringify(project)),
+                    studentProject: JSON.parse(JSON.stringify(studentProject)),
                     newPitchExpiryDate: changedPitchExpiryDate
                 });
 
@@ -1802,7 +1802,7 @@ class ProjectDetailsMain extends Component {
     }
 
     /**
-     * Send project back to teacher
+     * Send studentProject back to teacher
      */
     sendProjectBackToTeacher = async () => {
         const {
@@ -1824,14 +1824,14 @@ class ProjectDetailsMain extends Component {
         });
 
         try {
-            // send project back to the teacher
+            // send studentProject back to the teacher
             await new Api().request(
                 "post",
                 ApiRoutes.sendProjectBackToTeacherRoute,
                 {
                     queryParameters: null,
                     requestBody: {
-                        projectID: projectDetail.project.id,
+                        studentProjectID: projectDetail.studentProject.id,
                         feedback: rejectFeedback
                     }
                 }
@@ -1857,7 +1857,7 @@ class ProjectDetailsMain extends Component {
 
     render() {
         const {
-            AuthenticationState,
+            StudentAuthenticationState,
 
             isMobile,
 
@@ -1872,18 +1872,18 @@ class ProjectDetailsMain extends Component {
             studentLoaded,
             coursesStudentIsIn,
 
-            investorSelfCertificationAgreement,
+            studentSelfCertificationAgreement,
 
             createPledgeDialog_toggleDialog,
-            createPledgeDialog_setProject,
+            createPledgeDialog_setStudentProject,
 
             projectVisibilitySetting,
-            selectProjectVisibility_setProject
+            selectStudentProjectVisibility_setStudentProject
         } = this.props;
 
         const {
-            investorPledge,
-            investorPledgeLoaded,
+            studentPledge,
+            studentPledgeLoaded,
 
             mainBody,
             teacherOfferStatesActiveStep,
@@ -1910,11 +1910,11 @@ class ProjectDetailsMain extends Component {
         } = this.state;
 
         const {
-            project,
-            projectLoaded,
+            studentProject,
+            studentProjectLoaded,
 
-            pledges,
-            pledgesLoaded,
+            Studentpledges,
+            studentPledgesLoaded,
 
             votes,
             votesLoaded,
@@ -1935,7 +1935,7 @@ class ProjectDetailsMain extends Component {
             return <PageNotFoundWhole/>;
         }
 
-        if (authenticating || !studentLoaded || isAuthenticating(AuthenticationState)) {
+        if (authenticating || !studentLoaded || isStudentAuthenticating(StudentAuthenticationState)) {
             return (
                 <FlexView marginTop={30} hAlignContent="center">
                     <HashLoader
@@ -1951,21 +1951,20 @@ class ProjectDetailsMain extends Component {
             );
         }
 
-        if (authStatus !== AUTH_SUCCESS || !student || hasAuthenticationError(AuthenticationState)) {
+        if (authStatus !== STUDENT_AUTH_SUCCESS || !student || hasStudentAuthenticationError(StudentAuthenticationState)) {
             return <PageNotFoundWhole/>;
         }
 
         return (
             <div>
-                <ProjectDetails
-                    AuthenticationState={this.props.AuthenticationState}
+                <StudentProjectDetails
+                    StudentAuthenticationState={this.props.StudentAuthenticationState}
                     courseStudent={courseStudent}
                     courseProperties={courseProperties}
                     isMobile={isMobile}
                     student={student}
                     studentLoaded={studentLoaded}
                     coursesStudentIsIn={coursesStudentIsIn}
-                    investorSelfCertificationAgreement={investorSelfCertificationAgreement}
                     mainBody={mainBody}
                     teacherOfferStatesActiveStep={teacherOfferStatesActiveStep}
                     comments={comments}
@@ -1979,14 +1978,14 @@ class ProjectDetailsMain extends Component {
                     addingRejectFeedback={addingRejectFeedback}
                     rejectFeedback={rejectFeedback}
                     sendingProjectBack={sendingProjectBack}
-                    project={project}
-                    projectLoaded={projectLoaded}
+                    studentProject={studentProject}
+                    studentProjectLoaded={studentProjectLoaded}
                     votes={votes}
                     votesLoaded={votesLoaded}
-                    pledges={pledges}
-                    pledgesLoaded={pledgesLoaded}
-                    investorPledge={investorPledge}
-                    investorPledgeLoaded={investorPledgeLoaded}
+                    Studentpledges={Studentpledges}
+                    studentPledgesLoaded={studentPledgesLoaded}
+                    studentPledge={studentPledge}
+                    studentPledgeLoaded={studentPledgeLoaded}
                     projectTeacher={projectTeacher}
                     projectTeacherLoaded={projectTeacherLoaded}
                     projectVisibilitySetting={projectVisibilitySetting}
@@ -2008,17 +2007,17 @@ class ProjectDetailsMain extends Component {
                     onDeleteCommentReply={this.handleDeleteCommentReply}
                     onTeacherOfferStatesStepClick={this.handleTeacherOfferStatesStepClick}
                     createPledgeDialog_toggleDialog={createPledgeDialog_toggleDialog}
-                    createPledgeDialog_setProject={createPledgeDialog_setProject}
-                    selectProjectVisibility_setProject={selectProjectVisibility_setProject}
+                    createPledgeDialog_setStudentProject={createPledgeDialog_setStudentProject}
+                    selectStudentProjectVisibility_setStudentProject={selectStudentProjectVisibility_setStudentProject}
                     bringPitchBackToLive={this.bringPitchBackToLive}
                     toggleRejectFeedback={this.toggleRejectFeedback}
                     sendProjectBackToTeacher={this.sendProjectBackToTeacher}
-                    toggleContactPitchOwnerDialog={() => this.props.toggleContactPitchOwnerDialog(project.projectName, projectTeacher.email)}
+                    toggleContactPitchOwnerDialog={() => this.props.toggleContactPitchOwnerDialog(studentProject.studentProjectName, projectTeacher.email)}
                 />
 
                 <CommentDialog
                     open={commentDialogOpen}
-                    project={project}
+                    studentProject={studentProject}
                     commentText={commentText}
                     commentSubmitClick={commentSubmitClick}
                     onClose={this.handleCloseCommentDialog}
@@ -2036,7 +2035,7 @@ class ProjectDetailsMain extends Component {
     }
 }
 
-class ProjectDetails extends Component {
+class StudentProjectDetails extends Component {
 
     /**
      * Handle when the navigation tab is changed
@@ -2083,7 +2082,7 @@ class ProjectDetails extends Component {
     };
 
     /**
-     * Make a decision whether a project can go live (Teacher only)
+     * Make a decision whether a studentProject can go live (Teacher only)
      *
      * @param decision
      */
@@ -2092,7 +2091,7 @@ class ProjectDetails extends Component {
     };
 
     /**
-     * Make a decision whether a project can go to the Pledge phase
+     * Make a decision whether a studentProject can go to the Pledge phase
      *
      * @param decision
      */
@@ -2100,7 +2099,7 @@ class ProjectDetails extends Component {
         this.props.onMakeProjectGoToPledgePhaseDecision(decision);
     };
     /**
-     * Make a decision whether a project's Pledge can go live
+     * Make a decision whether a studentProject's Pledge can go live
      *
      * @param decision
      */
@@ -2130,7 +2129,7 @@ class ProjectDetails extends Component {
     };
 
     /**
-     * Handle to toggle input area to allow the project's owners to reply to the investor's comments
+     * Handle to toggle input area to allow the studentProject's owners to reply to the student's comments
      *
      * @param comment
      * @param replyEdited
@@ -2179,7 +2178,7 @@ class ProjectDetails extends Component {
     }
 
     /**
-     * Send project back to Teacher
+     * Send studentProject back to Teacher
      */
     sendProjectBackToTeacher = () => {
         this.props.sendProjectBackToTeacher();
@@ -2197,7 +2196,7 @@ class ProjectDetails extends Component {
      */
     renderPageContent = () => {
         const {
-            AuthenticationState,
+            StudentAuthenticationState,
 
             coursesStudentIsIn,
 
@@ -2208,7 +2207,7 @@ class ProjectDetails extends Component {
 
             student,
 
-            investorSelfCertificationAgreement,
+            studentSelfCertificationAgreement,
 
             mainBody,
             teacherOfferStatesActiveStep,
@@ -2216,16 +2215,16 @@ class ProjectDetails extends Component {
             comments,
             commentsLoaded,
 
-            project,
+            studentProject,
 
-            pledges,
-            pledgesLoaded,
+            Studentpledges,
+            studentPledgesLoaded,
 
             votes,
             votesLoaded,
 
-            investorPledge,
-            investorPledgeLoaded,
+            studentPledge,
+            studentPledgeLoaded,
 
             projectTeacher,
             projectTeacherLoaded,
@@ -2246,15 +2245,15 @@ class ProjectDetails extends Component {
             projectVisibilitySetting,
 
             createPledgeDialog_toggleDialog,
-            createPledgeDialog_setProject,
-            selectProjectVisibility_setProject
+            createPledgeDialog_setStudentProject,
+            selectStudentProjectVisibility_setStudentProject
         } = this.props;
 
         // if the data is being loaded
         // display loading
-        if (!pledgesLoaded
+        if (!studentPledgesLoaded
             || !votesLoaded
-            || !investorPledgeLoaded
+            || !studentPledgeLoaded
             || !projectTeacherLoaded
         ) {
             return (
@@ -2277,15 +2276,15 @@ class ProjectDetails extends Component {
         }
 
         // return Page Not Found for security reason
-        if (!project
-            || !pledges
+        if (!studentProject
+            || !Studentpledges
             || !projectTeacher
-            // the project is private
-            // the student is an investor/teacher that is not in the course that owns this project
+            // the studentProject is private
+            // the student is an student/teacher that is not in the course that owns this studentProject
             || (
-                project.visibility === DB_CONST.PROJECT_VISIBILITY_PRIVATE
+                studentProject.visibility === DB_CONST.STUDENT_PROJECT_VISIBILITY_PRIVATE
                 && (student.type === DB_CONST.TYPE_STUDENT || student.type === DB_CONST.TYPE_TEACHER)
-                && (coursesStudentIsIn !== null && coursesStudentIsIn.findIndex(course => course.anid === project.anid) === -1)
+                && (coursesStudentIsIn !== null && coursesStudentIsIn.findIndex(course => course.anid === studentProject.anid) === -1)
             )
         ) {
             return (
@@ -2297,14 +2296,14 @@ class ProjectDetails extends Component {
             );
         }
 
-        // the project is temporarily closed
+        // the studentProject is temporarily closed
         // only display its content to the super teachers,
-        // course teachers that own this project, and the teacher of this project
-        if (utils.isProjectTemporarilyClosed(project)
+        // course teachers that own this studentProject, and the teacher of this studentProject
+        if (utils.isStudentProjectTemporarilyClosed(studentProject)
             && (
-                (student.type === DB_CONST.TYPE_TEACHER && student.id !== project.teacherID)
+                (student.type === DB_CONST.TYPE_TEACHER && student.id !== studentProject.teacherID)
                 || (student.type === DB_CONST.TYPE_STUDENT)
-                || (student.type === DB_CONST.TYPE_PROF && !student.superTeacher && student.anid !== project.anid)
+                || (student.type === DB_CONST.TYPE_PROF && !student.superTeacher && student.anid !== studentProject.anid)
             )
         ) {
             return (
@@ -2318,12 +2317,12 @@ class ProjectDetails extends Component {
             );
         }
 
-        // the project is private
-        // the student is a course teacher that does not own this project
-        if (project.visibility === DB_CONST.PROJECT_VISIBILITY_PRIVATE
+        // the studentProject is private
+        // the student is a course teacher that does not own this studentProject
+        if (studentProject.visibility === DB_CONST.STUDENT_PROJECT_VISIBILITY_PRIVATE
             && (student.type === DB_CONST.TYPE_PROF)
             && !student.superTeacher
-            && student.anid !== project.anid
+            && student.anid !== studentProject.anid
         ) {
             return (
                 <Row noGutters style={{marginLeft: 10, marginRight: 10}}>
@@ -2364,9 +2363,9 @@ class ProjectDetails extends Component {
         return (
             <Container fluid style={{paddingLeft: 0, paddingRight: 0, paddingTop: 0, paddingBottom: 100}}>
                 <Row noGutters style={{paddingTop: 25, paddingBottom: 25, backgroundColor: colors.kick_starter_background_color}}>
-                    {/** Banner to announce if a project is temporarily closed */}
+                    {/** Banner to announce if a studentProject is temporarily closed */}
                     {
-                        !utils.isProjectTemporarilyClosed(project)
+                        !utils.isStudentProjectTemporarilyClosed(studentProject)
                             ?
                             null
                             :
@@ -2377,9 +2376,9 @@ class ProjectDetails extends Component {
                             </Col>
                     }
 
-                    {/** Pledge (displayed if the student is an investor and has pledged this project before) */}
+                    {/** Pledge (displayed if the student is an student and has pledged this studentProject before) */}
                     {
-                        !investorPledge
+                        !studentPledge
                             ?
                             null
                             :
@@ -2391,11 +2390,11 @@ class ProjectDetails extends Component {
                                                 <CheckCircleIcon color="primary" style={{marginRight: 15}}/>
                                                 <Typography align="left" variant="body1">
                                                     {
-                                                        investorPledge.status === DB_CONST.MAKE_A_NEW_PLEDGE
+                                                        studentPledge.status === DB_CONST.MAKE_A_NEW_PLEDGE
                                                             ?
-                                                            `You pledged £${Number(investorPledge.amount.toFixed(2)).toLocaleString()}.`
+                                                            `You pledged £${Number(studentPledge.amount.toFixed(2)).toLocaleString()}.`
                                                             :
-                                                            `You updated your pledge to £${Number(investorPledge.amount.toFixed(2)).toLocaleString()}.`
+                                                            `You updated your pledge to £${Number(studentPledge.amount.toFixed(2)).toLocaleString()}.`
                                                     }
                                                 </Typography>
                                             </FlexView>
@@ -2403,7 +2402,7 @@ class ProjectDetails extends Component {
                                         <Col xs={12} sm={12} md={{span: 5, offset: 2, order: 2}} lg={{span: 3, offset: 6, order: 2}}>
                                             <FlexView width="100%" hAlignContent="center" style={{padding: 10}}>
                                                 {
-                                                    !utils.isProjectInLivePledgePhase(project)
+                                                    !utils.isStudentProjectInLivePledgePhase(studentProject)
                                                         ?
                                                         <Typography align="left" variant="body2" color="secondary">Offer has ended. You can't change your pledge anymore.</Typography>
                                                         :
@@ -2415,7 +2414,7 @@ class ProjectDetails extends Component {
                                                                     :
                                                                     ROUTES.PLEDGE_INVEST_WEST_SUPER
                                                                 ,
-                                                                search: `?project=${project.id}`
+                                                                search: `?studentProject=${studentProject.id}`
                                                             }}
                                                             className={css(sharedStyles.nav_link_hover)}
                                                         >
@@ -2438,25 +2437,25 @@ class ProjectDetails extends Component {
                                         ?
                                         "This is an offer"
                                         :
-                                        project.projectName
+                                        studentProject.studentProjectName
                                 }
                             </Typography>
                             <Typography className={css(styles.gray_text)} align="center" variant="body1" style={{whiteSpace: "pre-line"}}>
                                 {
                                     this.shouldHideInformation()
                                         ?
-                                        `in ${project.sector} sector`
+                                        `in ${studentProject.sector} sector`
                                         :
-                                        project.description
+                                        studentProject.description
                                 }
                             </Typography>
                             {
                                 student.type === DB_CONST.TYPE_PROF
-                                || (student.type === DB_CONST.TYPE_TEACHER && student.id === project.teacherID)
+                                || (student.type === DB_CONST.TYPE_TEACHER && student.id === studentProject.teacherID)
                                     ?
                                     <FlexView width="100%" hAlignContent="center" vAlignContent="center" marginTop={20}>
                                         {
-                                            !utils.shouldAProjectBeEdited(student, project)
+                                            !utils.shouldAProjectBeEdited(student, studentProject)
                                                 ?
                                                 <Button color="default" variant="outlined" size="medium" className={css(sharedStyles.no_text_transform)} disabled>
                                                     <CreateIcon style={{marginRight: 8,  width: 20, height: "auto"}}
@@ -2468,10 +2467,10 @@ class ProjectDetails extends Component {
                                                             ?
                                                             ROUTES.EDIT_OFFER
                                                                 .replace(":courseStudent", courseStudent)
-                                                                .replace(":projectID", project.id)
+                                                                .replace(":studentProjectID", studentProject.id)
                                                             :
                                                             ROUTES.EDIT_OFFER_INVEST_WEST_SUPER
-                                                                .replace(":projectID", project.id)
+                                                                .replace(":studentProjectID", studentProject.id)
                                                     }
                                                     className={css(sharedStyles.nav_link_hover_without_changing_text_color)}
                                                 >
@@ -2479,35 +2478,13 @@ class ProjectDetails extends Component {
                                                         <CreateIcon style={{marginRight: 8, width: 20, height: "auto"}}/>Edit offer</Button>
                                                 </NavLink>
                                         }
-                                        {/*<FlexView*/}
-                                        {/*    marginLeft={15}*/}
-                                        {/*>*/}
-                                        {/*    <InfoOverlay*/}
-                                        {/*        message={*/}
-                                        {/*            student.type === DB_CONST.TYPE_PROF*/}
-                                        {/*                ?*/}
-                                        {/*                "Edit offer."*/}
-                                        {/*                :*/}
-                                        {/*                utils.isDraftProject(project)*/}
-                                        {/*                    ?*/}
-                                        {/*                    "This offer is still a draft. Complete it."*/}
-                                        {/*                    :*/}
-                                        {/*                    !utils.shouldAProjectBeEdited(student, project)*/}
-                                        {/*                        ?*/}
-                                        {/*                        "Pages cannot be edited."*/}
-                                        {/*                        :*/}
-                                        {/*                        `Pages can only be edited before the pitch phase expires. You can edit until ${utils.dateInReadableFormat(project.Pitch.expiredDate)}.`*/}
-                                        {/*        }*/}
-                                        {/*        placement="right"*/}
-                                        {/*    />*/}
-                                        {/*</FlexView>*/}
                                     </FlexView>
                                     :
                                     null
                             }
 
                             {
-                                student.id === project.teacherID
+                                student.id === studentProject.teacherID
                                     ?
                                     null
                                     :
@@ -2516,18 +2493,18 @@ class ProjectDetails extends Component {
                                             to={
                                                 this.shouldHideInformation()
                                                 || (
-                                                    project.hasOwnProperty('createdByCourseTeacher')
-                                                    && project.createdByCourseTeacher
+                                                    studentProject.hasOwnProperty('createdByCourseTeacher')
+                                                    && studentProject.createdByCourseTeacher
                                                 )
                                                     ?
                                                     courseStudent
                                                         ?
                                                         ROUTES.VIEW_COURSE_DETAILS
                                                             .replace(":courseStudent", courseStudent)
-                                                            .replace(":courseID", project.course.courseStudent)
+                                                            .replace(":courseID", studentProject.course.courseStudent)
                                                         :
                                                         ROUTES.VIEW_COURSE_DETAILS_INVEST_WEST_SUPER
-                                                            .replace(":courseID", project.course.courseStudent)
+                                                            .replace(":courseID", studentProject.course.courseStudent)
                                                     :
                                                     courseStudent
                                                         ?
@@ -2544,19 +2521,19 @@ class ProjectDetails extends Component {
                                                 {
                                                     this.shouldHideInformation()
                                                     || (
-                                                        project.hasOwnProperty('createdByCourseTeacher')
-                                                        && project.createdByCourseTeacher
+                                                        studentProject.hasOwnProperty('createdByCourseTeacher')
+                                                        && studentProject.createdByCourseTeacher
                                                     )
                                                         ?
-                                                        <u>by {`${project.course.displayName}`}</u>
+                                                        <u>by {`${studentProject.course.displayName}`}</u>
                                                         :
                                                         <u>by {`${projectTeacher.firstName} ${projectTeacher.lastName}`}</u>
                                                 }
                                             </Typography>
                                         </NavLink>
                                         {
-                                            project.hasOwnProperty('createdByCourseTeacher')
-                                            && project.createdByCourseTeacher
+                                            studentProject.hasOwnProperty('createdByCourseTeacher')
+                                            && studentProject.createdByCourseTeacher
                                                 ?
                                                 null
                                                 :
@@ -2579,7 +2556,7 @@ class ProjectDetails extends Component {
                         {
                             this.shouldHideInformation()
                                 ?
-                                <Image src={utils.getLogoFromCourse(utils.GET_PLAIN_LOGO, project.course)}
+                                <Image src={utils.getLogoFromCourse(utils.GET_PLAIN_LOGO, studentProject.course)}
                                     style={{
                                         maxHeight:
                                             isMobile
@@ -2594,7 +2571,7 @@ class ProjectDetails extends Component {
                                     }}
                                 />
                                 :
-                                project.Pitch.cover.map((coverItem, index) => (
+                                studentProject.Pitch.cover.map((coverItem, index) => (
                                     coverItem.hasOwnProperty('removed')
                                         ?
                                         null
@@ -2640,17 +2617,17 @@ class ProjectDetails extends Component {
                             <Col xs={12} sm={12} md={{span: 5, offset: 1, order: 2}} lg={{span: 12, offset: 0, order: 2}}>
                                 <FlexView column marginTop={18}>
                                     {
-                                        utils.isDraftProject(project)
-                                        || utils.isProjectWaitingToGoLive(project)
-                                        || utils.isProjectRejectedToGoLive(project)
-                                        || utils.isProjectInLivePitchPhase(project)
-                                        || utils.isProjectPitchExpiredWaitingForTeacherToCheck(project)
-                                        || utils.isProjectWaitingForPledgeToBeCreated(project)
-                                        || utils.isProjectWaitingForPledgeToBeChecked(project)
+                                        utils.isStudentDraftProject(studentProject)
+                                        || utils.isStudentProjectWaitingToGoLive(studentProject)
+                                        || utils.isStudentProjectRejectedToGoLive(studentProject)
+                                        || utils.isStudentProjectInLivePitchPhase(studentProject)
+                                        || utils.isStudentProjectPitchExpiredWaitingForTeacherToCheck(studentProject)
+                                        || utils.isStudentProjectWaitingForPledgeToBeCreated(studentProject)
+                                        || utils.isStudentProjectWaitingForPledgeToBeChecked(studentProject)
                                             ?
                                             <FlexView vAlignContent="center">
                                                 <FlexView column marginRight={20}>
-                                                    <Typography variant="h5" color="secondary" align="left">{'£' + Number(project.Pitch.fundRequired.toFixed(2)).toLocaleString()}</Typography>
+                                                    <Typography variant="h5" color="secondary" align="left">{'£' + Number(studentProject.Pitch.fundRequired.toFixed(2)).toLocaleString()}</Typography>
                                                     <Typography variant="body2" color="textSecondary" align="left">Funding goal</Typography>
                                                 </FlexView>
                                                 <InfoOverlay message="Funding amount sought via Invest West." placement="top"/>
@@ -2658,32 +2635,14 @@ class ProjectDetails extends Component {
                                             :
                                             <FlexView vAlignContent="center">
                                                 <FlexView column marginRight={20}>
-                                                    <Typography variant="h5" color="primary" align="left">{`£${Number(utils.calculatePledgesAmount(pledges).toFixed(2)).toLocaleString()}`}</Typography>
-                                                    <Typography variant="body2" color="textSecondary" align="left">{`pledged of £${Number(project.Pitch.fundRequired.toFixed(2)).toLocaleString()} goal`}</Typography>
+                                                    <Typography variant="h5" color="primary" align="left">{`£${Number(utils.calculatePledgesAmount(Studentpledges).toFixed(2)).toLocaleString()}`}</Typography>
+                                                    <Typography variant="body2" color="textSecondary" align="left">{`pledged of £${Number(studentProject.Pitch.fundRequired.toFixed(2)).toLocaleString()} goal`}</Typography>
                                                 </FlexView>
                                                 <InfoOverlay message="Total amount pledged via Invest West." placement="top"/>
                                             </FlexView>
                                     }
                                 </FlexView>
                             </Col>
-
-                            {/** Post money valuation */}
-                            {
-                                !project.Pitch.hasOwnProperty('postMoneyValuation')
-                                    ?
-                                    null
-                                    :
-                                    <Col xs={12} sm={12} md={{span: 5, offset: 1, order: 3}} lg={{span: 12, offset: 0, order: 3}}>
-                                        <FlexView marginTop={20} vAlignContent="center">
-                                            <FlexView column marginRight={20}>
-                                                <Typography variant="h5" color="inherit" align="left">{'£' + Number(project.Pitch.postMoneyValuation.toFixed(2)).toLocaleString()}</Typography>
-                                                <Typography variant="body2" color="textSecondary" align="left">Post money valuation</Typography>
-                                            </FlexView>
-                                            <InfoOverlay message="This is the company post money valuation." placement="top"/>
-                                        </FlexView>
-                                    </Col>
-                            }
-
                             
 
                             {/** Project status */}
@@ -2693,89 +2652,17 @@ class ProjectDetails extends Component {
                                 }
                             </Col>
 
-                            {/** SEIS badge check */}
-                            {
-                                project.Pitch.hasSEIS === "Yes"
-                                    ?
-                                    <Col xs={12} sm={12} md={{span: 1, offset: 1, order: 5}} lg={{span: 3, offset: 0, order: 5}}>
-                                        <FlexView className={css(styles.border_box)} style={{backgroundColor: colors.kick_starter_background_color}} column hAlignContent="center" vAlignContent="center">
-                                                    <Typography variant="body1"><b>SEIS</b></Typography>
-                                        </FlexView>
-                                    </Col>
-                                    :
-                                    null
-                            }
-
-                            {/** EIS badge check */}
-                            {
-
-                                project.Pitch.hasEIS === "Yes"
-                                    ?
-                                    <Col xs={12} sm={12} md={{span: 1, offset: 1, order: 6}} lg={{span: 3, offset: 0, order: 6}}>
-                                            <FlexView className={css(styles.border_box)} style={{backgroundColor: colors.kick_starter_background_color,}} hAlignContent="center" vAlignContent="center">
-                                                    <Typography variant="body1"><b>EIS</b></Typography>
-                                        </FlexView>
-                                    </Col>
-                                    :
-                                    null
-                            }
-
                             {/** Contact us */}
                             {
-                                isProjectOwner(AuthenticationState.currentStudent, project)
+                                isStudentProjectOwner(StudentAuthenticationState.currentStudent, studentProject)
                                     ? null
                                     : <Col xs={12} sm={12} md={{span: 10, offset: 1, order: 5}} lg={{span: 12, offset: 0, order: 7}} style={{marginTop: 15}}>
                                         <FlexView column hAlignContent="left">
                                             <FlexView hAlignContent="center" vAlignContent="center">
-                                                <Button color="primary" variant="contained" className={css(sharedStyles.no_text_transform)} disabled={this.shouldHideInformation() || (student.type === TYPE_STUDENT && !investorSelfCertificationAgreement)} onClick={() => this.toggleContactPitchOwnerDialog()}>Contact us</Button>
-                                                {/*<Button*/}
-                                                {/*    size="medium"*/}
-                                                {/*    variant={getInvestorVote(votes, student) && getInvestorVote(votes, student).voted ? "contained" : "outlined"}*/}
-                                                {/*    color="primary"*/}
-                                                {/*    disabled={this.shouldVoteDisabled()}*/}
-                                                {/*    onClick={() => this.onVote(true)}*/}
-                                                {/*    className={css(sharedStyles.no_text_transform)}*/}
-                                                {/*>*/}
-                                                {/*    <i*/}
-                                                {/*        style={{*/}
-                                                {/*            fontSize: 21,*/}
-                                                {/*            marginRight: 8*/}
-                                                {/*        }}*/}
-                                                {/*        className="far fa-thumbs-up"*/}
-                                                {/*    />*/}
-                                                {/*    <Typography*/}
-                                                {/*        variant="body1"*/}
-                                                {/*    >*/}
-                                                {/*        Like*/}
-                                                {/*    </Typography>*/}
-                                                {/*</Button>*/}
-                                                {/*<FlexView*/}
-                                                {/*    marginLeft={10}*/}
-                                                {/*>*/}
-                                                {/*    <Typography*/}
-                                                {/*        variant="body1"*/}
-                                                {/*        color="primary"*/}
-                                                {/*    >*/}
-                                                {/*        {this.displayVote(true)}*/}
-                                                {/*    </Typography>*/}
-                                                {/*</FlexView>*/}
+                                                <Button color="primary" variant="contained" className={css(sharedStyles.no_text_transform)} disabled={this.shouldHideInformation() || (student.type === TYPE_STUDENT && !studentSelfCertificationAgreement)} onClick={() => this.toggleContactPitchOwnerDialog()}>Contact us</Button>
+ 
                                             </FlexView>
-                                            {/*{*/}
-                                            {/*    student.type === DB_CONST.TYPE_TEACHER*/}
-                                            {/*        ?*/}
-                                            {/*        <Typography*/}
-                                            {/*            variant="body2"*/}
-                                            {/*            align="left"*/}
-                                            {/*            color="error"*/}
-                                            {/*            style={{*/}
-                                            {/*                marginTop: 10*/}
-                                            {/*            }}*/}
-                                            {/*        >*/}
-                                            {/*            Only investors can vote.*/}
-                                            {/*        </Typography>*/}
-                                            {/*        :*/}
-                                            {/*        null*/}
-                                            {/*}*/}
+
                                         </FlexView>
                                         {
                                             this.shouldHideInformation()
@@ -2783,32 +2670,32 @@ class ProjectDetails extends Component {
                                                 student.type === DB_CONST.TYPE_PROF
                                                     ?
                                                     <FlexView column marginTop={20}>
-                                                        <Typography align="left" variant="body2" color="textSecondary">You cannot see detailed information of this restricted offer.</Typography>
+                                                        <Typography align="left" variant="body2" color="textSecondary">You cannot see detailed information of this restricted project.</Typography>
                                                     </FlexView>
                                                     :
                                                     <FlexView column marginTop={20}>
-                                                        <Typography align="left" variant="body2" color="textSecondary">Restricted to {project.course.displayName} members.</Typography>
+                                                        <Typography align="left" variant="body2" color="textSecondary">Restricted to {studentProject.course.displayName} members.</Typography>
                                                         <NavLink
                                                             to={
                                                                 courseStudent
                                                                     ?
-                                                                    ROUTES.VIEW_COURSE_DETAILS.replace(":courseStudent", courseStudent).replace(":courseID", project.course.courseStudent)
+                                                                    ROUTES.VIEW_COURSE_DETAILS.replace(":courseStudent", courseStudent).replace(":courseID", studentProject.course.courseStudent)
                                                                     :
-                                                                    ROUTES.VIEW_COURSE_DETAILS_INVEST_WEST_SUPER.replace(":courseID", project.course.courseStudent)
+                                                                    ROUTES.VIEW_COURSE_DETAILS_INVEST_WEST_SUPER.replace(":courseID", studentProject.course.courseStudent)
                                                             }
                                                             style={{marginTop: 4}}>
                                                             <Typography variant="body2">Request access</Typography>
                                                         </NavLink>
                                                     </FlexView>
                                                 :
-                                                this.renderInvestorSelfCertifyReminder()
+                                                this.renderStudentSelfCertifyReminder()
                                         }
                                     </Col>
                             }
 
-                            {/** Pledge this project (available only for investor and only appears when the project is in the Primary offer phase) */}
+                            {/** Pledge this studentProject (available only for student and only appears when the studentProject is in the Primary offer phase) */}
                             {
-                                !utils.isProjectInLivePledgePhase(project)
+                                !utils.isStudentProjectInLivePledgePhase(studentProject)
                                     ?
                                     null
                                     :
@@ -2818,16 +2705,16 @@ class ProjectDetails extends Component {
                                             (
                                                 <Col xs={12} sm={12} md={{span: 10, offset: 1, order: 6}} lg={{span: 12, offset: 0, order: 6}} style={{marginTop: 30}}>
                                                     <Typography align="left" variant="body2">
-                                                        <u>Closes on {utils.dateTimeInReadableFormat(project.PrimaryOffer.expiredDate)}.</u>
+                                                        <u>Closes on {utils.dateTimeInReadableFormat(studentProject.PrimaryOffer.expiredDate)}.</u>
                                                     </Typography>
                                                 </Col>
                                             )
                                             :
                                             (
-                                                investorPledge
+                                                studentPledge
                                                     ?
                                                     <Col xs={12} sm={12} md={{span: 10, offset: 1, order: 6}} lg={{span: 12, offset: 0, order: 6}} style={{marginTop: 30}}>
-                                                        <Typography align="left" variant="body2"><u>Closes on {utils.dateTimeInReadableFormat(project.PrimaryOffer.expiredDate)}.</u>
+                                                        <Typography align="left" variant="body2"><u>Closes on {utils.dateTimeInReadableFormat(studentProject.PrimaryOffer.expiredDate)}.</u>
                                                         </Typography>
                                                     </Col>
                                                     :
@@ -2835,12 +2722,12 @@ class ProjectDetails extends Component {
 
                                                         {
                                                             student.type === DB_CONST.TYPE_STUDENT
-                                                            && !investorSelfCertificationAgreement
+                                                            && !studentSelfCertificationAgreement
                                                                 ?
                                                                 <Button style={{marginBottom: 14}} className={css(sharedStyles.no_text_transform)} fullWidth variant="outlined" color="primary" size="medium"
                                                                     disabled={
                                                                         student.type === DB_CONST.TYPE_STUDENT
-                                                                        && !investorSelfCertificationAgreement
+                                                                        && !studentSelfCertificationAgreement
                                                                     }
                                                                 >
                                                                     Pledge now
@@ -2854,7 +2741,7 @@ class ProjectDetails extends Component {
                                                                             :
                                                                             ROUTES.PLEDGE_INVEST_WEST_SUPER
                                                                         ,
-                                                                        search: `?project=${project.id}`
+                                                                        search: `?studentProject=${studentProject.id}`
                                                                     }}
                                                                     className={css(sharedStyles.nav_link_hover)}
                                                                 >
@@ -2863,11 +2750,11 @@ class ProjectDetails extends Component {
                                                         }
 
                                                         {
-                                                            this.renderInvestorSelfCertifyReminder()
+                                                            this.renderStudentSelfCertifyReminder()
                                                         }
 
                                                         <Typography align="left" variant="body2" style={{marginTop: 15}}>
-                                                            <u>Closes on {utils.dateTimeInReadableFormat(project.PrimaryOffer.expiredDate)}.</u></Typography>
+                                                            <u>Closes on {utils.dateTimeInReadableFormat(studentProject.PrimaryOffer.expiredDate)}.</u></Typography>
                                                     </Col>
                                             )
                                     )
@@ -2887,12 +2774,12 @@ class ProjectDetails extends Component {
                             <Tabs value={mainBody} onChange={this.onTabChanged} indicatorColor="primary" textColor="primary" variant="scrollable" scrollButtons="on">
                                 {
                                     // student is a super teacher
-                                    // or a course teacher that owns the project
+                                    // or a course teacher that owns the studentProject
                                     (student.type === DB_CONST.TYPE_PROF
-                                        && (student.superTeacher || (!student.superTeacher && student.anid === project.anid))
+                                        && (student.superTeacher || (!student.superTeacher && student.anid === studentProject.anid))
                                     )
-                                    // project is not a draft
-                                    && !utils.isDraftProject(project)
+                                    // studentProject is not a draft
+                                    && !utils.isStudentDraftProject(studentProject)
                                         ?
                                         <Tab value={MAIN_BODY_TEACHER_OFFER_STATES} className={css(sharedStyles.tab_title)} fullWidth label="Control phases"
                                          style={{
@@ -2907,35 +2794,10 @@ class ProjectDetails extends Component {
                                         :
                                         null
                                 }
-                                {/*{*/}
-                                {/*    // student is a super teacher*/}
-                                {/*    // or a course teacher that owns the project*/}
-                                {/*    (student.type === DB_CONST.TYPE_PROF*/}
-                                {/*        && (student.superTeacher || (!student.superTeacher && student.anid === project.anid))*/}
-                                {/*    )*/}
-                                {/*    // student is the Teacher that owns the project*/}
-                                {/*    || (student.type === DB_CONST.TYPE_TEACHER && student.id === project.teacherID)*/}
-                                {/*        ?*/}
-                                {/*        <Tab*/}
-                                {/*            value={MAIN_BODY_INVESTORS_PLEDGED}*/}
-                                {/*            className={css(sharedStyles.tab_title)}*/}
-                                {/*            fullWidth*/}
-                                {/*            label="Pledges"*/}
-                                {/*            style={{*/}
-                                {/*                color:*/}
-                                {/*                    !courseProperties*/}
-                                {/*                        ?*/}
-                                {/*                        colors.secondaryColor*/}
-                                {/*                        :*/}
-                                {/*                        courseProperties.settings.secondaryColor*/}
-                                {/*            }}*/}
-                                {/*        />*/}
-                                {/*        :*/}
-                                {/*        null*/}
-                                {/*}*/}
-                                <Tab value={MAIN_BODY_CAMPAIGN} className={css(sharedStyles.tab_title)} fullWidth label="Campaign"/>
+
+                                <Tab value={MAIN_BODY_CAMPAIGN} className={css(sharedStyles.tab_title)} fullWidth label="Project"/>
                                 <Tab value={MAIN_BODY_DOCUMENTS} className={css(sharedStyles.tab_title)} fullWidth label="Documents"/>
-                                <Tab value={MAIN_BODY_COMMENTS} className={css(sharedStyles.tab_title)} fullWidth label="Investor comments"/>
+                                <Tab value={MAIN_BODY_COMMENTS} className={css(sharedStyles.tab_title)} fullWidth label="Teacher comments"/>
                                 <Tab value={MAIN_BODY_NOTES} className={css(sharedStyles.tab_title)} fullWidth label="Extra information"/>
                             </Tabs>
                         </FlexView>
@@ -2962,28 +2824,28 @@ class ProjectDetails extends Component {
                                         <Col xs={{span: 12, order: 1}} sm={{span: 12, order: 1}} md={{span: 8, order: 0}} lg={{span: 8, order: 0}}>
                                             <Stepper nonLinear orientation="vertical" activeStep={teacherOfferStatesActiveStep} style={{marginTop: 15}}>
                                                 {/** Publish pitch step */}
-                                                <Step key={TEACHER_OFFER_STATES_PUBLISH_PITCH} completed={!utils.isProjectWaitingToGoLive(project)}>
+                                                <Step key={TEACHER_OFFER_STATES_PUBLISH_PITCH} completed={!utils.isStudentProjectWaitingToGoLive(studentProject)}>
                                                     <StepButton onClick={() => this.onTeacherOfferStatesStepClick(TEACHER_OFFER_STATES_PUBLISH_PITCH)}>
-                                                        <StepLabel>Publish pitch</StepLabel>
+                                                        <StepLabel>Publish project</StepLabel>
                                                     </StepButton>
                                                     <StepContent>
                                                         {
-                                                            utils.isProjectWaitingToGoLive(project)
+                                                            utils.isStudentProjectWaitingToGoLive(studentProject)
                                                                 ?
                                                                 <FlexView column width="100%" marginTop={20} className={css(styles.teacher_state_control_box)}>
                                                                     <Typography variant="body1" align="left" paragraph>
-                                                                        Please check this offer
+                                                                        Please check this project
                                                                         carefully
                                                                         before publishing as this action cannot be
                                                                         reversed. You
-                                                                        can control who can see this investment
+                                                                        can control who can see this project
                                                                         opportunity
                                                                         using the options below.
                                                                     </Typography>
 
                                                                     <Divider style={{marginTop: 25, marginBottom: 20}}/>
 
-                                                                    {/** Select project visibility before publishing pitch */}
+                                                                    {/** Select studentProject visibility before publishing pitch */}
                                                                     <SelectPitchVisibility/>
 
                                                                     <Divider style={{marginTop: 35, marginBottom: 25}}/>
@@ -3033,7 +2895,7 @@ class ProjectDetails extends Component {
                                                                             ?
                                                                             null
                                                                             :
-                                                                            isProjectCreatedByCourseTeacher(project)
+                                                                            isStudentProjectCreatedByCourseTeacher(studentProject)
                                                                                 ?
                                                                                 <Button fullWidth color="primary" variant="contained" className={css(sharedStyles.no_text_transform)} disabled={student.superTeacher} onClick={() => this.onMakeProjectGoLiveDecision({decision: true, projectVisibilitySetting})}>Publish pitch</Button>
                                                                                 :
@@ -3059,7 +2921,7 @@ class ProjectDetails extends Component {
                                                                 <FlexView column width="100%" marginTop={20}>
                                                                     <Typography
                                                                         color={
-                                                                            isProjectRejectedToGoLive(project)
+                                                                            isStudentProjectRejectedToGoLive(studentProject)
                                                                                 ?
                                                                                 "secondary"
                                                                                 :
@@ -3069,15 +2931,15 @@ class ProjectDetails extends Component {
                                                                         variant="body1"
                                                                     >
                                                                         {
-                                                                            isProjectRejectedToGoLive(project)
+                                                                            isStudentProjectRejectedToGoLive(studentProject)
                                                                                 ?
-                                                                                "This offer has been rejected."
+                                                                                "This project has been rejected."
                                                                                 :
-                                                                                isDraftProject(project)
+                                                                                isStudentDraftProject(studentProject)
                                                                                     ?
-                                                                                    "This offer is in draft phase."
+                                                                                    "This project is in draft phase."
                                                                                     :
-                                                                                    "This offer has been published."
+                                                                                    "This project has been published."
                                                                         }
                                                                     </Typography>
                                                                 </FlexView>
@@ -3090,37 +2952,37 @@ class ProjectDetails extends Component {
                                                 <Step
                                                     key={TEACHER_OFFER_STATES_MOVE_TO_PLEDGE}
                                                     disabled={
-                                                        isProjectWaitingToGoLive(project)
-                                                        || isProjectRejectedToGoLive(project)
+                                                        isStudentProjectWaitingToGoLive(studentProject)
+                                                        || isStudentProjectRejectedToGoLive(studentProject)
                                                     }
                                                     completed={
-                                                        isProjectSuccessful(project)
-                                                        || isProjectFailed(project)
-                                                        || isProjectInLivePledgePhase(project)
-                                                        || isProjectWaitingForPledgeToBeCreated(project)
-                                                        || isProjectWaitingForPledgeToBeChecked(project)
+                                                        isStudentProjectSuccessful(studentProject)
+                                                        || isStudentProjectFailed(studentProject)
+                                                        || isStudentProjectInLivePledgePhase(studentProject)
+                                                        || isStudentProjectWaitingForPledgeToBeCreated(studentProject)
+                                                        || isStudentProjectWaitingForPledgeToBeChecked(studentProject)
                                                     }
                                                 >
                                                     <StepButton onClick={() => this.onTeacherOfferStatesStepClick(TEACHER_OFFER_STATES_MOVE_TO_PLEDGE)}>
                                                         {/*<StepLabel*/}
-                                                        {/*    error={utils.isProjectRejectedToGoLive(project)}*/}
+                                                        {/*    error={utils.isStudentProjectRejectedToGoLive(studentProject)}*/}
                                                         {/*>*/}
                                                         {/*    Move pitch to pledge phase*/}
                                                         {/*</StepLabel>*/}
-                                                        <StepLabel error={utils.isProjectRejectedToGoLive(project)}>Make decision for expired pitch</StepLabel>
+                                                        <StepLabel error={utils.isStudentProjectRejectedToGoLive(studentProject)}>Make decision for expired pitch</StepLabel>
                                                     </StepButton>
                                                     <StepContent>
                                                         {
-                                                            (isProjectInLivePitchPhase(project)
-                                                                || isProjectPitchExpiredWaitingForTeacherToCheck(project))
-                                                            && !isProjectWaitingForPledgeToBeCreated(project)
-                                                            && !isProjectWaitingForPledgeToBeChecked(project)
+                                                            (isStudentProjectInLivePitchPhase(studentProject)
+                                                                || isStudentProjectPitchExpiredWaitingForTeacherToCheck(studentProject))
+                                                            && !isStudentProjectWaitingForPledgeToBeCreated(studentProject)
+                                                            && !isStudentProjectWaitingForPledgeToBeChecked(studentProject)
                                                                 ?
                                                                 <FlexView
                                                                     column
                                                                 >
                                                                     {
-                                                                        !isProjectPitchExpiredWaitingForTeacherToCheck(project)
+                                                                        !isStudentProjectPitchExpiredWaitingForTeacherToCheck(studentProject)
                                                                             ?
                                                                             null
                                                                             :
@@ -3164,105 +3026,12 @@ class ProjectDetails extends Component {
                                                                                 </FlexView>
                                                                             </FlexView>
                                                                     }
-
-                                                                    {/*<FlexView*/}
-                                                                    {/*    column*/}
-                                                                    {/*    width="100%"*/}
-                                                                    {/*    marginTop={20}*/}
-                                                                    {/*    className={css(styles.teacher_state_control_box)}*/}
-                                                                    {/*>*/}
-                                                                    {/*    <Typography*/}
-                                                                    {/*        align="left"*/}
-                                                                    {/*        variant="body1"*/}
-                                                                    {/*        paragraph*/}
-                                                                    {/*    >*/}
-                                                                    {/*        This offer is currently in the*/}
-                                                                    {/*        pitch*/}
-                                                                    {/*        phase. You can now move it to the pledge*/}
-                                                                    {/*        phase.*/}
-                                                                    {/*        The*/}
-                                                                    {/*        teacher will be notified and prompted to*/}
-                                                                    {/*        create*/}
-                                                                    {/*        their*/}
-                                                                    {/*        pledge page.*/}
-                                                                    {/*    </Typography>*/}
-
-                                                                    {/*    <Typography*/}
-                                                                    {/*        align="left"*/}
-                                                                    {/*        variant="body1"*/}
-                                                                    {/*    >*/}
-                                                                    {/*        <b>*/}
-                                                                    {/*            <u>*/}
-                                                                    {/*                Please do it carefully as you cannot*/}
-                                                                    {/*                reverse*/}
-                                                                    {/*                your action.*/}
-                                                                    {/*            </u>*/}
-                                                                    {/*        </b>*/}
-                                                                    {/*    </Typography>*/}
-
-                                                                    {/*    <Divider*/}
-                                                                    {/*        style={{*/}
-                                                                    {/*            marginTop: 30,*/}
-                                                                    {/*            marginBottom: 30*/}
-                                                                    {/*        }}*/}
-                                                                    {/*    />*/}
-
-                                                                    {/*    <FlexView>*/}
-                                                                    {/*        <FlexView*/}
-                                                                    {/*            grow*/}
-                                                                    {/*            marginRight={10}*/}
-                                                                    {/*        >*/}
-                                                                    {/*            <Button*/}
-                                                                    {/*                fullWidth*/}
-                                                                    {/*                color="primary"*/}
-                                                                    {/*                className={css(sharedStyles.no_text_transform)}*/}
-                                                                    {/*                variant="outlined"*/}
-                                                                    {/*                disabled={student.superTeacher}*/}
-                                                                    {/*                onClick={() => this.onMakeProjectGoToPledgePhaseDecision(true)}*/}
-                                                                    {/*            >*/}
-                                                                    {/*                Move to pledge phase*/}
-                                                                    {/*            </Button>*/}
-                                                                    {/*        </FlexView>*/}
-                                                                    {/*        <FlexView*/}
-                                                                    {/*            grow*/}
-                                                                    {/*            marginLeft={10}*/}
-                                                                    {/*        >*/}
-                                                                    {/*            <Button*/}
-                                                                    {/*                fullWidth*/}
-                                                                    {/*                color="secondary"*/}
-                                                                    {/*                className={css(sharedStyles.no_text_transform)}*/}
-                                                                    {/*                variant="outlined"*/}
-                                                                    {/*                disabled={student.superTeacher}*/}
-                                                                    {/*                onClick={() => this.onMakeProjectGoToPledgePhaseDecision(false)}*/}
-                                                                    {/*            >*/}
-                                                                    {/*                Close pitch*/}
-                                                                    {/*            </Button>*/}
-                                                                    {/*        </FlexView>*/}
-                                                                    {/*    </FlexView>*/}
-
-                                                                    {/*    {*/}
-                                                                    {/*        !student.superTeacher*/}
-                                                                    {/*            ?*/}
-                                                                    {/*            null*/}
-                                                                    {/*            :*/}
-                                                                    {/*            <Typography*/}
-                                                                    {/*                variant="body1"*/}
-                                                                    {/*                color="error"*/}
-                                                                    {/*                align="left"*/}
-                                                                    {/*                style={{*/}
-                                                                    {/*                    marginTop: 20*/}
-                                                                    {/*                }}*/}
-                                                                    {/*            >*/}
-                                                                    {/*                Only course teacher can do this.*/}
-                                                                    {/*            </Typography>*/}
-                                                                    {/*    }*/}
-                                                                    {/*</FlexView>*/}
                                                                 </FlexView>
                                                                 :
                                                                 <FlexView column width="100%" marginTop={20}>
                                                                     <Typography
                                                                         color={
-                                                                            utils.isProjectFailed(project)
+                                                                            utils.isStudentProjectFailed(studentProject)
                                                                                 ?
                                                                                 "secondary"
                                                                                 :
@@ -3272,15 +3041,15 @@ class ProjectDetails extends Component {
                                                                         variant="body1"
                                                                     >
                                                                         {
-                                                                            utils.isProjectFailed(project)
+                                                                            utils.isStudentProjectFailed(studentProject)
                                                                                 ?
                                                                                 "This offer has been rejected."
                                                                                 :
-                                                                                project.Pitch.status === DB_CONST.PITCH_STATUS_ACCEPTED_CREATE_PRIMARY_OFFER
+                                                                                studentProject.Pitch.status === DB_CONST.PITCH_STATUS_ACCEPTED_CREATE_PRIMARY_OFFER
                                                                                     ?
-                                                                                    project.hasOwnProperty('createdByCourseTeacher')
-                                                                                    && project.createdByCourseTeacher
-                                                                                    && (courseProperties && project.anid === courseProperties.anid)
+                                                                                    studentProject.hasOwnProperty('createdByCourseTeacher')
+                                                                                    && studentProject.createdByCourseTeacher
+                                                                                    && (courseProperties && studentProject.anid === courseProperties.anid)
                                                                                         ?
                                                                                         "You can create a pledge page for this offer now."
                                                                                         :
@@ -3290,18 +3059,18 @@ class ProjectDetails extends Component {
                                                                         }
                                                                     </Typography>
                                                                     {
-                                                                        project.hasOwnProperty('createdByCourseTeacher')
-                                                                        && project.createdByCourseTeacher
-                                                                        && (courseProperties && project.anid === courseProperties.anid)
-                                                                        && project.Pitch.status === DB_CONST.PITCH_STATUS_ACCEPTED_CREATE_PRIMARY_OFFER
+                                                                        studentProject.hasOwnProperty('createdByCourseTeacher')
+                                                                        && studentProject.createdByCourseTeacher
+                                                                        && (courseProperties && studentProject.anid === courseProperties.anid)
+                                                                        && studentProject.Pitch.status === DB_CONST.PITCH_STATUS_ACCEPTED_CREATE_PRIMARY_OFFER
                                                                             ?
                                                                             <FlexView marginTop={20}>
                                                                                 <Button color="primary" variant="outlined" size="medium"
                                                                                     className={css(sharedStyles.no_text_transform)}
                                                                                     onClick={() => {
                                                                                         createPledgeDialog_toggleDialog();
-                                                                                        createPledgeDialog_setProject(project);
-                                                                                        selectProjectVisibility_setProject(project);
+                                                                                        createPledgeDialog_setStudentProject(studentProject);
+                                                                                        selectStudentProjectVisibility_setStudentProject(studentProject);
                                                                                     }}>
                                                                                     Create pledge
                                                                                 </Button>
@@ -3315,180 +3084,29 @@ class ProjectDetails extends Component {
                                                 </Step>
 
                                                 {/*/!** Publish Pledge step *!/*/}
-                                                {/*<Step*/}
-                                                {/*    key={TEACHER_OFFER_STATES_PUBLISH_PLEDGE}*/}
-                                                {/*    disabled={*/}
-                                                {/*        isProjectWaitingToGoLive(project)*/}
-                                                {/*        || isProjectRejectedToGoLive(project)*/}
-                                                {/*        || isProjectInLivePitchPhase(project)*/}
-                                                {/*        || isProjectPitchExpiredWaitingForTeacherToCheck(project)*/}
-                                                {/*        || isProjectFailed(project)*/}
-                                                {/*    }*/}
-                                                {/*    completed={*/}
-                                                {/*        isProjectFailed(project)*/}
-                                                {/*        || isProjectSuccessful(project)*/}
-                                                {/*        || isProjectInLivePledgePhase(project)*/}
-                                                {/*    }*/}
-                                                {/*>*/}
-                                                {/*    <StepButton*/}
-                                                {/*        onClick={() => this.onTeacherOfferStatesStepClick(TEACHER_OFFER_STATES_PUBLISH_PLEDGE)}*/}
-                                                {/*    >*/}
-                                                {/*        <StepLabel*/}
-                                                {/*            error={*/}
-                                                {/*                isProjectFailed(project)*/}
-                                                {/*                || isProjectRejectedToGoLive(project)*/}
-                                                {/*            }*/}
-                                                {/*        >*/}
-                                                {/*            Publish pledge*/}
-                                                {/*        </StepLabel>*/}
-                                                {/*    </StepButton>*/}
-                                                {/*    <StepContent>*/}
-                                                {/*        {*/}
-                                                {/*            project.status === DB_CONST.PROJECT_STATUS_PRIMARY_OFFER_CREATED_WAITING_TO_BE_CHECKED*/}
-                                                {/*                ?*/}
-                                                {/*                <FlexView*/}
-                                                {/*                    column*/}
-                                                {/*                    width="100%"*/}
-                                                {/*                    marginTop={20}*/}
-                                                {/*                    className={css(styles.teacher_state_control_box)}*/}
-                                                {/*                >*/}
-                                                {/*                    <Typography*/}
-                                                {/*                        align="left"*/}
-                                                {/*                        variant="body1"*/}
-                                                {/*                        paragraph*/}
-                                                {/*                    >*/}
-                                                {/*                        The teacher has now created their pledge page.*/}
-                                                {/*                        Please*/}
-                                                {/*                        check this carefully before publishing as you*/}
-                                                {/*                        cannot*/}
-                                                {/*                        reverse this action. You can also control who*/}
-                                                {/*                        can see*/}
-                                                {/*                        this pledge using the options below.*/}
-                                                {/*                    </Typography>*/}
 
-                                                {/*                    <Divider*/}
-                                                {/*                        style={{*/}
-                                                {/*                            marginTop: 25,*/}
-                                                {/*                            marginBottom: 20*/}
-                                                {/*                        }}*/}
-                                                {/*                    />*/}
-
-                                                {/*                    /!** Select project visibility before publishing pledge *!/*/}
-                                                {/*                    <SelectPledgeVisibility/>*/}
-
-                                                {/*                    <Divider*/}
-                                                {/*                        style={{*/}
-                                                {/*                            marginTop: 35,*/}
-                                                {/*                            marginBottom: 25*/}
-                                                {/*                        }}*/}
-                                                {/*                    />*/}
-
-                                                {/*                    <FlexView*/}
-                                                {/*                        marginTop={20}*/}
-                                                {/*                    >*/}
-                                                {/*                        <FlexView*/}
-                                                {/*                            grow*/}
-                                                {/*                            marginRight={10}*/}
-                                                {/*                        >*/}
-                                                {/*                            <Button*/}
-                                                {/*                                fullWidth*/}
-                                                {/*                                color="primary"*/}
-                                                {/*                                className={css(sharedStyles.no_text_transform)}*/}
-                                                {/*                                variant="outlined"*/}
-                                                {/*                                disabled={student.superTeacher}*/}
-                                                {/*                                onClick={() => this.onMakeProjectPledgeGoLiveDecision({*/}
-                                                {/*                                    decision: true,*/}
-                                                {/*                                    projectVisibilitySetting*/}
-                                                {/*                                })}*/}
-                                                {/*                            >*/}
-                                                {/*                                Publish pledge*/}
-                                                {/*                            </Button>*/}
-                                                {/*                        </FlexView>*/}
-                                                {/*                        <FlexView*/}
-                                                {/*                            grow*/}
-                                                {/*                            marginLeft={10}*/}
-                                                {/*                        >*/}
-                                                {/*                            <Button*/}
-                                                {/*                                fullWidth*/}
-                                                {/*                                color="secondary"*/}
-                                                {/*                                className={css(sharedStyles.no_text_transform)}*/}
-                                                {/*                                variant="outlined"*/}
-                                                {/*                                disabled={student.superTeacher}*/}
-                                                {/*                                onClick={() => this.onMakeProjectPledgeGoLiveDecision({decision: false})}*/}
-                                                {/*                            >*/}
-                                                {/*                                Close pledge*/}
-                                                {/*                            </Button>*/}
-                                                {/*                        </FlexView>*/}
-                                                {/*                    </FlexView>*/}
-
-                                                {/*                    {*/}
-                                                {/*                        !student.superTeacher*/}
-                                                {/*                            ?*/}
-                                                {/*                            null*/}
-                                                {/*                            :*/}
-                                                {/*                            <Typography*/}
-                                                {/*                                variant="body1"*/}
-                                                {/*                                color="error"*/}
-                                                {/*                                align="left"*/}
-                                                {/*                                style={{*/}
-                                                {/*                                    marginTop: 20*/}
-                                                {/*                                }}*/}
-                                                {/*                            >*/}
-                                                {/*                                Only course teacher can do this.*/}
-                                                {/*                            </Typography>*/}
-                                                {/*                    }*/}
-                                                {/*                </FlexView>*/}
-                                                {/*                :*/}
-                                                {/*                <FlexView*/}
-                                                {/*                    column*/}
-                                                {/*                    width="100%"*/}
-                                                {/*                    marginTop={20}*/}
-                                                {/*                >*/}
-                                                {/*                    <Typography*/}
-                                                {/*                        color={*/}
-                                                {/*                            isProjectFailed(project)*/}
-                                                {/*                                ?*/}
-                                                {/*                                "secondary"*/}
-                                                {/*                                :*/}
-                                                {/*                                "primary"*/}
-                                                {/*                        }*/}
-                                                {/*                        align="left"*/}
-                                                {/*                        variant="body1"*/}
-                                                {/*                    >*/}
-                                                {/*                        {*/}
-                                                {/*                            isProjectFailed(project)*/}
-                                                {/*                                ?*/}
-                                                {/*                                "This offer has been rejected."*/}
-                                                {/*                                :*/}
-                                                {/*                                "This offer has been published."*/}
-                                                {/*                        }*/}
-                                                {/*                    </Typography>*/}
-                                                {/*                </FlexView>*/}
-                                                {/*        }*/}
-                                                {/*    </StepContent>*/}
-                                                {/*</Step>*/}
                                             </Stepper>
                                         </Col>
 
                                         <Col xs={{span: 12, order: 0}} sm={{span: 12, order: 0}} md={{span: 4, order: 1}} lg={{span: 4, order: 1}}>
                                             {
-                                                !isProjectLive(project)
+                                                !isStudentProjectLive(studentProject)
                                                     ?
                                                     null
                                                     :
                                                     <FlexView column marginTop={30}>
                                                         <Button variant="outlined" color="primary" className={css(sharedStyles.no_text_transform)}
-                                                            onClick={() => realtimeDBUtils.toggleProjectLivelinessTemporarily(student, JSON.parse(JSON.stringify(project)))}
+                                                            onClick={() => realtimeDBUtils.toggleProjectLivelinessTemporarily(student, JSON.parse(JSON.stringify(studentProject)))}
                                                             disabled={
                                                                 student.type !== DB_CONST.TYPE_PROF
                                                                 || (
                                                                     student.type === DB_CONST.TYPE_PROF
-                                                                    && student.anid !== project.anid
+                                                                    && student.anid !== studentProject.anid
                                                                 )
                                                             }
                                                         >
                                                             {
-                                                                isProjectTemporarilyClosed(project)
+                                                                isStudentProjectTemporarilyClosed(studentProject)
                                                                     ?
                                                                     "Open again"
                                                                     :
@@ -3504,11 +3122,11 @@ class ProjectDetails extends Component {
                                                         }
                                                         <Typography variant="body2" align="left" style={{marginTop: 15}}>
                                                             {
-                                                                isProjectTemporarilyClosed(project)
+                                                                isStudentProjectTemporarilyClosed(studentProject)
                                                                     ?
                                                                     "This offer will be opened again."
                                                                     :
-                                                                    "This offer will be closed temporarily and it will no longer be visible to any investors until you open it again."
+                                                                    "This offer will be closed temporarily and it will no longer be visible to any students until you open it again."
                                                             }
                                                         </Typography>
                                                     </FlexView>
@@ -3532,20 +3150,20 @@ class ProjectDetails extends Component {
                                         student.type === DB_CONST.TYPE_PROF
                                             ?
                                             <FlexView column marginTop={30} hAlignContent="center">
-                                                <Typography align="center" variant="h5">Restricted to {project.course.displayName} members.
+                                                <Typography align="center" variant="h5">Restricted to {studentProject.course.displayName} members.
                                                 </Typography>
                                             </FlexView>
                                             :
                                             <FlexView column marginTop={30}>
-                                                <Typography align="left" variant="h5">Restricted to {project.course.displayName} members.
+                                                <Typography align="left" variant="h5">Restricted to {studentProject.course.displayName} members.
                                                 </Typography>
                                                 <NavLink
                                                     to={
                                                         courseStudent
                                                             ?
-                                                            ROUTES.VIEW_COURSE_DETAILS.replace(":courseStudent", courseStudent).replace(":courseID", project.course.courseStudent)
+                                                            ROUTES.VIEW_COURSE_DETAILS.replace(":courseStudent", courseStudent).replace(":courseID", studentProject.course.courseStudent)
                                                             :
-                                                            ROUTES.VIEW_COURSE_DETAILS_INVEST_WEST_SUPER.replace(":courseID", project.course.courseStudent)
+                                                            ROUTES.VIEW_COURSE_DETAILS_INVEST_WEST_SUPER.replace(":courseID", studentProject.course.courseStudent)
                                                     }
                                                     style={{marginTop: 10}}>
                                                     <Typography variant="body1"> Request access</Typography>
@@ -3558,59 +3176,28 @@ class ProjectDetails extends Component {
 
                                     {
                                         // pitch deck
-                                        !project.Pitch.presentationDocument
+                                        !studentProject.Pitch.presentationDocument
                                             ?
                                             null
                                             :
                                             <FlexView column marginTop={30}>
-                                                <Typography variant="h5">Pitch deck</Typography>
-                                                <DocumentsDownload documents={project.Pitch.presentationDocument} shouldShowRiskWarningOnDownload={true}/>
+                                                <Typography variant="h5">Project presentation documents</Typography>
+                                                <DocumentsDownload documents={studentProject.Pitch.presentationDocument} shouldShowRiskWarningOnDownload={true}/>
                                                 <Divider style={{marginTop: 10}}/>
                                             </FlexView>
                                     }
 
                                     {
                                         // pitch presentation text
-                                        !project.Pitch.presentationText
+                                        !studentProject.Pitch.presentationText
                                             ?
                                             null
                                             :
-                                            <FlexView column dangerouslySetInnerHTML={{__html: utils.convertQuillDeltaToHTML(project.Pitch.presentationText.ops)}} marginTop={30}/>
+                                            <FlexView column dangerouslySetInnerHTML={{__html: utils.convertQuillDeltaToHTML(studentProject.Pitch.presentationText.ops)}} marginTop={30}/>
                                     }
                                 </Col>
                     }
 
-                    {/*/!** Investors pledged (only available when the primary offer expired and there are investors pledging the offer) *!/*/}
-                    {/*{*/}
-                    {/*    mainBody !== MAIN_BODY_INVESTORS_PLEDGED*/}
-                    {/*        ?*/}
-                    {/*        null*/}
-                    {/*        :*/}
-                    {/*        <Col*/}
-                    {/*            xs={12}*/}
-                    {/*            sm={12}*/}
-                    {/*            md={12}*/}
-                    {/*            lg={{span: 6, offset: 3}}*/}
-                    {/*        >*/}
-                    {/*            <FlexView*/}
-                    {/*                column*/}
-                    {/*                marginTop={30}*/}
-                    {/*            >*/}
-                    {/*                <Typography*/}
-                    {/*                    variant="h5"*/}
-                    {/*                    align="left"*/}
-                    {/*                    paragraph*/}
-                    {/*                >*/}
-                    {/*                    Pledges from investors*/}
-                    {/*                </Typography>*/}
-
-                    {/*                /!** Pledges table *!/*/}
-                    {/*                <PledgesTable/>*/}
-                    {/*            </FlexView>*/}
-                    {/*        </Col>*/}
-                    {/*}*/}
-
-                    {/** Comments */}
                     {
                         mainBody !== MAIN_BODY_COMMENTS
                             ?
@@ -3623,20 +3210,20 @@ class ProjectDetails extends Component {
                                         student.type === DB_CONST.TYPE_PROF
                                             ?
                                             <FlexView column marginTop={30} hAlignContent="center">
-                                                <Typography align="center" variant="h5">Restricted to {project.course.displayName} members.
+                                                <Typography align="center" variant="h5">Restricted to {studentProject.course.displayName} members.
                                                 </Typography>
                                             </FlexView>
                                             :
                                             <FlexView column marginTop={30}>
-                                                <Typography align="left" variant="h5">Restricted to {project.course.displayName} members.
+                                                <Typography align="left" variant="h5">Restricted to {studentProject.course.displayName} members.
                                                 </Typography>
                                                 <NavLink
                                                     to={
                                                         courseStudent
                                                             ?
-                                                            ROUTES.VIEW_COURSE_DETAILS.replace(":courseStudent", courseStudent).replace(":courseID", project.course.courseStudent)
+                                                            ROUTES.VIEW_COURSE_DETAILS.replace(":courseStudent", courseStudent).replace(":courseID", studentProject.course.courseStudent)
                                                             :
-                                                            ROUTES.VIEW_COURSE_DETAILS_INVEST_WEST_SUPER.replace(":courseID", project.course.courseStudent)
+                                                            ROUTES.VIEW_COURSE_DETAILS_INVEST_WEST_SUPER.replace(":courseID", studentProject.course.courseStudent)
                                                     }
                                                     style={{marginTop: 10}}>
                                                     <Typography variant="body1">Request access</Typography>
@@ -3653,7 +3240,7 @@ class ProjectDetails extends Component {
                                                     ?
                                                     null
                                                     :
-                                                    <Typography align="center" style={{padding: 15, backgroundColor: colors.kick_starter_background_color_1, marginBottom: 30}} variant="body2" color="inherit">Only investors can post comments.</Typography>
+                                                    <Typography align="center" style={{padding: 15, backgroundColor: colors.kick_starter_background_color_1, marginBottom: 30}} variant="body2" color="inherit">Only students can post comments.</Typography>
                                             }
 
                                             {
@@ -3797,8 +3384,8 @@ class ProjectDetails extends Component {
                                                                                                 && student.id === projectTeacher.id)
                                                                                             || (
                                                                                                 student.type === DB_CONST.TYPE_PROF
-                                                                                                && project.hasOwnProperty('createdByCourseTeacher')
-                                                                                                && student.anid === project.anid
+                                                                                                && studentProject.hasOwnProperty('createdByCourseTeacher')
+                                                                                                && student.anid === studentProject.anid
                                                                                             )
                                                                                                 ?
                                                                                                 <FlexView marginTop={25}>
@@ -3887,8 +3474,8 @@ class ProjectDetails extends Component {
 
                                                                                                         {/** Delete/edit a reply */}
                                                                                                         {
-                                                                                                            // allow course teachers that created this project,
-                                                                                                            // and teacher that created this project and owns this reply
+                                                                                                            // allow course teachers that created this studentProject,
+                                                                                                            // and teacher that created this studentProject and owns this reply
                                                                                                             // to edit/delete this reply
                                                                                                             (
                                                                                                                 student.type === DB_CONST.TYPE_TEACHER
@@ -3940,15 +3527,15 @@ class ProjectDetails extends Component {
                                                                         <div>
                                                                             <Button size="small" onClick={this.onPostACommentClick} variant="outlined" color="inherit" fullWidth={false}
                                                                                 disabled={
-                                                                                    utils.isProjectLive(project)
+                                                                                    utils.isStudentProjectLive(studentProject)
                                                                                     && student.type === DB_CONST.TYPE_STUDENT
-                                                                                    && !investorSelfCertificationAgreement
+                                                                                    && !studentSelfCertificationAgreement
                                                                                 }
                                                                             >Post a comment</Button>
                                                                         </div>
 
                                                                         {
-                                                                            this.renderInvestorSelfCertifyReminder()
+                                                                            this.renderStudentSelfCertifyReminder()
                                                                         }
                                                                     </FlexView>
                                                                 </FlexView>
@@ -3974,9 +3561,9 @@ class ProjectDetails extends Component {
                                                                         <div>
                                                                             <Button size="small" onClick={this.onPostACommentClick} variant="outlined" color="inherit"fullWidth={false}
                                                                                 disabled={
-                                                                                    utils.isProjectLive(project)
+                                                                                    utils.isStudentProjectLive(studentProject)
                                                                                     && student.type === DB_CONST.TYPE_STUDENT
-                                                                                    && !investorSelfCertificationAgreement
+                                                                                    && !studentSelfCertificationAgreement
                                                                                 }
                                                                             >Post a comment</Button>
                                                                         </div>
@@ -3984,20 +3571,20 @@ class ProjectDetails extends Component {
                                                                         null
                                                                 }
 
-                                                                {/** Check investor's self certification status - right hand side column - displayed only if there is at least one comment */}
+                                                                {/** Check student's self certification status - right hand side column - displayed only if there is at least one comment */}
                                                                 {
                                                                     commentsLoaded && comments.length > 0
                                                                         ?
-                                                                        this.renderInvestorSelfCertifyReminder()
+                                                                        this.renderStudentSelfCertifyReminder()
                                                                         :
                                                                         null
                                                                 }
                                                             </FlexView>
                                                             :
-                                                            <Typography variant="subtitle1" align="left">You have already commented on this investment opportunity. You can only edit your comment.</Typography>
+                                                            <Typography variant="subtitle1" align="left">You have already commented on this project opportunity. You can only edit your comment.</Typography>
                                                     )
                                                     :
-                                                    <Typography variant="subtitle1" align="left">All the comments from investors are displayed anonymously here.</Typography>
+                                                    <Typography variant="subtitle1" align="left">All the comments from students are displayed anonymously here.</Typography>
                                             }
 
                                         </Col>
@@ -4018,18 +3605,18 @@ class ProjectDetails extends Component {
                                         student.type === DB_CONST.TYPE_PROF
                                             ?
                                             <FlexView column marginTop={30} hAlignContent="center">
-                                                <Typography align="center" variant="h5">Restricted to {project.course.displayName} members.</Typography>
+                                                <Typography align="center" variant="h5">Restricted to {studentProject.course.displayName} members.</Typography>
                                             </FlexView>
                                             :
                                             <FlexView column marginTop={30}>
-                                                <Typography align="left" variant="h5">Restricted to {project.course.displayName} members.</Typography>
+                                                <Typography align="left" variant="h5">Restricted to {studentProject.course.displayName} members.</Typography>
                                                 <NavLink
                                                     to={
                                                         courseStudent
                                                             ?
-                                                            ROUTES.VIEW_COURSE_DETAILS.replace(":courseStudent", courseStudent).replace(":courseID", project.course.courseStudent)
+                                                            ROUTES.VIEW_COURSE_DETAILS.replace(":courseStudent", courseStudent).replace(":courseID", studentProject.course.courseStudent)
                                                             :
-                                                            ROUTES.VIEW_COURSE_DETAILS_INVEST_WEST_SUPER.replace(":courseID", project.course.courseStudent)
+                                                            ROUTES.VIEW_COURSE_DETAILS_INVEST_WEST_SUPER.replace(":courseID", studentProject.course.courseStudent)
                                                     }
                                                     style={{marginTop: 10}}>
                                                     <Typography variant="body1">Request access</Typography>
@@ -4042,9 +3629,9 @@ class ProjectDetails extends Component {
                                     <Typography variant="h5" color="inherit">Supporting documents</Typography>
 
                                     {
-                                        project.Pitch.supportingDocuments && project.Pitch.supportingDocuments.findIndex(document => !document.hasOwnProperty('removed')) !== -1
+                                        studentProject.Pitch.supportingDocuments && studentProject.Pitch.supportingDocuments.findIndex(document => !document.hasOwnProperty('removed')) !== -1
                                             ?
-                                            <DocumentsDownload documents={project.Pitch.supportingDocuments} shouldShowRiskWarningOnDownload={true}/>
+                                            <DocumentsDownload documents={studentProject.Pitch.supportingDocuments} shouldShowRiskWarningOnDownload={true}/>
                                             :
                                             <Typography variant="body1" color="textSecondary" style={{marginTop: 35}}>No supporting documents uploaded.</Typography>
                                     }
@@ -4064,19 +3651,19 @@ class ProjectDetails extends Component {
                                         student.type === DB_CONST.TYPE_PROF
                                             ?
                                             <FlexView column marginTop={30} hAlignContent="center">
-                                                <Typography align="center" variant="h5">Restricted to {project.course.displayName} members.</Typography>
+                                                <Typography align="center" variant="h5">Restricted to {studentProject.course.displayName} members.</Typography>
                                             </FlexView>
                                             :
                                             <FlexView column marginTop={30}>
-                                                <Typography align="left" variant="h5">Restricted to {project.course.displayName} members.
+                                                <Typography align="left" variant="h5">Restricted to {studentProject.course.displayName} members.
                                                 </Typography>
                                                 <NavLink
                                                     to={
                                                         courseStudent
                                                             ?
-                                                            ROUTES.VIEW_COURSE_DETAILS.replace(":courseStudent", courseStudent).replace(":courseID", project.course.courseStudent)
+                                                            ROUTES.VIEW_COURSE_DETAILS.replace(":courseStudent", courseStudent).replace(":courseID", studentProject.course.courseStudent)
                                                             :
-                                                            ROUTES.VIEW_COURSE_DETAILS_INVEST_WEST_SUPER.replace(":courseID", project.course.courseStudent)
+                                                            ROUTES.VIEW_COURSE_DETAILS_INVEST_WEST_SUPER.replace(":courseID", studentProject.course.courseStudent)
                                                     }
                                                     style={{marginTop: 10}}>
                                                     <Typography variant="body1">Request access</Typography>
@@ -4087,147 +3674,8 @@ class ProjectDetails extends Component {
                                 :
                                 <Col xs={12} sm={12} md={12} lg={{span: 6, offset: 3}} style={{marginTop: 30}}>
                                     <Typography variant="h5" color="inherit">Extra information</Typography>
-
-                                    {/** Financial round */}
-                                    {
-                                        !project.Pitch.hasOwnProperty('financialRound')
-                                            ?
-                                            null
-                                            :
-                                            <FlexView className={css(styles.border_box)} style={{backgroundColor: colors.kick_starter_background_color}} column marginTop={30} vAlignContent="center">
-                                                <Typography variant="body1" align="left">Financial round the company is looking for:&nbsp;&nbsp;
-                                                    <b>
-                                                        {project.Pitch.financialRound}
-                                                    </b>
-                                                </Typography>
-                                            </FlexView>
-                                    }
-
-                                    {/** Prior investment */}
-                                    <FlexView className={css(styles.border_box)} style={{backgroundColor: colors.kick_starter_background_color}} column marginTop={40} vAlignContent="center">
-                                        <Typography variant="body1" align="left">Prior investment raised:&nbsp;&nbsp;<b>
-                                                {
-                                                    project.Pitch.amountRaised === 0
-                                                        ?
-                                                        "none"
-                                                        :
-                                                        `£${Number(project.Pitch.amountRaised.toFixed(2)).toLocaleString()}`
-                                                }
-                                            </b>
-                                        </Typography>
-
-                                        {/*{*/}
-                                        {/*    project.Pitch.amountRaised === 0*/}
-                                        {/*        ?*/}
-                                        {/*        null*/}
-                                        {/*        :*/}
-                                        {/*        <Typography*/}
-                                        {/*            style={{marginTop: 30}}*/}
-                                        {/*            variant="body1"*/}
-                                        {/*            align="left"*/}
-                                        {/*        >*/}
-                                        {/*            Investors publicly committed:*/}
-                                        {/*            {*/}
-                                        {/*                !project.Pitch.investorsCommitted*/}
-                                        {/*                    ?*/}
-                                        {/*                    <b>&nbsp;&nbsp; Not provided.</b>*/}
-                                        {/*                    :*/}
-                                        {/*                    <b>&nbsp;&nbsp; {project.Pitch.investorsCommitted}</b>*/}
-                                        {/*            }*/}
-                                        {/*        </Typography>*/}
-                                        {/*}*/}
-                                    </FlexView>
-
-                                    {/** How fund is being raised */}
-                                    {
-                                        !project.Pitch.hasOwnProperty('howFundIsBeingRaised')
-                                            ?
-                                            null
-                                            :
-                                            <FlexView className={css(styles.border_box)} style={{backgroundColor: colors.kick_starter_background_color}} column marginTop={30} vAlignContent="center">
-                                                <Typography variant="body1" align="left">How does the company plan to raise funds:  {project.Pitch.howFundIsBeingRaised}</Typography>
-                                            </FlexView>
-                                    }
-
-                                   
-                                        
-                                            
-                                    {
-                                        project.Pitch.hasSEIS === "Yes"
-                                            ?
-                                            <FlexView className={css(styles.border_box)} style={{backgroundColor: colors.kick_starter_background_color}} column marginTop={30} vAlignContent="center">
-                                                <Typography variant="body1" align="left">Does this pitch have a SEIS badge: <b> {project.Pitch.hasSEIS}</b></Typography>
-                                            </FlexView>
-                                            :
-                                            <FlexView className={css(styles.border_box)} style={{backgroundColor: colors.kick_starter_background_color}} column marginTop={30} vAlignContent="center">
-                                                <Typography variant="body1" align="left">Does this pitch have a SEIS badge: <b> No </b></Typography>
-                                            </FlexView>
-                                    }
-                                            
-                                    
-
-                                    
-                                    {
-                                        project.Pitch.hasEIS === "Yes"
-                                            ?
-                                            <FlexView className={css(styles.border_box)} style={{backgroundColor: colors.kick_starter_background_color}} column marginTop={30} vAlignContent="center">
-                                                <Typography variant="body1" align="left">Does this pitch have a EIS badge: <b> {project.Pitch.hasEIS}</b></Typography>
-                                            </FlexView>
-                                            :
-                                            <FlexView className={css(styles.border_box)} style={{backgroundColor: colors.kick_starter_background_color}} column marginTop={30} vAlignContent="center">
-                                                <Typography variant="body1" align="left">Does this pitch have a EIS badge: <b> No </b></Typography>
-                                            </FlexView>
-
-                                    }
-                                    
-
-                                    
-                                    
-
-                                    {/** Details about earlier fundraising rounds */}
-                                    {
-                                        !project.Pitch.hasOwnProperty('detailsAboutEarlierFundraisingRounds')
-                                            ?
-                                            null
-                                            :
-                                            <FlexView className={css(styles.border_box)} style={{backgroundColor: colors.kick_starter_background_color}} column marginTop={30} vAlignContent="center">
-                                                <Typography variant="body1" align="left">Details about earlier fundraising rounds:<br/><br/> {project.Pitch.detailsAboutEarlierFundraisingRounds}</Typography>
-                                            </FlexView>
-                                    }
-
-                                    {/** QIB - special news */}
-                                    {
-                                        project.Pitch.hasOwnProperty('qibSpecialNews')
-                                        && (
-                                            (
-                                                (
-                                                    courseProperties
-                                                    && courseProperties.courseStudent === "qib"
-                                                )
-                                                && (
-                                                    (student.type === DB_CONST.TYPE_PROF
-                                                        && student.anid === courseProperties.anid)
-                                                    || (student.type === DB_CONST.TYPE_TEACHER
-                                                        && student.id === project.teacherID)
-                                                )
-                                            )
-                                            ||
-                                            (
-                                                !courseProperties
-                                                && student.type === DB_CONST.TYPE_PROF
-                                                && student.superTeacher
-                                            )
-                                        )
-                                            ?
-                                            <FlexView className={css(styles.border_box)} style={{backgroundColor: colors.kick_starter_background_color}} column marginTop={30} vAlignContent="center">
-                                                <Typography variant="body1" align="left">Special news that Briony should talk about:
-                                                    <br/><br/>
-                                                    {project.Pitch.qibSpecialNews}
-                                                </Typography>
-                                            </FlexView>
-                                            :
-                                            null
-                                    }
+                                           
+                                                                                                   
                                 </Col>
                     }
                 </Row>
@@ -4243,16 +3691,16 @@ class ProjectDetails extends Component {
     };
 
     /**
-     * Prevent the investors from interacting with the offer if they have not self-certified
+     * Prevent the students from interacting with the offer if they have not self-certified
      *
      * @returns {*}
      */
-    renderInvestorSelfCertifyReminder = () => {
+    renderStudentSelfCertifyReminder = () => {
         const {
             courseStudent,
             student,
-            investorSelfCertificationAgreement,
-            project
+            studentSelfCertificationAgreement,
+            studentProject
         } = this.props;
 
         if (student.type !== DB_CONST.TYPE_STUDENT) {
@@ -4260,8 +3708,8 @@ class ProjectDetails extends Component {
         }
 
         return (
-            utils.isProjectLive(project)
-            && !investorSelfCertificationAgreement
+            utils.isStudentProjectLive(studentProject)
+            && !studentSelfCertificationAgreement
                 ?
                 <FlexView column marginTop={20}>
                     <Typography align="left" variant="body2" color="textSecondary">You cannot interact with this offer as you have not completed your self certification.</Typography>
@@ -4300,7 +3748,7 @@ class ProjectDetails extends Component {
      */
     shouldHideInformation = () => {
         const {
-            project,
+            studentProject,
             student,
             coursesStudentIsIn
         } = this.props;
@@ -4312,18 +3760,18 @@ class ProjectDetails extends Component {
                 return false;
             }
 
-            // student is a course teacher and is the course that owns the project
-            if (student.anid === project.anid) {
+            // student is a course teacher and is the course that owns the studentProject
+            if (student.anid === studentProject.anid) {
                 return false;
             }
 
-            // other course teachers must go through the checks of project's visibility
-            switch (project.visibility) {
-                case DB_CONST.PROJECT_VISIBILITY_PUBLIC:
+            // other course teachers must go through the checks of studentProject's visibility
+            switch (studentProject.visibility) {
+                case DB_CONST.STUDENT_PROJECT_VISIBILITY_PUBLIC:
                     return false;
-                case DB_CONST.PROJECT_VISIBILITY_RESTRICTED:
+                case DB_CONST.STUDENT_PROJECT_VISIBILITY_RESTRICTED:
                     return true;
-                case DB_CONST.PROJECT_VISIBILITY_PRIVATE:
+                case DB_CONST.STUDENT_PROJECT_VISIBILITY_PRIVATE:
                     return true;
                 default:
                     return true;
@@ -4332,7 +3780,7 @@ class ProjectDetails extends Component {
         // student is not an teacher
         else {
             // should not hide any information if the student is an teacher that created this offer
-            if (student.type === DB_CONST.TYPE_TEACHER && student.id === project.teacherID) {
+            if (student.type === DB_CONST.TYPE_TEACHER && student.id === studentProject.teacherID) {
                 return false;
             }
 
@@ -4341,41 +3789,41 @@ class ProjectDetails extends Component {
                 return true;
             }
 
-            // if the project is not a restricted one, should not hide any information
-            if (project.visibility !== DB_CONST.PROJECT_VISIBILITY_RESTRICTED) {
+            // if the studentProject is not a restricted one, should not hide any information
+            if (studentProject.visibility !== DB_CONST.STUDENT_PROJECT_VISIBILITY_RESTRICTED) {
                 return false;
             }
 
             // student is not the member of the course that posted this offer --> hide information
             // otherwise, should not hide information
-            return coursesStudentIsIn.findIndex(course => course.anid === project.anid) === -1;
+            return coursesStudentIsIn.findIndex(course => course.anid === studentProject.anid) === -1;
         }
     };
 
     /**
-     * Render the status for this project
+     * Render the status for this studentProject
      */
     renderProjectStatus = () => {
         const {
-            project
+            studentProject
         } = this.props;
 
         let stt = {text: '', color: ''};
 
-        if (utils.isProjectWaitingToGoLive(project)
-            || utils.isProjectRejectedToGoLive(project)
-            || utils.isProjectSuccessful(project)
-            || utils.isProjectFailed(project)
+        if (utils.isStudentProjectWaitingToGoLive(studentProject)
+            || utils.isStudentProjectRejectedToGoLive(studentProject)
+            || utils.isStudentProjectSuccessful(studentProject)
+            || utils.isStudentProjectFailed(studentProject)
         ) {
             return (
                 <FlexView marginTop={30} marginBottom={30}>
                     <Typography variant="body1" color="error" align="left">
                         {
-                            utils.isProjectWaitingToGoLive(project)
+                            utils.isStudentProjectWaitingToGoLive(studentProject)
                                 ?
                                 "Offer is being checked."
                                 :
-                                utils.isProjectRejectedToGoLive(project)
+                                utils.isStudentProjectRejectedToGoLive(studentProject)
                                     ?
                                     "Offer has been rejected."
                                     :
@@ -4386,13 +3834,13 @@ class ProjectDetails extends Component {
             );
         }
 
-        if (project.PrimaryOffer) {
-            switch (project.PrimaryOffer.status) {
+        if (studentProject.PrimaryOffer) {
+            switch (studentProject.PrimaryOffer.status) {
                 case DB_CONST.PRIMARY_OFFER_STATUS_ON_GOING:
                     return (
                         <FlexView column marginTop={30} marginBottom={30}>
                             <Typography variant="body2" color="primary" align="left">Offer is in pledge phase</Typography>
-                            <Typography variant="h5" color="textPrimary" align="left">{utils.dateDiff(project.PrimaryOffer.expiredDate)}</Typography>
+                            <Typography variant="h5" color="textPrimary" align="left">{utils.dateDiff(studentProject.PrimaryOffer.expiredDate)}</Typography>
                             <Typography variant="body2" color="textSecondary" align="left">days remaining</Typography>
                         </FlexView>
                     );
@@ -4404,13 +3852,13 @@ class ProjectDetails extends Component {
                     break;
             }
         } else {
-            switch (project.Pitch.status) {
+            switch (studentProject.Pitch.status) {
                 case DB_CONST.PITCH_STATUS_ON_GOING:
                     return (
                         <FlexView column marginTop={30} marginBottom={30}>
                             <Typography variant="body2" color="primary" align="left">Offer is in pitch phase
                             </Typography>
-                            <Typography variant="h5" color="textPrimary" align="left">{utils.dateDiff(project.Pitch.expiredDate)}</Typography>
+                            <Typography variant="h5" color="textPrimary" align="left">{utils.dateDiff(studentProject.Pitch.expiredDate)}</Typography>
                             <Typography variant="body2" color="textSecondary" align="left"
                             >days remaining</Typography>
                         </FlexView>
@@ -4444,15 +3892,15 @@ class ProjectDetails extends Component {
      */
     shouldVoteDisabled = () => {
         const {
-            project,
+            studentProject,
             student,
             coursesStudentIsIn,
-            investorSelfCertificationAgreement
+            studentSelfCertificationAgreement
         } = this.props;
 
         // do not let the owner of the pitch vote for themselves
         // also, do not let the teacher vote the pitch
-        if (project.teacherID === firebase.auth().currentStudent.uid
+        if (studentProject.teacherID === firebase.auth().currentStudent.uid
             || student.type === DB_CONST.TYPE_PROF
         ) {
             return true;
@@ -4463,15 +3911,15 @@ class ProjectDetails extends Component {
         }
 
         // student is not in the course that posted the offer
-        if (project.visibility !== DB_CONST.PROJECT_VISIBILITY_PUBLIC
-            && coursesStudentIsIn.findIndex(course => course.anid === project.anid) === -1
+        if (studentProject.visibility !== DB_CONST.STUDENT_PROJECT_VISIBILITY_PUBLIC
+            && coursesStudentIsIn.findIndex(course => course.anid === studentProject.anid) === -1
         ) {
             return true;
         }
 
-        // do not let investors who haven't uploaded self-certification vote
+        // do not let students who haven't uploaded self-certification vote
         if (student.type === DB_CONST.TYPE_STUDENT) {
-            if (!investorSelfCertificationAgreement) {
+            if (!studentSelfCertificationAgreement) {
                 return true;
             }
         }
@@ -4481,8 +3929,8 @@ class ProjectDetails extends Component {
             return true;
         }
 
-        // do not allow investors to vote when the Pitch has expired
-        if (project.Pitch.status !== DB_CONST.PITCH_STATUS_ON_GOING) {
+        // do not allow students to vote when the Pitch has expired
+        if (studentProject.Pitch.status !== DB_CONST.PITCH_STATUS_ON_GOING) {
             return true;
         }
     };
@@ -4490,7 +3938,7 @@ class ProjectDetails extends Component {
     /**
      * Displaying votes (number or percentage depending on the type of student who is viewing it)
      *
-     * If an investor is viewing it, percentage should be displayed.
+     * If an student is viewing it, percentage should be displayed.
      *
      * If an teacher or teacher is viewing it, number should be displayed.
      */
@@ -4523,28 +3971,28 @@ class ProjectDetails extends Component {
 }
 
 /**
- * Get investor vote
+ * Get student vote
  *
  * @param votes
  * @param student
  * @returns {null|*}
  */
-const getInvestorVote = (votes, student) => {
+const getStudentVote = (votes, student) => {
     if (votes.length === 0) {
         return null;
     }
 
-    let investorVoteIndex = votes.findIndex(vote => vote.investorID === student.id);
-    // investor has voted
-    if (investorVoteIndex !== -1) {
-        return votes[investorVoteIndex];
+    let studentVoteIndex = votes.findIndex(vote => vote.studentID === student.id);
+    // student has voted
+    if (studentVoteIndex !== -1) {
+        return votes[studentVoteIndex];
     }
 
     return null;
 };
 
 /**
- * Comment dialog - displayed when the Investor clicks on the Comment button
+ * Comment dialog - displayed when the Student clicks on the Comment button
  */
 class CommentDialog extends Component {
 
@@ -4563,12 +4011,12 @@ class CommentDialog extends Component {
     render() {
         const {
             open,
-            project,
+            studentProject,
             commentText,
             commentSubmitClick
         } = this.props;
 
-        if (!project) {
+        if (!studentProject) {
             return null;
         }
 
@@ -4622,7 +4070,7 @@ class CommentReplyInputArea extends Component {
     }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(ProjectDetailsMain);
+export default connect(mapStateToProps, mapDispatchToProps)(StudentProjectDetailsMain);
 
 
 const styles = StyleSheet.create({

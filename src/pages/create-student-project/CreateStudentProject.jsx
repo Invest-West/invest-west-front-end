@@ -68,7 +68,7 @@ import {isAuthenticating, successfullyAuthenticated} from "../../redux-store/red
 import {isLoadingSystemAttributes} from "../../redux-store/reducers/manageSystemAttributesReducer";
 import {isTeacher} from "../../models/student";
 import {getHomeCourse} from "../../models/course_of_membership";
-import {isDraftProjectNotSubmitted} from "../../models/project";
+import {isDraftProjectNotSubmitted} from "../../models/studentProject";
 import Api, {ApiRoutes} from "../../api/Api";
 import CustomLink from "../../shared-js-css-styles/CustomLink";
 
@@ -109,13 +109,13 @@ const mapStateToProps = state => {
         AuthenticationState: state.AuthenticationState,
         isMobile: state.MediaQueryState.isMobile,
 
-        projectVisibilitySetting: state.manageSelectProjectVisibility.projectVisibilitySetting
+        studentProjectVisibilitySetting: state.manageSelectProjectVisibility.studentProjectVisibilitySetting
     }
 };
 
 const mapDispatchToProps = dispatch => {
     return {
-        selectProjectVisibility_setProject: (project) => dispatch(selectProjectVisibilityActions.setProject(project)),
+        selectStudentProjectVisibility_setProject: (studentProject) => dispatch(selectProjectVisibilityActions.setProject(studentProject)),
         setFeedbackSnackbarContent: (message, color, position) => dispatch(feedbackSnackbarActions.setFeedbackSnackbarContent(message, color, position))
     }
 };
@@ -123,18 +123,18 @@ const mapDispatchToProps = dispatch => {
 const initState = {
     recoveredFromPreviousState: false,
 
-    projectBeforeEdited: null,
-    projectEdited: null,
-    projectEditedLoaded: false,
+    studentProjectBeforeEdited: null,
+    studentProjectEdited: null,
+    studentProjectEditedLoaded: false,
 
     requestToLoadData: true,
-    projectIDToBeLoadedAfterSavingFirstTime: null,
+    studentProjectIDToBeLoadedAfterSavingFirstTime: null,
 
     saveProgress: false,
     progressBeingSaved: false,
     draftBeingDeleted: false,
 
-    createProject: {
+    createStudentProject: {
 
         activeStep: STEP_PITCH_GENERAL_INFORMATION,
 
@@ -142,7 +142,7 @@ const initState = {
 
         // pitch sector
         pitchSector: '-',
-        // pitch project name
+        // pitch studentProject name
         pitchProjectName: '',
         pitchProjectDescription: '',
         pitchExpiryDate: null,
@@ -193,7 +193,7 @@ const initState = {
         agreedToReceiveLocalInvestmentInfo: false,
         // -------------------------------------------------------------------------------------------------------------
 
-        projectID: null, // set when project has been successfully published to pass to UploadDialog
+        studentProjectID: null, // set when studentProject has been successfully published to pass to UploadDialog
 
         // customized fields (for specific courses only) ------------------------------------------------------------------
         // this field is only available for QIB
@@ -210,8 +210,8 @@ class CreatePitchPageMain extends Component {
         this.firebaseDB = firebase.database();
         this.firebaseStorage = firebase.storage();
 
-        // listen for changes made in save project mode
-        this.projectEditedSaveModeRefListener = null;
+        // listen for changes made in save studentProject mode
+        this.studentProjectEditedSaveModeRefListener = null;
 
         // these variables contain the data that is formatted to be uploaded on Realtime DB
         this.pitchCoverRealtimeDB = [];
@@ -254,21 +254,21 @@ class CreatePitchPageMain extends Component {
         const previousState = this.props.location.state;
         // when the student clicks Save for the first time
         // or when they click on the Next button in the STEP_PITCH_GENERAL_INFORMATION step
-        // the page will reload to take them to the edit page with the project ID.
+        // the page will reload to take them to the edit page with the studentProject ID.
         // If the student clicks on the Next button in the STEP_PITCH_GENERAL_INFORMATION step, once the page is
         // reloaded, they should be taken to the next step rather than stay in the same step.
         if (previousState !== undefined && previousState !== null) {
             if (!recoveredFromPreviousState) {
                 this.setState({
                     recoveredFromPreviousState: true,
-                    createProject: {
-                        ...this.state.createProject,
+                    createStudentProject: {
+                        ...this.state.createStudentProject,
                         activeStep:
                             previousState.activeStep !== -1
                                 ?
                                 previousState.activeStep
                                 :
-                                this.state.createProject.activeStep,
+                                this.state.createStudentProject.activeStep,
                         courseTeacherCreateOfferFor: !previousState.courseTeacherCreateOfferFor
                             ? ManageCourseUrlState.course
                                 ? ManageCourseUrlState.course.anid
@@ -288,7 +288,7 @@ class CreatePitchPageMain extends Component {
         }
 
         if (saveProgress && !progressBeingSaved) {
-            this.uploadProject();
+            this.uploadStudentProject();
         }
 
         if (prevProps.ManageCourseUrlState !== this.props.ManageCourseUrlState) {
@@ -301,8 +301,8 @@ class CreatePitchPageMain extends Component {
     }
 
     componentWillUnmount() {
-        if (this.projectEditedSaveModeRefListener) {
-            this.projectEditedSaveModeRefListener.off('child_changed');
+        if (this.studentProjectEditedSaveModeRefListener) {
+            this.studentProjectEditedSaveModeRefListener.off('child_changed');
         }
     }
 
@@ -312,16 +312,16 @@ class CreatePitchPageMain extends Component {
      * they can still continue with their previous step.
      *
      * @param activeStep
-     * @param projectID
+     * @param studentProjectID
      */
-    navigateToTheSamePageWithActiveStepSaved = (activeStep, projectID) => {
+    navigateToTheSamePageWithActiveStepSaved = (activeStep, studentProjectID) => {
         const {
             ManageCourseUrlState
         } = this.props;
 
-        // projectID not null
+        // studentProjectID not null
         // --> still in edit mode
-        if (projectID) {
+        if (studentProjectID) {
             this.props.history.push({
                 pathname:
                     ManageCourseUrlState.courseNameFromUrl
@@ -330,13 +330,13 @@ class CreatePitchPageMain extends Component {
                             .replace(":courseStudent", ManageCourseUrlState.courseNameFromUrl)
                         :
                         ROUTES.CREATE_OFFER_INVEST_WEST_SUPER,
-                search: `?edit=${projectID}`,
+                search: `?edit=${studentProjectID}`,
                 state: {
                     activeStep: activeStep
                 }
             });
         }
-        // projectID null --> create mode
+        // studentProjectID null --> create mode
         else {
             this.props.history.push({
                 pathname:
@@ -351,7 +351,7 @@ class CreatePitchPageMain extends Component {
                 }
             });
         }
-        console.log(`Navigating to step ${activeStep} with projectID ${projectID}. Current state:`, this.state);
+        console.log(`Navigating to step ${activeStep} with studentProjectID ${studentProjectID}. Current state:`, this.state);
     };
 
     /**
@@ -361,12 +361,12 @@ class CreatePitchPageMain extends Component {
         const {
             ManageCourseUrlState,
             AuthenticationState,
-            selectProjectVisibility_setProject
+            selectStudentProjectVisibility_setProject
         } = this.props;
 
         const {
-            projectEditedLoaded,
-            projectIDToBeLoadedAfterSavingFirstTime
+            studentProjectEditedLoaded,
+            studentProjectIDToBeLoadedAfterSavingFirstTime
         } = this.state;
 
         if (isValidatingCourseUrl(ManageCourseUrlState) || isAuthenticating(AuthenticationState)) {
@@ -376,9 +376,9 @@ class CreatePitchPageMain extends Component {
         if (!successfullyAuthenticated(AuthenticationState)
         || (AuthenticationState.currentStudent && AuthenticationState.currentStudent.type === DB_CONST.TYPE_INVESTOR)
         ) {
-            if (!projectEditedLoaded) {
+            if (!studentProjectEditedLoaded) {
                 this.setState({
-                    projectEditedLoaded: true
+                    studentProjectEditedLoaded: true
                 });
             }
             return;
@@ -388,153 +388,153 @@ class CreatePitchPageMain extends Component {
             requestToLoadData: false
         });
 
-        // get project id from the URL
+        // get studentProject id from the URL
         const params = queryString.parse(this.props.location.search);
 
         // in edit mode
-        if (params.edit || projectIDToBeLoadedAfterSavingFirstTime) {
-            // load the project
+        if (params.edit || studentProjectIDToBeLoadedAfterSavingFirstTime) {
+            // load the studentProject
             realtimeDBUtils
-                .loadAParticularProject(!params.edit ? projectIDToBeLoadedAfterSavingFirstTime : params.edit)
-                .then(project => {
+                .loadAParticularProject(!params.edit ? studentProjectIDToBeLoadedAfterSavingFirstTime : params.edit)
+                .then(studentProject => {
 
-                    // allow the course teacher to change the visibility of the project
+                    // allow the course teacher to change the visibility of the studentProject
                     if (AuthenticationState.currentStudent.type === DB_CONST.TYPE_PROF) {
-                        selectProjectVisibility_setProject(project);
+                        selectStudentProjectVisibility_setProject(studentProject);
                     }
 
-                    // project is in draft mode
-                    if (project.status === DB_CONST.PROJECT_STATUS_DRAFT) {
-                        if (!this.projectEditedSaveModeRefListener) {
-                            this.projectEditedSaveModeRefListener = this.firebaseDB
+                    // studentProject is in draft mode
+                    if (studentProject.status === DB_CONST.PROJECT_STATUS_DRAFT) {
+                        if (!this.studentProjectEditedSaveModeRefListener) {
+                            this.studentProjectEditedSaveModeRefListener = this.firebaseDB
                                 .ref(DB_CONST.PROJECTS_CHILD)
                                 .orderByKey()
-                                .equalTo(project.id);
+                                .equalTo(studentProject.id);
 
-                            this.projectEditedSaveModeRefListener
+                            this.studentProjectEditedSaveModeRefListener
                                 .on('child_changed', snapshot => {
 
-                                    let project = snapshot.val();
+                                    let studentProject = snapshot.val();
 
                                     this.setState({
-                                        projectEdited: Object.assign({}, project)
+                                        studentProjectEdited: Object.assign({}, studentProject)
                                     });
                                 });
                         }
                     }
 
                     this.setState({
-                        projectBeforeEdited: JSON.parse(JSON.stringify(project)),
-                        projectEdited: JSON.parse(JSON.stringify(project)),
-                        projectEditedLoaded: true,
-                        projectIDToBeLoadedAfterSavingFirstTime: null,
+                        studentProjectBeforeEdited: JSON.parse(JSON.stringify(studentProject)),
+                        studentProjectEdited: JSON.parse(JSON.stringify(studentProject)),
+                        studentProjectEditedLoaded: true,
+                        studentProjectIDToBeLoadedAfterSavingFirstTime: null,
 
-                        createProject: {
-                            ...this.state.createProject,
+                        createStudentProject: {
+                            ...this.state.createStudentProject,
                             courseTeacherCreateOfferFor:
-                                !isDraftProjectNotSubmitted(project)
+                                !isDraftProjectNotSubmitted(studentProject)
                                     ? "undefined"
-                                    : project.hasOwnProperty('anid')
-                                    ? project.anid
+                                    : studentProject.hasOwnProperty('anid')
+                                    ? studentProject.anid
                                     : "undefined",
                             // pitch sector
                             pitchSector:
-                                project.hasOwnProperty('sector')
+                                studentProject.hasOwnProperty('sector')
                                     ?
-                                    project.sector
+                                    studentProject.sector
                                     :
                                     '-'
                             ,
-                            // pitch project name
+                            // pitch studentProject name
                             pitchProjectName:
-                                project.hasOwnProperty('projectName')
+                                studentProject.hasOwnProperty('studentProjectName')
                                     ?
-                                    project.projectName
+                                    studentProject.studentProjectName
                                     :
                                     ''
                             ,
                             pitchProjectDescription:
-                                project.hasOwnProperty('description')
+                                studentProject.hasOwnProperty('description')
                                     ?
-                                    project.description
+                                    studentProject.description
                                     :
                                     ''
                             ,
                             pitchExpiryDate:
-                                project.Pitch.hasOwnProperty('expiredDate')
+                                studentProject.Pitch.hasOwnProperty('expiredDate')
                                     ?
-                                    project.Pitch.expiredDate
+                                    studentProject.Pitch.expiredDate
                                     :
                                     null
                             ,
                             pitchAmountRaisedToDate:
-                                project.Pitch.hasOwnProperty('amountRaised')
+                                studentProject.Pitch.hasOwnProperty('amountRaised')
                                     ?
-                                    Number(project.Pitch.amountRaised.toFixed(2)).toLocaleString()
+                                    Number(studentProject.Pitch.amountRaised.toFixed(2)).toLocaleString()
                                     :
                                     ''
                             ,
                             pitchRaiseRequired:
-                                project.Pitch.hasOwnProperty('fundRequired')
+                                studentProject.Pitch.hasOwnProperty('fundRequired')
                                     ?
-                                    Number(project.Pitch.fundRequired.toFixed(2)).toLocaleString()
+                                    Number(studentProject.Pitch.fundRequired.toFixed(2)).toLocaleString()
                                     :
                                     ''
                             ,
                             howFundIsBeingRaised:
-                                project.Pitch.hasOwnProperty('howFundIsBeingRaised')
+                                studentProject.Pitch.hasOwnProperty('howFundIsBeingRaised')
                                     ?
-                                    project.Pitch.howFundIsBeingRaised
+                                    studentProject.Pitch.howFundIsBeingRaised
                                     :
                                     ''
                             ,
                             financialRound:
-                                project.Pitch.hasOwnProperty('financialRound')
+                                studentProject.Pitch.hasOwnProperty('financialRound')
                                     ?
-                                    project.Pitch.financialRound
+                                    studentProject.Pitch.financialRound
                                     :
                                     ''
                             ,
                             hasSEIS:
-                                project.Pitch.hasOwnProperty('hasSEIS')
+                                studentProject.Pitch.hasOwnProperty('hasSEIS')
                                     ?
-                                    project.Pitch.hasSEIS
+                                    studentProject.Pitch.hasSEIS
                                     :
                                     ''
                             ,
                             hasEIS:
-                                project.Pitch.hasOwnProperty('hasEIS')
+                                studentProject.Pitch.hasOwnProperty('hasEIS')
                                     ?
-                                    project.Pitch.hasEIS
+                                    studentProject.Pitch.hasEIS
                                     :
                                     ''
                             ,  
                             pitchPostMoneyValuation:
-                                project.Pitch.hasOwnProperty('postMoneyValuation')
+                                studentProject.Pitch.hasOwnProperty('postMoneyValuation')
                                     ?
-                                    Number(project.Pitch.postMoneyValuation.toFixed(2)).toLocaleString()
+                                    Number(studentProject.Pitch.postMoneyValuation.toFixed(2)).toLocaleString()
                                     :
                                     ''
                             ,
                             detailsAboutEarlierFundraisingRounds:
-                                project.Pitch.hasOwnProperty('detailsAboutEarlierFundraisingRounds')
+                                studentProject.Pitch.hasOwnProperty('detailsAboutEarlierFundraisingRounds')
                                     ?
-                                    project.Pitch.detailsAboutEarlierFundraisingRounds
+                                    studentProject.Pitch.detailsAboutEarlierFundraisingRounds
                                     :
                                     ''
                             ,
                             pitchInvestorsCommitted:
-                                project.Pitch.hasOwnProperty('investorsCommitted')
+                                studentProject.Pitch.hasOwnProperty('investorsCommitted')
                                     ?
-                                    project.Pitch.investorsCommitted
+                                    studentProject.Pitch.investorsCommitted
                                     :
                                     ''
                             ,
                             hasRaisedMoneyBefore:
-                                project.Pitch.hasOwnProperty('amountRaised')
+                                studentProject.Pitch.hasOwnProperty('amountRaised')
                                     ?
                                     (
-                                        project.Pitch.amountRaised > 0
+                                        studentProject.Pitch.amountRaised > 0
                                             ?
                                             "true"
                                             :
@@ -544,44 +544,44 @@ class CreatePitchPageMain extends Component {
                                     ''
                             ,
                             pitchPresentationText:
-                                !project.Pitch.presentationText
+                                !studentProject.Pitch.presentationText
                                     ?
                                     {ops: []}
                                     :
-                                    project.Pitch.presentationText
+                                    studentProject.Pitch.presentationText
                             ,
                             // this field is only available for QIB
                             qibSpecialNews:
-                                project.Pitch.hasOwnProperty('qibSpecialNews')
+                                studentProject.Pitch.hasOwnProperty('qibSpecialNews')
                                     ?
-                                    project.Pitch.qibSpecialNews
+                                    studentProject.Pitch.qibSpecialNews
                                     :
                                     ''
                         }
                     });
                 })
                 .catch(error => {
-                    console.error('Error loading project data:', error);
+                    console.error('Error loading studentProject data:', error);
                     console.log('Current state at error:', this.state);
                     this.setState({
-                        projectEditedLoaded: true,
-                        projectIDToBeLoadedAfterSavingFirstTime: null,
-                        loadError: 'There was a problem loading the project data. Please try again.'
+                        studentProjectEditedLoaded: true,
+                        studentProjectIDToBeLoadedAfterSavingFirstTime: null,
+                        loadError: 'There was a problem loading the studentProject data. Please try again.'
                     });
                     this.setState({
-                        projectEditedLoaded: true,
-                        projectIDToBeLoadedAfterSavingFirstTime: null
+                        studentProjectEditedLoaded: true,
+                        studentProjectIDToBeLoadedAfterSavingFirstTime: null
                     });
                 });
         }
         // in create mode
         else {
             this.setState({
-                projectEditedLoaded: true,
-                projectIDToBeLoadedAfterSavingFirstTime: null,
+                studentProjectEditedLoaded: true,
+                studentProjectIDToBeLoadedAfterSavingFirstTime: null,
 
-                createProject: {
-                    ...this.state.createProject,
+                createStudentProject: {
+                    ...this.state.createStudentProject,
                     courseTeacherCreateOfferFor: ManageCourseUrlState.course
                         ? ManageCourseUrlState.course.anid
                         : getHomeCourse(AuthenticationState.coursesOfMembership) === null
@@ -595,13 +595,13 @@ class CreatePitchPageMain extends Component {
                             // Note: must ensure the defaultPitchExpiryDate field is valid
                             ManageCourseUrlState.course.settings.defaultPitchExpiryDate
                             :
-                            this.state.createProject.pitchExpiryDate
+                            this.state.createStudentProject.pitchExpiryDate
                 }
             });
 
-            // allow the course teacher to change the visibility of the project
+            // allow the course teacher to change the visibility of the studentProject
             if (AuthenticationState.currentStudent.type === DB_CONST.TYPE_PROF) {
-                selectProjectVisibility_setProject(null);
+                selectStudentProjectVisibility_setProject(null);
             }
         }
     };
@@ -619,7 +619,7 @@ class CreatePitchPageMain extends Component {
         } = this.props;
 
         const {
-            projectEdited,
+            studentProjectEdited,
             progressBeingSaved
         } = this.state;
 
@@ -652,7 +652,7 @@ class CreatePitchPageMain extends Component {
 
             // this field is only available for QIB
             qibSpecialNews
-        } = this.state.createProject;
+        } = this.state.createStudentProject;
 
         // progress is being saved,
         // we shouldn't let the Student click
@@ -669,11 +669,11 @@ class CreatePitchPageMain extends Component {
                     || pitchProjectDescription.trim().length === 0
                     || pitchExpiryDate === null
                     || (ManageCourseUrlState.courseNameFromUrl === "qib" && qibSpecialNews.trim().length === 0)
-                    || (isTeacher(AuthenticationState.currentStudent) && !(params.edit && projectEdited) && courseTeacherCreateOfferFor === "undefined")
+                    || (isTeacher(AuthenticationState.currentStudent) && !(params.edit && studentProjectEdited) && courseTeacherCreateOfferFor === "undefined")
                 ) {
                     this.setState({
-                        createProject: {
-                            ...this.state.createProject,
+                        createStudentProject: {
+                            ...this.state.createStudentProject,
                             pitchPublishCheck: PITCH_PUBLISH_FALSE_MISSING_FIELDS_IN_GENERAL_INFORMATION,
                             pitchPublishErrorMessageShowed: true
                         }
@@ -688,8 +688,8 @@ class CreatePitchPageMain extends Component {
                     (pitchExpiryDate && (pitchExpiryDate < utils.getDateWithDaysFurtherThanToday(0)))
                 ) {
                     this.setState({
-                        createProject: {
-                            ...this.state.createProject,
+                        createStudentProject: {
+                            ...this.state.createStudentProject,
                             pitchPublishCheck: PITCH_PUBLISH_FALSE_INVALID_DATE,
                             pitchPublishErrorMessageShowed: true
                         }
@@ -704,8 +704,8 @@ class CreatePitchPageMain extends Component {
                 ) {
 
                     this.setState({
-                        createProject: {
-                            ...this.state.createProject,
+                        createStudentProject: {
+                            ...this.state.createStudentProject,
                             pitchPublishCheck: PITCH_PUBLISH_FALSE_INVALID_FUND,
                             pitchPublishErrorMessageShowed: true
                         }
@@ -714,8 +714,8 @@ class CreatePitchPageMain extends Component {
                     return;
                 }
                 this.setState({
-                    createProject: {
-                        ...this.state.createProject,
+                    createStudentProject: {
+                        ...this.state.createStudentProject,
                         activeStep: activeStep + 1,
                         pitchPublishCheck: PITCH_PUBLISH_CHECK_NONE,
                         pitchPublishErrorMessageShowed: false
@@ -725,13 +725,13 @@ class CreatePitchPageMain extends Component {
             // Pitch cover
             case STEP_PITCH_COVER:
                 // in edit mode
-                if (params.edit && projectEdited) {
+                if (params.edit && studentProjectEdited) {
                     if (
                         (
-                            !projectEdited.Pitch.cover
+                            !studentProjectEdited.Pitch.cover
                             ||
-                            (projectEdited.Pitch.cover
-                                && projectEdited.Pitch.cover.filter(coverItem => !coverItem.hasOwnProperty('removed')).length === 0)
+                            (studentProjectEdited.Pitch.cover
+                                && studentProjectEdited.Pitch.cover.filter(coverItem => !coverItem.hasOwnProperty('removed')).length === 0)
                         )
                         && (
                             !pitchCoverTypeSelected
@@ -740,8 +740,8 @@ class CreatePitchPageMain extends Component {
                         )
                     ) {
                         this.setState({
-                            createProject: {
-                                ...this.state.createProject,
+                            createStudentProject: {
+                                ...this.state.createStudentProject,
                                 pitchPublishCheck: PITCH_PUBLISH_FALSE_MISSING_PITCH_COVER,
                                 pitchPublishErrorMessageShowed: true
                             }
@@ -755,8 +755,8 @@ class CreatePitchPageMain extends Component {
                         || (pitchCoverTypeSelected === PITCH_COVER_VIDEO_URL_TYPE_SELECTED && pitchCoverVideoURL.trim().length === 0)
                     ) {
                         this.setState({
-                            createProject: {
-                                ...this.state.createProject,
+                            createStudentProject: {
+                                ...this.state.createStudentProject,
                                 pitchPublishCheck: PITCH_PUBLISH_FALSE_MISSING_PITCH_COVER,
                                 pitchPublishErrorMessageShowed: true
                             }
@@ -765,8 +765,8 @@ class CreatePitchPageMain extends Component {
                     }
                 }
                 this.setState({
-                    createProject: {
-                        ...this.state.createProject,
+                    createStudentProject: {
+                        ...this.state.createStudentProject,
                         activeStep: activeStep + 1,
                         pitchPublishCheck: PITCH_PUBLISH_CHECK_NONE,
                         pitchPublishErrorMessageShowed: false
@@ -779,20 +779,20 @@ class CreatePitchPageMain extends Component {
                 // there will be no presentation text, so don't need to check
                 if (ManageCourseUrlState.courseNameFromUrl === "qib") {
                     // in edit mode
-                    if (params.edit && projectEdited) {
+                    if (params.edit && studentProjectEdited) {
                         if (pitchPresentationDocument.length === 0
                             && (
-                                !projectEdited.Pitch.presentationDocument
+                                !studentProjectEdited.Pitch.presentationDocument
                                 ||
                                 (
-                                    projectEdited.Pitch.presentationDocument
-                                    && projectEdited.Pitch.presentationDocument.filter(document => !document.hasOwnProperty('removed')).length === 0
+                                    studentProjectEdited.Pitch.presentationDocument
+                                    && studentProjectEdited.Pitch.presentationDocument.filter(document => !document.hasOwnProperty('removed')).length === 0
                                 )
                             )
                         ) {
                             this.setState({
-                                createProject: {
-                                    ...this.state.createProject,
+                                createStudentProject: {
+                                    ...this.state.createStudentProject,
                                     pitchPublishCheck: PITCH_PUBLISH_FALSE_MISSING_PITCH_PRESENTATION,
                                     pitchPublishErrorMessageShowed: true
                                 }
@@ -803,8 +803,8 @@ class CreatePitchPageMain extends Component {
                         // if the Student has not created their pitch presentation, ask them to do so by uploading a presentation file or use the text editor provided
                         if (pitchPresentationDocument.length === 0) {
                             this.setState({
-                                createProject: {
-                                    ...this.state.createProject,
+                                createStudentProject: {
+                                    ...this.state.createStudentProject,
                                     pitchPublishCheck: PITCH_PUBLISH_FALSE_MISSING_PITCH_PRESENTATION,
                                     pitchPublishErrorMessageShowed: true
                                 }
@@ -817,21 +817,21 @@ class CreatePitchPageMain extends Component {
                 // in the text editor or both
                 else {
                     // in edit mode
-                    if (params.edit && projectEdited) {
+                    if (params.edit && studentProjectEdited) {
                         if (pitchPresentationDocument.length === 0
                             && pitchPresentationText.ops.length === 0
                             && (
-                                !projectEdited.Pitch.presentationDocument
+                                !studentProjectEdited.Pitch.presentationDocument
                                 ||
                                 (
-                                    projectEdited.Pitch.presentationDocument
-                                    && projectEdited.Pitch.presentationDocument.filter(document => !document.hasOwnProperty('removed')).length === 0
+                                    studentProjectEdited.Pitch.presentationDocument
+                                    && studentProjectEdited.Pitch.presentationDocument.filter(document => !document.hasOwnProperty('removed')).length === 0
                                 )
                             )
-                            && !projectEdited.Pitch.presentationText) {
+                            && !studentProjectEdited.Pitch.presentationText) {
                             this.setState({
-                                createProject: {
-                                    ...this.state.createProject,
+                                createStudentProject: {
+                                    ...this.state.createStudentProject,
                                     pitchPublishCheck: PITCH_PUBLISH_FALSE_MISSING_PITCH_PRESENTATION,
                                     pitchPublishErrorMessageShowed: true
                                 }
@@ -842,8 +842,8 @@ class CreatePitchPageMain extends Component {
                         // if the Student has not created their pitch presentation, ask them to do so by uploading a presentation file or use the text editor provided
                         if (pitchPresentationDocument.length === 0 && pitchPresentationText.ops.length === 0) {
                             this.setState({
-                                createProject: {
-                                    ...this.state.createProject,
+                                createStudentProject: {
+                                    ...this.state.createStudentProject,
                                     pitchPublishCheck: PITCH_PUBLISH_FALSE_MISSING_PITCH_PRESENTATION,
                                     pitchPublishErrorMessageShowed: true
                                 }
@@ -853,8 +853,8 @@ class CreatePitchPageMain extends Component {
                     }
                 }
                 this.setState({
-                    createProject: {
-                        ...this.state.createProject,
+                    createStudentProject: {
+                        ...this.state.createStudentProject,
                         activeStep: activeStep + 1,
                         pitchPublishCheck: PITCH_PUBLISH_CHECK_NONE,
                         pitchPublishErrorMessageShowed: false
@@ -863,14 +863,14 @@ class CreatePitchPageMain extends Component {
                 break;
             // Supporting documents
             case STEP_PITCH_SUPPORTING_DOCUMENTS:
-                if (projectEdited.status !== DB_CONST.PROJECT_STATUS_DRAFT) {
+                if (studentProjectEdited.status !== DB_CONST.PROJECT_STATUS_DRAFT) {
                     // upload the pitch
-                    this.uploadProject();
+                    this.uploadStudentProject();
                     return;
                 } else {
                     this.setState({
-                        createProject: {
-                            ...this.state.createProject,
+                        createStudentProject: {
+                            ...this.state.createStudentProject,
                             activeStep: activeStep + 1,
                             pitchPublishCheck: PITCH_PUBLISH_CHECK_NONE,
                             pitchPublishErrorMessageShowed: false
@@ -880,14 +880,14 @@ class CreatePitchPageMain extends Component {
                 break;
             case STEP_ACCEPT_TERMS_AND_CONDITIONS:
                 // publish button is clicked and the offer is a draft, detach the listener so that success message can be displayed correctly
-                if (projectEdited && projectEdited.status === DB_CONST.PROJECT_STATUS_DRAFT) {
-                    if (this.projectEditedSaveModeRefListener) {
-                        this.projectEditedSaveModeRefListener.off('child_changed');
+                if (studentProjectEdited && studentProjectEdited.status === DB_CONST.PROJECT_STATUS_DRAFT) {
+                    if (this.studentProjectEditedSaveModeRefListener) {
+                        this.studentProjectEditedSaveModeRefListener.off('child_changed');
                     }
 
                     // upload the pitch
-                    this.uploadProject();
-                    this.navigateToTheSamePageWithActiveStepSaved(0, projectEdited.id);
+                    this.uploadStudentProject();
+                    this.navigateToTheSamePageWithActiveStepSaved(0, studentProjectEdited.id);
                     return;
                 }
                 break;
@@ -895,12 +895,12 @@ class CreatePitchPageMain extends Component {
                 return;
         }
 
-        if (params.edit && projectEdited) {
-            if (projectEdited.status === DB_CONST.PROJECT_STATUS_DRAFT) {
+        if (params.edit && studentProjectEdited) {
+            if (studentProjectEdited.status === DB_CONST.PROJECT_STATUS_DRAFT) {
                 // save progress
                 this.handleSaveProgressClick();
             } else {
-                this.navigateToTheSamePageWithActiveStepSaved(activeStep + 1, projectEdited.id);
+                this.navigateToTheSamePageWithActiveStepSaved(activeStep + 1, studentProjectEdited.id);
             }
         } else {
             // save progress
@@ -912,19 +912,19 @@ class CreatePitchPageMain extends Component {
      * This function is used to handle when the Back button is clicked (got to previous step)
      */
     handleBackClick = () => {
-        const projectEdited = this.state.projectEdited;
-        const activeStep = this.state.createProject.activeStep;
+        const studentProjectEdited = this.state.studentProjectEdited;
+        const activeStep = this.state.createStudentProject.activeStep;
 
         if (activeStep === 0) {
             return;
         }
         this.setState({
-            createProject: {
-                ...this.state.createProject,
+            createStudentProject: {
+                ...this.state.createStudentProject,
                 activeStep: activeStep - 1
             }
         });
-        this.navigateToTheSamePageWithActiveStepSaved(activeStep - 1, projectEdited.id);
+        this.navigateToTheSamePageWithActiveStepSaved(activeStep - 1, studentProjectEdited.id);
     };
 
     /**
@@ -938,12 +938,12 @@ class CreatePitchPageMain extends Component {
             pitchCoverTypeSelected,
             pitchCover,
             pitchCoverVideoURL
-        } = this.state.createProject;
+        } = this.state.createStudentProject;
 
         if (pitchCoverTypeSelected === type) {
             this.setState({
-                createProject: {
-                    ...this.state.createProject,
+                createStudentProject: {
+                    ...this.state.createStudentProject,
                     pitchCoverTypeSelected: null,
                     pitchCover: type === PITCH_COVER_FILE_TYPE_SELECTED ? [] : pitchCover,
                     pitchCoverVideoURL: type === PITCH_COVER_VIDEO_URL_TYPE_SELECTED ? '' : pitchCoverVideoURL
@@ -951,8 +951,8 @@ class CreatePitchPageMain extends Component {
             });
         } else {
             this.setState({
-                createProject: {
-                    ...this.state.createProject,
+                createStudentProject: {
+                    ...this.state.createStudentProject,
                     pitchCoverTypeSelected: type
                 }
             });
@@ -969,12 +969,12 @@ class CreatePitchPageMain extends Component {
         } = this.props;
 
         const {
-            projectEdited
+            studentProjectEdited
         } = this.state;
 
         const {
             pitchSupportingDocuments
-        } = this.state.createProject;
+        } = this.state.createStudentProject;
 
         const {
             setFeedbackSnackbarContent
@@ -991,8 +991,8 @@ class CreatePitchPageMain extends Component {
                 // there can only be 1 file uploaded for the pitch cover
                 case PITCH_COVER_FILES_CHANGED:
                     this.setState({
-                        createProject: {
-                            ...this.state.createProject,
+                        createStudentProject: {
+                            ...this.state.createStudentProject,
                             pitchCover: [fileRead]
                         }
                     });
@@ -1003,16 +1003,16 @@ class CreatePitchPageMain extends Component {
                     // so, the Student can only upload one file
                     if (ManageCourseUrlState.courseNameFromUrl === "qib") {
                         this.setState(prevState => ({
-                            createProject: {
-                                ...prevState.createProject,
+                            createStudentProject: {
+                                ...prevState.createStudentProject,
                                 pitchSupportingDocuments: [fileRead]
                             }
                         }));
                     }
                     // for other courses, the Student can upload multiple files for supporting documents
                     else {
-                        if (projectEdited) {
-                            if (!projectEdited.Pitch.supportingDocuments) {
+                        if (studentProjectEdited) {
+                            if (!studentProjectEdited.Pitch.supportingDocuments) {
                                 if (pitchSupportingDocuments.length >= DB_CONST.MAX_FILES_FOR_PITCH_SUPPORTING_DOCUMENTS) {
                                     setFeedbackSnackbarContent(
                                         'Max file count reached.',
@@ -1023,7 +1023,7 @@ class CreatePitchPageMain extends Component {
                                 }
                             } else {
                                 if (pitchSupportingDocuments.length >=
-                                    DB_CONST.MAX_FILES_FOR_PITCH_SUPPORTING_DOCUMENTS - projectEdited.Pitch.supportingDocuments.filter(document => !document.hasOwnProperty('removed')).length) {
+                                    DB_CONST.MAX_FILES_FOR_PITCH_SUPPORTING_DOCUMENTS - studentProjectEdited.Pitch.supportingDocuments.filter(document => !document.hasOwnProperty('removed')).length) {
                                     setFeedbackSnackbarContent(
                                         'Max file count reached.',
                                         "error",
@@ -1044,9 +1044,9 @@ class CreatePitchPageMain extends Component {
                         }
 
                         this.setState(prevState => ({
-                            createProject: {
-                                ...prevState.createProject,
-                                pitchSupportingDocuments: [...prevState.createProject.pitchSupportingDocuments, fileRead]
+                            createStudentProject: {
+                                ...prevState.createStudentProject,
+                                pitchSupportingDocuments: [...prevState.createStudentProject.pitchSupportingDocuments, fileRead]
                             }
                         }));
                     }
@@ -1054,8 +1054,8 @@ class CreatePitchPageMain extends Component {
                 // there can only be 1 file for pitch presentation
                 case PITCH_PRESENTATION_FILES_CHANGED:
                     this.setState({
-                        createProject: {
-                            ...this.state.createProject,
+                        createStudentProject: {
+                            ...this.state.createStudentProject,
                             pitchPresentationDocument: [fileRead]
                         }
                     });
@@ -1094,8 +1094,8 @@ class CreatePitchPageMain extends Component {
 
         if (name === "courseTeacherCreateOfferFor") {
             this.setState({
-                createProject: {
-                    ...this.state.createProject,
+                createStudentProject: {
+                    ...this.state.createStudentProject,
                     [name]: value
                 }
             });
@@ -1118,7 +1118,7 @@ class CreatePitchPageMain extends Component {
                         .replace(":courseStudent", AuthenticationState.coursesOfMembership[index].course.courseStudent),
                     search: `?edit=${params.edit}`,
                     state: {
-                        activeStep: this.state.createProject.activeStep,
+                        activeStep: this.state.createStudentProject.activeStep,
                         courseTeacherCreateOfferFor: value,
                         requestToLoadData: true
                     }
@@ -1130,7 +1130,7 @@ class CreatePitchPageMain extends Component {
                     pathname: ROUTES.CREATE_OFFER
                         .replace(":courseStudent", AuthenticationState.coursesOfMembership[index].course.courseStudent),
                     state: {
-                        activeStep: this.state.createProject.activeStep,
+                        activeStep: this.state.createStudentProject.activeStep,
                         courseTeacherCreateOfferFor: value,
                         requestToLoadData: true
                     }
@@ -1143,8 +1143,8 @@ class CreatePitchPageMain extends Component {
             }
 
             this.setState({
-                createProject: {
-                    ...this.state.createProject,
+                createStudentProject: {
+                    ...this.state.createStudentProject,
                     [name]: value
                 }
             });
@@ -1160,15 +1160,15 @@ class CreatePitchPageMain extends Component {
         // we must ensure that a pitch body contains text
         if (editor.getText().trim().length === 0) {
             this.setState({
-                createProject: {
-                    ...this.state.createProject,
+                createStudentProject: {
+                    ...this.state.createStudentProject,
                     pitchPresentationText: {ops: []}
                 }
             });
         } else {
             this.setState({
-                createProject: {
-                    ...this.state.createProject,
+                createStudentProject: {
+                    ...this.state.createStudentProject,
                     pitchPresentationText: editor.getContents(),
                     pitchPresentationPlainText: editor.getText()
                 }
@@ -1179,7 +1179,7 @@ class CreatePitchPageMain extends Component {
     /**
      * This function gets called to create a new pitch.
      */
-    uploadProject = () => {
+    uploadStudentProject = () => {
 
         const params = queryString.parse(this.props.location.search);
 
@@ -1187,12 +1187,12 @@ class CreatePitchPageMain extends Component {
             ManageCourseUrlState,
             AuthenticationState,
 
-            projectVisibilitySetting
+            studentProjectVisibilitySetting
         } = this.props;
 
         const {
-            projectBeforeEdited,
-            projectEdited,
+            studentProjectBeforeEdited,
+            studentProjectEdited,
 
             saveProgress,
             progressBeingSaved
@@ -1231,7 +1231,7 @@ class CreatePitchPageMain extends Component {
 
             // this field is only available for QIB
             qibSpecialNews
-        } = this.state.createProject;
+        } = this.state.createStudentProject;
 
 
         if (saveProgress && !progressBeingSaved) {
@@ -1241,86 +1241,86 @@ class CreatePitchPageMain extends Component {
         }
 
         // in edit mode
-        if (params.edit && projectEdited) {
+        if (params.edit && studentProjectEdited) {
             // new cover has been chosen
             if (pitchCover.length > 0 || pitchCoverVideoURL.trim().length > 0) {
-                if (projectEdited.Pitch.hasOwnProperty('cover')) {
+                if (studentProjectEdited.Pitch.hasOwnProperty('cover')) {
                     // mark the existing cover with the 'removed' tag
-                    projectEdited.Pitch.cover.forEach((coverItem, index) => {
+                    studentProjectEdited.Pitch.cover.forEach((coverItem, index) => {
                         coverItem.removed = true;
-                        projectEdited.Pitch.cover[index] = coverItem;
+                        studentProjectEdited.Pitch.cover[index] = coverItem;
                     });
                 }
             }
 
             // new pitch presentation document has been chosen
             if (pitchPresentationDocument.length > 0) {
-                if (projectEdited.Pitch.hasOwnProperty('presentationDocument')) {
+                if (studentProjectEdited.Pitch.hasOwnProperty('presentationDocument')) {
                     // mark the existing presentation document with the 'removed' tag
-                    projectEdited.Pitch.presentationDocument.forEach((presentationItem, index) => {
+                    studentProjectEdited.Pitch.presentationDocument.forEach((presentationItem, index) => {
                         presentationItem.removed = true;
                         // noinspection TypeScriptValidateTypes
-                        projectEdited.Pitch.presentationDocument[index] = presentationItem;
+                        studentProjectEdited.Pitch.presentationDocument[index] = presentationItem;
                     });
                 }
             }
 
             // pitch reference in Realtime DB
-            const projectRef = this.firebaseDB
+            const studentProjectRef = this.firebaseDB
                 .ref(DB_CONST.PROJECTS_CHILD);
 
             // pitch storage reference
-            const projectStorageRef = this.firebaseStorage
+            const studentProjectStorageRef = this.firebaseStorage
                 .ref(DB_CONST.STUDENTS_CHILD)
-                .child(projectEdited.teacherID)
+                .child(studentProjectEdited.teacherID)
                 .child(DB_CONST.PROJECTS_CHILD)
-                .child(projectEdited.id);
+                .child(studentProjectEdited.id);
 
             // upload pitch cover
-            this.uploadMultipleFiles(UPLOAD_PITCH_COVER_MODE, projectStorageRef)
+            this.uploadMultipleFiles(UPLOAD_PITCH_COVER_MODE, studentProjectStorageRef)
                 .then(successful => {
 
                     this.setState({
-                        createProject: {
-                            ...this.state.createProject,
+                        createStudentProject: {
+                            ...this.state.createStudentProject,
                             uploadFileProgress: 100
                         }
                     });
 
                     // upload pitch supporting documents
-                    this.uploadMultipleFiles(UPLOAD_PITCH_SUPPORTING_DOCUMENTS_MODE, projectStorageRef)
+                    this.uploadMultipleFiles(UPLOAD_PITCH_SUPPORTING_DOCUMENTS_MODE, studentProjectStorageRef)
                         .then(successful => {
 
                             this.setState({
-                                createProject: {
-                                    ...this.state.createProject,
+                                createStudentProject: {
+                                    ...this.state.createStudentProject,
                                     uploadFileProgress: 100
                                 }
                             });
 
                             // upload pitch presentation or pitch deck
-                            this.uploadMultipleFiles(UPLOAD_PITCH_PRESENTATION_DOCUMENT_MODE, projectStorageRef)
+                            this.uploadMultipleFiles(UPLOAD_PITCH_PRESENTATION_DOCUMENT_MODE, studentProjectStorageRef)
                                 .then(successful => {
 
                                     this.setState({
-                                        createProject: {
-                                            ...this.state.createProject,
+                                        createStudentProject: {
+                                            ...this.state.createStudentProject,
                                             uploadFileMode: UPLOAD_REALTIME_DB,
                                             uploadFileProgress: 100
                                         }
                                     });
 
                                     let updatedProject = {
-                                        ...JSON.parse(JSON.stringify(projectEdited)),
+                                        ...JSON.parse(JSON.stringify(studentProjectEdited)),
                                         teacher: null,
                                         course: null,
                                         anid:
-                                            isDraftProjectNotSubmitted(projectEdited)
+                                            isDraftProjectNotSubmitted(studentProjectEdited)
                                                 ? courseTeacherCreateOfferFor !== "undefined"
                                                 ? courseTeacherCreateOfferFor
-                                                : projectEdited.anid
-                                                : projectEdited.anid,
-                                        projectName:
+                                                : studentProjectEdited.anid
+                                                : studentProjectEdited.anid,
+                                        studentProjectName:
                                             saveProgress
                                                 ?
                                                 pitchProjectName.trim().length === 0
@@ -1354,11 +1354,11 @@ class CreatePitchPageMain extends Component {
                                                 pitchProjectDescription
                                         ,
                                         visibility:
-                                            projectVisibilitySetting === -1
+                                            studentProjectVisibilitySetting === -1
                                                 ?
-                                                projectEdited.visibility
+                                                studentProjectEdited.visibility
                                                 :
-                                                projectVisibilitySetting
+                                                studentProjectVisibilitySetting
                                         ,
                                         status:
                                             saveProgress
@@ -1367,13 +1367,13 @@ class CreatePitchPageMain extends Component {
                                                 DB_CONST.PROJECT_STATUS_DRAFT
                                                 :
                                                 // not in save progress mode --> publish mode
-                                                // check if the edited project is a draft one --> if so, change its status to being checked
-                                                // otherwise, keep the previous project status
-                                                projectEdited.status === DB_CONST.PROJECT_STATUS_DRAFT
+                                                // check if the edited studentProject is a draft one --> if so, change its status to being checked
+                                                // otherwise, keep the previous studentProject status
+                                                studentProjectEdited.status === DB_CONST.PROJECT_STATUS_DRAFT
                                                     ?
                                                     DB_CONST.PROJECT_STATUS_BEING_CHECKED
                                                     :
-                                                    projectEdited.status
+                                                    studentProjectEdited.status
                                         ,
                                         edited:
                                             saveProgress
@@ -1383,9 +1383,9 @@ class CreatePitchPageMain extends Component {
                                                 utils.getCurrentDate()
                                         ,
                                         PrimaryOffer:
-                                            projectEdited.PrimaryOffer
+                                            studentProjectEdited.PrimaryOffer
                                                 ?
-                                                projectEdited.PrimaryOffer
+                                                studentProjectEdited.PrimaryOffer
                                                 :
                                                 null
                                         ,
@@ -1521,9 +1521,9 @@ class CreatePitchPageMain extends Component {
                                                     pitchInvestorsCommitted
                                             ,
                                             supportingDocuments:
-                                                projectEdited.Pitch.supportingDocuments
+                                                studentProjectEdited.Pitch.supportingDocuments
                                                     ?
-                                                    [...projectEdited.Pitch.supportingDocuments, ...this.pitchSupportingDocumentsRealtimeDB]
+                                                    [...studentProjectEdited.Pitch.supportingDocuments, ...this.pitchSupportingDocumentsRealtimeDB]
                                                     :
                                                     this.pitchSupportingDocumentsRealtimeDB
                                             ,
@@ -1545,25 +1545,25 @@ class CreatePitchPageMain extends Component {
                                                 this.pitchPresentationDocumentRealtimeDB.length === 0
                                                     ?
                                                     (
-                                                        projectEdited.Pitch.presentationDocument
+                                                        studentProjectEdited.Pitch.presentationDocument
                                                             ?
-                                                            projectEdited.Pitch.presentationDocument
+                                                            studentProjectEdited.Pitch.presentationDocument
                                                             :
                                                             null
                                                     )
                                                     :
                                                     (
-                                                        projectEdited.Pitch.presentationDocument
+                                                        studentProjectEdited.Pitch.presentationDocument
                                                             ?
-                                                            [...projectEdited.Pitch.presentationDocument, ...this.pitchPresentationDocumentRealtimeDB]
+                                                            [...studentProjectEdited.Pitch.presentationDocument, ...this.pitchPresentationDocumentRealtimeDB]
                                                             :
                                                             this.pitchPresentationDocumentRealtimeDB
                                                     )
                                             ,
                                             cover:
-                                                projectEdited.Pitch.cover
+                                                studentProjectEdited.Pitch.cover
                                                     ?
-                                                    [...projectEdited.Pitch.cover, ...this.pitchCoverRealtimeDB]
+                                                    [...studentProjectEdited.Pitch.cover, ...this.pitchCoverRealtimeDB]
                                                     :
                                                     this.pitchCoverRealtimeDB
                                             ,
@@ -1572,11 +1572,11 @@ class CreatePitchPageMain extends Component {
                                                     ?
                                                     utils.getCurrentDate()
                                                     :
-                                                    projectEdited.status === DB_CONST.PROJECT_STATUS_DRAFT
+                                                    studentProjectEdited.status === DB_CONST.PROJECT_STATUS_DRAFT
                                                         ?
                                                         utils.getCurrentDate()
                                                         :
-                                                        projectEdited.Pitch.postedDate
+                                                        studentProjectEdited.Pitch.postedDate
                                             ,
                                             expiredDate:
                                                 saveProgress
@@ -1594,11 +1594,11 @@ class CreatePitchPageMain extends Component {
                                                     ?
                                                     DB_CONST.PROJECT_STATUS_DRAFT
                                                     :
-                                                    projectEdited.status === DB_CONST.PROJECT_STATUS_DRAFT
+                                                    studentProjectEdited.status === DB_CONST.PROJECT_STATUS_DRAFT
                                                         ?
                                                         DB_CONST.PITCH_STATUS_ON_GOING
                                                         :
-                                                        projectEdited.Pitch.status
+                                                        studentProjectEdited.Pitch.status
                                             ,
                                             // this field is only available for QIB
                                             qibSpecialNews:
@@ -1616,28 +1616,28 @@ class CreatePitchPageMain extends Component {
                                     };
 
                                     // set the updated pitch in firebase
-                                    projectRef
-                                        .child(projectEdited.id)
+                                    studentProjectRef
+                                        .child(studentProjectEdited.id)
                                         .update(updatedProject)
                                         .then(() => {
                                             // publish button is clicked
                                             // only check and send notifications if the save progress is not triggered (save progress is only available for saving draft)
                                             if (!saveProgress) {
                                                 // if the draft offer is published, don't need to check for sending notifications
-                                                if (projectEdited.status !== DB_CONST.PROJECT_STATUS_DRAFT) {
-                                                    projectBeforeEdited.teacher = null;
-                                                    projectBeforeEdited.course = null;
-                                                    // track activity for editing a published project
+                                                if (studentProjectEdited.status !== DB_CONST.PROJECT_STATUS_DRAFT) {
+                                                    studentProjectBeforeEdited.teacher = null;
+                                                    studentProjectBeforeEdited.course = null;
+                                                    // track activity for editing a published studentProject
                                                     realtimeDBUtils
                                                         .trackActivity({
                                                             studentID: AuthenticationState.currentStudent.id,
                                                             activityType: DB_CONST.ACTIVITY_TYPE_POST,
                                                             interactedObjectLocation: DB_CONST.PROJECTS_CHILD,
-                                                            interactedObjectID: projectEdited.id,
-                                                            activitySummary: realtimeDBUtils.ACTIVITY_SUMMARY_TEMPLATE_EDITED_PROJECT.replace("%project%", projectEdited.projectName),
-                                                            action: ROUTES.PROJECT_DETAILS_INVEST_WEST_SUPER.replace(":projectID", projectEdited.id),
+                                                            interactedObjectID: studentProjectEdited.id,
+                                                            activitySummary: realtimeDBUtils.ACTIVITY_SUMMARY_TEMPLATE_EDITED_PROJECT.replace("%studentProject%", studentProjectEdited.studentProjectName),
+                                                            action: ROUTES.PROJECT_DETAILS_INVEST_WEST_SUPER.replace(":studentProjectID", studentProjectEdited.id),
                                                             value: {
-                                                                before: JSON.parse(JSON.stringify(projectBeforeEdited)),
+                                                                before: JSON.parse(JSON.stringify(studentProjectBeforeEdited)),
                                                                 after: JSON.parse(JSON.stringify(updatedProject))
                                                             }
                                                         });
@@ -1645,7 +1645,7 @@ class CreatePitchPageMain extends Component {
                                                     // Send notifications to investors who voted or pledged
                                                     // load votes
                                                     realtimeDBUtils
-                                                        .loadVotes(projectEdited.id, null, realtimeDBUtils.LOAD_VOTES_ORDER_BY_PROJECT)
+                                                        .loadVotes(studentProjectEdited.id, null, realtimeDBUtils.LOAD_VOTES_ORDER_BY_PROJECT)
                                                         .then(votes => {
 
                                                             let listOfInvestorsToBeNotified = [];
@@ -1655,7 +1655,7 @@ class CreatePitchPageMain extends Component {
 
                                                             // load pledges
                                                             realtimeDBUtils
-                                                                .loadPledges(projectEdited.id, null, realtimeDBUtils.LOAD_PLEDGES_ORDER_BY_PROJECT)
+                                                                .loadPledges(studentProjectEdited.id, null, realtimeDBUtils.LOAD_PLEDGES_ORDER_BY_PROJECT)
                                                                 .then(pledges => {
                                                                     pledges.forEach(pledge => {
                                                                         if (listOfInvestorsToBeNotified.findIndex(investorID => investorID === pledge.investorID) === -1) {
@@ -1666,10 +1666,10 @@ class CreatePitchPageMain extends Component {
                                                                     let notifications = [];
                                                                     listOfInvestorsToBeNotified.forEach(investorID => {
                                                                         const notification = {
-                                                                            title: `${projectEdited.projectName} has been edited`,
+                                                                            title: `${studentProjectEdited.studentProjectName} has been edited`,
                                                                             message: `Please have a look at the changes that have been made in this offer. You may find some more useful information.`,
                                                                             studentID: investorID,
-                                                                            action: ROUTES.PROJECT_DETAILS_INVEST_WEST_SUPER.replace(":projectID", projectEdited.id)
+                                                                            action: ROUTES.PROJECT_DETAILS_INVEST_WEST_SUPER.replace(":studentProjectID", studentProjectEdited.id)
                                                                         };
                                                                         notifications.push(notification);
                                                                     });
@@ -1689,19 +1689,19 @@ class CreatePitchPageMain extends Component {
                                                                     })).then(() => {
 
                                                                         this.setState({
-                                                                            createProject: {
-                                                                                ...this.state.createProject,
+                                                                            createStudentProject: {
+                                                                                ...this.state.createStudentProject,
                                                                                 uploadFileMode: UPLOAD_DONE_MODE,
                                                                                 uploadFileProgress: 100,
-                                                                                projectID: projectEdited.id
+                                                                                studentProjectID: studentProjectEdited.id
                                                                             }
                                                                         });
 
                                                                     }).catch(error => {
 
                                                                         this.setState({
-                                                                            createProject: {
-                                                                                ...this.state.createProject,
+                                                                            createStudentProject: {
+                                                                                ...this.state.createStudentProject,
                                                                                 uploadFileMode: UPLOAD_DONE_MODE,
                                                                                 uploadFileProgress: 100
                                                                             }
@@ -1715,7 +1715,7 @@ class CreatePitchPageMain extends Component {
                                                     // don't need to check for prior TCs acceptance because this is create new mode
                                                     const acceptedTCsObj = {
                                                         teacherID: AuthenticationState.currentStudent.id,
-                                                        projectID: projectEdited.id,
+                                                        studentProjectID: studentProjectEdited.id,
                                                         date: utils.getCurrentDate(),
                                                         agreedToShareRaisePublicly
                                                     };
@@ -1733,21 +1733,21 @@ class CreatePitchPageMain extends Component {
                                                                     requestBody: {
                                                                         emailType: 3,
                                                                         emailInfo: {
-                                                                            projectID: projectEdited.id
+                                                                            studentProjectID: studentProjectEdited.id
                                                                         }
                                                                     }
                                                                 }
                                                             );
 
-                                                            // track activity for creating a new project from a draft one
+                                                            // track activity for creating a new studentProject from a draft one
                                                             realtimeDBUtils
                                                                 .trackActivity({
                                                                     studentID: AuthenticationState.currentStudent.id,
                                                                     activityType: DB_CONST.ACTIVITY_TYPE_POST,
                                                                     interactedObjectLocation: DB_CONST.PROJECTS_CHILD,
-                                                                    interactedObjectID: projectEdited.id,
-                                                                    activitySummary: realtimeDBUtils.ACTIVITY_SUMMARY_TEMPLATE_CREATED_PROJECT.replace("%project%", updatedProject.projectName),
-                                                                    action: ROUTES.PROJECT_DETAILS_INVEST_WEST_SUPER.replace(":projectID", updatedProject.id),
+                                                                    interactedObjectID: studentProjectEdited.id,
+                                                                    activitySummary: realtimeDBUtils.ACTIVITY_SUMMARY_TEMPLATE_CREATED_PROJECT.replace("%studentProject%", updatedProject.studentProjectName),
+                                                                    action: ROUTES.PROJECT_DETAILS_INVEST_WEST_SUPER.replace(":studentProjectID", updatedProject.id),
                                                                     value: updatedProject
                                                                 });
 
@@ -1766,11 +1766,11 @@ class CreatePitchPageMain extends Component {
                                                             }
 
                                                             this.setState({
-                                                                createProject: {
-                                                                    ...this.state.createProject,
+                                                                createStudentProject: {
+                                                                    ...this.state.createStudentProject,
                                                                     uploadFileMode: UPLOAD_DONE_MODE,
                                                                     uploadFileProgress: 100,
-                                                                    projectID: projectEdited.id
+                                                                    studentProjectID: studentProjectEdited.id
                                                                 }
                                                             });
                                                         });
@@ -1788,8 +1788,8 @@ class CreatePitchPageMain extends Component {
                                                     progressBeingSaved: false,
                                                     acceptedTermsAndConditions: false,
 
-                                                    createProject: {
-                                                        ...this.state.createProject,
+                                                    createStudentProject: {
+                                                        ...this.state.createStudentProject,
                                                         uploadFileMode: UPLOAD_NONE,
                                                         uploadFileProgress: 0,
                                                         pitchCover: [],
@@ -1802,7 +1802,7 @@ class CreatePitchPageMain extends Component {
 
                                                 this.navigateToTheSamePageWithActiveStepSaved(
                                                     activeStep,
-                                                    projectEdited.id
+                                                    studentProjectEdited.id
                                                 );
                                             }
                                         })
@@ -1820,61 +1820,61 @@ class CreatePitchPageMain extends Component {
             const postedDate = utils.getCurrentDate();
 
             // pitch reference in Realtime DB
-            const projectRef = this.firebaseDB
+            const studentProjectRef = this.firebaseDB
                 .ref(DB_CONST.PROJECTS_CHILD);
             // get pitch's publishing id
-            const projectID = projectRef.push().key;
+            const studentProjectID = studentProjectRef.push().key;
 
             // pitch storage reference
-            const projectStorageRef = this.firebaseStorage
+            const studentProjectStorageRef = this.firebaseStorage
                 .ref(DB_CONST.STUDENTS_CHILD)
                 .child(AuthenticationState.currentStudent.id)
                 .child(DB_CONST.PROJECTS_CHILD)
-                .child(projectID);
+                .child(studentProjectID);
 
             // upload pitch cover
-            this.uploadMultipleFiles(UPLOAD_PITCH_COVER_MODE, projectStorageRef)
+            this.uploadMultipleFiles(UPLOAD_PITCH_COVER_MODE, studentProjectStorageRef)
                 .then(successful => {
 
                     this.setState({
-                        createProject: {
-                            ...this.state.createProject,
+                        createStudentProject: {
+                            ...this.state.createStudentProject,
                             uploadFileProgress: 100
                         }
                     });
 
                     // upload pitch supporting documents
-                    this.uploadMultipleFiles(UPLOAD_PITCH_SUPPORTING_DOCUMENTS_MODE, projectStorageRef)
+                    this.uploadMultipleFiles(UPLOAD_PITCH_SUPPORTING_DOCUMENTS_MODE, studentProjectStorageRef)
                         .then(successful => {
 
                             this.setState({
-                                createProject: {
-                                    ...this.state.createProject,
+                                createStudentProject: {
+                                    ...this.state.createStudentProject,
                                     uploadFileProgress: 100
                                 }
                             });
 
                             // upload pitch presentation or pitch deck
-                            this.uploadMultipleFiles(UPLOAD_PITCH_PRESENTATION_DOCUMENT_MODE, projectStorageRef)
+                            this.uploadMultipleFiles(UPLOAD_PITCH_PRESENTATION_DOCUMENT_MODE, studentProjectStorageRef)
                                 .then(successful => {
 
                                     this.setState({
-                                        createProject: {
-                                            ...this.state.createProject,
+                                        createStudentProject: {
+                                            ...this.state.createStudentProject,
                                             uploadFileMode: UPLOAD_REALTIME_DB,
                                             uploadFileProgress: 100
                                         }
                                     });
 
-                                    const projectObj = {
-                                        id: projectID,
+                                    const studentProjectObj = {
+                                        id: studentProjectID,
                                         anid: courseTeacherCreateOfferFor === "undefined" ? ManageCourseUrlState.course.anid : courseTeacherCreateOfferFor,
                                         visibility:
-                                            projectVisibilitySetting === -1
+                                            studentProjectVisibilitySetting === -1
                                                 ?
-                                                ManageCourseUrlState.course.settings.projectVisibility
+                                                ManageCourseUrlState.course.settings.studentProjectVisibility
                                                 :
-                                                projectVisibilitySetting
+                                                studentProjectVisibilitySetting
                                         ,
                                         teacherID:
                                         // a course teacher is creating an offer on behalf of a known teacher
@@ -1907,7 +1907,7 @@ class CreatePitchPageMain extends Component {
                                                     // so this field is set to null
                                                     null
                                         ,
-                                        projectName: saveProgress ? (pitchProjectName.trim().length === 0 ? null : pitchProjectName) : pitchProjectName,
+                                        studentProjectName: saveProgress ? (pitchProjectName.trim().length === 0 ? null : pitchProjectName) : pitchProjectName,
                                         sector: saveProgress ? (pitchSector === "-" ? null : pitchSector) : pitchSector,
                                         description: saveProgress ? (pitchProjectDescription.trim().length === 0 ? null : pitchProjectDescription) : pitchProjectDescription,
                                         status:
@@ -2111,13 +2111,13 @@ class CreatePitchPageMain extends Component {
                                         }
                                     };
 
-                                    projectRef
-                                        .child(projectID)
-                                        .set(projectObj)
+                                    studentProjectRef
+                                        .child(studentProjectID)
+                                        .set(studentProjectObj)
                                         .then(() => {
                                             // save button is clicked
                                             if (saveProgress) {
-                                                // don't need to track activity for draft project
+                                                // don't need to track activity for draft studentProject
 
                                                 // reset all variables and states
                                                 this.pitchCoverRealtimeDB = [];
@@ -2126,14 +2126,14 @@ class CreatePitchPageMain extends Component {
 
                                                 this.setState({
                                                     requestToLoadData: true,
-                                                    projectIDToBeLoadedAfterSavingFirstTime: projectID,
+                                                    studentProjectIDToBeLoadedAfterSavingFirstTime: studentProjectID,
                                                     saveProgress: false,
                                                     progressBeingSaved: false,
-                                                    projectEditedLoaded: false,
+                                                    studentProjectEditedLoaded: false,
                                                     acceptedTermsAndConditions: false,
 
-                                                    createProject: {
-                                                        ...this.state.createProject,
+                                                    createStudentProject: {
+                                                        ...this.state.createStudentProject,
                                                         uploadFileMode: UPLOAD_NONE,
                                                         uploadFileProgress: 0,
                                                         pitchCover: [],
@@ -2146,21 +2146,21 @@ class CreatePitchPageMain extends Component {
 
                                                 this.navigateToTheSamePageWithActiveStepSaved(
                                                     activeStep,
-                                                    projectID
+                                                    studentProjectID
                                                 );
                                             }
                                             // publish button is clicked
                                             else {
-                                                // track activity for creating a new project
+                                                // track activity for creating a new studentProject
                                                 realtimeDBUtils
                                                     .trackActivity({
                                                         studentID: AuthenticationState.currentStudent.id,
                                                         activityType: DB_CONST.ACTIVITY_TYPE_POST,
                                                         interactedObjectLocation: DB_CONST.PROJECTS_CHILD,
-                                                        interactedObjectID: projectID,
-                                                        activitySummary: realtimeDBUtils.ACTIVITY_SUMMARY_TEMPLATE_CREATED_PROJECT.replace("%project%", projectObj.projectName),
-                                                        action: ROUTES.PROJECT_DETAILS_INVEST_WEST_SUPER.replace(":projectID", projectObj.id),
-                                                        value: projectObj
+                                                        interactedObjectID: studentProjectID,
+                                                        activitySummary: realtimeDBUtils.ACTIVITY_SUMMARY_TEMPLATE_CREATED_PROJECT.replace("%studentProject%", studentProjectObj.studentProjectName),
+                                                        action: ROUTES.PROJECT_DETAILS_INVEST_WEST_SUPER.replace(":studentProjectID", studentProjectObj.id),
+                                                        value: studentProjectObj
                                                     });
 
                                                 const id = this.firebaseDB
@@ -2172,7 +2172,7 @@ class CreatePitchPageMain extends Component {
                                                 const acceptedTCsObj = {
                                                     id,
                                                     teacherID: AuthenticationState.currentStudent.id,
-                                                    projectID: projectID,
+                                                    studentProjectID: studentProjectID,
                                                     date: utils.getCurrentDate()
                                                 };
 
@@ -2182,11 +2182,11 @@ class CreatePitchPageMain extends Component {
                                                     .set(acceptedTCsObj)
                                                     .then(() => {
                                                         this.setState({
-                                                            createProject: {
-                                                                ...this.state.createProject,
+                                                            createStudentProject: {
+                                                                ...this.state.createStudentProject,
                                                                 uploadFileMode: UPLOAD_DONE_MODE,
                                                                 uploadFileProgress: 100,
-                                                                projectID: projectID
+                                                                studentProjectID: studentProjectID
                                                             }
                                                         });
                                                     });
@@ -2205,7 +2205,7 @@ class CreatePitchPageMain extends Component {
     /**
      * Upload multiple files
      */
-    uploadMultipleFiles = async (mode, projectStorageRef) => {
+    uploadMultipleFiles = async (mode, studentProjectStorageRef) => {
 
         const {
             saveProgress
@@ -2217,11 +2217,11 @@ class CreatePitchPageMain extends Component {
             pitchCoverTypeSelected,
             pitchSupportingDocuments,
             pitchPresentationDocument
-        } = this.state.createProject;
+        } = this.state.createStudentProject;
 
         this.setState({
-            createProject: {
-                ...this.state.createProject,
+            createStudentProject: {
+                ...this.state.createStudentProject,
                 pitchPublishCheck: PITCH_PUBLISH_CHECK_NONE,
                 openUploadingProgressDialog: !saveProgress,
                 uploadFileMode: mode,
@@ -2262,7 +2262,7 @@ class CreatePitchPageMain extends Component {
 
         return Promise
             .all(
-                filesArray.map(file => this.uploadIndividualFile(mode, projectStorageRef, file))
+                filesArray.map(file => this.uploadIndividualFile(mode, studentProjectStorageRef, file))
             )
             .then(() => {
                 return true;
@@ -2279,7 +2279,7 @@ class CreatePitchPageMain extends Component {
 
         const {
             pitchSupportingDocuments
-        } = this.state.createProject;
+        } = this.state.createStudentProject;
 
         let docRef = null;
 
@@ -2314,8 +2314,8 @@ class CreatePitchPageMain extends Component {
 
                 if (mode === UPLOAD_PITCH_COVER_MODE || mode === UPLOAD_PITCH_PRESENTATION_DOCUMENT_MODE) {
                     this.setState({
-                        createProject: {
-                            ...this.state.createProject,
+                        createStudentProject: {
+                            ...this.state.createStudentProject,
                             uploadFileProgress: progress
                         }
                     });
@@ -2344,9 +2344,9 @@ class CreatePitchPageMain extends Component {
                         case UPLOAD_PITCH_SUPPORTING_DOCUMENTS_MODE:
                             percentDone = 100 / (pitchSupportingDocuments.length);
                             this.setState(prevState => ({
-                                createProject: {
-                                    ...prevState.createProject,
-                                    uploadFileProgress: prevState.createProject.uploadFileProgress + percentDone.toFixed(0)
+                                createStudentProject: {
+                                    ...prevState.createStudentProject,
+                                    uploadFileProgress: prevState.createStudentProject.uploadFileProgress + percentDone.toFixed(0)
                                 }
                             }));
                             const formattedSupportingDocument = {
@@ -2386,27 +2386,27 @@ class CreatePitchPageMain extends Component {
 
         switch (mode) {
             case PITCH_SUPPORTING_DOCUMENTS_FILES_CHANGED:
-                let supportingDocuments = this.state.createProject.pitchSupportingDocuments;
+                let supportingDocuments = this.state.createStudentProject.pitchSupportingDocuments;
                 supportingDocuments.splice(index, 1);
                 this.setState({
-                    createProject: {
-                        ...this.state.createProject,
+                    createStudentProject: {
+                        ...this.state.createStudentProject,
                         pitchSupportingDocuments: supportingDocuments
                     }
                 });
                 break;
             case PITCH_PRESENTATION_FILES_CHANGED:
                 this.setState({
-                    createProject: {
-                        ...this.state.createProject,
+                    createStudentProject: {
+                        ...this.state.createStudentProject,
                         pitchPresentationDocument: []
                     }
                 });
                 break;
             case PITCH_COVER_FILES_CHANGED:
                 this.setState({
-                    createProject: {
-                        ...this.state.createProject,
+                    createStudentProject: {
+                        ...this.state.createStudentProject,
                         pitchCover: []
                     }
                 });
@@ -2423,8 +2423,8 @@ class CreatePitchPageMain extends Component {
      */
     attachNextStepButtonRef = target => {
         this.setState({
-            createProject: {
-                ...this.state.createProject,
+            createStudentProject: {
+                ...this.state.createStudentProject,
                 pitchNextStepButtonTarget: target
             }
         });
@@ -2435,8 +2435,8 @@ class CreatePitchPageMain extends Component {
      */
     handlePopoverErrorMessageClose = () => {
         this.setState({
-            createProject: {
-                ...this.state.createProject,
+            createStudentProject: {
+                ...this.state.createStudentProject,
                 pitchPublishErrorMessageShowed: false
             }
         });
@@ -2449,14 +2449,14 @@ class CreatePitchPageMain extends Component {
      */
     handleDownloadDocumentDeleteClick = index => {
         const {
-            projectEdited
+            studentProjectEdited
         } = this.state;
 
-        let updatedProjectEdited = JSON.parse(JSON.stringify(projectEdited));
+        let updatedProjectEdited = JSON.parse(JSON.stringify(studentProjectEdited));
         updatedProjectEdited.Pitch.supportingDocuments[index].removed = true;
 
         this.setState({
-            projectEdited: updatedProjectEdited
+            studentProjectEdited: updatedProjectEdited
         });
     };
 
@@ -2467,8 +2467,8 @@ class CreatePitchPageMain extends Component {
 
         if (reason === 'clickaway') {
             this.setState({
-                createProject: {
-                    ...this.state.createProject,
+                createStudentProject: {
+                    ...this.state.createStudentProject,
                     errorSnackbarOpen: false
                 }
             });
@@ -2476,8 +2476,8 @@ class CreatePitchPageMain extends Component {
         }
 
         this.setState({
-            createProject: {
-                ...this.state.createProject,
+            createStudentProject: {
+                ...this.state.createStudentProject,
                 errorSnackbarOpen: false
             }
         });
@@ -2490,8 +2490,8 @@ class CreatePitchPageMain extends Component {
 
         if (date && date === "Invalid Date") {
             this.setState({
-                createProject: {
-                    ...this.state.createProject,
+                createStudentProject: {
+                    ...this.state.createStudentProject,
                     pitchExpiryDate: NaN
                 }
             });
@@ -2499,8 +2499,8 @@ class CreatePitchPageMain extends Component {
         }
 
         this.setState({
-            createProject: {
-                ...this.state.createProject,
+            createStudentProject: {
+                ...this.state.createStudentProject,
                 pitchExpiryDate:
                     !date
                         ?
@@ -2519,8 +2519,8 @@ class CreatePitchPageMain extends Component {
         const name = event.target.name;
 
         this.setState({
-            createProject: {
-                ...this.state.createProject,
+            createStudentProject: {
+                ...this.state.createStudentProject,
                 [name]: event.target.checked
             }
         });
@@ -2550,13 +2550,9 @@ class CreatePitchPageMain extends Component {
             howFundIsBeingRaised,
             financialRound,
             pitchPostMoneyValuation,
-            hasRaisedMoneyBefore,
-
-            hasSEIS,
-            hasEIS,
 
             qibSpecialNews
-        } = this.state.createProject;
+        } = this.state.createStudentProject;
 
         if (activeStep === STEP_PITCH_GENERAL_INFORMATION) {
             // check if at least one field is filled
@@ -2587,39 +2583,6 @@ class CreatePitchPageMain extends Component {
                 return;
             }
 
-            // check if amount raised specified if the Student chose Yes for prior investment
-            if (hasRaisedMoneyBefore.trim().length > 0) {
-                if (hasRaisedMoneyBefore === "true"
-                    && pitchAmountRaisedToDate.trim().length === 0
-                ) {
-                    setFeedbackSnackbarContent(
-                        'Please specify the fund you have raised.',
-                        "error",
-                        "bottom"
-                    );
-                    return;
-                }
-            }
-
-            // check if entered funds are valid
-            if ((hasRaisedMoneyBefore === "true"
-                    && pitchAmountRaisedToDate.trim().length > 0
-                    && !utils.getNumberFromInputString(pitchAmountRaisedToDate)
-                )
-                || (pitchRaiseRequired.trim().length > 0
-                    && !utils.getNumberFromInputString(pitchRaiseRequired)
-                )
-                || (pitchPostMoneyValuation.trim().length > 0
-                    && !utils.getNumberFromInputString(pitchPostMoneyValuation)
-                )
-            ) {
-                setFeedbackSnackbarContent(
-                    'Please check your entered funds again.',
-                    "error",
-                    "bottom"
-                );
-                return;
-            }
         }
 
         this.setState({
@@ -2634,7 +2597,7 @@ class CreatePitchPageMain extends Component {
     handleDeleteDraftClick = () => {
 
         const {
-            projectEdited
+            studentProjectEdited
         } = this.state;
 
         this.setState({
@@ -2652,7 +2615,7 @@ class CreatePitchPageMain extends Component {
                             .then(() => {
                                 this.firebaseDB
                                     .ref(DB_CONST.PROJECTS_CHILD)
-                                    .child(projectEdited.id)
+                                    .child(studentProjectEdited.id)
                                     .remove()
                                     .then(() => {
                                         // reset all variables and states to refresh the page
@@ -2666,8 +2629,8 @@ class CreatePitchPageMain extends Component {
                                         });
 
                                         // remove listener
-                                        if (this.projectEditedSaveModeRefListener) {
-                                            this.projectEditedSaveModeRefListener.off('child_changed');
+                                        if (this.studentProjectEditedSaveModeRefListener) {
+                                            this.studentProjectEditedSaveModeRefListener.off('child_changed');
                                         }
 
                                         this.navigateToTheSamePageWithActiveStepSaved(0, null);
@@ -2688,25 +2651,25 @@ class CreatePitchPageMain extends Component {
         } = this.props;
 
         const {
-            projectEdited
+            studentProjectEdited
         } = this.state;
 
         let storageRef = this.firebaseStorage
             .ref(DB_CONST.STUDENTS_CHILD)
             .child(AuthenticationState.currentStudent.id)
             .child(DB_CONST.PROJECTS_CHILD)
-            .child(projectEdited.id);
+            .child(studentProjectEdited.id);
 
         switch (mode) {
             case UPLOAD_PITCH_COVER_MODE:
-                if (!projectEdited.Pitch.cover) {
+                if (!studentProjectEdited.Pitch.cover) {
                     return;
                 }
                 storageRef = storageRef
                     .child(DB_CONST.PROJECT_COVER_CHILD);
                 return Promise
                     .all(
-                        projectEdited.Pitch.cover.map(coverItem => (
+                        studentProjectEdited.Pitch.cover.map(coverItem => (
                             this.deleteASingleFileOnStorage(mode, storageRef, coverItem)
                         ))
                     )
@@ -2717,14 +2680,14 @@ class CreatePitchPageMain extends Component {
                         return (error);
                     });
             case UPLOAD_PITCH_PRESENTATION_DOCUMENT_MODE:
-                if (!projectEdited.Pitch.presentationDocument) {
+                if (!studentProjectEdited.Pitch.presentationDocument) {
                     return;
                 }
                 storageRef = storageRef
                     .child(DB_CONST.PROJECT_PRESENTATION_DOCUMENT_CHILD);
                 return Promise
                     .all(
-                        projectEdited.Pitch.presentationDocument.map(coverItem => (
+                        studentProjectEdited.Pitch.presentationDocument.map(coverItem => (
                             this.deleteASingleFileOnStorage(mode, storageRef, coverItem)
                         ))
                     )
@@ -2735,14 +2698,14 @@ class CreatePitchPageMain extends Component {
                         return (error);
                     });
             case UPLOAD_PITCH_SUPPORTING_DOCUMENTS_MODE:
-                if (!projectEdited.Pitch.supportingDocuments) {
+                if (!studentProjectEdited.Pitch.supportingDocuments) {
                     return;
                 }
                 storageRef = storageRef
                     .child(DB_CONST.PROJECT_SUPPORTING_DOCUMENTS_CHILD);
                 return Promise
                     .all(
-                        projectEdited.Pitch.supportingDocuments.map(coverItem => (
+                        studentProjectEdited.Pitch.supportingDocuments.map(coverItem => (
                             this.deleteASingleFileOnStorage(mode, storageRef, coverItem)
                         ))
                     )
@@ -2819,8 +2782,8 @@ class CreatePitchPageMain extends Component {
         } = this.props;
 
         const {
-            projectEdited,
-            projectEditedLoaded,
+            studentProjectEdited,
+            studentProjectEditedLoaded,
 
             saveProgress,
             progressBeingSaved,
@@ -2852,7 +2815,7 @@ class CreatePitchPageMain extends Component {
         // in edit mode
         if (params.edit) {
             // offer not loaded yet
-            if (!projectEditedLoaded) {
+            if (!studentProjectEditedLoaded) {
                 return (
                     <FlexView width="100%" hAlignContent="center"  style={{padding: 30}}>
                         <HashLoader color={getCourseRouteTheme(ManageCourseUrlState).palette.primary.main}/>
@@ -2862,11 +2825,11 @@ class CreatePitchPageMain extends Component {
 
             // no offer found or found offer does not belong to the current teacher/Course Teacher
             if (
-                !projectEdited
-                // current Student is an teacher that does not own the project
-                || (projectEdited
+                !studentProjectEdited
+                // current Student is an teacher that does not own the studentProject
+                || (studentProjectEdited
                     && AuthenticationState.currentStudent.type === DB_CONST.TYPE_TEACHER
-                    && AuthenticationState.currentStudent.id !== projectEdited.teacherID
+                    && AuthenticationState.currentStudent.id !== studentProjectEdited.teacherID
                 )
             ) {
                 return (
@@ -2875,7 +2838,7 @@ class CreatePitchPageMain extends Component {
             }
 
             // check editable offer
-            if (!utils.shouldAProjectBeEdited(AuthenticationState.currentStudent, projectEdited)) {
+            if (!utils.shouldAProjectBeEdited(AuthenticationState.currentStudent, studentProjectEdited)) {
                 return (
                     <FlexView marginTop={50} width="100%">
                         <Typography variant="h4" align="center">This offer can't be edited anymore</Typography>
@@ -2883,11 +2846,11 @@ class CreatePitchPageMain extends Component {
                 );
             }
 
-            // current Student is a Course Teacher that does not own the project
-            if (projectEdited
+            // current Student is a Course Teacher that does not own the studentProject
+            if (studentProjectEdited
                 && AuthenticationState.currentStudent.type === DB_CONST.TYPE_PROF
                 && !AuthenticationState.currentStudent.superTeacher
-                && AuthenticationState.currentStudent.anid !== projectEdited.anid
+                && AuthenticationState.currentStudent.anid !== studentProjectEdited.anid
             ) {
                 return <FlexView marginTop={50} hAlignContent="center">
                     <Typography variant="h4" align="center">
@@ -2906,13 +2869,13 @@ class CreatePitchPageMain extends Component {
                     params={params}
                     AuthenticationState={AuthenticationState}
                     currentStudent={AuthenticationState.currentStudent}
-                    projectEdited={projectEdited}
-                    projectEditedLoaded={projectEditedLoaded}
+                    studentProjectEdited={studentProjectEdited}
+                    studentProjectEditedLoaded={studentProjectEditedLoaded}
                     saveProgress={saveProgress}
                     progressBeingSaved={progressBeingSaved}
                     draftBeingDeleted={draftBeingDeleted}
                     isMobile={isMobile}
-                    createProjectState={this.state.createProject}
+                    createStudentProjectState={this.state.createStudentProject}
                     onSelectPitchCoverTypeClick={this.handleSelectPitchCoverTypeClick}
                     onFilesChanged={this.handleFilesChanged}
                     onFilesError={this.handleFileError}
@@ -2933,12 +2896,12 @@ class CreatePitchPageMain extends Component {
                 <UploadingDialog
                     courseStudent={ManageCourseUrlState.course ? ManageCourseUrlState.course.courseStudent : null}
                     currentStudent={AuthenticationState.currentStudent}
-                    open={this.state.createProject.openUploadingProgressDialog}
-                    uploadFileMode={this.state.createProject.uploadFileMode}
-                    uploadFileProgress={this.state.createProject.uploadFileProgress}
+                    open={this.state.createStudentProject.openUploadingProgressDialog}
+                    uploadFileMode={this.state.createStudentProject.uploadFileMode}
+                    uploadFileProgress={this.state.createStudentProject.uploadFileProgress}
                     params={params}
-                    projectEdited={projectEdited}
-                    projectID={this.state.createProject.projectID}
+                    studentProjectEdited={studentProjectEdited}
+                    studentProjectID={this.state.createStudentProject.studentProjectID}
                 />
             </Container>
         );
@@ -3021,7 +2984,7 @@ class CreateProject extends Component {
 
         let msg = "";
 
-        switch (this.props.createProjectState.pitchPublishCheck) {
+        switch (this.props.createStudentProjectState.pitchPublishCheck) {
             case PITCH_PUBLISH_CHECK_NONE:
                 return null;
             case PITCH_PUBLISH_FALSE_MISSING_FIELDS_IN_GENERAL_INFORMATION:
@@ -3064,7 +3027,7 @@ class CreateProject extends Component {
             courseProperties,
             currentStudent,
             params,
-            projectEdited,
+            studentProjectEdited,
 
             saveProgress,
             progressBeingSaved,
@@ -3072,7 +3035,7 @@ class CreateProject extends Component {
 
             isMobile,
 
-            createProjectState
+            createStudentProjectState
         } = this.props;
 
         return (
@@ -3081,7 +3044,7 @@ class CreateProject extends Component {
                 <Row noGutters style={{ marginTop: 40, padding: 20}}>
                     <Col xs={12} sm={12} md={{span: 8, offset: 2}} lg={{span: 8, offset: 2}}>
                         <FlexView hAlignContent="center" vAlignContent="center">
-                            <Stepper activeStep={createProjectState.activeStep} alternativeLabel style={{ width: isMobile ? "auto" : "100%", padding: 0}}>
+                            <Stepper activeStep={createStudentProjectState.activeStep} alternativeLabel style={{ width: isMobile ? "auto" : "100%", padding: 0}}>
                                 <Step key={0}>
                                     <StepLabel>General information</StepLabel>
                                 </Step>
@@ -3107,10 +3070,10 @@ class CreateProject extends Component {
                                     }
                                 </Step>
                                 {
-                                    params.edit && projectEdited
+                                    params.edit && studentProjectEdited
                                         ?
                                         (
-                                            projectEdited.status !== DB_CONST.PROJECT_STATUS_DRAFT
+                                            studentProjectEdited.status !== DB_CONST.PROJECT_STATUS_DRAFT
                                                 ?
                                                 null
                                                 :
@@ -3131,7 +3094,7 @@ class CreateProject extends Component {
                 {/** Main content (changed based on activeStep) */}
                 <Row noGutters style={{padding: 18}}>
                     {
-                        createProjectState.activeStep === STEP_PITCH_GENERAL_INFORMATION
+                        createStudentProjectState.activeStep === STEP_PITCH_GENERAL_INFORMATION
                             ?
                             /**
                              * General information column
@@ -3159,9 +3122,9 @@ class CreateProject extends Component {
 
                                     {/** Let the teacher select the course they want to create an offer for */}
                                     {
-                                        createProjectState.courseTeacherCreateOfferFor === "undefined"
+                                        createStudentProjectState.courseTeacherCreateOfferFor === "undefined"
                                             ? null
-                                            : params.edit && projectEdited && !isDraftProjectNotSubmitted(projectEdited)
+                                            : params.edit && studentProjectEdited && !isDraftProjectNotSubmitted(studentProjectEdited)
                                             ? null
                                             : !isTeacher(AuthenticationState.currentStudent)
                                                 ? null
@@ -3170,7 +3133,7 @@ class CreateProject extends Component {
                                                     : <FlexView marginTop={30}>
                                                         <FormControl fullWidth required>
                                                             <FormLabel>Select course</FormLabel>
-                                                            <Select name="courseTeacherCreateOfferFor" value={createProjectState.courseTeacherCreateOfferFor} margin="dense" input={<OutlinedInput/>} onChange={this.onInputChanged}>
+                                                            <Select name="courseTeacherCreateOfferFor" value={createStudentProjectState.courseTeacherCreateOfferFor} margin="dense" input={<OutlinedInput/>} onChange={this.onInputChanged}>
                                                                 {
                                                                     AuthenticationState.coursesOfMembership.map(
                                                                         courseOfMembership =>
@@ -3184,7 +3147,7 @@ class CreateProject extends Component {
 
                                     {
                                         /**
-                                         * Choosing sector
+                                         * Choosing course
                                          */
                                     }
                                     <FlexView marginTop={30}>
@@ -3192,12 +3155,12 @@ class CreateProject extends Component {
                                             fullWidth
                                             required
                                             error={
-                                                createProjectState.pitchPublishCheck === PITCH_PUBLISH_FALSE_MISSING_FIELDS_IN_GENERAL_INFORMATION
-                                                && createProjectState.pitchSector === "-"
+                                                createStudentProjectState.pitchPublishCheck === PITCH_PUBLISH_FALSE_MISSING_FIELDS_IN_GENERAL_INFORMATION
+                                                && createStudentProjectState.pitchSector === "-"
                                             }
                                         >
-                                            <FormLabel>Choose sector</FormLabel>
-                                            <Select name="pitchSector" value={createProjectState.pitchSector} margin="dense" input={<OutlinedInput/>} onChange={this.onInputChanged}>
+                                            <FormLabel>Choose course</FormLabel>
+                                            <Select name="pitchSector" value={createStudentProjectState.pitchSector} margin="dense" input={<OutlinedInput/>} onChange={this.onInputChanged}>
                                                 <MenuItem key={-1} value="-">
                                                     -
                                                 </MenuItem>
@@ -3206,8 +3169,8 @@ class CreateProject extends Component {
                                                         ?
                                                         null
                                                         :
-                                                        clubAttributes.Sectors.map((sector, index) => (
-                                                            <MenuItem key={index} value={sector}>{sector}</MenuItem>
+                                                        clubAttributes.Sectors.map((course, index) => (
+                                                            <MenuItem key={index} value={course}>{course}</MenuItem>
                                                         ))
                                                 }
                                             </Select>
@@ -3219,7 +3182,7 @@ class CreateProject extends Component {
                                          * Select expiry date
                                          *
                                          * For QIB: Hide this section as the course Teachers will set
-                                         * the default expiry date for all the projects.
+                                         * the default expiry date for all the studentProjects.
                                          */
                                     }
                                     {
@@ -3241,7 +3204,7 @@ class CreateProject extends Component {
                                                 <Row noGutters style={{width: "100%"}}>
                                                     <Col xs={12} sm={12} md={8} lg={6}>
                                                         {
-                                                            !params.edit || !projectEdited
+                                                            !params.edit || !studentProjectEdited
                                                                 ?
                                                                 <KeyboardDatePicker
                                                                     autoOk
@@ -3251,22 +3214,22 @@ class CreateProject extends Component {
                                                                     label="Choose expiry date for this pitch"
                                                                     format="dd/MM/yyyy"
                                                                     minDate={utils.getDateWithDaysFurtherThanToday(1)}
-                                                                    value={createProjectState.pitchExpiryDate}
+                                                                    value={createStudentProjectState.pitchExpiryDate}
                                                                     InputAdornmentProps={{position: "start"}}
                                                                     error={
-                                                                        (createProjectState.pitchPublishCheck === PITCH_PUBLISH_FALSE_MISSING_FIELDS_IN_GENERAL_INFORMATION
-                                                                            && createProjectState.pitchExpiryDate === null)
+                                                                        (createStudentProjectState.pitchPublishCheck === PITCH_PUBLISH_FALSE_MISSING_FIELDS_IN_GENERAL_INFORMATION
+                                                                            && createStudentProjectState.pitchExpiryDate === null)
                                                                         ||
-                                                                        (createProjectState.pitchPublishCheck === PITCH_PUBLISH_FALSE_INVALID_DATE
-                                                                            && (isNaN(createProjectState.pitchExpiryDate)
-                                                                                || createProjectState.pitchExpiryDate < utils.getDateWithDaysFurtherThanToday(0))
+                                                                        (createStudentProjectState.pitchPublishCheck === PITCH_PUBLISH_FALSE_INVALID_DATE
+                                                                            && (isNaN(createStudentProjectState.pitchExpiryDate)
+                                                                                || createStudentProjectState.pitchExpiryDate < utils.getDateWithDaysFurtherThanToday(0))
                                                                         )
                                                                     }
                                                                     onChange={date => this.onDateChanged(date)}
                                                                 />
                                                                 :
                                                                 (
-                                                                    utils.isDraftProject(projectEdited)
+                                                                    utils.isDraftProject(studentProjectEdited)
                                                                         ?
                                                                         <KeyboardDatePicker
                                                                             autoOk
@@ -3276,14 +3239,14 @@ class CreateProject extends Component {
                                                                             label="Choose expiry date for this pitch"
                                                                             format="dd/MM/yyyy"
                                                                             minDate={utils.getDateWithDaysFurtherThanToday(1)}
-                                                                            value={createProjectState.pitchExpiryDate}
+                                                                            value={createStudentProjectState.pitchExpiryDate}
                                                                             InputAdornmentProps={{position: "start"}}
                                                                             error={
-                                                                                (createProjectState.pitchPublishCheck === PITCH_PUBLISH_FALSE_MISSING_FIELDS_IN_GENERAL_INFORMATION
-                                                                                    && createProjectState.pitchExpiryDate === null)
-                                                                                || (createProjectState.pitchPublishCheck === PITCH_PUBLISH_FALSE_INVALID_DATE
-                                                                                    && (isNaN(createProjectState.pitchExpiryDate)
-                                                                                        || createProjectState.pitchExpiryDate < utils.getDateWithDaysFurtherThanToday(0))
+                                                                                (createStudentProjectState.pitchPublishCheck === PITCH_PUBLISH_FALSE_MISSING_FIELDS_IN_GENERAL_INFORMATION
+                                                                                    && createStudentProjectState.pitchExpiryDate === null)
+                                                                                || (createStudentProjectState.pitchPublishCheck === PITCH_PUBLISH_FALSE_INVALID_DATE
+                                                                                    && (isNaN(createStudentProjectState.pitchExpiryDate)
+                                                                                        || createStudentProjectState.pitchExpiryDate < utils.getDateWithDaysFurtherThanToday(0))
                                                                                 )
                                                                             }
                                                                             onChange={date => this.onDateChanged(date)}
@@ -3296,13 +3259,13 @@ class CreateProject extends Component {
                                                                                         ?
                                                                                         null
                                                                                         :
-                                                                                        projectEdited.PrimaryOffer
+                                                                                        studentProjectEdited.PrimaryOffer
                                                                                             ?
-                                                                                            `Pledge phase will be active in ${utils.dateDiff(projectEdited.PrimaryOffer.expiredDate)} days. Please contact us if you need to change the expiry date.`
+                                                                                            `Pledge phase will be active in ${utils.dateDiff(studentProjectEdited.PrimaryOffer.expiredDate)} days. Please contact us if you need to change the expiry date.`
                                                                                             :
-                                                                                            projectEdited.Pitch
+                                                                                            studentProjectEdited.Pitch
                                                                                                 ?
-                                                                                                `Pitch phase will be active in ${utils.dateDiff(projectEdited.Pitch.expiredDate)} days. Please contact us if you need to change the expiry date.`
+                                                                                                `Pitch phase will be active in ${utils.dateDiff(studentProjectEdited.Pitch.expiredDate)} days. Please contact us if you need to change the expiry date.`
                                                                                                 :
                                                                                                 null
                                                                                 }
@@ -3313,7 +3276,7 @@ class CreateProject extends Component {
                                                                                     null
                                                                                     :
                                                                                     (
-                                                                                        projectEdited.status === DB_CONST.PROJECT_STATUS_PITCH_PHASE_EXPIRED_WAITING_TO_BE_CHECKED
+                                                                                        studentProjectEdited.status === DB_CONST.PROJECT_STATUS_PITCH_PHASE_EXPIRED_WAITING_TO_BE_CHECKED
                                                                                             ?
                                                                                             <Typography variant="body1" align="left" color="primary">
                                                                                                 Pitch phase has ended.
@@ -3328,7 +3291,7 @@ class CreateProject extends Component {
                                                                                                 variant="dialog"
                                                                                                 inputVariant="outlined"
                                                                                                 label={
-                                                                                                    projectEdited.status === DB_CONST.PROJECT_STATUS_PRIMARY_OFFER_PHASE
+                                                                                                    studentProjectEdited.status === DB_CONST.PROJECT_STATUS_PRIMARY_OFFER_PHASE
                                                                                                         ?
                                                                                                         "Choose expiry date for pledge phase"
                                                                                                         :
@@ -3336,14 +3299,14 @@ class CreateProject extends Component {
                                                                                                 }
                                                                                                 format="dd/MM/yyyy"
                                                                                                 minDate={utils.getDateWithDaysFurtherThanToday(1)}
-                                                                                                value={createProjectState.pitchExpiryDate}
+                                                                                                value={createStudentProjectState.pitchExpiryDate}
                                                                                                 InputAdornmentProps={{position: "start"}}
                                                                                                 error={
-                                                                                                    (createProjectState.pitchPublishCheck === PITCH_PUBLISH_FALSE_MISSING_FIELDS_IN_GENERAL_INFORMATION
-                                                                                                        && createProjectState.pitchExpiryDate === null)
-                                                                                                    || (createProjectState.pitchPublishCheck === PITCH_PUBLISH_FALSE_INVALID_DATE
-                                                                                                        && (isNaN(createProjectState.pitchExpiryDate)
-                                                                                                            || createProjectState.pitchExpiryDate < utils.getDateWithDaysFurtherThanToday(0))
+                                                                                                    (createStudentProjectState.pitchPublishCheck === PITCH_PUBLISH_FALSE_MISSING_FIELDS_IN_GENERAL_INFORMATION
+                                                                                                        && createStudentProjectState.pitchExpiryDate === null)
+                                                                                                    || (createStudentProjectState.pitchPublishCheck === PITCH_PUBLISH_FALSE_INVALID_DATE
+                                                                                                        && (isNaN(createStudentProjectState.pitchExpiryDate)
+                                                                                                            || createStudentProjectState.pitchExpiryDate < utils.getDateWithDaysFurtherThanToday(0))
                                                                                                     )
                                                                                                 }
                                                                                                 onChange={date => this.onDateChanged(date)}
@@ -3360,21 +3323,21 @@ class CreateProject extends Component {
 
                                     {
                                         /**
-                                         * Company name (or project name)
+                                         * Company name (or studentProject name)
                                          */
                                     }
                                     <FlexView marginTop={20}>
                                         <TextField
                                             label="Company name"
                                             name="pitchProjectName"
-                                            value={createProjectState.pitchProjectName}
+                                            value={createStudentProjectState.pitchProjectName}
                                             fullWidth
                                             margin="normal"
                                             variant="outlined"
                                             required
                                             error={
-                                                createProjectState.pitchPublishCheck === PITCH_PUBLISH_FALSE_MISSING_FIELDS_IN_GENERAL_INFORMATION
-                                                && createProjectState.pitchProjectName.trim().length === 0
+                                                createStudentProjectState.pitchPublishCheck === PITCH_PUBLISH_FALSE_MISSING_FIELDS_IN_GENERAL_INFORMATION
+                                                && createStudentProjectState.pitchProjectName.trim().length === 0
                                             }
                                             onChange={this.onInputChanged}
                                         />
@@ -3382,7 +3345,7 @@ class CreateProject extends Component {
 
                                     {
                                         /**
-                                         * Company description (or project description)
+                                         * Company description (or studentProject description)
                                          */
                                     }
                                     <FlexView marginTop={10}>
@@ -3390,12 +3353,12 @@ class CreateProject extends Component {
                                             <TextField
                                                 label="Please provide a brief summary of what you do (max 300 characters)"
                                                 name="pitchProjectDescription"
-                                                value={createProjectState.pitchProjectDescription}
+                                                value={createStudentProjectState.pitchProjectDescription}
                                                 margin="normal"
                                                 variant="outlined"
                                                 error={
-                                                    createProjectState.pitchPublishCheck === PITCH_PUBLISH_FALSE_MISSING_FIELDS_IN_GENERAL_INFORMATION
-                                                    && createProjectState.pitchProjectDescription.trim().length === 0
+                                                    createStudentProjectState.pitchPublishCheck === PITCH_PUBLISH_FALSE_MISSING_FIELDS_IN_GENERAL_INFORMATION
+                                                    && createStudentProjectState.pitchProjectDescription.trim().length === 0
                                                 }
                                                 multiline
                                                 rowsMax={5}
@@ -3403,7 +3366,7 @@ class CreateProject extends Component {
                                                 onChange={this.onInputChanged}
                                             />
                                             <FormHelperText>
-                                                This will be circulated to investors in and outside region.
+                                                This will be circulated to members of your course.
                                             </FormHelperText>
                                         </FormControl>
                                     </FlexView>
@@ -3418,16 +3381,16 @@ class CreateProject extends Component {
                                             <FormLabel>How much do you want to raise?</FormLabel>
                                             <TextField
                                                 name="pitchRaiseRequired"
-                                                value={createProjectState.pitchRaiseRequired}
+                                                value={createStudentProjectState.pitchRaiseRequired}
                                                 fullWidth
                                                 variant="outlined"
                                                 onChange={this.onInputChanged}
                                                 error={
-                                                    (createProjectState.pitchPublishCheck === PITCH_PUBLISH_FALSE_MISSING_FIELDS_IN_GENERAL_INFORMATION
-                                                        && createProjectState.pitchRaiseRequired.trim().length === 0)
+                                                    (createStudentProjectState.pitchPublishCheck === PITCH_PUBLISH_FALSE_MISSING_FIELDS_IN_GENERAL_INFORMATION
+                                                        && createStudentProjectState.pitchRaiseRequired.trim().length === 0)
                                                     ||
-                                                    (createProjectState.pitchPublishCheck === PITCH_PUBLISH_FALSE_INVALID_FUND
-                                                        && !utils.getNumberFromInputString(createProjectState.pitchRaiseRequired)
+                                                    (createStudentProjectState.pitchPublishCheck === PITCH_PUBLISH_FALSE_INVALID_FUND
+                                                        && !utils.getNumberFromInputString(createStudentProjectState.pitchRaiseRequired)
                                                     )
                                                 }
                                                 InputProps={{
@@ -3441,71 +3404,8 @@ class CreateProject extends Component {
 
                                     {
                                         /**
-                                         * Raised money before?
-                                         */
-                                    }
-                                    <FlexView marginTop={60}>
-                                        <FormControl component="fieldset" required fullWidth
-                                            error={
-                                                createProjectState.pitchPublishCheck === PITCH_PUBLISH_FALSE_MISSING_FIELDS_IN_GENERAL_INFORMATION
-                                                && createProjectState.hasRaisedMoneyBefore.trim().length === 0
-                                            }>
-                                            <FormLabel> Have you already raised money?
-                                            </FormLabel>
-                                            <RadioGroup row name="hasRaisedMoneyBefore" value={createProjectState.hasRaisedMoneyBefore} onChange={this.onInputChanged}>
-                                                <FormControlLabel value={true.toString()} control={<Radio color="primary"/>} label="Yes" labelPlacement="start"/>
-                                                <FormControlLabel value={false.toString()} control={<Radio color="secondary"/>} label="No" labelPlacement="start"/>
-                                            </RadioGroup>
-                                        </FormControl>
-                                    </FlexView>
-
-                                    {
-                                        /**
                                          * If raised money before, ask how much has been raised?
                                          */
-                                    }
-                                    {
-                                        createProjectState.hasRaisedMoneyBefore !== "true"
-                                            ?
-                                            null
-                                            :
-                                            <FlexView column marginTop={30}>
-                                                <FlexView>
-                                                    <FormControl fullWidth required>
-                                                        <FormLabel>How much have you already raised?</FormLabel>
-                                                        <TextField
-                                                            name="pitchAmountRaisedToDate"
-                                                            value={createProjectState.pitchAmountRaisedToDate}
-                                                            fullWidth
-                                                            variant="outlined"
-                                                            required
-                                                            onChange={this.onInputChanged}
-                                                            error={
-                                                                (createProjectState.pitchPublishCheck === PITCH_PUBLISH_FALSE_MISSING_FIELDS_IN_GENERAL_INFORMATION
-                                                                    && createProjectState.hasRaisedMoneyBefore === "true"
-                                                                    && createProjectState.pitchAmountRaisedToDate.trim().length === 0)
-                                                                ||
-                                                                (createProjectState.pitchPublishCheck === PITCH_PUBLISH_FALSE_INVALID_FUND
-                                                                    && !utils.getNumberFromInputString(createProjectState.pitchAmountRaisedToDate)
-                                                                )
-                                                            }
-                                                            InputProps={{
-                                                                startAdornment: <InputAdornment
-                                                                    position="start">£</InputAdornment>
-                                                            }}
-                                                        />
-                                                        <FormHelperText>Please use commas as thousands-separators and do not use decimal numbers.</FormHelperText>
-                                                    </FormControl>
-                                                </FlexView>
-
-                                                <FlexView marginTop={30}>
-                                                    <FormControl fullWidth>
-                                                        <FormLabel>Earlier fundraising rounds details</FormLabel>
-                                                        <TextField multiline name="detailsAboutEarlierFundraisingRounds" value={createProjectState.detailsAboutEarlierFundraisingRounds} fullWidth variant="outlined" onChange={this.onInputChanged}/>
-                                                        <FormHelperText>Please provide any further details on your earlier fundraising rounds</FormHelperText>
-                                                    </FormControl>
-                                                </FlexView>
-                                            </FlexView>
                                     }
 
                                     {
@@ -3515,11 +3415,11 @@ class CreateProject extends Component {
                                     }
                                     <FlexView marginTop={45}>
                                         <FormControl required fullWidth>
-                                            <FormLabel>How are you raising? e.g. Do you have a crowdfunding page (please add a link)?</FormLabel>
-                                            <TextField name="howFundIsBeingRaised" value={createProjectState.howFundIsBeingRaised} fullWidth variant="outlined" onChange={this.onInputChanged} multiline rowsMax={3}
+                                            <FormLabel>Do you have a link to a live example of your project?</FormLabel>
+                                            <TextField name="howFundIsBeingRaised" value={createStudentProjectState.howFundIsBeingRaised} fullWidth variant="outlined" onChange={this.onInputChanged} multiline rowsMax={3}
                                                 error={
-                                                    createProjectState.pitchPublishCheck === PITCH_PUBLISH_FALSE_MISSING_FIELDS_IN_GENERAL_INFORMATION
-                                                    && createProjectState.howFundIsBeingRaised.trim().length === 0
+                                                    createStudentProjectState.pitchPublishCheck === PITCH_PUBLISH_FALSE_MISSING_FIELDS_IN_GENERAL_INFORMATION
+                                                    && createStudentProjectState.howFundIsBeingRaised.trim().length === 0
                                                 }
                                             />
                                         </FormControl>
@@ -3527,116 +3427,10 @@ class CreateProject extends Component {
 
                                     {
                                         /**
-                                         * Financial round
-                                         */
-                                    }
-                                    <FlexView marginTop={45}>
-                                        <FormControl required fullWidth
-                                            error={
-                                                createProjectState.pitchPublishCheck === PITCH_PUBLISH_FALSE_MISSING_FIELDS_IN_GENERAL_INFORMATION
-                                                && createProjectState.financialRound.trim().length === 0
-                                            }
-                                        >
-                                            <FormLabel style={{marginBottom: 16}}>What financial round are you looking for?</FormLabel>
-                                            <RadioGroup name="financialRound" value={createProjectState.financialRound} onChange={this.onInputChanged}>
-                                                {
-                                                    DB_CONST.FINANCIAL_ROUNDS.map(round =>
-                                                        <FormControlLabel key={round} value={round} control={<Radio/>} label={round}/>
-                                                    )
-                                                }
-                                            </RadioGroup>
-                                        </FormControl>
-                                    </FlexView>
-
-                                    {
-                                        /**
-                                         * Special news - QIB only
-                                         */
-                                    }
-                                    {
-                                        courseStudent === "qib"
-                                        || (
-                                            !courseStudent
-                                            && currentStudent.type === DB_CONST.TYPE_PROF
-                                            && currentStudent.superTeacher
-                                        )
-                                            ?
-                                            <FlexView marginTop={45}>
-                                                <FormControl required fullWidth>
-                                                    <FormLabel>What special news should Briony talk about when she mentions your investment raise at the QIB?</FormLabel>
-                                                    <TextField name="qibSpecialNews" value={createProjectState.qibSpecialNews} placeholder="This would be a good place to mention if you have already made progress in your funding round." fullWidth variant="outlined" onChange={this.onInputChanged} multiline rowsMax={3}
-                                                        error={
-                                                            courseStudent === "qib"
-                                                            && createProjectState.qibSpecialNews === PITCH_PUBLISH_FALSE_INVALID_FUND
-                                                            && createProjectState.qibSpecialNews.trim().length === 0
-                                                        }
-                                                    />
-                                                    <FormHelperText>QIB won't be able to mention everyone. So, you can make it REALLY exciting.</FormHelperText>
-                                                </FormControl>
-                                            </FlexView>
-                                            :
-                                            null
-                                    }
-
-                                    {
-                                        /**
                                          * Post money valuation
                                          */
                                     }
-                                    <FlexView marginTop={45}>
-                                        <FormControl fullWidth>
-                                            <FormLabel>Enter post money valuation</FormLabel>
-                                            <TextField name="pitchPostMoneyValuation" value={createProjectState.pitchPostMoneyValuation} fullWidth variant="outlined" onChange={this.onInputChanged}
-                                                error={
-                                                    createProjectState.pitchPublishCheck === PITCH_PUBLISH_FALSE_INVALID_FUND
-                                                    && createProjectState.pitchPostMoneyValuation.trim().length > 0
-                                                    && !utils.getNumberFromInputString(createProjectState.pitchPostMoneyValuation)
-                                                }
-                                                InputProps={{
-                                                    startAdornment:
-                                                        <InputAdornment position="start">£</InputAdornment>
-                                                }}/>
-                                            <FormHelperText>Please use commas as thousands-separators and do not use decimal numbers.
-                                            </FormHelperText>
-                                        </FormControl>
-                                    </FlexView>
 
-                                    <FlexView marginTop={60}>
-                                        <FormControl component="fieldset" required fullWidth
-                                            error={
-                                                createProjectState.pitchPublishCheck === PITCH_PUBLISH_FALSE_MISSING_FIELDS_IN_GENERAL_INFORMATION
-                                                && createProjectState.hasSEIS.trim().length === 0
-                                            }>
-                                            <FormLabel> Have you received SEIS advanced assurance from HMRC?
-                                            </FormLabel>
-                                            <RadioGroup name="hasSEIS" value={createProjectState.hasSEIS} onChange={this.onInputChanged}>
-                                                {
-                                                    DB_CONST.SEIS_BADGE.map(round =>
-                                                        <FormControlLabel key={round} value={round} control={<Radio/>} label={round}/>
-                                                    )
-                                                }
-                                            </RadioGroup>
-
-                                        </FormControl>
-                                    </FlexView>
-
-                                    <FlexView marginTop={60}>
-                                        <FormControl component="fieldset" required fullWidth
-                                            error={
-                                                createProjectState.pitchPublishCheck === PITCH_PUBLISH_FALSE_MISSING_FIELDS_IN_GENERAL_INFORMATION
-                                                && createProjectState.hasEIS.trim().length === 0
-                                            }>
-                                            <FormLabel> Have you received EIS advanced assurance from HMRC?
-                                            </FormLabel>
-                                            <RadioGroup name="hasEIS" value={createProjectState.hasEIS} onChange={this.onInputChanged}>
-                                                {
-                                                    DB_CONST.EIS_BADGE.map(round =>
-                                                        <FormControlLabel key={round} value={round} control={<Radio/>} label={round}/>
-                                                    )
-                                                }
-                                            </RadioGroup>
-                                        </FormControl>
-                                    </FlexView>
                                 </FlexView>
 
                                 
@@ -3645,7 +3439,7 @@ class CreateProject extends Component {
                             </Col>
                             :
                             (
-                                createProjectState.activeStep === STEP_PITCH_COVER
+                                createStudentProjectState.activeStep === STEP_PITCH_COVER
                                     ?
                                     // Pitch cover
                                     <Col xs={12} sm={12} md={{span: 10, offset: 1}} lg={{span: 6, offset: 3}} style={{marginTop: 30}}>
@@ -3656,11 +3450,11 @@ class CreateProject extends Component {
                                             </FlexView>
 
                                             {
-                                                !params.edit || !projectEdited
+                                                !params.edit || !studentProjectEdited
                                                     ?
                                                     null
                                                     :
-                                                    !projectEdited.Pitch.hasOwnProperty('cover')
+                                                    !studentProjectEdited.Pitch.hasOwnProperty('cover')
                                                         ?
                                                         null
                                                         :
@@ -3668,7 +3462,7 @@ class CreateProject extends Component {
                                                             <Typography variant="body1" color="textSecondary" align="left" style={{marginBottom: 20}}>Your current pitch cover</Typography>
 
                                                             {
-                                                                projectEdited.Pitch.cover.map((coverItem, index) => (
+                                                                studentProjectEdited.Pitch.cover.map((coverItem, index) => (
                                                                     coverItem.hasOwnProperty('removed')
                                                                         ?
                                                                         null
@@ -3686,11 +3480,11 @@ class CreateProject extends Component {
 
                                             <Typography variant="subtitle1" color="textSecondary" align="left" style={{marginTop: 18}}>
                                                 {
-                                                    !params.edit || !projectEdited
+                                                    !params.edit || !studentProjectEdited
                                                         ?
                                                         "You need to upload an image or a video for the cover of your pitch."
                                                         :
-                                                        projectEdited.status === DB_CONST.PROJECT_STATUS_DRAFT && !projectEdited.Pitch.hasOwnProperty('cover')
+                                                        studentProjectEdited.status === DB_CONST.PROJECT_STATUS_DRAFT && !studentProjectEdited.Pitch.hasOwnProperty('cover')
                                                             ?
                                                             "You need to upload an image or a video for the cover of your pitch."
                                                             :
@@ -3710,8 +3504,8 @@ class CreateProject extends Component {
                                                 <FlexView>
                                                     <Button
                                                         variant={
-                                                            createProjectState.pitchCoverTypeSelected
-                                                            && createProjectState.pitchCoverTypeSelected === PITCH_COVER_FILE_TYPE_SELECTED
+                                                            createStudentProjectState.pitchCoverTypeSelected
+                                                            && createStudentProjectState.pitchCoverTypeSelected === PITCH_COVER_FILE_TYPE_SELECTED
                                                                 ?
                                                                 "contained"
                                                                 :
@@ -3724,15 +3518,15 @@ class CreateProject extends Component {
                                                         {
                                                             clubAttributes && clubAttributes.allowVideoUpload
                                                                 ?
-                                                                createProjectState.pitchCoverTypeSelected
-                                                                && createProjectState.pitchCoverTypeSelected === PITCH_COVER_FILE_TYPE_SELECTED
+                                                                createStudentProjectState.pitchCoverTypeSelected
+                                                                && createStudentProjectState.pitchCoverTypeSelected === PITCH_COVER_FILE_TYPE_SELECTED
                                                                     ?
                                                                     "Cancel upload an image or a video"
                                                                     :
                                                                     "Upload an image or a video"
                                                                 :
-                                                                createProjectState.pitchCoverTypeSelected
-                                                                && createProjectState.pitchCoverTypeSelected === PITCH_COVER_FILE_TYPE_SELECTED
+                                                                createStudentProjectState.pitchCoverTypeSelected
+                                                                && createStudentProjectState.pitchCoverTypeSelected === PITCH_COVER_FILE_TYPE_SELECTED
                                                                     ?
                                                                     "Cancel upload an image"
                                                                     :
@@ -3743,8 +3537,8 @@ class CreateProject extends Component {
                                                     <FlexView marginLeft={20} vAlignContent="center">
                                                         <Button
                                                             variant={
-                                                                createProjectState.pitchCoverTypeSelected
-                                                                && createProjectState.pitchCoverTypeSelected === PITCH_COVER_VIDEO_URL_TYPE_SELECTED
+                                                                createStudentProjectState.pitchCoverTypeSelected
+                                                                && createStudentProjectState.pitchCoverTypeSelected === PITCH_COVER_VIDEO_URL_TYPE_SELECTED
                                                                     ?
                                                                     "contained"
                                                                     :
@@ -3757,8 +3551,8 @@ class CreateProject extends Component {
                                                             }
                                                             style={{marginRight: 15}}>
                                                             {
-                                                                createProjectState.pitchCoverTypeSelected
-                                                                && createProjectState.pitchCoverTypeSelected === PITCH_COVER_VIDEO_URL_TYPE_SELECTED
+                                                                createStudentProjectState.pitchCoverTypeSelected
+                                                                && createStudentProjectState.pitchCoverTypeSelected === PITCH_COVER_VIDEO_URL_TYPE_SELECTED
                                                                     ?
                                                                     "Cancel upload a video URL"
                                                                     :
@@ -3771,11 +3565,11 @@ class CreateProject extends Component {
 
                                                 <FlexView column marginTop={20}>
                                                     {
-                                                        !createProjectState.pitchCoverTypeSelected
+                                                        !createStudentProjectState.pitchCoverTypeSelected
                                                             ?
                                                             null
                                                             :
-                                                            createProjectState.pitchCoverTypeSelected === PITCH_COVER_FILE_TYPE_SELECTED
+                                                            createStudentProjectState.pitchCoverTypeSelected === PITCH_COVER_FILE_TYPE_SELECTED
                                                                 ?
                                                                 <FlexView column marginTop={10}>
                                                                     <Files className={css(styles.file_drop_zone)} onChange={this.onFilesChanged(PITCH_COVER_FILES_CHANGED)} onError={this.onFilesError}
@@ -3804,22 +3598,22 @@ class CreateProject extends Component {
                                                                 </FlexView>
                                                                 :
                                                                 <FlexView column>
-                                                                    <TextField name="pitchCoverVideoURL" value={createProjectState.pitchCoverVideoURL} placeholder="Enter your video URL here" variant="outlined" margin="dense" onChange={this.onInputChanged}/>
+                                                                    <TextField name="pitchCoverVideoURL" value={createStudentProjectState.pitchCoverVideoURL} placeholder="Enter your video URL here" variant="outlined" margin="dense" onChange={this.onInputChanged}/>
                                                                 </FlexView>
                                                     }
 
                                                     {/** Pitch cover file type preview */}
                                                     {
-                                                        createProjectState.pitchCoverTypeSelected === PITCH_COVER_FILE_TYPE_SELECTED
-                                                        && createProjectState.pitchCover.length > 0
+                                                        createStudentProjectState.pitchCoverTypeSelected === PITCH_COVER_FILE_TYPE_SELECTED
+                                                        && createStudentProjectState.pitchCover.length > 0
                                                             ?
                                                             <FlexView column marginTop={35}>
                                                                 {
-                                                                    createProjectState.pitchCover[0].file.type !== "video/mp4"
+                                                                    createStudentProjectState.pitchCover[0].file.type !== "video/mp4"
                                                                         ?
-                                                                        <Image fluid src={createProjectState.pitchCover[0].preview}/>
+                                                                        <Image fluid src={createStudentProjectState.pitchCover[0].preview}/>
                                                                         :
-                                                                        <ReactPlayer url={createProjectState.pitchCover[0].preview} playsInline width="100%" height="auto" playing={false} controls={true}/>
+                                                                        <ReactPlayer url={createStudentProjectState.pitchCover[0].preview} playsInline width="100%" height="auto" playing={false} controls={true}/>
                                                                 }
                                                                 <FlexView marginTop={10} hAlignContent="center">
                                                                     <OverlayTrigger trigger={['hover', 'focus']} placement="bottom" flip
@@ -3839,11 +3633,11 @@ class CreateProject extends Component {
 
                                                     {/** Pitch cover video URL preview */}
                                                     {
-                                                        createProjectState.pitchCoverTypeSelected === PITCH_COVER_VIDEO_URL_TYPE_SELECTED
-                                                        && createProjectState.pitchCoverVideoURL.trim().length > 0
+                                                        createStudentProjectState.pitchCoverTypeSelected === PITCH_COVER_VIDEO_URL_TYPE_SELECTED
+                                                        && createStudentProjectState.pitchCoverVideoURL.trim().length > 0
                                                             ?
                                                             <FlexView column marginTop={35} height={280}>
-                                                                <ReactPlayer url={createProjectState.pitchCoverVideoURL} playsInline width="100%" height="100%" playing={false} controls={true}/>
+                                                                <ReactPlayer url={createStudentProjectState.pitchCoverVideoURL} playsInline width="100%" height="100%" playing={false} controls={true}/>
                                                             </FlexView>
                                                             :
                                                             null
@@ -3854,7 +3648,7 @@ class CreateProject extends Component {
                                     </Col>
                                     :
                                     (
-                                        createProjectState.activeStep === STEP_PITCH_DECK
+                                        createStudentProjectState.activeStep === STEP_PITCH_DECK
                                             ?
                                             // Pitch deck (other courses)
                                             // One-pager (for QIB only)
@@ -3868,18 +3662,18 @@ class CreateProject extends Component {
 
                                                             {/** Display the current one-pager if there is one */}
                                                             {
-                                                                !params.edit || !projectEdited
+                                                                !params.edit || !studentProjectEdited
                                                                     ?
                                                                     null
                                                                     :
                                                                     (
-                                                                        utils.isDraftProject(projectEdited)
+                                                                        utils.isDraftProject(studentProjectEdited)
                                                                         && (
-                                                                            !projectEdited.Pitch.presentationDocument
+                                                                            !studentProjectEdited.Pitch.presentationDocument
                                                                             ||
                                                                             (
-                                                                                projectEdited.Pitch.presentationDocument
-                                                                                && projectEdited.Pitch.presentationDocument
+                                                                                studentProjectEdited.Pitch.presentationDocument
+                                                                                && studentProjectEdited.Pitch.presentationDocument
                                                                                     .filter(document => !document.hasOwnProperty('removed')).length === 0
                                                                             )
                                                                         )
@@ -3889,8 +3683,8 @@ class CreateProject extends Component {
                                                                             <FlexView column marginTop={25} marginBottom={25}>
                                                                                 <Typography variant="body1" color="textSecondary" align="left">
                                                                                     {
-                                                                                        projectEdited.Pitch.presentationDocument
-                                                                                        && projectEdited.Pitch.presentationDocument
+                                                                                        studentProjectEdited.Pitch.presentationDocument
+                                                                                        && studentProjectEdited.Pitch.presentationDocument
                                                                                             .filter(document => !document.hasOwnProperty('removed')).length > 0
                                                                                             ?
                                                                                             "Your current one-pager"
@@ -3898,7 +3692,7 @@ class CreateProject extends Component {
                                                                                             "You haven't submitted your one-pager."
                                                                                     }
                                                                                 </Typography>
-                                                                                <DocumentsDownload documents={projectEdited.Pitch.presentationDocument}/>
+                                                                                <DocumentsDownload documents={studentProjectEdited.Pitch.presentationDocument}/>
 
                                                                                 <Divider style={{marginTop: 20}}/>
                                                                             </FlexView>
@@ -3921,7 +3715,7 @@ class CreateProject extends Component {
                                                                     only.
                                                                 </Typography>
 
-                                                                <UploadDocuments documents={createProjectState.pitchPresentationDocument} onDeleteDocument={this.onDeleteDocument(PITCH_PRESENTATION_FILES_CHANGED)}/>
+                                                                <UploadDocuments documents={createStudentProjectState.pitchPresentationDocument} onDeleteDocument={this.onDeleteDocument(PITCH_PRESENTATION_FILES_CHANGED)}/>
                                                             </FlexView>
 
                                                             {/** Explanation text */}
@@ -3948,18 +3742,18 @@ class CreateProject extends Component {
 
                                                             {/** Display the current pitch deck if there is one */}
                                                             {
-                                                                !params.edit || !projectEdited
+                                                                !params.edit || !studentProjectEdited
                                                                     ?
                                                                     null
                                                                     :
                                                                     (
-                                                                        utils.isDraftProject(projectEdited)
+                                                                        utils.isDraftProject(studentProjectEdited)
                                                                         && (
-                                                                            !projectEdited.Pitch.presentationDocument
+                                                                            !studentProjectEdited.Pitch.presentationDocument
                                                                             ||
                                                                             (
-                                                                                projectEdited.Pitch.presentationDocument
-                                                                                && projectEdited.Pitch.presentationDocument
+                                                                                studentProjectEdited.Pitch.presentationDocument
+                                                                                && studentProjectEdited.Pitch.presentationDocument
                                                                                     .filter(document => !document.hasOwnProperty('removed')).length === 0
                                                                             )
                                                                         )
@@ -3969,8 +3763,8 @@ class CreateProject extends Component {
                                                                             <FlexView column marginTop={25} marginBottom={25}>
                                                                                 <Typography variant="body1" color="textSecondary" align="left">
                                                                                     {
-                                                                                        projectEdited.Pitch.presentationDocument
-                                                                                        && projectEdited.Pitch.presentationDocument
+                                                                                        studentProjectEdited.Pitch.presentationDocument
+                                                                                        && studentProjectEdited.Pitch.presentationDocument
                                                                                             .filter(document => !document.hasOwnProperty('removed')).length > 0
                                                                                             ?
                                                                                             "Your current pitch deck"
@@ -3978,7 +3772,7 @@ class CreateProject extends Component {
                                                                                             "You have no pitch deck."
                                                                                     }
                                                                                 </Typography>
-                                                                                <DocumentsDownload documents={projectEdited.Pitch.presentationDocument}/>
+                                                                                <DocumentsDownload documents={studentProjectEdited.Pitch.presentationDocument}/>
 
                                                                                 <Divider style={{marginTop: 20}}/>
                                                                             </FlexView>
@@ -3988,18 +3782,18 @@ class CreateProject extends Component {
                                                             {/** Explanation text */}
                                                             <Typography variant="subtitle1" color="textSecondary" align="left" style={{marginTop: 8}}>
                                                                 {
-                                                                    !params.edit || !projectEdited
+                                                                    !params.edit || !studentProjectEdited
                                                                         ?
                                                                         "You need to either upload your pitch deck (PDF, Word, or Power Point file) or use our provided text editor to create your own presentation."
                                                                         :
-                                                                        projectEdited.status === DB_CONST.PROJECT_STATUS_DRAFT
+                                                                        studentProjectEdited.status === DB_CONST.PROJECT_STATUS_DRAFT
                                                                         &&
                                                                         (
-                                                                            !projectEdited.Pitch.presentationDocument
+                                                                            !studentProjectEdited.Pitch.presentationDocument
                                                                             ||
                                                                             (
-                                                                                projectEdited.Pitch.presentationDocument
-                                                                                && projectEdited.Pitch.presentationDocument.filter(document => !document.hasOwnProperty('removed')).length === 0
+                                                                                studentProjectEdited.Pitch.presentationDocument
+                                                                                && studentProjectEdited.Pitch.presentationDocument.filter(document => !document.hasOwnProperty('removed')).length === 0
                                                                             )
                                                                         )
                                                                             ?
@@ -4035,7 +3829,7 @@ class CreateProject extends Component {
                                                                 </Typography>
 
                                                                 <UploadDocuments
-                                                                    documents={createProjectState.pitchPresentationDocument}
+                                                                    documents={createStudentProjectState.pitchPresentationDocument}
                                                                     onDeleteDocument={this.onDeleteDocument(PITCH_PRESENTATION_FILES_CHANGED)}
                                                                 />
                                                             </FlexView>
@@ -4046,11 +3840,11 @@ class CreateProject extends Component {
                                                                 <ReactQuill
                                                                     theme="snow"
                                                                     placeholder={
-                                                                        !params.edit || !projectEdited
+                                                                        !params.edit || !studentProjectEdited
                                                                             ?
                                                                             "Write your pitch presentation here. Add images for visual effects."
                                                                             :
-                                                                            projectEdited.status === DB_CONST.PROJECT_STATUS_DRAFT && !projectEdited.Pitch.hasOwnProperty('presentationText')
+                                                                            studentProjectEdited.status === DB_CONST.PROJECT_STATUS_DRAFT && !studentProjectEdited.Pitch.hasOwnProperty('presentationText')
                                                                                 ?
                                                                                 "Write your pitch presentation here. Add images for visual effects."
                                                                                 :
@@ -4059,7 +3853,7 @@ class CreateProject extends Component {
                                                                     }
                                                                     onChange={this.onPitchEditorChanged}
                                                                     modules={modules}
-                                                                    value={createProjectState.pitchPresentationText}
+                                                                    value={createStudentProjectState.pitchPresentationText}
                                                                 />
                                                             </FlexView>
                                                         </FlexView>
@@ -4067,7 +3861,7 @@ class CreateProject extends Component {
                                             </Col>
                                             :
                                             (
-                                                createProjectState.activeStep === STEP_PITCH_SUPPORTING_DOCUMENTS
+                                                createStudentProjectState.activeStep === STEP_PITCH_SUPPORTING_DOCUMENTS
                                                     ?
                                                     // Supporting documents (other courses)
                                                     // Pitch deck (for QIB only)
@@ -4081,18 +3875,18 @@ class CreateProject extends Component {
 
                                                                     {/** Display current pitch deck if there is */}
                                                                     {
-                                                                        !params.edit || !projectEdited
+                                                                        !params.edit || !studentProjectEdited
                                                                             ?
                                                                             null
                                                                             :
-                                                                            utils.isDraftProject(projectEdited)
+                                                                            utils.isDraftProject(studentProjectEdited)
                                                                             &&
                                                                             (
-                                                                                !projectEdited.Pitch.supportingDocuments
+                                                                                !studentProjectEdited.Pitch.supportingDocuments
                                                                                 ||
                                                                                 (
-                                                                                    projectEdited.Pitch.supportingDocuments
-                                                                                    && projectEdited.Pitch.supportingDocuments
+                                                                                    studentProjectEdited.Pitch.supportingDocuments
+                                                                                    && studentProjectEdited.Pitch.supportingDocuments
                                                                                         .filter(document => !document.hasOwnProperty('removed')).length === 0
                                                                                 )
                                                                             )
@@ -4101,13 +3895,13 @@ class CreateProject extends Component {
                                                                                 :
                                                                                 <FlexView column marginTop={25} marginBottom={25}>
                                                                                     {
-                                                                                        projectEdited.Pitch.supportingDocuments
-                                                                                        && projectEdited.Pitch.supportingDocuments
+                                                                                        studentProjectEdited.Pitch.supportingDocuments
+                                                                                        && studentProjectEdited.Pitch.supportingDocuments
                                                                                             .filter(document => !document.hasOwnProperty('removed')).length > 0
                                                                                             ?
                                                                                             <FlexView column>
                                                                                                 <Typography variant="body1" color="textSecondary" align="left">Your current pitch deck</Typography>
-                                                                                                <DocumentsDownload documents={projectEdited.Pitch.supportingDocuments} deleteEnable onDeleteDocument={this.onDownloadDocumentDeleteClick}/>
+                                                                                                <DocumentsDownload documents={studentProjectEdited.Pitch.supportingDocuments} deleteEnable onDeleteDocument={this.onDownloadDocumentDeleteClick}/>
                                                                                             </FlexView>
                                                                                             :
                                                                                             <Typography variant="body1" color="textSecondary" align="left">You have no pitch deck.</Typography>
@@ -4139,7 +3933,7 @@ class CreateProject extends Component {
                                                                             and .xlsx are accepted only.
                                                                         </Typography>
 
-                                                                        <UploadDocuments documents={createProjectState.pitchSupportingDocuments} onDeleteDocument={this.onDeleteDocument(PITCH_SUPPORTING_DOCUMENTS_FILES_CHANGED)}/>
+                                                                        <UploadDocuments documents={createStudentProjectState.pitchSupportingDocuments} onDeleteDocument={this.onDeleteDocument(PITCH_SUPPORTING_DOCUMENTS_FILES_CHANGED)}/>
                                                                     </FlexView>
 
                                                                     {/** Divider */}
@@ -4151,18 +3945,18 @@ class CreateProject extends Component {
 
                                                                     {/** Display current supporting documents if there are */}
                                                                     {
-                                                                        !params.edit || !projectEdited
+                                                                        !params.edit || !studentProjectEdited
                                                                             ?
                                                                             null
                                                                             :
-                                                                            utils.isDraftProject(projectEdited)
+                                                                            utils.isDraftProject(studentProjectEdited)
                                                                             &&
                                                                             (
-                                                                                !projectEdited.Pitch.supportingDocuments
+                                                                                !studentProjectEdited.Pitch.supportingDocuments
                                                                                 ||
                                                                                 (
-                                                                                    projectEdited.Pitch.supportingDocuments
-                                                                                    && projectEdited.Pitch.supportingDocuments
+                                                                                    studentProjectEdited.Pitch.supportingDocuments
+                                                                                    && studentProjectEdited.Pitch.supportingDocuments
                                                                                         .filter(document => !document.hasOwnProperty('removed')).length === 0
                                                                                 )
                                                                             )
@@ -4171,13 +3965,13 @@ class CreateProject extends Component {
                                                                                 :
                                                                                 <FlexView column marginTop={25} marginBottom={25}>
                                                                                     {
-                                                                                        projectEdited.Pitch.supportingDocuments
-                                                                                        && projectEdited.Pitch.supportingDocuments
+                                                                                        studentProjectEdited.Pitch.supportingDocuments
+                                                                                        && studentProjectEdited.Pitch.supportingDocuments
                                                                                             .filter(document => !document.hasOwnProperty('removed')).length > 0
                                                                                             ?
                                                                                             <FlexView column>
                                                                                                 <Typography variant="body1" color="textSecondary" align="left">Your supporting documents</Typography>
-                                                                                                <DocumentsDownload documents={projectEdited.Pitch.supportingDocuments} deleteEnable onDeleteDocument={this.onDownloadDocumentDeleteClick}/>
+                                                                                                <DocumentsDownload documents={studentProjectEdited.Pitch.supportingDocuments} deleteEnable onDeleteDocument={this.onDownloadDocumentDeleteClick}/>
                                                                                             </FlexView>
                                                                                             :
                                                                                             <Typography variant="body1" color="textSecondary" align="left">You have no supporting documents.</Typography>
@@ -4190,17 +3984,17 @@ class CreateProject extends Component {
                                                                     {/** Explanation text */}
                                                                     <Typography variant="body1" color="textSecondary" align="left" style={{marginTop: 8}}>
                                                                         {
-                                                                            !params.edit || !projectEdited
+                                                                            !params.edit || !studentProjectEdited
                                                                                 ?
                                                                                 `You can upload supporting documents to help strengthen your pitch. You can upload up to ${DB_CONST.MAX_FILES_FOR_PITCH_SUPPORTING_DOCUMENTS} files.`
                                                                                 :
                                                                                 (
-                                                                                    !projectEdited.Pitch.supportingDocuments
+                                                                                    !studentProjectEdited.Pitch.supportingDocuments
                                                                                         ?
                                                                                         `You can upload supporting documents to help strengthen your pitch. You can upload up to ${DB_CONST.MAX_FILES_FOR_PITCH_SUPPORTING_DOCUMENTS} files.`
                                                                                         :
                                                                                         `Upload new supporting documents. 
-                                                                        You can still upload ${DB_CONST.MAX_FILES_FOR_PITCH_SUPPORTING_DOCUMENTS - projectEdited.Pitch.supportingDocuments.filter(document => !document.hasOwnProperty('removed')).length} 
+                                                                        You can still upload ${DB_CONST.MAX_FILES_FOR_PITCH_SUPPORTING_DOCUMENTS - studentProjectEdited.Pitch.supportingDocuments.filter(document => !document.hasOwnProperty('removed')).length} 
                                                                         more documents.`
                                                                                 )
                                                                         }
@@ -4229,7 +4023,7 @@ class CreateProject extends Component {
                                                                             and .xlsx are accepted only.
                                                                         </Typography>
 
-                                                                        <UploadDocuments documents={createProjectState.pitchSupportingDocuments} onDeleteDocument={this.onDeleteDocument(PITCH_SUPPORTING_DOCUMENTS_FILES_CHANGED)}/>
+                                                                        <UploadDocuments documents={createStudentProjectState.pitchSupportingDocuments} onDeleteDocument={this.onDeleteDocument(PITCH_SUPPORTING_DOCUMENTS_FILES_CHANGED)}/>
                                                                     </FlexView>
 
                                                                     {/** Divider */}
@@ -4250,7 +4044,7 @@ class CreateProject extends Component {
                                                             <FormControl component="fieldset" style={{marginTop: 30}}>
                                                                 <FormControlLabel
                                                                     control={
-                                                                        <Checkbox color="primary" name="agreedToShareRaisePublicly" value={createProjectState.agreedToShareRaisePublicly} checked={createProjectState.agreedToShareRaisePublicly} onChange={this.onCheckboxChanged}/>
+                                                                        <Checkbox color="primary" name="agreedToShareRaisePublicly" value={createStudentProjectState.agreedToShareRaisePublicly} checked={createStudentProjectState.agreedToShareRaisePublicly} onChange={this.onCheckboxChanged}/>
                                                                     }
                                                                     label={
                                                                         <Typography variant="body1" align="left">If you're happy to share news of your raise publicly e.g. via Twitter, please tick this box.</Typography>
@@ -4268,7 +4062,7 @@ class CreateProject extends Component {
                                                             <FormControl component="fieldset">
                                                                 <FormControlLabel
                                                                     control={
-                                                                        <Checkbox color="primary" name="agreedToReceiveLocalInvestmentInfo" value={createProjectState.agreedToReceiveLocalInvestmentInfo} checked={createProjectState.agreedToReceiveLocalInvestmentInfo} onChange={this.onCheckboxChanged}/>
+                                                                        <Checkbox color="primary" name="agreedToReceiveLocalInvestmentInfo" value={createStudentProjectState.agreedToReceiveLocalInvestmentInfo} checked={createStudentProjectState.agreedToReceiveLocalInvestmentInfo} onChange={this.onCheckboxChanged}/>
                                                                     }
                                                                     label={
                                                                         <Typography variant="body1" align="left">If you're happy to receive information about the local investment ecosystem (max 8 times a year), please tick this box.</Typography>
@@ -4290,7 +4084,7 @@ class CreateProject extends Component {
                                                                     a pitch in our platform.</Typography>
                                                                 <FormControlLabel style={{marginTop: 10}}
                                                                     control={
-                                                                        <Checkbox color="primary" name="acceptedTermsAndConditions" value={createProjectState.acceptedTermsAndConditions} checked={createProjectState.acceptedTermsAndConditions} onChange={this.onCheckboxChanged}/>
+                                                                        <Checkbox color="primary" name="acceptedTermsAndConditions" value={createStudentProjectState.acceptedTermsAndConditions} checked={createStudentProjectState.acceptedTermsAndConditions} onChange={this.onCheckboxChanged}/>
                                                                     }
                                                                     label={
                                                                         <Typography variant="body1" align="left">I've read and accept the
@@ -4331,15 +4125,15 @@ class CreateProject extends Component {
                     <Col xs={12} sm={12} md={{span: 10, offset: 1}} lg={{span: 6, offset: 3}} style={{marginTop: 20, marginBottom: 120, padding: 18}}>
 
                         {
-                            params.edit && projectEdited
+                            params.edit && studentProjectEdited
                                 ?
                                 (
-                                    projectEdited.status === DB_CONST.PROJECT_STATUS_DRAFT
+                                    studentProjectEdited.status === DB_CONST.PROJECT_STATUS_DRAFT
                                         ?
-                                        createProjectState.activeStep === STEP_ACCEPT_TERMS_AND_CONDITIONS
+                                        createStudentProjectState.activeStep === STEP_ACCEPT_TERMS_AND_CONDITIONS
                                             ?
                                             (
-                                                !createProjectState.acceptedTermsAndConditions
+                                                !createStudentProjectState.acceptedTermsAndConditions
                                                     ?
                                                     null
                                                     :
@@ -4348,7 +4142,7 @@ class CreateProject extends Component {
                                             :
                                             null
                                         :
-                                        createProjectState.activeStep === STEP_PITCH_SUPPORTING_DOCUMENTS
+                                        createStudentProjectState.activeStep === STEP_PITCH_SUPPORTING_DOCUMENTS
                                             ?
                                             <Typography color="error" variant="body1" align="right" style={{marginBottom: 25}}>Please check everything carefully again before publishing.</Typography>
                                             :
@@ -4356,10 +4150,10 @@ class CreateProject extends Component {
                                 )
                                 :
                                 (
-                                    createProjectState.activeStep === STEP_ACCEPT_TERMS_AND_CONDITIONS
+                                    createStudentProjectState.activeStep === STEP_ACCEPT_TERMS_AND_CONDITIONS
                                         ?
                                         (
-                                            !createProjectState.acceptedTermsAndConditions
+                                            !createStudentProjectState.acceptedTermsAndConditions
                                                 ?
                                                 null
                                                 :
@@ -4371,11 +4165,11 @@ class CreateProject extends Component {
                         }
 
                         <FlexView width="100%" hAlignContent="right">
-                            <Button variant="text" onClick={this.onBackClick} disabled={createProjectState.activeStep === STEP_PITCH_GENERAL_INFORMATION} size="large" className={css(sharedStyles.no_text_transform)}>Back</Button>
+                            <Button variant="text" onClick={this.onBackClick} disabled={createStudentProjectState.activeStep === STEP_PITCH_GENERAL_INFORMATION} size="large" className={css(sharedStyles.no_text_transform)}>Back</Button>
                             <Button ref={this.attachNextStepButtonRef} variant="outlined" color="primary" onClick={this.onNextStepClick} size="large" className={css(sharedStyles.no_text_transform)}
                                 disabled={
-                                    createProjectState.activeStep === STEP_ACCEPT_TERMS_AND_CONDITIONS
-                                    && !createProjectState.acceptedTermsAndConditions
+                                    createStudentProjectState.activeStep === STEP_ACCEPT_TERMS_AND_CONDITIONS
+                                    && !createStudentProjectState.acceptedTermsAndConditions
                                 }
                                 style={{marginLeft: 15}}>
                                 {
@@ -4383,18 +4177,18 @@ class CreateProject extends Component {
                                         ?
                                         <BeatLoader size={8}/>
                                         :
-                                        params.edit && projectEdited
+                                        params.edit && studentProjectEdited
                                             ?
                                             (
-                                                projectEdited.status !== DB_CONST.PROJECT_STATUS_DRAFT
+                                                studentProjectEdited.status !== DB_CONST.PROJECT_STATUS_DRAFT
                                                     ?
-                                                    createProjectState.activeStep === STEP_PITCH_SUPPORTING_DOCUMENTS
+                                                    createStudentProjectState.activeStep === STEP_PITCH_SUPPORTING_DOCUMENTS
                                                         ?
                                                         "Update"
                                                         :
                                                         "Next"
                                                     :
-                                                    createProjectState.activeStep === STEP_ACCEPT_TERMS_AND_CONDITIONS
+                                                    createStudentProjectState.activeStep === STEP_ACCEPT_TERMS_AND_CONDITIONS
                                                         ?
                                                         "Submit"
                                                         :
@@ -4402,7 +4196,7 @@ class CreateProject extends Component {
                                             )
                                             :
                                             (
-                                                createProjectState.activeStep === STEP_ACCEPT_TERMS_AND_CONDITIONS
+                                                createStudentProjectState.activeStep === STEP_ACCEPT_TERMS_AND_CONDITIONS
                                                     ?
                                                     "Submit"
                                                     :
@@ -4410,7 +4204,7 @@ class CreateProject extends Component {
                                             )
                                 }
                             </Button>
-                            <Overlay show={createProjectState.pitchPublishErrorMessageShowed} target={createProjectState.pitchNextStepButtonTarget} placement="bottom">
+                            <Overlay show={createStudentProjectState.pitchPublishErrorMessageShowed} target={createStudentProjectState.pitchNextStepButtonTarget} placement="bottom">
                                 <Popover style={{marginTop: 14}} id="publish-popover-bottom">
                                     <FlexView vAlignContent="center">
                                         {
@@ -4428,8 +4222,8 @@ class CreateProject extends Component {
                 </Row>
 
                 {
-                    (!params.edit || !projectEdited)
-                    || (params.edit && projectEdited && projectEdited.status === DB_CONST.PROJECT_STATUS_DRAFT)
+                    (!params.edit || !studentProjectEdited)
+                    || (params.edit && studentProjectEdited && studentProjectEdited.status === DB_CONST.PROJECT_STATUS_DRAFT)
                         ?
                         <div
                             style={{position: 'fixed', width: 'auto', height: 'auto', bottom: 0, right: 0, marginRight: isMobile ? 72 : 120, marginBottom: isMobile ? 80 : 100}}>
@@ -4453,7 +4247,7 @@ class CreateProject extends Component {
                                 </div>
 
                                 {
-                                    params.edit && projectEdited && projectEdited.status === DB_CONST.PROJECT_STATUS_DRAFT
+                                    params.edit && studentProjectEdited && studentProjectEdited.status === DB_CONST.PROJECT_STATUS_DRAFT
                                         ?
                                         <div style={{marginTop: isMobile ? 62 : 72}}>
                                             <OverlayTrigger trigger={['hover', 'focus']} placement="left" flip
@@ -4516,8 +4310,8 @@ class UploadingDialog extends Component {
             progressBeingSaved,
 
             params,
-            projectEdited, // pass in if in edit mode
-            projectID,
+            studentProjectEdited, // pass in if in edit mode
+            studentProjectID,
             currentStudent,
 
             ...other
@@ -4572,18 +4366,18 @@ class UploadingDialog extends Component {
                                     to={
                                         courseStudent
                                             ?
-                                            ROUTES.PROJECT_DETAILS.replace(":courseStudent", courseStudent).replace(":projectID", projectID)
+                                            ROUTES.PROJECT_DETAILS.replace(":courseStudent", courseStudent).replace(":studentProjectID", studentProjectID)
                                             :
-                                            ROUTES.PROJECT_DETAILS_INVEST_WEST_SUPER.replace(":projectID", projectID)
+                                            ROUTES.PROJECT_DETAILS_INVEST_WEST_SUPER.replace(":studentProjectID", studentProjectID)
                                     }
                                     className={css(sharedStyles.nav_link_hover)}
                                     style={{ width: "100%", marginRight: 10}}>
                                     <Button variant="outlined" color="primary" size="medium" fullWidth className={css(sharedStyles.no_text_transform)}>
                                         {
-                                            params.edit && projectEdited
+                                            params.edit && studentProjectEdited
                                                 ?
                                                 (
-                                                    projectEdited.status === DB_CONST.PROJECT_STATUS_DRAFT
+                                                    studentProjectEdited.status === DB_CONST.PROJECT_STATUS_DRAFT
                                                         ?
                                                         "View submitted offer"
                                                         :
@@ -4631,7 +4425,7 @@ class UploadingDialog extends Component {
             courseStudent,
             uploadFileMode,
             params,
-            projectEdited,
+            studentProjectEdited,
             currentStudent
         } = this.props;
 
@@ -4654,8 +4448,8 @@ class UploadingDialog extends Component {
                     <Typography variant="body2" color="textSecondary" align="left">Finalizing</Typography>
                 );
             case UPLOAD_DONE_MODE: {
-                if (params.edit && projectEdited) {
-                    if (projectEdited.status !== DB_CONST.PROJECT_STATUS_DRAFT) {
+                if (params.edit && studentProjectEdited) {
+                    if (studentProjectEdited.status !== DB_CONST.PROJECT_STATUS_DRAFT) {
                         return <Typography variant="body1" color="textSecondary" align="left">Your offer has been successfully updated.</Typography>;
                     } else if (currentStudent.type === DB_CONST.TYPE_PROF) {
                         return <Typography variant="body1" color="textSecondary" align="left">

@@ -4,37 +4,37 @@ import * as realtimeDBUtils from "../../firebase/realtimeDBUtils";
 import * as myUtils from "../../utils/utils";
 import * as feedbackSnackbarActions from "./feedbackSnackbarActions";
 
-export const GROUP_ADMIN_SETTINGS_INITIALIZE_GROUP_ATTRIBUTES_EDITED = 'GROUP_ADMIN_SETTINGS_INITIALIZE_GROUP_ATTRIBUTES_EDITED';
-export const initializeGroupAttributesEdited = () => {
+export const COURSE_ADMIN_SETTINGS_INITIALIZE_COURSE_ATTRIBUTES_EDITED = 'COURSE_ADMIN_SETTINGS_INITIALIZE_COURSE_ATTRIBUTES_EDITED';
+export const initializeCourseAttributesEdited = () => {
     return (dispatch, getState) => {
         dispatch({
-            type: GROUP_ADMIN_SETTINGS_INITIALIZE_GROUP_ATTRIBUTES_EDITED,
-            group: getState().manageGroupFromParams.groupProperties
+            type: COURSE_ADMIN_SETTINGS_INITIALIZE_COURSE_ATTRIBUTES_EDITED,
+            course: getState().manageCourseFromParams.courseProperties
         });
     }
 };
 
-export const GROUP_ADMIN_SETTINGS_CHANGED = 'GROUP_ADMIN_SETTINGS_CHANGED';
+export const COURSE_ADMIN_SETTINGS_CHANGED = 'COURSE_ADMIN_SETTINGS_CHANGED';
 export const handleInputChanged = event => {
     return (dispatch, getState) => {
-        const groupProperties = getState().manageGroupFromParams.groupProperties;
-        const groupAttributesEdited = getState().groupAdminSettings.groupAttributesEdited;
+        const courseProperties = getState().manageCourseFromParams.courseProperties;
+        const courseAttributesEdited = getState().courseAdminSettings.courseAttributesEdited;
         const target = event.target;
 
-        let isPropertyOfGroupAttributes = false;
+        let isPropertyOfCourseAttributes = false;
 
         let updateValue = null;
         let shouldUpdateDatabase = false;
 
         switch (target.type) {
             case 'checkbox':
-                if (groupAttributesEdited.hasOwnProperty(target.name)) {
+                if (courseAttributesEdited.hasOwnProperty(target.name)) {
                     shouldUpdateDatabase = true;
                     updateValue = target.checked;
                 }
                 break;
             case 'radio':
-                if (groupAttributesEdited.hasOwnProperty(target.name)) {
+                if (courseAttributesEdited.hasOwnProperty(target.name)) {
                     shouldUpdateDatabase = true;
                     updateValue = !isNaN(target.value) ? parseInt(target.value) : target.value;
                 }
@@ -42,16 +42,16 @@ export const handleInputChanged = event => {
             case 'text':
                 if (target.name !== "primaryColor"
                     && target.name !== "secondaryColor"
-                    && groupAttributesEdited.hasOwnProperty(target.name)
+                    && courseAttributesEdited.hasOwnProperty(target.name)
                 ) {
-                    isPropertyOfGroupAttributes = true;
+                    isPropertyOfCourseAttributes = true;
                     shouldUpdateDatabase = true;
                     updateValue = target.value;
                 }
                 break;
             case 'textarea':
-                if (groupAttributesEdited.hasOwnProperty(target.name)) {
-                    isPropertyOfGroupAttributes = true;
+                if (courseAttributesEdited.hasOwnProperty(target.name)) {
+                    isPropertyOfCourseAttributes = true;
                 }
                 break;
             default:
@@ -60,8 +60,8 @@ export const handleInputChanged = event => {
 
         if (shouldUpdateDatabase) {
             realtimeDBUtils
-                .updateGroupPropertiesSetting({
-                    anid: groupProperties.anid,
+                .updateCoursePropertiesSetting({
+                    anid: courseProperties.anid,
                     field: target.name,
                     value: updateValue
                 })
@@ -76,10 +76,10 @@ export const handleInputChanged = event => {
         }
 
         dispatch({
-            type: GROUP_ADMIN_SETTINGS_CHANGED,
+            type: COURSE_ADMIN_SETTINGS_CHANGED,
             name: target.name,
             value: target.type === 'checkbox' ? target.checked : target.value,
-            isPropertyOfGroupAttributes
+            isPropertyOfCourseAttributes
         });
     }
 };
@@ -88,8 +88,8 @@ export const handlePitchExpiryDateChanged = date => {
     return (dispatch, getState) => {
         if (date && date === "Invalid Date") {
             dispatch({
-                type: GROUP_ADMIN_SETTINGS_CHANGED,
-                isPropertyOfGroupAttributes: true,
+                type: COURSE_ADMIN_SETTINGS_CHANGED,
+                isPropertyOfCourseAttributes: true,
                 name: "defaultPitchExpiryDate",
                 value: NaN
             });
@@ -97,8 +97,8 @@ export const handlePitchExpiryDateChanged = date => {
         }
 
         dispatch({
-            type: GROUP_ADMIN_SETTINGS_CHANGED,
-            isPropertyOfGroupAttributes: true,
+            type: COURSE_ADMIN_SETTINGS_CHANGED,
+            isPropertyOfCourseAttributes: true,
             name: "defaultPitchExpiryDate",
             value:
                 !date
@@ -113,14 +113,14 @@ export const handlePitchExpiryDateChanged = date => {
 export const handleSavePitchExpiryDate = () => {
     return (dispatch, getState) => {
 
-        const groupProperties = getState().manageGroupFromParams.groupProperties;
-        const groupSettings = getState().groupAdminSettings.groupAttributesEdited;
+        const courseProperties = getState().manageCourseFromParams.courseProperties;
+        const courseSettings = getState().courseAdminSettings.courseAttributesEdited;
 
         realtimeDBUtils
-            .updateGroupPropertiesSetting({
-                anid: groupProperties.anid,
+            .updateCoursePropertiesSetting({
+                anid: courseProperties.anid,
                 field: "defaultPitchExpiryDate",
-                value: groupSettings.defaultPitchExpiryDate
+                value: courseSettings.defaultPitchExpiryDate
             })
             .catch(error => {
                 dispatch({
@@ -135,38 +135,38 @@ export const handleSavePitchExpiryDate = () => {
 
 export const handleCancelEditingPitchExpiryDate = () => {
     return (dispatch, getState) => {
-        const groupProperties = getState().manageGroupFromParams.groupProperties;
+        const courseProperties = getState().manageCourseFromParams.courseProperties;
 
         dispatch({
-            type: GROUP_ADMIN_SETTINGS_CHANGED,
-            isPropertyOfGroupAttributes: true,
+            type: COURSE_ADMIN_SETTINGS_CHANGED,
+            isPropertyOfCourseAttributes: true,
             name: "defaultPitchExpiryDate",
             value:
-                !groupProperties.settings.hasOwnProperty('defaultPitchExpiryDate')
+                !courseProperties.settings.hasOwnProperty('defaultPitchExpiryDate')
                     ?
                     myUtils.getDateWithDaysFurtherThanToday(1)
                     :
-                    groupProperties.settings.defaultPitchExpiryDate
+                    courseProperties.settings.defaultPitchExpiryDate
         });
     }
 }
 
-export const GROUP_ADMIN_SETTINGS_PLEDGE_FAQ_PANEL_EXPANSION_CHANGED = 'GROUP_ADMIN_SETTINGS_PLEDGE_FAQ_PANEL_EXPANSION_CHANGED';
+export const COURSE_ADMIN_SETTINGS_PLEDGE_FAQ_PANEL_EXPANSION_CHANGED = 'COURSE_ADMIN_SETTINGS_PLEDGE_FAQ_PANEL_EXPANSION_CHANGED';
 export const handleExpandPledgeFAQPanel = (FAQ, isExpanded) => {
     return (dispatch, getState) => {
 
-        const expandedPledgeFAQ = getState().groupAdminSettings.expandedPledgeFAQ;
+        const expandedPledgeFAQ = getState().courseAdminSettings.expandedPledgeFAQ;
 
         if (isExpanded) {
             dispatch({
-                type: GROUP_ADMIN_SETTINGS_PLEDGE_FAQ_PANEL_EXPANSION_CHANGED,
+                type: COURSE_ADMIN_SETTINGS_PLEDGE_FAQ_PANEL_EXPANSION_CHANGED,
                 expandedPledgeFAQ: FAQ,
                 editExpandedPledgeFAQ: false
             });
         } else {
             if (expandedPledgeFAQ && expandedPledgeFAQ.id === FAQ.id) {
                 dispatch({
-                    type: GROUP_ADMIN_SETTINGS_PLEDGE_FAQ_PANEL_EXPANSION_CHANGED,
+                    type: COURSE_ADMIN_SETTINGS_PLEDGE_FAQ_PANEL_EXPANSION_CHANGED,
                     expandedPledgeFAQ: null,
                     editExpandedPledgeFAQ: false
                 });
@@ -175,17 +175,17 @@ export const handleExpandPledgeFAQPanel = (FAQ, isExpanded) => {
     }
 };
 
-export const GROUP_ADMIN_SETTINGS_TOGGLE_EDIT_EXPANDED_PLEDGE_FAQ = 'GROUP_ADMIN_SETTINGS_TOGGLE_EDIT_EXPANDED_PLEDGE_FAQ';
+export const COURSE_ADMIN_SETTINGS_TOGGLE_EDIT_EXPANDED_PLEDGE_FAQ = 'COURSE_ADMIN_SETTINGS_TOGGLE_EDIT_EXPANDED_PLEDGE_FAQ';
 export const toggleEditExpandedPledgeFAQ = () => {
     return {
-        type: GROUP_ADMIN_SETTINGS_TOGGLE_EDIT_EXPANDED_PLEDGE_FAQ
+        type: COURSE_ADMIN_SETTINGS_TOGGLE_EDIT_EXPANDED_PLEDGE_FAQ
     }
 };
 
-export const GROUP_ADMIN_SETTINGS_TOGGLE_ADD_NEW_PLEDGE_FAQ = 'GROUP_ADMIN_SETTINGS_TOGGLE_ADD_NEW_PLEDGE_FAQ';
+export const COURSE_ADMIN_SETTINGS_TOGGLE_ADD_NEW_PLEDGE_FAQ = 'COURSE_ADMIN_SETTINGS_TOGGLE_ADD_NEW_PLEDGE_FAQ';
 export const toggleAddNewPledgeFAQ = () => {
     return {
-        type: GROUP_ADMIN_SETTINGS_TOGGLE_ADD_NEW_PLEDGE_FAQ
+        type: COURSE_ADMIN_SETTINGS_TOGGLE_ADD_NEW_PLEDGE_FAQ
     }
 };
 
@@ -194,11 +194,11 @@ export const submitNewPledgeFAQ = () => {
         const {
             addedPledgeQuestion,
             addedPledgeAnswer
-        } = getState().groupAdminSettings;
+        } = getState().courseAdminSettings;
 
-        const groupProperties = getState().manageGroupFromParams.groupProperties;
+        const courseProperties = getState().manageCourseFromParams.courseProperties;
 
-        const groupAttributesEdited = Object.assign({}, getState().groupAdminSettings.groupAttributesEdited);
+        const courseAttributesEdited = Object.assign({}, getState().courseAdminSettings.courseAttributesEdited);
 
         if (addedPledgeQuestion.trim().length === 0 || addedPledgeAnswer.trim().length === 0) {
             return;
@@ -210,22 +210,22 @@ export const submitNewPledgeFAQ = () => {
             answer: addedPledgeAnswer
         };
 
-        if (groupAttributesEdited[DB_CONST.PLEDGE_FAQS_CHILD]) {
-            groupAttributesEdited[DB_CONST.PLEDGE_FAQS_CHILD].push(faq);
+        if (courseAttributesEdited[DB_CONST.PLEDGE_FAQS_CHILD]) {
+            courseAttributesEdited[DB_CONST.PLEDGE_FAQS_CHILD].push(faq);
         } else {
-            groupAttributesEdited[DB_CONST.PLEDGE_FAQS_CHILD] = [faq];
+            courseAttributesEdited[DB_CONST.PLEDGE_FAQS_CHILD] = [faq];
         }
 
         firebase
             .database()
-            .ref(DB_CONST.GROUP_PROPERTIES_CHILD)
-            .child(groupProperties.anid)
+            .ref(DB_CONST.COURSE_PROPERTIES_CHILD)
+            .child(courseProperties.anid)
             .child('settings')
             .child(DB_CONST.PLEDGE_FAQS_CHILD)
-            .set(groupAttributesEdited[DB_CONST.PLEDGE_FAQS_CHILD])
+            .set(courseAttributesEdited[DB_CONST.PLEDGE_FAQS_CHILD])
             .then(() => {
                 dispatch({
-                    type: GROUP_ADMIN_SETTINGS_TOGGLE_ADD_NEW_PLEDGE_FAQ
+                    type: COURSE_ADMIN_SETTINGS_TOGGLE_ADD_NEW_PLEDGE_FAQ
                 });
             });
     }
@@ -234,13 +234,13 @@ export const submitNewPledgeFAQ = () => {
 export const saveEditedPledgeFAQ = () => {
     return (dispatch, getState) => {
         const {
-            groupAttributesEdited,
+            courseAttributesEdited,
             expandedPledgeFAQ,
             editedPledgeQuestion,
             editedPledgeAnswer
-        } = getState().groupAdminSettings;
+        } = getState().courseAdminSettings;
 
-        const groupProperties = getState().manageGroupFromParams.groupProperties;
+        const courseProperties = getState().manageCourseFromParams.courseProperties;
 
         if (editedPledgeQuestion.trim().length === 0 || editedPledgeAnswer.trim().length === 0) {
             return;
@@ -252,19 +252,19 @@ export const saveEditedPledgeFAQ = () => {
             answer: editedPledgeAnswer
         };
 
-        let index = groupAttributesEdited[DB_CONST.PLEDGE_FAQS_CHILD].findIndex(faq => faq.id === expandedPledgeFAQ.id);
-        groupAttributesEdited[DB_CONST.PLEDGE_FAQS_CHILD][index] = editedFAQ;
+        let index = courseAttributesEdited[DB_CONST.PLEDGE_FAQS_CHILD].findIndex(faq => faq.id === expandedPledgeFAQ.id);
+        courseAttributesEdited[DB_CONST.PLEDGE_FAQS_CHILD][index] = editedFAQ;
 
         firebase
             .database()
-            .ref(DB_CONST.GROUP_PROPERTIES_CHILD)
-            .child(groupProperties.anid)
+            .ref(DB_CONST.COURSE_PROPERTIES_CHILD)
+            .child(courseProperties.anid)
             .child('settings')
             .child(DB_CONST.PLEDGE_FAQS_CHILD)
-            .set(groupAttributesEdited[DB_CONST.PLEDGE_FAQS_CHILD])
+            .set(courseAttributesEdited[DB_CONST.PLEDGE_FAQS_CHILD])
             .then(() => {
                 dispatch({
-                    type: GROUP_ADMIN_SETTINGS_TOGGLE_EDIT_EXPANDED_PLEDGE_FAQ
+                    type: COURSE_ADMIN_SETTINGS_TOGGLE_EDIT_EXPANDED_PLEDGE_FAQ
                 });
             });
     }
@@ -272,73 +272,73 @@ export const saveEditedPledgeFAQ = () => {
 
 export const deleteExistingPledgeFAQ = () => {
     return (dispatch, getState) => {
-        const expandedPledgeFAQ = getState().groupAdminSettings.expandedPledgeFAQ;
-        const groupAttributesEdited = Object.assign({}, getState().groupAdminSettings.groupAttributesEdited);
+        const expandedPledgeFAQ = getState().courseAdminSettings.expandedPledgeFAQ;
+        const courseAttributesEdited = Object.assign({}, getState().courseAdminSettings.courseAttributesEdited);
 
-        const groupProperties = getState().manageGroupFromParams.groupProperties;
+        const courseProperties = getState().manageCourseFromParams.courseProperties;
 
-        let index = groupAttributesEdited[DB_CONST.PLEDGE_FAQS_CHILD].findIndex(faq => faq.id === expandedPledgeFAQ.id);
-        groupAttributesEdited[DB_CONST.PLEDGE_FAQS_CHILD].splice(index, 1);
+        let index = courseAttributesEdited[DB_CONST.PLEDGE_FAQS_CHILD].findIndex(faq => faq.id === expandedPledgeFAQ.id);
+        courseAttributesEdited[DB_CONST.PLEDGE_FAQS_CHILD].splice(index, 1);
 
         firebase
             .database()
-            .ref(DB_CONST.GROUP_PROPERTIES_CHILD)
-            .child(groupProperties.anid)
+            .ref(DB_CONST.COURSE_PROPERTIES_CHILD)
+            .child(courseProperties.anid)
             .child('settings')
             .child(DB_CONST.PLEDGE_FAQS_CHILD)
-            .set(groupAttributesEdited[DB_CONST.PLEDGE_FAQS_CHILD]);
+            .set(courseAttributesEdited[DB_CONST.PLEDGE_FAQS_CHILD]);
     }
 };
 
-export const saveGroupDetails = (field, value) => {
+export const saveCourseDetails = (field, value) => {
     return (dispatch, getState) => {
-        const group = getState().manageGroupFromParams.groupProperties;
+        const course = getState().manageCourseFromParams.courseProperties;
 
         firebase
             .database()
-            .ref(DB_CONST.GROUP_PROPERTIES_CHILD)
-            .child(group.anid)
+            .ref(DB_CONST.COURSE_PROPERTIES_CHILD)
+            .child(course.anid)
             .child(field)
             .set(value);
     }
 };
 
-export const GROUP_ADMIN_SETTINGS_CANCEL_EDITING_GROUP_DETAILS = 'GROUP_ADMIN_SETTINGS_CANCEL_EDITING_GROUP_DETAILS';
-export const cancelEditingGroupDetails = (field) => {
+export const COURSE_ADMIN_SETTINGS_CANCEL_EDITING_COURSE_DETAILS = 'COURSE_ADMIN_SETTINGS_CANCEL_EDITING_COURSE_DETAILS';
+export const cancelEditingCourseDetails = (field) => {
     return (dispatch, getState) => {
-        const group = getState().manageGroupFromParams.groupProperties;
+        const course = getState().manageCourseFromParams.courseProperties;
 
         dispatch({
-            type: GROUP_ADMIN_SETTINGS_CANCEL_EDITING_GROUP_DETAILS,
+            type: COURSE_ADMIN_SETTINGS_CANCEL_EDITING_COURSE_DETAILS,
             name: field,
-            value: group[field]
+            value: course[field]
         });
     }
 };
 
 export const saveColor = field => {
     return (dispatch, getState) => {
-        const group = getState().manageGroupFromParams.groupProperties;
-        const color = field === "primaryColor" ? getState().groupAdminSettings.primaryColor : getState().groupAdminSettings.secondaryColor;
+        const course = getState().manageCourseFromParams.courseProperties;
+        const color = field === "primaryColor" ? getState().courseAdminSettings.primaryColor : getState().courseAdminSettings.secondaryColor;
 
         firebase
             .database()
-            .ref(DB_CONST.GROUP_PROPERTIES_CHILD)
-            .child(group.anid)
+            .ref(DB_CONST.COURSE_PROPERTIES_CHILD)
+            .child(course.anid)
             .child('settings')
             .child(field)
             .set(color.toUpperCase());
     }
 };
 
-export const GROUP_ADMIN_SETTINGS_CANCEL_EDITING_COLOR = 'GROUP_ADMIN_SETTINGS_CANCEL_EDITING_COLOR';
+export const COURSE_ADMIN_SETTINGS_CANCEL_EDITING_COLOR = 'COURSE_ADMIN_SETTINGS_CANCEL_EDITING_COLOR';
 export const cancelEditingColor = field => {
     return (dispatch, getState) => {
-        const group = getState().manageGroupFromParams.groupProperties;
-        const color = field === "primaryColor" ? group.settings.primaryColor : group.settings.secondaryColor;
+        const course = getState().manageCourseFromParams.courseProperties;
+        const color = field === "primaryColor" ? course.settings.primaryColor : course.settings.secondaryColor;
 
         dispatch({
-            type: GROUP_ADMIN_SETTINGS_CANCEL_EDITING_COLOR,
+            type: COURSE_ADMIN_SETTINGS_CANCEL_EDITING_COLOR,
             field,
             color
         });

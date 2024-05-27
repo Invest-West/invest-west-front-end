@@ -15,6 +15,13 @@ export default interface AccessRequest {
     requestedDate: number;
 }
 
+export default interface AccessStudentRequest {
+    id: string;
+    studentID: string;
+    courseToJoin: string;
+    requestedDate: number;
+}
+
 export interface AccessRequestInstance {
     request: AccessRequest;
     user: User;

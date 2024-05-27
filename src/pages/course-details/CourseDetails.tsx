@@ -18,8 +18,8 @@ import {BeatLoader} from "react-spinners";
 import {getCourseRouteTheme, ManageCourseUrlState} from "../../redux-store/reducers/manageCourseUrlReducer";
 import {loadData, removeAccessRequest, sendAccessRequest} from "./CourseDetailsActions";
 import {getCourseLogo} from "../../models/course_properties";
-import {AuthenticationState} from "../../redux-store/reducers/authenticationReducer";
-import Teacher, {isTeacher} from "../../models/teacher";
+import {StudentAuthenticationState} from "../../redux-store/reducers/authenticationReducer";
+import Teacher, {isProf} from "../../models/teacher";
 import {dateInReadableFormat} from "../../utils/utils";
 import CourseOfMembership, {getHomeCourse} from "../../models/course_of_membership";
 import {CheckCircle} from "@material-ui/icons";
@@ -33,7 +33,7 @@ import Footer from "../../shared-components/footer/Footer";
 interface CourseDetailsProps {
     MediaQueryState: MediaQueryState;
     ManageCourseUrlState: ManageCourseUrlState;
-    AuthenticationState: AuthenticationState;
+    StudentAuthenticationState: StudentAuthenticationState;
     CourseDetailsLocalState: CourseDetailsState;
     loadData: (viewedCourseStudent: string) => any;
     sendAccessRequest: () => any;
@@ -44,7 +44,7 @@ const mapStateToProps = (state: AppState) => {
     return {
         MediaQueryState: state.MediaQueryState,
         ManageCourseUrlState: state.ManageCourseUrlState,
-        AuthenticationState: state.AuthenticationState,
+        StudentAuthenticationState: state.StudentAuthenticationState,
         CourseDetailsLocalState: state.CourseDetailsLocalState
     }
 }
@@ -67,19 +67,19 @@ class CourseDetails extends Component<CourseDetailsProps & Readonly<RouteCompone
         const {
             MediaQueryState,
             ManageCourseUrlState,
-            AuthenticationState,
+            StudentAuthenticationState,
             CourseDetailsLocalState,
             sendAccessRequest,
             removeAccessRequest
         } = this.props;
 
-        const currentStudent = AuthenticationState.currentStudent;
+        const currentStudent = StudentAuthenticationState.currentStudent;
 
         if (!currentStudent) {
             return null;
         }
 
-        const currentTeacher: Teacher | null = isTeacher(currentStudent);
+        const currentTeacher: Teacher | null = isProf(currentStudent);
 
         // loading
         if (isLoadingData(CourseDetailsLocalState)) {
@@ -99,7 +99,7 @@ class CourseDetails extends Component<CourseDetailsProps & Readonly<RouteCompone
 
         let courseMember: CourseOfMembership | undefined = undefined;
         if (!currentTeacher) {
-            courseMember = AuthenticationState.coursesOfMembership.find(
+            courseMember = StudentAuthenticationState.coursesOfMembership.find(
                 courseOfMembership => courseOfMembership.course.anid === CourseDetailsLocalState.course?.anid);
         }
 
@@ -162,7 +162,7 @@ class CourseDetails extends Component<CourseDetailsProps & Readonly<RouteCompone
                                                             <Box width="6px"/>
                                                             <Typography variant="body1" align="center" color="textSecondary">
                                                                 {
-                                                                    getHomeCourse(AuthenticationState.coursesOfMembership)?.course.anid === courseMember.course.anid
+                                                                    getHomeCourse(StudentAuthenticationState.coursesOfMembership)?.course.anid === courseMember.course.anid
                                                                         ? "Home member"
                                                                         : "Platform member"
                                                                 }

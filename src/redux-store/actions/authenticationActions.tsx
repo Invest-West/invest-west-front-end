@@ -23,6 +23,14 @@ export enum AuthenticationEvents {
     UpdateUserChanges = "AuthenticationEvents.UpdateUserChanges"
 }
 
+export enum StudentAuthenticationEvents {
+    StartStudentAuthenticating = "AuthenticationEvents.StartStudentAuthenticating",
+    CompleteStudentAuthentication = "AuthenticationEvents.CompleteAuthentication",
+    StudentSignOut = "AuthenticationEvents.StudentSignOut",
+    UpdateStudentChanges = "AuthenticationEvents.UpdateStudentChanges"
+}
+
+
 export interface AuthenticationAction extends Action {
 }
 
@@ -31,6 +39,10 @@ export interface AuthenticationStudentAction extends Action {
 
 export interface UpdateUserChangesAction extends Action {
     updatedUser: User | Admin;
+}
+
+export interface UpdateStudentChangesAction extends Action {
+    updatedStudent: Student | Teacher;
 }
 
 export interface CompleteAuthenticationAction extends AuthenticationAction {
@@ -186,7 +198,7 @@ export const studentSignIn: ActionCreator<any> = (email?: string, password?: str
         }
 
         const authenticationCompleteAction: CompleteAuthenticationAction = {
-            type: AuthenticationEvents.CompleteAuthentication,
+            type: StudentAuthenticationEvents.CompleteStudentAuthentication,
             status: AuthenticationStatus.Authenticating,
             currentStudent: null,
             coursesOfMembership: []
@@ -202,7 +214,7 @@ export const studentSignIn: ActionCreator<any> = (email?: string, password?: str
                 }
 
                 dispatch({
-                    type: AuthenticationEvents.StartAuthenticating
+                    type: StudentAuthenticationEvents.StartStudentAuthenticating
                 });
             }
             // user is currently not signed in with Firebase
@@ -216,7 +228,7 @@ export const studentSignIn: ActionCreator<any> = (email?: string, password?: str
                 }
 
                 dispatch({
-                    type: AuthenticationEvents.StartAuthenticating
+                    type: StudentAuthenticationEvents.StartStudentAuthenticating
                 });
 
                 // set persistence state to SESSION
