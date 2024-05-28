@@ -50,7 +50,7 @@ import {
     changePage,
     changeRowsPerPage,
     exportCsv,
-    fetchOffers,
+    fetchStudentOffers,
     filterChanged,
     filterOffersByName,
     setStudent
@@ -61,12 +61,12 @@ import PublicIcon from "@material-ui/icons/Public";
 import RestrictedIcon from "@material-ui/icons/VpnLock";
 import PrivateIcon from "@material-ui/icons/LockOutlined";
 import {
-    isDraftProject,
-    isProjectPitchExpiredWaitingForTeacherToCheck,
-    isProjectPublic,
-    isProjectRestricted,
-    isProjectTemporarilyClosed,
-    isProjectWaitingToGoLive
+    isStudentDraftProject,
+    isStudentProjectPitchExpiredWaitingForAdminToCheck,
+    isStudentProjectPublic,
+    isStudentProjectRestricted,
+    isStudentProjectTemporarilyClosed,
+    isStudentProjectWaitingToGoLive
 } from "../../models/studentProject";
 import Routes from "../../router/routes";
 import {dateInReadableFormat, isProjectInLivePitchPhase} from "../../utils/utils";
@@ -81,16 +81,16 @@ import {
 import {toRGBWithOpacity} from "../../utils/colorUtils";
 
 interface OffersTableProps {
-    // table student set by passing this prop to the OffersTable component when used
+    // table student set by passing this prop to the StudentOffersTable component when used
     directTableStudent?: Student | Teacher;
 
     MediaQueryState: MediaQueryState;
     ManageSystemAttributesState: ManageSystemAttributesState;
     ManageCourseUrlState: ManageCourseUrlState;
     AuthenticationState: AuthenticationState;
-    OffersTableLocalState: OffersStudentTableStates;
+    StudentOffersTableLocalState: OffersStudentTableStates;
     setStudent: (student?: Student | Teacher) => any;
-    fetchOffers: () => any;
+    fetchStudentOffers: () => any;
     filterChanged: (event: any) => any;
     filterOffersByName: () => any;
     cancelFilteringOffersByName: () => any;
@@ -105,14 +105,14 @@ const mapStateToProps = (state: AppState) => {
         ManageSystemAttributesState: state.ManageSystemAttributesState,
         ManageCourseUrlState: state.ManageCourseUrlState,
         AuthenticationState: state.AuthenticationState,
-        OffersTableLocalState: state.OffersTableLocalState
+        StudentOffersTableLocalState: state.StudentOffersTableLocalState
     }
 }
 
 const mapDispatchToProps = (dispatch: ThunkDispatch<any, any, AnyAction>) => {
     return {
         setStudent: (student?: Student | Teacher) => dispatch(setStudent(student)),
-        fetchOffers: () => dispatch(fetchOffers()),
+        fetchStudentOffers: () => dispatch(fetchStudentOffers()),
         filterChanged: (event: any) => dispatch(filterChanged(event)),
         filterOffersByName: () => dispatch(filterOffersByName()),
         cancelFilteringOffersByName: () => dispatch(cancelFilteringOffersByName()),
@@ -122,7 +122,7 @@ const mapDispatchToProps = (dispatch: ThunkDispatch<any, any, AnyAction>) => {
     }
 }
 
-class OffersTable extends Component<OffersTableProps, any> {
+class StudentOffersTable extends Component<OffersTableProps, any> {
 
     componentDidMount() {
         const {
@@ -137,8 +137,8 @@ class OffersTable extends Component<OffersTableProps, any> {
         const {
             ManageCourseUrlState,
             AuthenticationState,
-            OffersTableLocalState,
-            fetchOffers,
+            StudentOffersTableLocalState,
+            fetchStudentOffers,
             filterChanged,
             filterOffersByName,
             cancelFilteringOffersByName,
@@ -152,7 +152,7 @@ class OffersTable extends Component<OffersTableProps, any> {
         }
 
         const currentStudent: Student | Teacher = AuthenticationState.currentStudent;
-        const tableStudent: Student | Teacher | undefined = OffersTableLocalState.tableStudent;
+        const tableStudent: Student | Teacher | undefined = StudentOffersTableLocalState.tableStudent;
 
         if (!currentStudent || !tableStudent) {
             return null;
@@ -180,18 +180,18 @@ class OffersTable extends Component<OffersTableProps, any> {
                                             <ImportExportOutlined fontSize="small" />
                                             <Box width="10px" />
                                             {
-                                                isExportingCsv(OffersTableLocalState)
+                                                isExportingCsv(StudentOffersTableLocalState)
                                                     ? "Exporting ..."
                                                     : "Export csv"
                                             }
                                         </Button>
 
                                         {
-                                            !hasErrorExportingCsv(OffersTableLocalState)
+                                            !hasErrorExportingCsv(StudentOffersTableLocalState)
                                                 ? null
                                                 : <Box marginTop="12px" >
                                                     <Typography variant="body2" color="error" >
-                                                        {`${OffersTableLocalState.errorExportingCsv?.detail}. Please retry.`}
+                                                        {`${StudentOffersTableLocalState.errorExportingCsv?.detail}. Please retry.`}
                                                     </Typography>
                                                 </Box>
                                         }
@@ -248,7 +248,7 @@ class OffersTable extends Component<OffersTableProps, any> {
                                         height="100%"
                                         alignItems="center"
                                         bgcolor={
-                                            !isFilteringOffersByName(OffersTableLocalState)
+                                            !isFilteringOffersByName(StudentOffersTableLocalState)
                                                 ? colors.grey["200"]
                                                 : toRGBWithOpacity(getCourseRouteTheme(ManageCourseUrlState).palette.primary.main, 0.18)
                                         }
@@ -257,24 +257,24 @@ class OffersTable extends Component<OffersTableProps, any> {
                                         <InputBase
                                             fullWidth
                                             name="nameFilter"
-                                            value={OffersTableLocalState.nameFilter}
+                                            value={StudentOffersTableLocalState.nameFilter}
                                             placeholder="Search offer by name"
                                             onChange={filterChanged}
-                                            disabled={!successfullyFetchedOffers(OffersTableLocalState)}
+                                            disabled={!successfullyFetchedOffers(StudentOffersTableLocalState)}
                                             startAdornment={
                                                 <InputAdornment
                                                     position="start"
                                                 >
                                                     <IconButton
                                                         onClick={() => filterOffersByName()}
-                                                        disabled={!successfullyFetchedOffers(OffersTableLocalState)}
+                                                        disabled={!successfullyFetchedOffers(StudentOffersTableLocalState)}
                                                     >
                                                         <Search fontSize="small"/>
                                                     </IconButton>
                                                 </InputAdornment>
                                             }
                                             endAdornment={
-                                                !isFilteringOffersByName(OffersTableLocalState)
+                                                !isFilteringOffersByName(StudentOffersTableLocalState)
                                                     ? null
                                                     : <InputAdornment
                                                         position="end"
@@ -291,7 +291,7 @@ class OffersTable extends Component<OffersTableProps, any> {
                                 {/** Refresh button */}
                                 <Col xs={1} sm={1} md={4} lg={6} >
                                     <Box display="flex" height="100%" justifyContent="flex-end" alignItems="center" >
-                                        <IconButton onClick={() => fetchOffers()} disabled={!successfullyFetchedOffers(OffersTableLocalState)} >
+                                        <IconButton onClick={() => fetchStudentOffers()} disabled={!successfullyFetchedOffers(StudentOffersTableLocalState)} >
                                             <Refresh/>
                                         </IconButton>
                                     </Box>
@@ -314,12 +314,12 @@ class OffersTable extends Component<OffersTableProps, any> {
                                         <Select
                                             fullWidth
                                             name="visibilityFilter"
-                                            value={OffersTableLocalState.visibilityFilter}
+                                            value={StudentOffersTableLocalState.visibilityFilter}
                                             variant="outlined"
                                             margin="dense"
                                             input={<OutlinedInput/>}
                                             onChange={filterChanged}
-                                            disabled={!successfullyFetchedOffers(OffersTableLocalState)}
+                                            disabled={!successfullyFetchedOffers(StudentOffersTableLocalState)}
                                         >
                                             <MenuItem key="all" value="all" >All</MenuItem>
                                             <MenuItem key={PROJECT_VISIBILITY_PUBLIC} value={PROJECT_VISIBILITY_PUBLIC}>Public</MenuItem>
@@ -337,19 +337,19 @@ class OffersTable extends Component<OffersTableProps, any> {
                                         <Select
                                             fullWidth
                                             name="courseFilter"
-                                            value={OffersTableLocalState.courseFilter}
+                                            value={StudentOffersTableLocalState.courseFilter}
                                             variant="outlined"
                                             margin="dense"
                                             input={<OutlinedInput/>}
                                             onChange={filterChanged}
-                                            disabled={!successfullyFetchedOffers(OffersTableLocalState)}
+                                            disabled={!successfullyFetchedOffers(StudentOffersTableLocalState)}
                                         >
                                             <MenuItem key="all" value="all" >All</MenuItem>
                                             {
-                                                !hasCoursesSelect(OffersTableLocalState)
-                                                || !OffersTableLocalState.coursesSelect
+                                                !hasCoursesSelect(StudentOffersTableLocalState)
+                                                || !StudentOffersTableLocalState.coursesSelect
                                                     ? null
-                                                    : OffersTableLocalState.coursesSelect.map(course =>
+                                                    : StudentOffersTableLocalState.coursesSelect.map(course =>
                                                         <MenuItem
                                                             key={course.anid}
                                                             value={course.anid}
@@ -370,12 +370,12 @@ class OffersTable extends Component<OffersTableProps, any> {
                                         <Select
                                             fullWidth
                                             name="phaseFilter"
-                                            value={OffersTableLocalState.phaseFilter}
+                                            value={StudentOffersTableLocalState.phaseFilter}
                                             variant="outlined"
                                             margin="dense"
                                             input={<OutlinedInput/>}
                                             onChange={filterChanged}
-                                            disabled={!successfullyFetchedOffers(OffersTableLocalState)}
+                                            disabled={!successfullyFetchedOffers(StudentOffersTableLocalState)}
                                         >
                                             <MenuItem key="all" value="all" >All</MenuItem>
                                             <MenuItem key={FetchProjectsPhaseOptions.LivePitch} value={FetchProjectsPhaseOptions.LivePitch}>Live</MenuItem>
@@ -411,7 +411,7 @@ class OffersTable extends Component<OffersTableProps, any> {
                 <TableBody>
                     {
                         // Fetching offers
-                        isFetchingOffers(OffersTableLocalState)
+                        isFetchingOffers(StudentOffersTableLocalState)
                             ? <TableRow>
                                 <TableCell colSpan={5} >
                                     <Box display="flex" justifyContent="center" alignItems="center" height="120px" >
@@ -420,7 +420,7 @@ class OffersTable extends Component<OffersTableProps, any> {
                                 </TableCell>
                             </TableRow>
                             // Error setting table student / fetching offers
-                            : hasErrorFetchingOffers(OffersTableLocalState)
+                            : hasErrorFetchingOffers(StudentOffersTableLocalState)
                             ? <TableRow>
                                 <TableCell colSpan={5} >
                                     <Box display="flex" justifyContent="center" alignItems="center" height="120px" >
@@ -429,10 +429,10 @@ class OffersTable extends Component<OffersTableProps, any> {
                                 </TableCell>
                             </TableRow>
                             // Not successfully fetching offers
-                            : !successfullyFetchedOffers(OffersTableLocalState)
+                            : !successfullyFetchedOffers(StudentOffersTableLocalState)
                                 ? null
                                 // No offers available for current filters
-                                : !hasOffersForCurrentFilters(OffersTableLocalState)
+                                : !hasOffersForCurrentFilters(StudentOffersTableLocalState)
                                     ? <TableRow>
                                         <TableCell colSpan={5} >
                                             <Box display="flex" justifyContent="center" alignItems="center" height="120px" >
@@ -441,11 +441,11 @@ class OffersTable extends Component<OffersTableProps, any> {
                                         </TableCell>
                                     </TableRow>
                                     // Render offers
-                                    : OffersTableLocalState.offerInstancesFilteredByName
-                                        .slice(OffersTableLocalState.currentPage * OffersTableLocalState.rowsPerPage, OffersTableLocalState.currentPage * OffersTableLocalState.rowsPerPage + OffersTableLocalState.rowsPerPage)
+                                    : StudentOffersTableLocalState.studentOfferInstancesFilteredByName
+                                        .slice(StudentOffersTableLocalState.currentPage * StudentOffersTableLocalState.rowsPerPage, StudentOffersTableLocalState.currentPage * StudentOffersTableLocalState.rowsPerPage + StudentOffersTableLocalState.rowsPerPage)
                                         .map(
-                                            offerInstance => <TableRow
-                                                key={offerInstance.projectDetail.id}
+                                            studentOfferInstance => <TableRow
+                                                key={studentOfferInstance.projectDetail.id}
                                                 hover
                                             >
                                                 {/** Offer name */}
@@ -454,21 +454,21 @@ class OffersTable extends Component<OffersTableProps, any> {
                                                         {/** Visibility + Name */}
                                                         <Box display="flex" flexDirection="row" >
                                                             {
-                                                                isProjectPublic(offerInstance.projectDetail)
+                                                                isStudentProjectPublic(studentOfferInstance.projectDetail)
                                                                     ? <PublicIcon fontSize="small"/>
-                                                                    : isProjectRestricted(offerInstance.projectDetail)
+                                                                    : isStudentProjectRestricted(studentOfferInstance.projectDetail)
                                                                     ? <RestrictedIcon fontSize="small"/>
                                                                     : <PrivateIcon fontSize="small"/>
                                                             }
                                                             <Box width="15px" />
                                                             <CustomLink
                                                                 url={
-                                                                    isDraftProject(offerInstance.projectDetail)
-                                                                        ? Routes.constructCreateProjectRoute(ManageCourseUrlState.courseNameFromUrl ?? null, {edit: offerInstance.projectDetail.id})
-                                                                        : Routes.constructProjectDetailRoute(ManageCourseUrlState.courseNameFromUrl ?? null, offerInstance.projectDetail.id)
+                                                                    isStudentDraftProject(studentOfferInstance.projectDetail)
+                                                                        ? Routes.constructCreateProjectRoute(ManageCourseUrlState.courseNameFromUrl ?? null, {edit: studentOfferInstance.projectDetail.id})
+                                                                        : Routes.constructProjectDetailRoute(ManageCourseUrlState.courseNameFromUrl ?? null, studentOfferInstance.projectDetail.id)
                                                                 }
                                                                 target={
-                                                                    isDraftProject(offerInstance.projectDetail)
+                                                                    isStudentDraftProject(studentOfferInstance.projectDetail)
                                                                         ? "_blank"
                                                                         : ""
                                                                 }
@@ -481,7 +481,7 @@ class OffersTable extends Component<OffersTableProps, any> {
                                                                         variant="body2"
                                                                         align="left"
                                                                     >
-                                                                        {offerInstance.projectDetail.projectName ?? ""}
+                                                                        {studentOfferInstance.projectDetail.projectName ?? ""}
                                                                     </Typography>
                                                                 }
                                                             />
@@ -490,16 +490,16 @@ class OffersTable extends Component<OffersTableProps, any> {
                                                         {/** Created by (not available for issuers who are looking at their own offers table) */}
                                                         {
                                                             isTeacher(currentStudent)
-                                                            && OffersTableLocalState.tableStudent !== undefined
-                                                            && currentStudent.id === OffersTableLocalState.tableStudent.id
+                                                            && StudentOffersTableLocalState.tableStudent !== undefined
+                                                            && currentStudent.id === StudentOffersTableLocalState.tableStudent.id
                                                                 ? null
                                                                 : <Box marginTop="10px" >
                                                                     <Typography variant="body2" align="left" color="textSecondary" >
                                                                         <i>
                                                                             {
-                                                                                offerInstance.projectDetail.createdByCourseTeacher
-                                                                                    ? `Created by ${offerInstance.course.displayName} admin`
-                                                                                    : `Created by ${(offerInstance.issuer as Student).firstName} ${(offerInstance.issuer as Student).lastName}`
+                                                                                studentOfferInstance.projectDetail.createdByCourseTeacher
+                                                                                    ? `Created by ${studentOfferInstance.course.displayName} admin`
+                                                                                    : `Created by ${(studentOfferInstance.issuer as Student).firstName} ${(studentOfferInstance.issuer as Student).lastName}`
                                                                             }
                                                                         </i>
                                                                     </Typography>
@@ -510,12 +510,12 @@ class OffersTable extends Component<OffersTableProps, any> {
                                                         {
                                                             isStudent(currentStudent)
                                                                 ? null
-                                                                : !isDraftProject(offerInstance.projectDetail)
+                                                                : !isStudentDraftProject(studentOfferInstance.projectDetail)
                                                                 ? null
                                                                 : <Box marginTop="18px" >
                                                                     <CustomLink
                                                                         url={
-                                                                            Routes.constructCreateProjectRoute(ManageCourseUrlState.courseNameFromUrl ?? null, {edit: offerInstance.projectDetail.id})
+                                                                            Routes.constructCreateProjectRoute(ManageCourseUrlState.courseNameFromUrl ?? null, {edit: studentOfferInstance.projectDetail.id})
                                                                         }
                                                                         target="_blank"
                                                                         color="none"
@@ -539,9 +539,9 @@ class OffersTable extends Component<OffersTableProps, any> {
                                                 <TableCell colSpan={1} >
                                                     <Typography variant="body2" align="left" >
                                                         {
-                                                            !offerInstance.projectDetail.Pitch.fundRequired
+                                                            !studentOfferInstance.projectDetail.Pitch.fundRequired
                                                                 ? ""
-                                                                : `£${Number(offerInstance.projectDetail.Pitch.fundRequired.toFixed(0)).toLocaleString()}`
+                                                                : `£${Number(studentOfferInstance.projectDetail.Pitch.fundRequired.toFixed(0)).toLocaleString()}`
                                                         }
                                                     </Typography>
                                                 </TableCell>
@@ -550,14 +550,14 @@ class OffersTable extends Component<OffersTableProps, any> {
                                                 <TableCell colSpan={1} >
                                                     <Box display="flex" flexDirection="column" >
                                                         <Typography variant="body2" align="left" >
-                                                            {`Posted date: ${dateInReadableFormat(offerInstance.projectDetail.Pitch.postedDate)}`}
+                                                            {`Posted date: ${dateInReadableFormat(studentOfferInstance.projectDetail.Pitch.postedDate)}`}
                                                         </Typography>
                                                         <Box height="12px" />
                                                         <Typography variant="body2" align="left" >
                                                             {
-                                                                !offerInstance.projectDetail.Pitch.expiredDate
+                                                                !studentOfferInstance.projectDetail.Pitch.expiredDate
                                                                     ? "Expiry date: unknown"
-                                                                    : `Expiry date: ${dateInReadableFormat(offerInstance.projectDetail.Pitch.expiredDate)}`
+                                                                    : `Expiry date: ${dateInReadableFormat(studentOfferInstance.projectDetail.Pitch.expiredDate)}`
                                                             }
                                                         </Typography>
                                                     </Box>
@@ -567,15 +567,15 @@ class OffersTable extends Component<OffersTableProps, any> {
                                                 <TableCell colSpan={1} >
                                                     <Typography variant="body2" align="left" >
                                                         {
-                                                            isDraftProject(offerInstance.projectDetail)
+                                                            isStudentDraftProject(studentOfferInstance.projectDetail)
                                                                 ? "Draft"
-                                                                : isProjectWaitingToGoLive(offerInstance.projectDetail)
+                                                                : isStudentProjectWaitingToGoLive(studentOfferInstance.projectDetail)
                                                                 ? "Submitted. Awaiting course admin review"
-                                                                : isProjectInLivePitchPhase(offerInstance.projectDetail)
-                                                                    ? isProjectTemporarilyClosed(offerInstance.projectDetail)
+                                                                : isProjectInLivePitchPhase(studentOfferInstance.projectDetail)
+                                                                    ? isStudentProjectTemporarilyClosed(studentOfferInstance.projectDetail)
                                                                         ? "Temporarily closed"
                                                                         : "Live"
-                                                                    : isProjectPitchExpiredWaitingForTeacherToCheck(offerInstance.projectDetail)
+                                                                    : isStudentProjectPitchExpiredWaitingForAdminToCheck(studentOfferInstance.projectDetail)
                                                                         ? "Expired. Awaiting course admin review"
                                                                         : "Closed"
                                                         }
@@ -591,9 +591,9 @@ class OffersTable extends Component<OffersTableProps, any> {
                     <TableRow>
                         <TablePagination
                             rowsPerPageOptions={[5, 10, 15]}
-                            count={OffersTableLocalState.offerInstancesFilteredByName.length}
-                            rowsPerPage={OffersTableLocalState.rowsPerPage}
-                            page={OffersTableLocalState.currentPage}
+                            count={StudentOffersTableLocalState.studentOfferInstancesFilteredByName.length}
+                            rowsPerPage={StudentOffersTableLocalState.rowsPerPage}
+                            page={StudentOffersTableLocalState.currentPage}
                             backIconButtonProps={{
                                 'aria-label': 'Previous Page',
                             }}
@@ -613,4 +613,4 @@ class OffersTable extends Component<OffersTableProps, any> {
     }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(OffersTable);
+export default connect(mapStateToProps, mapDispatchToProps)(StudentOffersTable);

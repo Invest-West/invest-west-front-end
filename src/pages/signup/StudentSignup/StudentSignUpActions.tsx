@@ -1,35 +1,35 @@
 import {Action, ActionCreator, Dispatch} from "redux";
-import {AppState} from "../../redux-store/reducers";
+import {AppState} from "../../../redux-store/reducers";
 import InvitedStudent from "../../../models/invited_student";
 import StudentRepository from "../../../api/repositories/StudentRepository";
 import React from "react";
 import {checkPasswordStrength, PASSWORD_VERY_WEAK} from "../../../utils/passwordUtils";
 import {isValidEmailAddress} from "../../../utils/emailUtils";
-import {signIn} from "../../../redux-store/actions/authenticationActions";
+import {studentSignIn} from "../../../redux-store/actions/authenticationActions";
 
-export enum SignUpEvents {
-    LoadingInvitedStudent = "SignUpEvents.LoadingInvitedStudent",
-    CompleteLoadingInvitedStudent = "SignUpEvents.CompleteLoadingInvitedStudent",
-    InputFieldChanged = "SignUpEvents.InputFieldChanged",
-    CreatingAccount = "SignUpEvents.CreatingAccount",
-    CompleteCreatingAccount = "SignUpEvents.CompleteCreatingAccount"
+export enum StudentSignUpEvents {
+    LoadingInvitedStudent = "StudentSignUpEvents.LoadingInvitedStudent",
+    CompleteLoadingInvitedStudent = "StudentSignUpEvents.CompleteLoadingInvitedStudent",
+    InputFieldChanged = "StudentSignUpEvents.InputFieldChanged",
+    CreatingAccount = "StudentSignUpEvents.CreatingAccount",
+    CompleteCreatingAccount = "StudentSignUpEvents.CompleteCreatingAccount"
 }
 
-export interface SignUpAction extends Action {
+export interface StudentSignUpAction extends Action {
 
 }
 
-export interface CompleteLoadingInvitedStudentAction extends SignUpAction {
+export interface CompleteLoadingInvitedStudentAction extends StudentSignUpAction {
     invitedStudent?: InvitedStudent;
     error?: string;
 }
 
-export interface InputFieldChangedAction extends SignUpAction {
+export interface InputFieldChangedAction extends StudentSignUpAction {
     name: string;
     value: string | boolean;
 }
 
-export interface CompleteCreatingAccountAction extends SignUpAction {
+export interface CompleteCreatingAccountAction extends StudentSignUpAction {
     error?: string;
 }
 
@@ -37,12 +37,12 @@ export const loadInvitedStudent: ActionCreator<any> = (invitedStudentID: string)
     return async (dispatch: Dispatch, getState: () => AppState) => {
 
         const completeAction: CompleteLoadingInvitedStudentAction = {
-            type: SignUpEvents.CompleteLoadingInvitedStudent
+            type: StudentSignUpEvents.CompleteLoadingInvitedStudent
         };
 
         try {
             dispatch({
-                type: SignUpEvents.LoadingInvitedStudent
+                type: StudentSignUpEvents.LoadingInvitedStudent
             });
 
             const response = await new StudentRepository().retrieveInvitedStudent(invitedStudentID);
@@ -64,7 +64,7 @@ export const handleInputFieldChanged: ActionCreator<any> = (event: React.ChangeE
         const inputFieldChecked: boolean = event.target.checked;
 
         const action: InputFieldChangedAction = {
-            type: SignUpEvents.InputFieldChanged,
+            type: StudentSignUpEvents.InputFieldChanged,
             name: inputFieldName,
             value: inputFieldType === "checkbox" ? inputFieldChecked : inputFieldValue
         };
@@ -73,27 +73,29 @@ export const handleInputFieldChanged: ActionCreator<any> = (event: React.ChangeE
     }
 }
 
-export const createAccount: ActionCreator<any> = () => {
+export const createStudentAccount: ActionCreator<any> = () => {
     return async (dispatch: Dispatch, getState: () => AppState) => {
         const {
+            discover,
             invitedStudent,
             studentType,
             title,
             firstName,
             lastName,
+            
             email,
             confirmedEmail,
             password,
             confirmedPassword,
             acceptMarketingPreferences
-        } = getState().SignUpLocalState;
+        } = getState().StudentSignUpLocalState;
 
         const {
             course
         } = getState().ManageCourseUrlState;
 
         const completeAction: CompleteCreatingAccountAction = {
-            type: SignUpEvents.CompleteCreatingAccount
+            type: StudentSignUpEvents.CompleteCreatingAccount
         };
 
         // invalid email address
@@ -122,7 +124,7 @@ export const createAccount: ActionCreator<any> = () => {
 
         try {
             dispatch({
-                type: SignUpEvents.CreatingAccount
+                type: StudentSignUpEvents.CreatingAccount
             });
 
             await new StudentRepository().signUp({
@@ -142,7 +144,7 @@ export const createAccount: ActionCreator<any> = () => {
             });
 
             dispatch(completeAction);
-            return dispatch(signIn(email, password));
+            return dispatch(studentSignIn(email, password));
         } catch (error) {
             console.error("Error creating account:", error);
             completeAction.error = `Error creating account: ${error.message}`;

@@ -18,18 +18,18 @@ import {
 import {Col, Row} from "react-bootstrap";
 import {css} from "aphrodite";
 import sharedStyles from "../../../shared-js-css-styles/SharedStyles";
-import {StudentTitles, HearAbout} from "../../../models/student";
+import {StudentTitles} from "../../../models/student";
 import {AuthenticationState, isAuthenticating} from "../../../redux-store/reducers/authenticationReducer";
 import {RouteComponentProps} from "react-router-dom";
 import {RouteParams} from "../../../router/router";
-import {createAccount, handleInputFieldChanged, loadInvitedStudent} from "./StudentSignUpActions";
+import {createStudentAccount, handleInputFieldChanged, loadInvitedStudent} from "./StudentSignUpActions";
 import {
     hasErrorCreatingAccount,
     hasErrorLoadingInvitedStudent,
     isCreatingAccount,
     isLoadingInvitedStudent,
     notFoundInvitedStudent,
-    SignUpState
+    StudentSignUpState
 } from "./StudentSignUpReducer";
 import {getCourseRouteTheme, ManageCourseUrlState} from "../../../redux-store/reducers/manageCourseUrlReducer";
 import {BarLoader} from "react-spinners";
@@ -45,10 +45,10 @@ interface SignUpProps {
     ManageCourseUrlState: ManageCourseUrlState;
     MediaQueryState: MediaQueryState;
     AuthenticationState: AuthenticationState;
-    SignUpLocalState: SignUpState;
+    StudentSignUpLocalState: StudentSignUpState;
     loadInvitedStudent: (invitedStudentID: string) => any;
     handleInputFieldChanged: (event: React.ChangeEvent<HTMLInputElement>) => any;
-    createAccount: () => any;
+    createStudentAccount: () => any;
 }
 
 const mapStateToProps = (state: AppState) => {
@@ -56,7 +56,7 @@ const mapStateToProps = (state: AppState) => {
         ManageCourseUrlState: state.ManageCourseUrlState,
         MediaQueryState: state.MediaQueryState,
         AuthenticationState: state.AuthenticationState,
-        SignUpLocalState: state.SignUpLocalState
+        StudentSignUpLocalState: state.StudentSignUpLocalState
     }
 }
 
@@ -64,11 +64,11 @@ const mapDispatchToProps = (dispatch: ThunkDispatch<any, any, AnyAction>) => {
     return {
         loadInvitedStudent: (invitedStudentID: string) => dispatch(loadInvitedStudent(invitedStudentID)),
         handleInputFieldChanged: (event: React.ChangeEvent<HTMLInputElement>) => dispatch(handleInputFieldChanged(event)),
-        createAccount: () => dispatch(createAccount())
+        createStudentAccount: () => dispatch(createStudentAccount())
     }
 }
 
-class SignUp extends Component<SignUpProps & Readonly<RouteComponentProps<RouteParams>>, {}> {
+class StudentSignUp extends Component<SignUpProps & Readonly<RouteComponentProps<RouteParams>>, {}> {
     // invited Student id (optional parameter from the url)
     // if invitedStudentId = undefined --> public registration
     private invitedStudentId: string | undefined;
@@ -89,15 +89,15 @@ class SignUp extends Component<SignUpProps & Readonly<RouteComponentProps<RouteP
             ManageCourseUrlState,
             AuthenticationState,
             MediaQueryState,
-            SignUpLocalState,
+            StudentSignUpLocalState,
             handleInputFieldChanged,
-            createAccount
+            createStudentAccount
         } = this.props;
 
         // invited Student ID is specified in the url
         if (this.invitedStudentId) {
             // loading invited Student
-            if (isLoadingInvitedStudent(SignUpLocalState)) {
+            if (isLoadingInvitedStudent(StudentSignUpLocalState)) {
                 return (
                     <Box>
                         <BarLoader
@@ -111,8 +111,8 @@ class SignUp extends Component<SignUpProps & Readonly<RouteComponentProps<RouteP
 
             // error loading invited Student (network error or not found)
             // OR Student has already signed up
-            if (hasErrorLoadingInvitedStudent(SignUpLocalState)
-                || (SignUpLocalState.invitedStudent && hasRegistered(SignUpLocalState.invitedStudent))
+            if (hasErrorLoadingInvitedStudent(StudentSignUpLocalState)
+                || (StudentSignUpLocalState.invitedStudent && hasRegistered(StudentSignUpLocalState.invitedStudent))
             ) {
                 return <Box
                     marginTop="30px"
@@ -126,13 +126,13 @@ class SignUp extends Component<SignUpProps & Readonly<RouteComponentProps<RouteP
                     >
                         {
                             // invalid invitedStudentID
-                            notFoundInvitedStudent(SignUpLocalState)
+                            notFoundInvitedStudent(StudentSignUpLocalState)
                                 ? "This registration URL is not valid."
                                 // Student has already signed up
-                                : SignUpLocalState.invitedStudent && hasRegistered(SignUpLocalState.invitedStudent)
+                                : StudentSignUpLocalState.invitedStudent && hasRegistered(StudentSignUpLocalState.invitedStudent)
                                 ? "You have already registered. Please sign in."
                                 // other error
-                                : `${SignUpLocalState.errorLoadingInvitedStudent?.detail}`
+                                : `${StudentSignUpLocalState.errorLoadingInvitedStudent?.detail}`
                         }
                     </Typography>
                     <Box
@@ -144,7 +144,7 @@ class SignUp extends Component<SignUpProps & Readonly<RouteComponentProps<RouteP
                         color="primary"
                         onClick={() => {
                             // invalid invitedStudentID
-                            if (notFoundInvitedStudent(SignUpLocalState)) {
+                            if (notFoundInvitedStudent(StudentSignUpLocalState)) {
                                 this.props.history.replace(
                                     Routes.constructSignUpRoute(ManageCourseUrlState.courseNameFromUrl ?? "")
                                 );
@@ -153,7 +153,7 @@ class SignUp extends Component<SignUpProps & Readonly<RouteComponentProps<RouteP
                             }
 
                             // Student has already signed up
-                            if (SignUpLocalState.invitedStudent && hasRegistered(SignUpLocalState.invitedStudent)) {
+                            if (StudentSignUpLocalState.invitedStudent && hasRegistered(StudentSignUpLocalState.invitedStudent)) {
                                 this.props.history.push(Routes.constructSignInRoute(this.props.match.params));
                                 return;
                             }
@@ -164,10 +164,10 @@ class SignUp extends Component<SignUpProps & Readonly<RouteComponentProps<RouteP
                     >
                         {
                             // invalid invitedStudentID
-                            notFoundInvitedStudent(SignUpLocalState)
+                            notFoundInvitedStudent(StudentSignUpLocalState)
                                 ? "Go to public registration"
                                 // Student has already signed up
-                                : SignUpLocalState.invitedStudent && hasRegistered(SignUpLocalState.invitedStudent)
+                                : StudentSignUpLocalState.invitedStudent && hasRegistered(StudentSignUpLocalState.invitedStudent)
                                 ? "Sign in"
                                 // other error
                                 : "Retry"
@@ -175,12 +175,12 @@ class SignUp extends Component<SignUpProps & Readonly<RouteComponentProps<RouteP
 
                         {/** Error message */}
                         {
-                            hasErrorCreatingAccount(SignUpLocalState)
+                            hasErrorCreatingAccount(StudentSignUpLocalState)
                                 ? <Box marginY="20px">
                                     <Typography align="center" variant="body1" color="error">
-                                        {SignUpLocalState.errorCreatingAccount?.detail}
+                                        {StudentSignUpLocalState.errorCreatingAccount?.detail}
                                     </Typography>
-                                    {console.error("Error creating account:", SignUpLocalState.errorCreatingAccount)}
+                                    {console.error("Error creating account:", StudentSignUpLocalState.errorCreatingAccount)}
                                 </Box>
                                 : null
                         }
@@ -228,7 +228,7 @@ class SignUp extends Component<SignUpProps & Readonly<RouteComponentProps<RouteP
 
                             {/** Hash loader */}
                             {
-                                isCreatingAccount(SignUpLocalState) || isAuthenticating(AuthenticationState)
+                                isCreatingAccount(StudentSignUpLocalState) || isAuthenticating(AuthenticationState)
                                     ? <Box
                                         display="flex"
                                         marginY="20px"
@@ -243,7 +243,7 @@ class SignUp extends Component<SignUpProps & Readonly<RouteComponentProps<RouteP
 
                             {/** Error message */}
                             {
-                                !hasErrorCreatingAccount(SignUpLocalState)
+                                !hasErrorCreatingAccount(StudentSignUpLocalState)
                                     ? <Box
                                         marginY="20px"
                                     >
@@ -252,7 +252,7 @@ class SignUp extends Component<SignUpProps & Readonly<RouteComponentProps<RouteP
                                             variant="body1"
                                             color="error"
                                         >
-                                            {SignUpLocalState.errorCreatingAccount?.detail}
+                                            {StudentSignUpLocalState.errorCreatingAccount?.detail}
                                         </Typography>
                                     </Box>
                                     : null
@@ -274,7 +274,7 @@ class SignUp extends Component<SignUpProps & Readonly<RouteComponentProps<RouteP
                                 </InputLabel>
                                 <Select
                                     name="studentType"
-                                    value={SignUpLocalState.studentType}
+                                    value={StudentSignUpLocalState.studentType}
                                     // @ts-ignore
                                     onChange={handleInputFieldChanged}
                                     margin="dense"
@@ -322,7 +322,7 @@ class SignUp extends Component<SignUpProps & Readonly<RouteComponentProps<RouteP
                                 </InputLabel>
                                 <Select
                                     name="title"
-                                    value={SignUpLocalState.title}
+                                    value={StudentSignUpLocalState.title}
                                     // @ts-ignore
                                     onChange={handleInputFieldChanged}
                                     margin="dense"
@@ -366,7 +366,7 @@ class SignUp extends Component<SignUpProps & Readonly<RouteComponentProps<RouteP
                                         required
                                         label="First name"
                                         name="firstName"
-                                        value={SignUpLocalState.firstName}
+                                        value={StudentSignUpLocalState.firstName}
                                         fullWidth
                                         variant="outlined"
                                         margin="dense"
@@ -383,7 +383,7 @@ class SignUp extends Component<SignUpProps & Readonly<RouteComponentProps<RouteP
                                         required
                                         label="Last name"
                                         name="lastName"
-                                        value={SignUpLocalState.lastName}
+                                        value={StudentSignUpLocalState.lastName}
                                         fullWidth
                                         variant="outlined"
                                         margin="dense"
@@ -405,7 +405,7 @@ class SignUp extends Component<SignUpProps & Readonly<RouteComponentProps<RouteP
                                         required
                                         label="Email"
                                         name="email"
-                                        value={SignUpLocalState.email}
+                                        value={StudentSignUpLocalState.email}
                                         fullWidth
                                         variant="outlined"
                                         margin="dense"
@@ -423,7 +423,7 @@ class SignUp extends Component<SignUpProps & Readonly<RouteComponentProps<RouteP
                                         required
                                         label="Re-enter email"
                                         name="confirmedEmail"
-                                        value={SignUpLocalState.confirmedEmail}
+                                        value={StudentSignUpLocalState.confirmedEmail}
                                         fullWidth
                                         variant="outlined"
                                         margin="dense"
@@ -443,7 +443,7 @@ class SignUp extends Component<SignUpProps & Readonly<RouteComponentProps<RouteP
                                         required
                                         label="Password"
                                         name="password"
-                                        value={SignUpLocalState.password}
+                                        value={StudentSignUpLocalState.password}
                                         fullWidth
                                         variant="outlined"
                                         margin="dense"
@@ -461,7 +461,7 @@ class SignUp extends Component<SignUpProps & Readonly<RouteComponentProps<RouteP
                                         required
                                         label="Confirm password"
                                         name="confirmedPassword"
-                                        value={SignUpLocalState.confirmedPassword}
+                                        value={StudentSignUpLocalState.confirmedPassword}
                                         fullWidth
                                         variant="outlined"
                                         margin="dense"
@@ -481,7 +481,7 @@ class SignUp extends Component<SignUpProps & Readonly<RouteComponentProps<RouteP
                                 </InputLabel>
                                 <Select
                                     name="discover"
-                                    value={SignUpLocalState.discover}
+                                    value={StudentSignUpLocalState.discover}
                                     // @ts-ignore
                                     onChange={handleInputFieldChanged}
                                     margin="dense"
@@ -496,7 +496,7 @@ class SignUp extends Component<SignUpProps & Readonly<RouteComponentProps<RouteP
                                         Please select
                                     </MenuItem>
                                     {
-                                        HearAbout.map((discover, index) => (
+                                        StudentTitles.map((discover, index) => (
                                             <MenuItem
                                                 key={index}
                                                 value={discover}
@@ -522,7 +522,7 @@ class SignUp extends Component<SignUpProps & Readonly<RouteComponentProps<RouteP
                                         <Checkbox
                                             name="acceptMarketingPreferences"
                                             color="primary"
-                                            checked={SignUpLocalState.acceptMarketingPreferences}
+                                            checked={StudentSignUpLocalState.acceptMarketingPreferences}
                                             onChange={handleInputFieldChanged}
                                         />
                                         <Typography
@@ -593,16 +593,16 @@ class SignUp extends Component<SignUpProps & Readonly<RouteComponentProps<RouteP
                                     color="primary"
                                     variant="contained"
                                     disabled={
-                                        SignUpLocalState.studentType === -1
-                                        || SignUpLocalState.title === "-1"
-                                        || SignUpLocalState.firstName.trim().length === 0
-                                        || SignUpLocalState.lastName.trim().length === 0
-                                        || SignUpLocalState.email.trim().length === 0
-                                        || SignUpLocalState.confirmedEmail.trim().length === 0
-                                        || SignUpLocalState.password.trim().length === 0
-                                        || SignUpLocalState.confirmedPassword.trim().length === 0
+                                        StudentSignUpLocalState.studentType === -1
+                                        || StudentSignUpLocalState.title === "-1"
+                                        || StudentSignUpLocalState.firstName.trim().length === 0
+                                        || StudentSignUpLocalState.lastName.trim().length === 0
+                                        || StudentSignUpLocalState.email.trim().length === 0
+                                        || StudentSignUpLocalState.confirmedEmail.trim().length === 0
+                                        || StudentSignUpLocalState.password.trim().length === 0
+                                        || StudentSignUpLocalState.confirmedPassword.trim().length === 0
                                     }
-                                    onClick={() => createAccount()}
+                                    onClick={() => createStudentAccount()}
                                 >
                                     Create account
                                 </Button>
@@ -651,4 +651,4 @@ class SignUp extends Component<SignUpProps & Readonly<RouteComponentProps<RouteP
     }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(SignUpStudent);
+export default connect(mapStateToProps, mapDispatchToProps)(StudentSignUp);

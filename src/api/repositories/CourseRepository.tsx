@@ -46,7 +46,7 @@ export default class CourseRepository {
         return await new Api()
             .request(
                 "get",
-                ApiRoutes.listCourseMembers.replace(":course", courseID)
+                ApiRoutes.listCourseStudents.replace(":course", courseID)
             );
     }
 }

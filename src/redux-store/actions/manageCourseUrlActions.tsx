@@ -1,103 +1,103 @@
 import {Action, ActionCreator, Dispatch} from "redux";
-import GroupProperties from "../../models/group_properties";
+import CourseProperties from "../../models/course_properties";
 import Error from "../../models/error";
 import {AppState} from "../reducers";
-import GroupRepository from "../../api/repositories/GroupRepository";
+import CourseRepository from "../../api/repositories/CourseRepository";
 
-export enum ManageGroupUrlEvents {
-    SetGroupUrl = "ManageGroupUrlEvents.SetGroupUrl",
-    ValidatingGroupUrl = "ManageGroupUrlEvents.ValidatingGroupUrl",
-    FinishedValidatingGroupUrl = "ManageGroupUrlEvents.FinishedValidatingGroupUrl"
+export enum ManageCourseUrlEvents {
+    SetCourseUrl = "ManageCourseUrlEvents.SetCourseUrl",
+    ValidatingCourseUrl = "ManageCourseUrlEvents.ValidatingCourseUrl",
+    FinishedValidatingCourseUrl = "ManageCourseUrlEvents.FinishedValidatingCourseUrl"
 }
 
-export interface ManageGroupUrlAction extends Action {
+export interface ManageCourseUrlAction extends Action {
     path?: string;
-    groupUserName?: string | null;
-    group?: GroupProperties | null;
-    validGroupUrl?: boolean;
+    courseUserName?: string | null;
+    course?: CourseProperties | null;
+    validCourseUrl?: boolean;
     error?: Error
 }
 
-export interface SetGroupUrlAction extends ManageGroupUrlAction {
+export interface SetCourseUrlAction extends ManageCourseUrlAction {
     path: string;
-    groupUserName: string | null;
+    courseUserName: string | null;
 }
 
-export interface ValidatingGroupUrlAction extends ManageGroupUrlAction {
+export interface ValidatingCourseUrlAction extends ManageCourseUrlAction {
 }
 
-export interface FinishedValidatingGroupUrlAction extends ManageGroupUrlAction {
-    group: GroupProperties | null;
-    validGroupUrl: boolean;
+export interface FinishedValidatingCourseUrlAction extends ManageCourseUrlAction {
+    course: CourseProperties | null;
+    validCourseUrl: boolean;
     error?: Error
 }
 
-export const validateGroupUrl: ActionCreator<any> = (path: string, groupUserName: string | null) => {
+export const validateCourseUrl: ActionCreator<any> = (path: string, courseUserName: string | null) => {
     return async (dispatch: Dispatch, getState: () => AppState) => {
         const {
             routePath,
-            groupNameFromUrl,
-            group,
-            loadingGroup,
-            groupLoaded
-        } = getState().ManageGroupUrlState;
+            courseNameFromUrl,
+            course,
+            loadingCourse,
+            courseLoaded
+        } = getState().ManageCourseUrlState;
 
-        const setGroupUrlAction: SetGroupUrlAction = {
-            type: ManageGroupUrlEvents.SetGroupUrl,
+        const setCourseUrlAction: SetCourseUrlAction = {
+            type: ManageCourseUrlEvents.SetCourseUrl,
             path,
-            groupUserName
+            courseUserName
         }
 
-        let shouldValidateGroupUrl = false;
+        let shouldValidateCourseUrl = false;
 
-        // routePath or groupNameFromUrl or both of them have not been defined
-        if (routePath === undefined || groupNameFromUrl === undefined) {
-            shouldValidateGroupUrl = true;
+        // routePath or courseNameFromUrl or both of them have not been defined
+        if (routePath === undefined || courseNameFromUrl === undefined) {
+            shouldValidateCourseUrl = true;
         }
-        // routePath and groupNameFromUrl have been defined
+        // routePath and courseNameFromUrl have been defined
         else {
-            if (groupNameFromUrl !== groupUserName) {
-                shouldValidateGroupUrl = true;
+            if (courseNameFromUrl !== courseUserName) {
+                shouldValidateCourseUrl = true;
             }
         }
 
-        // group has not been loaded
-        // or group has been loaded but a new group name is set in the url
-        // --> continue validating group url
-        if ((!group && !loadingGroup && !groupLoaded)
-            || (!(!group && !loadingGroup && !groupLoaded) && shouldValidateGroupUrl)
+        // course has not been loaded
+        // or course has been loaded but a new course name is set in the url
+        // --> continue validating course url
+        if ((!course && !loadingCourse && !courseLoaded)
+            || (!(!course && !loadingCourse && !courseLoaded) && shouldValidateCourseUrl)
         ) {
-            dispatch(setGroupUrlAction);
+            dispatch(setCourseUrlAction);
 
-            const validatingGroupUrlAction: ValidatingGroupUrlAction = {
-                type: ManageGroupUrlEvents.ValidatingGroupUrl
+            const validatingCourseUrlAction: ValidatingCourseUrlAction = {
+                type: ManageCourseUrlEvents.ValidatingCourseUrl
             }
 
-            dispatch(validatingGroupUrlAction);
+            dispatch(validatingCourseUrlAction);
 
-            const finishedLoadingGroupUrlAction: FinishedValidatingGroupUrlAction = {
-                type: ManageGroupUrlEvents.FinishedValidatingGroupUrl,
-                group: null,
-                validGroupUrl: false
+            const finishedLoadingCourseUrlAction: FinishedValidatingCourseUrlAction = {
+                type: ManageCourseUrlEvents.FinishedValidatingCourseUrl,
+                course: null,
+                validCourseUrl: false
             }
 
-            // group name is not specified in the url
-            if (!groupUserName) {
-                finishedLoadingGroupUrlAction.validGroupUrl = true;
-                return dispatch(finishedLoadingGroupUrlAction);
+            // course name is not specified in the url
+            if (!courseUserName) {
+                finishedLoadingCourseUrlAction.validCourseUrl = true;
+                return dispatch(finishedLoadingCourseUrlAction);
             }
 
             try {
-                const response = await new GroupRepository().getGroup(groupUserName);
-                const retrievedGroup: GroupProperties | null = response.data;
-                finishedLoadingGroupUrlAction.group = retrievedGroup;
-                finishedLoadingGroupUrlAction.validGroupUrl = retrievedGroup !== null;
-                return dispatch(finishedLoadingGroupUrlAction);
+                const response = await new CourseRepository().getCourse(courseUserName);
+                const retrievedCourse: CourseProperties | null = response.data;
+                finishedLoadingCourseUrlAction.course = retrievedCourse;
+                finishedLoadingCourseUrlAction.validCourseUrl = retrievedCourse !== null;
+                return dispatch(finishedLoadingCourseUrlAction);
             } catch (error) {
-                finishedLoadingGroupUrlAction.error = {
+                finishedLoadingCourseUrlAction.error = {
                     detail: error.toString()
                 }
-                return dispatch(finishedLoadingGroupUrlAction);
+                return dispatch(finishedLoadingCourseUrlAction);
             }
         }
     }

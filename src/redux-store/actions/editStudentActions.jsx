@@ -55,9 +55,9 @@ export const setOriginalStudentAndEditedStudent = student => {
 };
 
 export const EDIT_PERSONAL_INFORMATION = 'EDIT_PERSONAL_INFORMATION';
-export const EDIT_ORDINARY_BUSINESS_PROFILE_INFORMATION = 'EDIT_ORDINARY_BUSINESS_PROFILE_INFORMATION';
-export const EDIT_TRADING_ADDRESS_BUSINESS_PROFILE = 'EDIT_TRADING_ADDRESS_BUSINESS_PROFILE';
-export const EDIT_REGISTERED_OFFICE_BUSINESS_PROFILE = 'EDIT_REGISTERED_OFFICE_BUSINESS_PROFILE';
+export const EDIT_ORDINARY_UNI_PROFILE_INFORMATION = 'EDIT_ORDINARY_UNI_PROFILE_INFORMATION';
+export const EDIT_TRADING_ADDRESS_UNI_PROFILE = 'EDIT_TRADING_ADDRESS_UNI_PROFILE';
+export const EDIT_REGISTERED_OFFICE_UNI_PROFILE = 'EDIT_REGISTERED_OFFICE_UNI_PROFILE';
 export const ADDING_NEW_DIRECTOR = 'ADDING_NEW_DIRECTOR';
 export const editStudentLocally = (type, edit) => {
     return (dispatch, getState) => {
@@ -99,7 +99,7 @@ export const deleteDirectorTemporarily = (index, isEditingExistingBusinessProfil
 };
 
 export const RESET_PERSONAL_INFORMATION = 'RESET_PERSONAL_INFORMATION';
-export const RESET_BUSINESS_PROFILE = 'RESET_BUSINESS_PROFILE';
+export const RESET_UNI_PROFILE = 'RESET_UNI_PROFILE';
 export const cancelEditingStudent = type => {
     return {
         type
@@ -107,7 +107,7 @@ export const cancelEditingStudent = type => {
 };
 
 export const COMMIT_PERSONAL_INFORMATION_CHANGES = 'COMMIT_PERSONAL_INFORMATION_CHANGES';
-export const COMMIT_BUSINESS_PROFILE_CHANGES = 'COMMIT_BUSINESS_PROFILE_CHANGES';
+export const COMMIT_UNI_PROFILE_CHANGES = 'COMMIT_UNI_PROFILE_CHANGES';
 export const commitStudentProfileChanges = type => {
     return (dispatch, getState) => {
 
@@ -197,7 +197,7 @@ export const commitStudentProfileChanges = type => {
                         position: "bottom"
                     });
                 });
-        } else if (type === COMMIT_BUSINESS_PROFILE_CHANGES) {
+        } else if (type === COMMIT_UNI_PROFILE_CHANGES) {
 
             let businessProfile = JSON.parse(JSON.stringify(studentEdited.BusinessProfile));
             businessProfile.registeredOffice.postcode = businessProfile.registeredOffice.postcode.toUpperCase();
@@ -233,10 +233,10 @@ export const commitStudentProfileChanges = type => {
                                 currentStudent.id === studentEdited.id
                                     ?
                                     // student is editing their own details
-                                    realtimeDBUtils.ACTIVITY_SUMMARY_TEMPLATE_UPDATED_BUSINESS_PROFILE
+                                    realtimeDBUtils.ACTIVITY_SUMMARY_TEMPLATE_UPDATED_UNI_PROFILE
                                     :
                                     // admin is editing student's details
-                                    realtimeDBUtils.ACTIVITY_SUMMARY_TEMPLATE_ADMIN_UPDATED_STUDENT_BUSINESS_PROFILE
+                                    realtimeDBUtils.ACTIVITY_SUMMARY_TEMPLATE_ADMIN_UPDATED_STUDENT_UNI_PROFILE
                                         .replace("%student%", studentEdited.firstName + " " + studentEdited.lastName)
                             ,
                             action:

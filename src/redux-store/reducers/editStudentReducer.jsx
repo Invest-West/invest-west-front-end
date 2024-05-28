@@ -39,7 +39,7 @@ const editStudentReducer = (state = initState, action) => {
                     [action.edit.property]: action.edit.value
                 }
             };
-        case editStudentActions.EDIT_ORDINARY_BUSINESS_PROFILE_INFORMATION:
+        case editStudentActions.EDIT_ORDINARY_UNI_PROFILE_INFORMATION:
             return {
                 ...state,
                 studentEdited: {
@@ -50,7 +50,7 @@ const editStudentReducer = (state = initState, action) => {
                     }
                 }
             };
-        case editStudentActions.EDIT_REGISTERED_OFFICE_BUSINESS_PROFILE:
+        case editStudentActions.EDIT_REGISTERED_OFFICE_UNI_PROFILE:
             return {
                 ...state,
                 studentEdited: {
@@ -64,7 +64,7 @@ const editStudentReducer = (state = initState, action) => {
                     }
                 }
             };
-        case editStudentActions.EDIT_TRADING_ADDRESS_BUSINESS_PROFILE:
+        case editStudentActions.EDIT_TRADING_ADDRESS_UNI_PROFILE:
             return {
                 ...state,
                 studentEdited: {
@@ -139,7 +139,7 @@ const editStudentReducer = (state = initState, action) => {
                     linkedin: !state.originalStudent.linkedin ? '' : state.originalStudent.linkedin
                 }
             };
-        case editStudentActions.RESET_BUSINESS_PROFILE:
+        case editStudentActions.RESET_UNI_PROFILE:
             return {
                 ...state,
                 studentEdited: {

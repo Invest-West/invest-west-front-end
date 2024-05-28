@@ -4,7 +4,7 @@ import EmailRepository, {
     ClientEmailTypes,
     ContactPitchOwnerEmailData
 } from "../../../../api/repositories/EmailRepository";
-import User from "../../../../models/user";
+import Student from "../../../../models/student";
 import {openFeedbackSnackbar} from "../../../../shared-components/feedback-snackbar/FeedbackSnackbarActions";
 import {FeedbackSnackbarTypes} from "../../../../shared-components/feedback-snackbar/FeedbackSnackbarReducer";
 
@@ -19,20 +19,20 @@ export interface ContactPitchOwnerDialogAction extends Action {
 }
 
 export interface ToggleContactDialogAction extends ContactPitchOwnerDialogAction {
-    projectName: string | null;
-    projectOwnerEmail: string | null;
+    studentProjectName: string | null;
+    studentProjectOwnerEmail: string | null;
 }
 
 export interface CompleteSendingContactEmailAction extends ContactPitchOwnerDialogAction {
     error?: string;
 }
 
-export const toggleContactPitchOwnerDialog: ActionCreator<any> = (projectName?: string, projectOwnerEmail?: string) => {
+export const toggleContactPitchOwnerDialog: ActionCreator<any> = (studentProjectName?: string, studentProjectOwnerEmail?: string) => {
     return (dispatch: Dispatch, getState: () => AppState) => {
         const action: ToggleContactDialogAction = {
             type: ContactPitchOwnerDialogEvents.ToggleContactDialog,
-            projectName: projectName ?? null,
-            projectOwnerEmail: projectOwnerEmail ?? null
+            studentProjectName: studentProjectName ?? null,
+            studentProjectOwnerEmail: studentProjectOwnerEmail ?? null
         };
         return dispatch(action);
     }
@@ -41,8 +41,8 @@ export const toggleContactPitchOwnerDialog: ActionCreator<any> = (projectName?: 
 export const sendContactEmail: ActionCreator<any> = () => {
     return async (dispatch: Dispatch, getState: () => AppState) => {
         const {
-            projectName,
-            projectOwnerEmail,
+            studentProjectName,
+            studentProjectOwnerEmail,
             sendingContactEmail
         } = getState().ContactPitchOwnerDialogLocalState;
 
@@ -50,15 +50,15 @@ export const sendContactEmail: ActionCreator<any> = () => {
             return;
         }
 
-        if (!projectName || !projectOwnerEmail) {
+        if (!studentProjectName || !studentProjectOwnerEmail) {
             return;
         }
 
         const {
-            currentUser
+            currentStudent
         } = getState().AuthenticationState;
 
-        if (!currentUser) {
+        if (!currentStudent) {
             return;
         }
 
@@ -72,10 +72,10 @@ export const sendContactEmail: ActionCreator<any> = () => {
 
         try {
             const emailInfo: ContactPitchOwnerEmailData = {
-                receiver: projectOwnerEmail,
-                sender: currentUser.email,
-                userName: `${(currentUser as User).firstName} ${(currentUser as User).lastName}`,
-                projectName: projectName
+                receiver: studentProjectOwnerEmail,
+                sender: currentStudent.email,
+                userName: `${(currentStudent as Student).firstName} ${(currentStudent as Student).lastName}`,
+                studentProjectName: studentProjectName
             };
 
             await new EmailRepository().sendEmail({

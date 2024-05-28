@@ -28,14 +28,8 @@ export interface AccessRequestInstance {
     group: GroupProperties;
 }
 
-export interface AccessRequestInstanceWithStudent {
+export interface AccessStudentRequestInstance {
     request: AccessRequest;
-    user: Student;
-    group: GroupProperties;
-}
-
-export interface AccessRequestInstanceWithCourse {
-    request: AccessRequest;
-    user: Student;
+    student: Student;
     course: CourseProperties;
 }

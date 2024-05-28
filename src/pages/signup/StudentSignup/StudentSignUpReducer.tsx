@@ -2,14 +2,14 @@ import {
     CompleteCreatingAccountAction,
     CompleteLoadingInvitedStudentAction,
     InputFieldChangedAction,
-    SignUpAction,
-    SignUpEvents
+    StudentSignUpAction,
+    StudentSignUpEvents
 } from "./StudentSignUpActions";
 import Error from "../../../models/error";
 import InvitedStudent from "../../../models/invited_student";
-import {AuthenticationEvents} from "../../../redux-store/actions/authenticationActions";
+import {StudentAuthenticationEvents} from "../../../redux-store/actions/authenticationActions";
 
-export interface SignUpState {
+export interface StudentSignUpState {
     invitedStudent?: InvitedStudent;
     invitedStudentLoaded: boolean;
     loadingInvitedStudent: boolean;
@@ -30,7 +30,7 @@ export interface SignUpState {
     errorCreatingAccount?: Error;
 }
 
-const initialState: SignUpState = {
+const initialState: StudentSignUpState = {
     invitedStudentLoaded: false,
     loadingInvitedStudent: false,
 
@@ -48,37 +48,37 @@ const initialState: SignUpState = {
     creatingAccount: false
 }
 
-export const isLoadingInvitedStudent = (state: SignUpState) => {
+export const isLoadingInvitedStudent = (state: StudentSignUpState) => {
     return !state.invitedStudentLoaded && state.loadingInvitedStudent;
 }
 
-export const hasSuccessfullyLoadedInvitedStudent = (state: SignUpState) => {
+export const hasSuccessfullyLoadedInvitedStudent = (state: StudentSignUpState) => {
     return state.invitedStudentLoaded && !state.loadingInvitedStudent && state.invitedStudent !== undefined && state.errorLoadingInvitedStudent === undefined;
 }
 
-export const hasErrorLoadingInvitedStudent = (state: SignUpState) => {
+export const hasErrorLoadingInvitedStudent = (state: StudentSignUpState) => {
     return state.invitedStudentLoaded && !state.loadingInvitedStudent && state.invitedStudent === undefined && state.errorLoadingInvitedStudent !== undefined;
 }
 
-export const notFoundInvitedStudent = (state: SignUpState) => {
+export const notFoundInvitedStudent = (state: StudentSignUpState) => {
     return hasErrorLoadingInvitedStudent(state) && state.errorLoadingInvitedStudent && state.errorLoadingInvitedStudent.detail.includes("404");
 }
 
-export const isCreatingAccount = (state: SignUpState) => {
+export const isCreatingAccount = (state: StudentSignUpState) => {
     return state.creatingAccount;
 }
 
-export const hasErrorCreatingAccount = (state: SignUpState) => {
+export const hasErrorCreatingAccount = (state: StudentSignUpState) => {
     return !state.creatingAccount && state.errorCreatingAccount !== undefined;
 }
 
-const signUpReducer = (state = initialState, action: SignUpAction) => {
+const signUpReducer = (state = initialState, action: StudentSignUpAction) => {
     switch (action.type) {
-        case AuthenticationEvents.SignOut:
+        case StudentAuthenticationEvents.StudentSignOut:
             return initialState;
-        case AuthenticationEvents.CompleteAuthentication:
+        case StudentAuthenticationEvents.CompleteStudentAuthentication:
             return initialState;
-        case SignUpEvents.LoadingInvitedStudent:
+        case StudentSignUpEvents.LoadingInvitedStudent:
             return {
                 ...state,
                 invitedStudent: undefined,
@@ -86,7 +86,7 @@ const signUpReducer = (state = initialState, action: SignUpAction) => {
                 loadingInvitedStudent: true,
                 errorLoadingInvitedStudent: undefined
             }
-        case SignUpEvents.CompleteLoadingInvitedStudent:
+        case StudentSignUpEvents.CompleteLoadingInvitedStudent:
             const completeLoadingInvitedStudentAction: CompleteLoadingInvitedStudentAction = action as CompleteLoadingInvitedStudentAction;
             return {
                 ...state,
@@ -106,20 +106,20 @@ const signUpReducer = (state = initialState, action: SignUpAction) => {
                 email: completeLoadingInvitedStudentAction.invitedStudent
                     ? completeLoadingInvitedStudentAction.invitedStudent.email : state.email
             }
-        case SignUpEvents.InputFieldChanged:
+        case StudentSignUpEvents.InputFieldChanged:
             const inputFieldChangedAction: InputFieldChangedAction = action as InputFieldChangedAction;
             return {
                 ...state,
                 [inputFieldChangedAction.name]: inputFieldChangedAction.value
             }
-        case SignUpEvents.CreatingAccount:
+        case StudentSignUpEvents.CreatingAccount:
             return {
                 ...state,
                 creatingAccount: true,
                 successfullyCreatedAccount: false,
                 errorCreatingAccount: undefined
             }
-        case SignUpEvents.CompleteCreatingAccount:
+        case StudentSignUpEvents.CompleteCreatingAccount:
             const completeCreatingAccountAction: CompleteCreatingAccountAction = action as CompleteCreatingAccountAction;
             return {
                 ...state,

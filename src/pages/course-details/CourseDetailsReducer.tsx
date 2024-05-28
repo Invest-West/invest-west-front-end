@@ -9,13 +9,13 @@ import CourseProperties from "../../models/course_properties";
 import {InvitedStudentWithProfile} from "../../models/invited_student";
 import {StudentProjectInstance} from "../../models/studentProject";
 import Error from "../../models/error";
-import {AccessRequestInstance} from "../../models/access_request";
+import {AccessStudentRequestInstance} from "../../models/access_request";
 
 export interface CourseDetailsState {
     course?: CourseProperties;
     members?: InvitedStudentWithProfile[];
     offers?: StudentProjectInstance[];
-    accessRequestsInstances?: AccessRequestInstance[];
+    accessRequestsInstances?: AccessStudentRequestInstance[];
 
     loadingData: boolean;
     dataLoaded: boolean;
@@ -93,8 +93,8 @@ const courseDetailsReducer = (state = initialState, action: CourseDetailsAction)
                 members: completeLoadingDataAction.members !== undefined
                     ? [...completeLoadingDataAction.members]
                     : state.members,
-                offers: completeLoadingDataAction.offers !== undefined
-                    ? [...completeLoadingDataAction.offers]
+                offers: completeLoadingDataAction.studentOffers !== undefined
+                    ? [...completeLoadingDataAction.studentOffers]
                     : state.offers,
                 accessRequestsInstances: completeLoadingDataAction.accessRequestInstances !== undefined
                     ? [...completeLoadingDataAction.accessRequestInstances]

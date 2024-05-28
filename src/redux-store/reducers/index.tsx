@@ -33,6 +33,7 @@ import manageSystemGroupsReducer from './manageSystemGroupsReducer';
 import manageMarketingPreferencesReducer from './manageMarketingPreferencesReducer';
 import createProjectReducer from './createProjectReducer';
 import manageGroupUrlReducer, {ManageGroupUrlState} from "./manageGroupUrlReducer";
+import manageCourseUrlReducer, {ManageCourseUrlState} from "./manageCourseUrlReducer";
 import signInReducer, {SignInState} from "../../pages/signin/SignInReducer";
 import authenticationReducer, {AuthenticationState} from "./authenticationReducer";
 import manageSystemAttributesReducer, {ManageSystemAttributesState} from "./manageSystemAttributesReducer";
@@ -48,6 +49,7 @@ import feedbackSnackbarReducerNew, {FeedbackSnackbarState} from "../../shared-co
 import documentsDownloadReducer, {DocumentsDownloadState} from "../../shared-components/documents-download/DocumentsDownloadReducer";
 import contactPitchOwnerDialogReducer, {ContactPitchOwnerDialogState} from "../../pages/project-details/components/contact-pitch-owner-dialog/ContactPitchOwnerDialogReducer";
 import profileReducer, {ProfileState} from "../../shared-components/profile/ProfileReducer";
+import studentProfileReducer, {StudentProfileState} from "../../shared-components/student-profile/StudentProfileReducer";
 import signUpReducer, {SignUpState} from "../../pages/signup/SignUpReducer";
 import manageSectorsReducer, {ManageSectorsState} from "../../pages/admin/components/manage-sectors/ManageSectorsReducer";
 
@@ -55,6 +57,7 @@ export interface AppState {
     MediaQueryState: MediaQueryState;
     ManageSystemIdleTimeState: ManageSystemIdleTimeState;
     ManageGroupUrlState: ManageGroupUrlState;
+    ManageCourseUrlState: ManageCourseUrlState;
     AuthenticationState: AuthenticationState;
     ManageSystemAttributesState: ManageSystemAttributesState;
 
@@ -75,6 +78,8 @@ export interface AppState {
 
     ProfileLocalState: ProfileState;
 
+    StudentLocalState: StudentProfileState;
+
     // mitigation plan for the old states of old reducers
     [oldReducers: string]: any;
 }
@@ -83,6 +88,7 @@ const rootReducer = combineReducers<AppState>({
     MediaQueryState: mediaQueryReducer,
     ManageSystemIdleTimeState: manageSystemIdleTimeReducer,
     ManageGroupUrlState: manageGroupUrlReducer,
+    ManageCourseUrlState: manageCourseUrlReducer,
     AuthenticationState: authenticationReducer,
     ManageSystemAttributesState: manageSystemAttributesReducer,
 
@@ -102,6 +108,8 @@ const rootReducer = combineReducers<AppState>({
     ManageSectorsLocalState: manageSectorsReducer,
 
     ProfileLocalState: profileReducer,
+
+    StudentLocalState: studentProfileReducer,
 
     // Old reducers --------------------------
     auth: authReducer,

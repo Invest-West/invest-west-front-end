@@ -72,6 +72,13 @@ export class ApiRoutes {
     static createAccessRequestRoute = ApiRoutes.accessRequestsBaseRoute + "/create";
     static removeAccessRequestRoute = ApiRoutes.createAccessRequestRoute + "/remove";
 
+
+    // Student access request routes
+    static accessStudentRequestsBaseRoute = "/access-requests";
+    static listStudentAccessRequestsRoute = ApiRoutes.accessRequestsBaseRoute + "/list";
+    static createStudentAccessRequestRoute = ApiRoutes.accessRequestsBaseRoute + "/create";
+    static removeStudentAccessRequestRoute = ApiRoutes.createAccessRequestRoute + "/remove";
+
     static investorSelfCertificationBaseRoute = "/investor-self-certifications";
     static retrieveInvestorSelfCertificationRoute = ApiRoutes.investorSelfCertificationBaseRoute + "/retrieve";
     static updateInvestorSelfCertificationRoute = ApiRoutes.investorSelfCertificationBaseRoute + "/update";

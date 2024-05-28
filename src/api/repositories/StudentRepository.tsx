@@ -1,35 +1,35 @@
-import User, {ProfileImage, ProfileVideo} from "../../models/user";
+import Student, {StudentProfileImage, StudentProfileVideo} from "../../models/student";
 import Api, {ApiRoutes} from "../Api";
 
-export interface UpdateUserData {
-    updatedUser: User;
-    newProfilePicture?: ProfileImage;
-    newLogo?: ProfileImage;
-    newVideo?: ProfileVideo;
+export interface UpdateStudentData {
+    updatedStudent: Student;
+    newProfilePicture?: StudentProfileImage;
+    newLogo?: StudentProfileImage;
+    newVideo?: StudentProfileVideo;
     removeProfilePicture?: true;
 }
 
-export interface SignUpData {
+export interface StudentSignUpData {
     isPublicRegistration: boolean;
-    invitedUserID?: string;
-    userProfile: Partial<User>;
+    invitedStudentID?: string;
+    studentProfile: Partial<Student>;
     password: string;
-    groupID: string;
+    courseID: string;
     acceptMarketingPreferences: boolean;
 }
 
-    export default class UserRepository {
+    export default class StudentRepository {
 
     /**
      * Sign up
      *
      * @param data
      */
-    public async signUp(data: SignUpData) {
+    public async signUp(data: StudentSignUpData) {
         return await new Api()
             .request(
                 "post",
-                ApiRoutes.createUser,
+                ApiRoutes.createStudent,
                 {
                     queryParameters: null,
                     requestBody: data
@@ -38,35 +38,35 @@ export interface SignUpData {
     }
 
     /**
-     * Retrieve user
+     * Retrieve student
      *
      * @param uid
      */
-    public async retrieveUser(uid: string) {
+    public async retrieveStudent(uid: string) {
         return await new Api().request("get",
-            ApiRoutes.retrieveUser.replace(":uid", uid));
+            ApiRoutes.retrieveStudent.replace(":uid", uid));
     }
 
     /**
-     * Retrieve invited user
+     * Retrieve invited student
      *
-     * @param invitedUserID
+     * @param invitedStudentID
      */
-    public async retrieveInvitedUser(invitedUserID: string) {
+    public async retrieveInvitedStudent(invitedStudentID: string) {
         return await new Api().request("get",
-            ApiRoutes.retrieveInvitedUser.replace(":invitedUserID", invitedUserID));
+            ApiRoutes.retrieveInvitedStudent.replace(":invitedStudentID", invitedStudentID));
     }
 
     /**
-     * Update user
+     * Update student
      *
      * @param data
      */
-    public async updateUser(data: UpdateUserData) {
+    public async updateStudent(data: UpdateStudentData) {
         return await new Api()
             .request(
                 "put",
-                ApiRoutes.updateUser,
+                ApiRoutes.updateStudent,
                 {
                     queryParameters: null,
                     requestBody: data
@@ -75,12 +75,12 @@ export interface SignUpData {
     }
 
     /**
-     * List groups of membership
+     * List courses of membership
      *
      * @param uid
      */
-    public async listGroupsOfMembership(uid: string) {
+    public async listCoursesOfMembership(uid: string) {
         return await new Api().request("get",
-            ApiRoutes.listGroupsOfMembership.replace(":uid", uid));
+            ApiRoutes.listCoursesOfMembership.replace(":uid", uid));
     }
 }

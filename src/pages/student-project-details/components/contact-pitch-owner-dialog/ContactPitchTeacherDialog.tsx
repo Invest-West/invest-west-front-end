@@ -5,9 +5,9 @@ import {ThunkDispatch} from "redux-thunk";
 import {Box, Button, Dialog, DialogActions, DialogContent, Typography} from "@material-ui/core";
 import {css} from "aphrodite";
 import sharedStyles from "../../../../shared-js-css-styles/SharedStyles";
-import {ContactPitchOwnerDialogState, isSendingContactEmail} from "./ContactPitchOwnerDialogReducer";
+import {ContactPitchOwnerDialogState, isSendingContactEmail} from "./ContactPitchTeacherDialogReducer";
 import {AnyAction} from "redux";
-import {sendContactEmail, toggleContactPitchOwnerDialog} from "./ContactPitchOwnerDialogActions";
+import {sendContactEmail, toggleContactPitchOwnerDialog} from "./ContactPitchTeacherDialogActions";
 
 interface ContactPitchOwnerDialogProps {
     ContactPitchOwnerDialogLocalState: ContactPitchOwnerDialogState;

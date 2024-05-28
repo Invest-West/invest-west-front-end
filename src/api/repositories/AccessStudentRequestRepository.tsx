@@ -29,7 +29,7 @@ export default class AccessStudentRequestRepository {
      * @param studentID
      * @param courseID
      */
-    public async createAccessRequest(studentID: string, courseID: string) {
+    public async createStudentAccessRequest(studentID: string, courseID: string) {
         return await new Api()
             .request(
                 "post",
@@ -49,11 +49,11 @@ export default class AccessStudentRequestRepository {
      *
      * @param requestID
      */
-    public async removeAccessRequest(requestID: string) {
+    public async removeStudentAccessRequest(requestID: string) {
         return await new Api()
             .request(
                 "delete",
-                ApiRoutes.RemoveStudentAccessRequestRoute,
+                ApiRoutes.removeStudentAccessRequestRoute,
                 {
                     queryParameters: null,
                     requestBody: {

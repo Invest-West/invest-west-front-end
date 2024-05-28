@@ -319,15 +319,15 @@ export const isVideoPitchCover = (pitchCover: PitchCover) => {
     return pitchCover.fileType === FILE_TYPE_VIDEO;
 }
 
-export const isProjectPublic = (studentProject: StudentProject) => {
+export const isStudentProjectPublic = (studentProject: StudentProject) => {
     return studentProject.visibility === STUDENT_PROJECT_VISIBILITY_PUBLIC;
 }
 
-export const isProjectRestricted = (studentProject: StudentProject) => {
+export const isStudentProjectRestricted = (studentProject: StudentProject) => {
     return studentProject.visibility === STUDENT_PROJECT_VISIBILITY_RESTRICTED;
 }
 
-export const isProjectPrivate = (studentProject: StudentProject) => {
+export const isStudentProjectPrivate = (studentProject: StudentProject) => {
     return studentProject.visibility === STUDENT_PROJECT_VISIBILITY_PRIVATE;
 }
 

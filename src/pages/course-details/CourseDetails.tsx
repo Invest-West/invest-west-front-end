@@ -106,7 +106,7 @@ class CourseDetails extends Component<CourseDetailsProps & Readonly<RouteCompone
         let hasRequestedToAccessCourse: boolean = false;
         if (hasAccessRequestsBeenSatisfied(CourseDetailsLocalState)) {
             hasRequestedToAccessCourse = CourseDetailsLocalState.accessRequestsInstances
-                ?.findIndex(accessRequestInstance => accessRequestInstance.course.anid === CourseDetailsLocalState.course?.course) !== -1;
+                ?.findIndex(accessStudentRequestInstance => accessStudentRequestInstance.course.anid === CourseDetailsLocalState.course?.anid) !== -1;
         }
 
         // successfully loaded
