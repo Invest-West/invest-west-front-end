@@ -18,7 +18,7 @@ import {BeatLoader} from "react-spinners";
 import {getCourseRouteTheme, ManageCourseUrlState} from "../../redux-store/reducers/manageCourseUrlReducer";
 import {loadData, removeAccessRequest, sendAccessRequest} from "./CourseDetailsActions";
 import {getCourseLogo} from "../../models/course_properties";
-import {StudentAuthenticationState} from "../../redux-store/reducers/authenticationReducer";
+import {StudentAuthenticationState} from "../../redux-store/reducers/studentAuthenticationReducer";
 import Teacher, {isProf} from "../../models/teacher";
 import {dateInReadableFormat} from "../../utils/utils";
 import CourseOfMembership, {getHomeCourse} from "../../models/course_of_membership";
@@ -244,11 +244,11 @@ class CourseDetails extends Component<CourseDetailsProps & Readonly<RouteCompone
                                                 </Box>
 
                                                 <Box padding="18px">
-                                                    <Typography variant="h4" align="left">{CourseDetailsLocalState.offers?.length}</Typography>
+                                                    <Typography variant="h4" align="left">{CourseDetailsLocalState.studentOffers?.length}</Typography>
 
                                                     <Box height="2px"/>
 
-                                                    <Typography variant="body1" align="left">Investment opportunities</Typography>
+                                                    <Typography variant="body1" align="left">Student projects</Typography>
                                                 </Box>
                                             </Box>
                                         </Col>

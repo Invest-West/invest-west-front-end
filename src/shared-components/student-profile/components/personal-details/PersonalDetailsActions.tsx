@@ -1,9 +1,9 @@
-import {ProfileAction} from "../../StudentProfileActions";
+import {StudentProfileAction} from "../../StudentProfileActions";
 
-export enum PersonalDetailsEvents {
+export enum StudentPersonalDetailsEvents {
 
 }
 
-export interface PersonalDetailsAction extends ProfileAction {
+export interface StudentPersonalDetailsAction extends StudentProfileAction {
 
 }

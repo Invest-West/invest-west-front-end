@@ -26,7 +26,7 @@ import {Close, CreateOutlined, ImportExportOutlined, Refresh, Search} from "@mat
 import {MediaQueryState} from "../../redux-store/reducers/mediaQueryReducer";
 import {ManageSystemAttributesState} from "../../redux-store/reducers/manageSystemAttributesReducer";
 import {getCourseRouteTheme, ManageCourseUrlState} from "../../redux-store/reducers/manageCourseUrlReducer";
-import {AuthenticationState} from "../../redux-store/reducers/authenticationReducer";
+import {StudentAuthenticationState} from "../../redux-store/reducers/studentAuthenticationReducer";
 import {
     hasErrorExportingCsv,
     hasErrorFetchingOffers,
@@ -87,7 +87,7 @@ interface OffersTableProps {
     MediaQueryState: MediaQueryState;
     ManageSystemAttributesState: ManageSystemAttributesState;
     ManageCourseUrlState: ManageCourseUrlState;
-    AuthenticationState: AuthenticationState;
+    StudentAuthenticationState: StudentAuthenticationState;
     StudentOffersTableLocalState: OffersStudentTableStates;
     setStudent: (student?: Student | Teacher) => any;
     fetchStudentOffers: () => any;
@@ -104,7 +104,7 @@ const mapStateToProps = (state: AppState) => {
         MediaQueryState: state.MediaQueryState,
         ManageSystemAttributesState: state.ManageSystemAttributesState,
         ManageCourseUrlState: state.ManageCourseUrlState,
-        AuthenticationState: state.AuthenticationState,
+        StudentAuthenticationState: state.StudentAuthenticationState,
         StudentOffersTableLocalState: state.StudentOffersTableLocalState
     }
 }
@@ -127,16 +127,16 @@ class StudentOffersTable extends Component<OffersTableProps, any> {
     componentDidMount() {
         const {
             directTableStudent,
-            AuthenticationState,
+            StudentAuthenticationState,
             setStudent
         } = this.props;
-        setStudent(directTableStudent ?? AuthenticationState.currentStudent ?? undefined);
+        setStudent(directTableStudent ?? StudentAuthenticationState.currentStudent ?? undefined);
     }
 
     render() {
         const {
             ManageCourseUrlState,
-            AuthenticationState,
+            StudentAuthenticationState,
             StudentOffersTableLocalState,
             fetchStudentOffers,
             filterChanged,
@@ -147,11 +147,11 @@ class StudentOffersTable extends Component<OffersTableProps, any> {
             exportCsv
         } = this.props;
 
-        if (!AuthenticationState.currentStudent) {
+        if (!StudentAuthenticationState.currentStudent) {
             return null;
         }
 
-        const currentStudent: Student | Teacher = AuthenticationState.currentStudent;
+        const currentStudent: Student | Teacher = StudentAuthenticationState.currentStudent;
         const tableStudent: Student | Teacher | undefined = StudentOffersTableLocalState.tableStudent;
 
         if (!currentStudent || !tableStudent) {

@@ -8,60 +8,60 @@ import {
     ManageSystemAttributesState,
     successfullyLoadedSystemAttributes
 } from "../../../../redux-store/reducers/manageSystemAttributesReducer";
-import {isSavingSectorsChanges, ManageSectorsState} from "./ManageSectorsReducer";
+import {isSavingCourseSectorsChanges, ManageCourseSectorsState} from "./ManageCourseSectorsReducer";
 import {css} from "aphrodite";
 import sharedStyles from "../../../../shared-js-css-styles/SharedStyles";
 import AddIcon from "@material-ui/icons/Add";
 import {
-    addNewSector,
-    cancelSectorsChanges, deleteSector,
+    addNewCourseSector,
+    cancelCourseSectorsChanges, deleteCourseSector,
     onTextChanged,
-    saveSectorsChanges,
-    toggleAddNewSector
-} from "./ManageSectorsActions";
+    saveCourseSectorsChanges,
+    toggleAddNewCourseSector
+} from "./ManageCourseSectorsActions";
 import CloseIcon from "@material-ui/icons/Close";
 import DeleteIcon from "@material-ui/icons/Delete";
 
-interface ManageSectorsProps {
+interface ManageCourseSectorsProps {
     ManageSystemAttributesState: ManageSystemAttributesState;
-    ManageSectorsLocalState: ManageSectorsState;
-    toggleAddNewSector: () => any;
+    ManageCourseSectorsLocalState: ManageCourseSectorsState;
+    toggleAddNewCourseSector: () => any;
     onTextChanged: (event: React.ChangeEvent<HTMLInputElement>) => any;
-    addNewSector: () => any;
-    deleteSector: (sector: string) => any;
-    saveSectorsChanges: () => any;
-    cancelSectorsChanges: () => any;
+    addNewCourseSector: () => any;
+    deleteCourseSector: (sector: string) => any;
+    saveCourseSectorsChanges: () => any;
+    cancelCourseSectorsChanges: () => any;
 }
 
 const mapStateToProps = (state: AppState) => {
     return {
         ManageSystemAttributesState: state.ManageSystemAttributesState,
-        ManageSectorsLocalState: state.ManageSectorsLocalState
+        ManageCourseSectorsLocalState: state.ManageCourseSectorsLocalState
     }
 }
 
 const mapDispatchToProps = (dispatch: ThunkDispatch<any, any, AnyAction>) => {
     return {
-        toggleAddNewSector: () => dispatch(toggleAddNewSector()),
+        toggleAddNewCourseSector: () => dispatch(toggleAddNewCourseSector()),
         onTextChanged: (event: React.ChangeEvent<HTMLInputElement>) => dispatch(onTextChanged(event)),
-        addNewSector: () => dispatch(addNewSector()),
-        deleteSector: (sector: string) => dispatch(deleteSector(sector)),
-        saveSectorsChanges: () => dispatch(saveSectorsChanges()),
-        cancelSectorsChanges: () => dispatch(cancelSectorsChanges())
+        addNewCourseSector: () => dispatch(addNewCourseSector()),
+        deleteCourseSector: (sector: string) => dispatch(deleteCourseSector(sector)),
+        saveCourseSectorsChanges: () => dispatch(saveCourseSectorsChanges()),
+        cancelCourseSectorsChanges: () => dispatch(cancelCourseSectorsChanges())
     }
 }
 
-class ManageSectors extends Component<ManageSectorsProps, any> {
+class ManageCourseSectors extends Component<ManageCourseSectorsProps, any> {
     render() {
         const {
             ManageSystemAttributesState,
-            ManageSectorsLocalState,
-            toggleAddNewSector,
+            ManageCourseSectorsLocalState,
+            toggleAddNewCourseSector,
             onTextChanged,
-            addNewSector,
-            deleteSector,
-            saveSectorsChanges,
-            cancelSectorsChanges
+            addNewCourseSector,
+            deleteCourseSector,
+            saveCourseSectorsChanges,
+            cancelCourseSectorsChanges
         } = this.props;
 
         if (!successfullyLoadedSystemAttributes(ManageSystemAttributesState)) {
@@ -73,9 +73,9 @@ class ManageSectors extends Component<ManageSectorsProps, any> {
 
             <Box height="15px"/>
 
-            <Button className={css(sharedStyles.no_text_transform)} variant="outlined" onClick={() => toggleAddNewSector()}>
+            <Button className={css(sharedStyles.no_text_transform)} variant="outlined" onClick={() => toggleAddNewCourseSector()}>
                 {
-                    !ManageSectorsLocalState.addingNewSector
+                    !ManageCourseSectorsLocalState.addingNewCourseSector
                         ? <AddIcon/>
                         : <CloseIcon/>
                 }
@@ -84,31 +84,31 @@ class ManageSectors extends Component<ManageSectorsProps, any> {
                     width="6px"
                 />
                 {
-                    !ManageSectorsLocalState.addingNewSector
+                    !ManageCourseSectorsLocalState.addingNewCourseSector
                         ? "Add new sector"
                         : "Cancel adding new sector"
                 }
             </Button>
 
             {
-                !ManageSectorsLocalState.addingNewSector
+                !ManageCourseSectorsLocalState.addingNewCourseSector
                     ? null
                     : <Box display="flex" flexDirection="row" alignItems="center" marginTop="10px">
                         <TextField variant="outlined" margin="dense" onChange={onTextChanged}/>
                         <Box width="15px"/>
-                        <Button className={css(sharedStyles.no_text_transform)} variant="contained" color="primary" onClick={() => addNewSector()}>Add</Button>
+                        <Button className={css(sharedStyles.no_text_transform)} variant="contained" color="primary" onClick={() => addNewCourseSector()}>Add</Button>
                       </Box>
             }
 
             <Box height="30px"/>
 
             {
-                ManageSectorsLocalState.sectors.map(sector => (
+                ManageCourseSectorsLocalState.sectors.map(sector => (
                     <Box display="flex" flexDirection="row" alignItems="center" marginBottom="10px">
                         <Typography align="left" variant="body1">{sector}
                         </Typography>
                         <Box width="10px"/>
-                        <IconButton onClick={() => deleteSector(sector)} >
+                        <IconButton onClick={() => deleteCourseSector(sector)} >
                             <DeleteIcon fontSize="small"/>
                         </IconButton>
                     </Box>
@@ -116,11 +116,11 @@ class ManageSectors extends Component<ManageSectorsProps, any> {
             }
 
             <Box display="flex" flexDirection="row" marginTop="20px">
-                <Button className={css(sharedStyles.no_text_transform)} variant="outlined" onClick={() => cancelSectorsChanges()}>Cancel changes</Button>
+                <Button className={css(sharedStyles.no_text_transform)} variant="outlined" onClick={() => cancelCourseSectorsChanges()}>Cancel changes</Button>
                 <Box width="15px"/>
-                <Button className={css(sharedStyles.no_text_transform)} variant="contained" color="primary" onClick={() => saveSectorsChanges()} disabled={isSavingSectorsChanges(ManageSectorsLocalState)}>
+                <Button className={css(sharedStyles.no_text_transform)} variant="contained" color="primary" onClick={() => saveCourseSectorsChanges()} disabled={isSavingCourseSectorsChanges(ManageCourseSectorsLocalState)}>
                     {
-                        isSavingSectorsChanges(ManageSectorsLocalState)
+                        isSavingCourseSectorsChanges(ManageCourseSectorsLocalState)
                             ? "Saving ..."
                             : "Save changes"
                     }
@@ -131,4 +131,4 @@ class ManageSectors extends Component<ManageSectorsProps, any> {
 
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(ManageSectors);
+export default connect(mapStateToProps, mapDispatchToProps)(ManageCourseSectors);

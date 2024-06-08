@@ -3,21 +3,21 @@ import * as realtimeDBUtils from "../../firebase/realtimeDBUtils";
 import {trackActivity} from "../../firebase/realtimeDBUtils";
 import firebase from "../../firebase/firebaseApp";
 import {
-    ADD_NEW_COURSE_ADMIN_STATUS_CHECKING,
-    ADD_NEW_COURSE_ADMIN_STATUS_EMAIL_USED,
-    ADD_NEW_COURSE_ADMIN_STATUS_MISSING_EMAIL
-} from "../../pages/admin/components/CourseAdminsTable";
+    ADD_NEW_COURSE_TEACHER_STATUS_CHECKING,
+    ADD_NEW_COURSE_TEACHER_STATUS_EMAIL_USED,
+    ADD_NEW_COURSE_TEACHER_STATUS_MISSING_EMAIL
+} from "../../pages/admin/components/CourseTeachersTable";
 import * as feedbackSnackbarActions from "./feedbackSnackbarActions";
 import Api, {ApiRoutes} from "../../api/Api";
 
-export const COURSE_ADMINS_TABLE_SET_COURSE = 'COURSE_ADMINS_TABLE_SET_COURSE';
+export const COURSE_TEACHERS_TABLE_SET_COURSE = 'COURSE_TEACHERS_TABLE_SET_COURSE';
 export const setCourse = newCourse => {
     return (dispatch, getState) => {
-        const prevTableCourse = getState().manageCourseAdminsTable.tableCourse;
+        const prevTableCourse = getState().manageCourseTeachersTable.tableCourse;
 
         if (!newCourse || !prevTableCourse) {
             dispatch({
-                type: COURSE_ADMINS_TABLE_SET_COURSE,
+                type: COURSE_TEACHERS_TABLE_SET_COURSE,
                 course: newCourse
             });
             return;
@@ -28,102 +28,102 @@ export const setCourse = newCourse => {
         }
 
         dispatch({
-            type: COURSE_ADMINS_TABLE_SET_COURSE,
+            type: COURSE_TEACHERS_TABLE_SET_COURSE,
             course: newCourse
         });
     }
 };
 
-export const COURSE_ADMINS_TABLE_LOADING_COURSE_ADMINS = 'COURSE_ADMINS_TABLE_LOADING_COURSE_ADMINS';
-export const COURSE_ADMINS_TABLE_FINISHED_LOADING_COURSE_ADMINS = 'COURSE_ADMINS_TABLE_FINISHED_LOADING_COURSE_ADMINS';
-export const loadCourseAdmins = () => {
+export const COURSE_TEACHERS_TABLE_LOADING_COURSE_TEACHERS = 'COURSE_TEACHERS_TABLE_LOADING_COURSE_TEACHERS';
+export const COURSE_TEACHERS_TABLE_FINISHED_LOADING_COURSE_TEACHERS = 'COURSE_TEACHERS_TABLE_FINISHED_LOADING_COURSE_TEACHERS';
+export const loadCourseTeachers = () => {
     return (dispatch, getState) => {
-        const currentStudent = getState().auth.user;
-        const tableCourse = getState().manageCourseAdminsTable.tableCourse;
+        const currentStudent = getState().auth.student;
+        const tableCourse = getState().manageCourseTeachersTable.tableCourse;
 
         if (currentStudent.type !== DB_CONST.TYPE_PROF) {
             dispatch({
-                type: COURSE_ADMINS_TABLE_FINISHED_LOADING_COURSE_ADMINS,
-                courseAdmins: []
+                type: COURSE_TEACHERS_TABLE_FINISHED_LOADING_COURSE_TEACHERS,
+                courseTeachers: []
             });
             return;
         }
 
-        if (!currentStudent.superAdmin) {
+        if (!currentStudent.superTeacher) {
             if (currentStudent.anid !== tableCourse.anid) {
                 dispatch({
-                    type: COURSE_ADMINS_TABLE_FINISHED_LOADING_COURSE_ADMINS,
-                    courseAdmins: []
+                    type: COURSE_TEACHERS_TABLE_FINISHED_LOADING_COURSE_TEACHERS,
+                    courseTeachers: []
                 });
                 return;
             }
         }
 
         dispatch({
-            type: COURSE_ADMINS_TABLE_LOADING_COURSE_ADMINS
+            type: COURSE_TEACHERS_TABLE_LOADING_COURSE_TEACHERS
         });
 
         realtimeDBUtils
-        .loadCourseAdminsBasedOnCourseID(tableCourse.anid)
-        .then(courseAdmins => {
+        .loadCourseTeachersBasedOnCourseID(tableCourse.anid)
+        .then(courseTeachers => {
             dispatch({
-                type: COURSE_ADMINS_TABLE_FINISHED_LOADING_COURSE_ADMINS,
-                courseAdmins: [...courseAdmins]
+                type: COURSE_TEACHERS_TABLE_FINISHED_LOADING_COURSE_TEACHERS,
+                courseTeachers: [...courseTeachers]
             });
         })
         .catch(error => {
             console.error('Error loading course admins:', error);
             dispatch({
-                type: COURSE_ADMINS_TABLE_FINISHED_LOADING_COURSE_ADMINS,
-                courseAdmins: []
+                type: COURSE_TEACHERS_TABLE_FINISHED_LOADING_COURSE_TEACHERS,
+                courseTeachers: []
             });
         });
     }
 };
 
-export const COURSE_ADMINS_TABLE_PAGE_CHANGED = 'COURSE_ADMINS_TABLE_PAGE_CHANGED';
+export const COURSE_TEACHERS_TABLE_PAGE_CHANGED = 'COURSE_TEACHERS_TABLE_PAGE_CHANGED';
 export const changePage = (event, newPage) => {
     return {
-        type: COURSE_ADMINS_TABLE_PAGE_CHANGED,
+        type: COURSE_TEACHERS_TABLE_PAGE_CHANGED,
         newPage
     }
 };
 
-export const COURSE_ADMINS_TABLE_ROWS_PER_PAGE_CHANGED = 'COURSE_ADMINS_TABLE_ROWS_PER_PAGE_CHANGED';
+export const COURSE_TEACHERS_TABLE_ROWS_PER_PAGE_CHANGED = 'COURSE_TEACHERS_TABLE_ROWS_PER_PAGE_CHANGED';
 export const changeRowsPerPage = event => {
     return {
-        type: COURSE_ADMINS_TABLE_ROWS_PER_PAGE_CHANGED,
+        type: COURSE_TEACHERS_TABLE_ROWS_PER_PAGE_CHANGED,
         value: parseInt(event.target.value, 10)
     }
 };
 
-export const COURSE_ADMINS_TABLE_TOGGLE_SEARCH_MODE = 'COURSE_ADMINS_TABLE_TOGGLE_SEARCH_MODE';
+export const COURSE_TEACHERS_TABLE_TOGGLE_SEARCH_MODE = 'COURSE_TEACHERS_TABLE_TOGGLE_SEARCH_MODE';
 export const toggleSearchMode = () => {
     return {
-        type: COURSE_ADMINS_TABLE_TOGGLE_SEARCH_MODE
+        type: COURSE_TEACHERS_TABLE_TOGGLE_SEARCH_MODE
     }
 };
 
-export const COURSE_ADMINS_TABLE_HANDLE_INPUT_CHANGED = 'COURSE_ADMINS_TABLE_HANDLE_INPUT_CHANGED';
+export const COURSE_TEACHERS_TABLE_HANDLE_INPUT_CHANGED = 'COURSE_TEACHERS_TABLE_HANDLE_INPUT_CHANGED';
 export const handleInputChanged = event => {
     return {
-        type: COURSE_ADMINS_TABLE_HANDLE_INPUT_CHANGED,
+        type: COURSE_TEACHERS_TABLE_HANDLE_INPUT_CHANGED,
         event
     }
 };
 
-export const COURSE_ADMINS_TABLE_TOGGLE_ADD_NEW_COURSE_ADMIN_DIALOG = 'COURSE_ADMINS_TABLE_TOGGLE_ADD_NEW_COURSE_ADMIN_DIALOG';
-export const toggleAddNewCourseAdminDialog = () => {
+export const COURSE_TEACHERS_TABLE_TOGGLE_ADD_NEW_COURSE_TEACHER_DIALOG = 'COURSE_TEACHERS_TABLE_TOGGLE_ADD_NEW_COURSE_TEACHER_DIALOG';
+export const toggleAddNewCourseTeacherDialog = () => {
     return {
-        type: COURSE_ADMINS_TABLE_TOGGLE_ADD_NEW_COURSE_ADMIN_DIALOG
+        type: COURSE_TEACHERS_TABLE_TOGGLE_ADD_NEW_COURSE_TEACHER_DIALOG
     }
 };
 
-export const COURSE_ADMINS_TABLE_ADD_NEW_COURSE_STATUS_CHANGED = 'COURSE_ADMINS_TABLE_ADD_NEW_COURSE_STATUS_CHANGED';
-export const handleAddNewCourseAdmin = () => {
+export const COURSE_TEACHERS_TABLE_ADD_NEW_COURSE_STATUS_CHANGED = 'COURSE_TEACHERS_TABLE_ADD_NEW_COURSE_STATUS_CHANGED';
+export const handleAddNewCourseTeacher = () => {
     return async (dispatch, getState) => {
-        const newCourseAdminEmail = getState().manageCourseAdminsTable.newCourseAdminEmail;
-        const currentStudent = getState().auth.user;
+        const newCourseTeacherEmail = getState().manageCourseTeachersTable.newCourseTeacherEmail;
+        const currentStudent = getState().auth.student;
         const courseProperties = getState().manageCourseFromParams.courseProperties;
 
         if (!currentStudent) {
@@ -134,61 +134,61 @@ export const handleAddNewCourseAdmin = () => {
             return;
         }
 
-        if (!currentStudent.superCourseAdmin) {
+        if (!currentStudent.superCourseTeacher) {
             return;
         }
 
-        if (newCourseAdminEmail.trim().length === 0) {
+        if (newCourseTeacherEmail.trim().length === 0) {
             dispatch({
-                type: COURSE_ADMINS_TABLE_ADD_NEW_COURSE_STATUS_CHANGED,
-                status: ADD_NEW_COURSE_ADMIN_STATUS_MISSING_EMAIL
+                type: COURSE_TEACHERS_TABLE_ADD_NEW_COURSE_STATUS_CHANGED,
+                status: ADD_NEW_COURSE_TEACHER_STATUS_MISSING_EMAIL
             });
             return;
         }
 
         dispatch({
-            type: COURSE_ADMINS_TABLE_ADD_NEW_COURSE_STATUS_CHANGED,
-            status: ADD_NEW_COURSE_ADMIN_STATUS_CHECKING
+            type: COURSE_TEACHERS_TABLE_ADD_NEW_COURSE_STATUS_CHANGED,
+            status: ADD_NEW_COURSE_TEACHER_STATUS_CHECKING
         });
 
         try {
-            const checkResult = await realtimeDBUtils.doesStudentExist(newCourseAdminEmail.toLowerCase());
+            const checkResult = await realtimeDBUtils.doesStudentExist(newCourseTeacherEmail.toLowerCase());
 
             // this email has already been used
-            if (checkResult.userExists) {
+            if (checkResult.studentExists) {
                 dispatch({
-                    type: COURSE_ADMINS_TABLE_ADD_NEW_COURSE_STATUS_CHANGED,
-                    status: ADD_NEW_COURSE_ADMIN_STATUS_EMAIL_USED
+                    type: COURSE_TEACHERS_TABLE_ADD_NEW_COURSE_STATUS_CHANGED,
+                    status: ADD_NEW_COURSE_TEACHER_STATUS_EMAIL_USED
                 });
             } else {
                 const response = await new Api().request(
                     "post",
-                    ApiRoutes.addCourseAdminRoute,
+                    ApiRoutes.addCourseTeacherRoute,
                     {
                         queryParameters: null,
                         requestBody: {
                             adder: currentStudent,
                             courseProperties: courseProperties,
-                            newCourseAdminEmail: newCourseAdminEmail
+                            newCourseTeacherEmail: newCourseTeacherEmail
                         }
                     }
                 );
 
                 // obtain the newly created course admin profile from the server
-                const newCourseAdmin = response.data;
+                const newCourseTeacher = response.data;
 
                 // track super course admin's activity
                 trackActivity({
-                    userID: currentStudent.id,
+                    studentID: currentStudent.id,
                     activityType: DB_CONST.ACTIVITY_TYPE_POST,
                     interactedObjectLocation: DB_CONST.ADMINISTRATORS_CHILD,
-                    interactedObjectID: newCourseAdmin.id,
+                    interactedObjectID: newCourseTeacher.id,
                     activitySummary:
                         realtimeDBUtils
-                            .ACTIVITY_SUMMARY_TEMPLATE_ADDED_A_NEW_COURSE_ADMIN
-                            .replace("%courseAdminEmail%", newCourseAdminEmail)
+                            .ACTIVITY_SUMMARY_TEMPLATE_ADDED_A_NEW_COURSE_TEACHER
+                            .replace("%courseTeacherEmail%", newCourseTeacherEmail)
                     ,
-                    value: newCourseAdmin
+                    value: newCourseTeacher
                 });
 
                 dispatch({
@@ -199,7 +199,7 @@ export const handleAddNewCourseAdmin = () => {
                 });
 
                 dispatch({
-                    type: COURSE_ADMINS_TABLE_TOGGLE_ADD_NEW_COURSE_ADMIN_DIALOG
+                    type: COURSE_TEACHERS_TABLE_TOGGLE_ADD_NEW_COURSE_TEACHER_DIALOG
                 });
             }
         } catch (error) {
@@ -214,86 +214,86 @@ export const handleAddNewCourseAdmin = () => {
 };
 //----------------------------------------------------------------------------------------------------------------------
 
-let courseAdminsListener = null;
+let courseTeachersListener = null;
 
-export const COURSE_ADMINS_TABLE_CHANGED = 'COURSE_ADMINS_TABLE_CHANGED';
-export const startListeningForCourseAdminsChanged = () => {
+export const COURSE_TEACHERS_TABLE_CHANGED = 'COURSE_TEACHERS_TABLE_CHANGED';
+export const startListeningForCourseTeachersChanged = () => {
     return (dispatch, getState) => {
-        if (courseAdminsListener) {
+        if (courseTeachersListener) {
             return;
         }
 
-        const currentStudent = getState().auth.user;
-        const tableCourse = getState().manageCourseAdminsTable.tableCourse;
+        const currentStudent = getState().auth.student;
+        const tableCourse = getState().manageCourseTeachersTable.tableCourse;
 
         if (currentStudent.type !== DB_CONST.TYPE_PROF) {
             return;
         }
 
-        if (!currentStudent.superAdmin && currentStudent.anid !== tableCourse.anid) {
+        if (!currentStudent.superTeacher && currentStudent.anid !== tableCourse.anid) {
             return;
         }
 
-        courseAdminsListener = firebase
+        courseTeachersListener = firebase
             .database()
             .ref(DB_CONST.ADMINISTRATORS_CHILD);
 
-        courseAdminsListener
+        courseTeachersListener
             .on('child_added', snapshot => {
-                const courseAdmin = snapshot.val();
-                let courseAdmins = [...getState().manageCourseAdminsTable.courseAdmins];
+                const courseTeacher = snapshot.val();
+                let courseTeachers = [...getState().manageCourseTeachersTable.courseTeachers];
 
-                const index = courseAdmins.findIndex(existingCourseAdmin => existingCourseAdmin.id === courseAdmin.id);
+                const index = courseTeachers.findIndex(existingCourseTeacher => existingCourseTeacher.id === courseTeacher.id);
                 if (index === -1) {
 
-                    if (courseAdmin.anid === tableCourse.anid) {
+                    if (courseTeacher.anid === tableCourse.anid) {
                         dispatch({
-                            type: COURSE_ADMINS_TABLE_CHANGED,
-                            courseAdmins: [...courseAdmins, courseAdmin]
+                            type: COURSE_TEACHERS_TABLE_CHANGED,
+                            courseTeachers: [...courseTeachers, courseTeacher]
                         });
                     }
                 }
             });
 
-        courseAdminsListener
+        courseTeachersListener
             .on('child_changed', snapshot => {
-                const courseAdmin = snapshot.val();
-                let courseAdmins = [...getState().manageCourseAdminsTable.courseAdmins];
+                const courseTeacher = snapshot.val();
+                let courseTeachers = [...getState().manageCourseTeachersTable.courseTeachers];
 
-                const index = courseAdmins.findIndex(existingCourseAdmin => existingCourseAdmin.id === courseAdmin.id);
+                const index = courseTeachers.findIndex(existingCourseTeacher => existingCourseTeacher.id === courseTeacher.id);
                 if (index !== -1) {
-                    courseAdmins[index] = courseAdmin;
+                    courseTeachers[index] = courseTeacher;
                     dispatch({
-                        type: COURSE_ADMINS_TABLE_CHANGED,
-                        courseAdmins: [...courseAdmins]
+                        type: COURSE_TEACHERS_TABLE_CHANGED,
+                        courseTeachers: [...courseTeachers]
                     });
                 }
             });
 
-        courseAdminsListener
+        courseTeachersListener
             .on('child_removed', snapshot => {
-                const courseAdmin = snapshot.val();
-                let courseAdmins = [...getState().manageCourseAdminsTable.courseAdmins];
+                const courseTeacher = snapshot.val();
+                let courseTeachers = [...getState().manageCourseTeachersTable.courseTeachers];
 
-                const index = courseAdmins.findIndex(existingCourseAdmin => existingCourseAdmin.id === courseAdmin.id);
+                const index = courseTeachers.findIndex(existingCourseTeacher => existingCourseTeacher.id === courseTeacher.id);
                 if (index !== -1) {
-                    courseAdmins.splice(index, 1);
+                    courseTeachers.splice(index, 1);
                     dispatch({
-                        type: COURSE_ADMINS_TABLE_CHANGED,
-                        courseAdmins: [...courseAdmins]
+                        type: COURSE_TEACHERS_TABLE_CHANGED,
+                        courseTeachers: [...courseTeachers]
                     });
                 }
             });
     }
 };
 
-export const stopListeningForCourseAdminsChanged = () => {
+export const stopListeningForCourseTeachersChanged = () => {
     return (dispatch, getState) => {
-        if (courseAdminsListener) {
-            courseAdminsListener.off('child_added');
-            courseAdminsListener.off('child_changed');
-            courseAdminsListener.off('child_removed');
-            courseAdminsListener = null;
+        if (courseTeachersListener) {
+            courseTeachersListener.off('child_added');
+            courseTeachersListener.off('child_changed');
+            courseTeachersListener.off('child_removed');
+            courseTeachersListener = null;
         }
     }
 };

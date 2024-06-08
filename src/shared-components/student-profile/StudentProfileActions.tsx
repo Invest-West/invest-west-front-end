@@ -32,7 +32,7 @@ export enum InputCategories {
     // includes text fields in the Personal details section
     PersonalDetails = "InputCategories.PersonalDetails",
     // includes text fields in the Business profile section
-    BusinessProfile = "InputCategories.BusinessProfile",
+    UniProfile = "InputCategories.UniProfile",
     // includes text fields in the Registered office section (subsection of Business profile)
     RegisteredOffice = "InputCategories.RegisteredOffice",
     // includes text fields in the Trading address section (subsection of Business profile)
@@ -40,7 +40,7 @@ export enum InputCategories {
     // includes text fields in the Director section (subsection of Business profile)
     Director = "InputCategories.Director",
     // includes all checkboxes in Business profile section
-    BusinessProfileCheckBox = "InputCategories.BusinessProfileCheckBox"
+    UniProfileCheckBox = "InputCategories.UniProfileCheckBox"
 }
 
 export const handleInputFieldChanged: ActionCreator<any> = (inputCategory: InputCategories, event: React.ChangeEvent<HTMLInputElement>) => {
@@ -50,7 +50,7 @@ export const handleInputFieldChanged: ActionCreator<any> = (inputCategory: Input
             return;
         }
 
-        // let newBusinessProfile: BusinessProfile = getState().ProfileLocalState.BusinessProfileState.newBusinessProfile;
+        // let newUniProfile: UniProfile = getState().ProfileLocalState.UniProfileState.newUniProfile;
         //
         // const inputFieldName: string = event.target.name;
         // const inputFieldValue: string = event.target.value;
@@ -63,25 +63,25 @@ export const handleInputFieldChanged: ActionCreator<any> = (inputCategory: Input
         //             [inputFieldName]: inputFieldValue
         //         }
         //         return dispatch(setCopiedStudent(currentCopiedStudent));
-        //     case InputCategories.BusinessProfile:
-        //         if (hasBusinessProfile(currentCopiedStudent)) {
+        //     case InputCategories.UniProfile:
+        //         if (hasUniProfile(currentCopiedStudent)) {
         //             currentCopiedStudent = {
         //                 ...currentCopiedStudent,
         //                 // @ts-ignore
-        //                 BusinessProfile: {
-        //                     ...currentCopiedStudent.BusinessProfile,
+        //                 UniProfile: {
+        //                     ...currentCopiedStudent.UniProfile,
         //                     [inputFieldName]: inputFieldValue
         //                 }
         //             }
         //             return dispatch(setCopiedStudent(currentCopiedStudent));
         //         } else {
-        //             newBusinessProfile = {
-        //                 ...newBusinessProfile,
+        //             newUniProfile = {
+        //                 ...newUniProfile,
         //                 [inputFieldName]: inputFieldValue
         //             }
         //             const updateNewBusinessStudentProfileAction: UpdateNewBusinessStudentProfileAction = {
-        //                 type: BusinessStudentProfileEvents.NewBusinessProfileChanged,
-        //                 updatedNewBusinessProfile: newBusinessProfile
+        //                 type: BusinessStudentProfileEvents.NewUniProfileChanged,
+        //                 updatedNewUniProfile: newUniProfile
         //             };
         //             return dispatch(updateNewBusinessStudentProfileAction);
         //         }
@@ -89,7 +89,7 @@ export const handleInputFieldChanged: ActionCreator<any> = (inputCategory: Input
         //         if (inputFieldValue === "none") {
         //             return;
         //         }
-        //         const foundAddresses: Address[] | undefined = getState().ProfileLocalState.BusinessProfileState.foundAddressesForRegisteredOffice;
+        //         const foundAddresses: Address[] | undefined = getState().ProfileLocalState.UniProfileState.foundAddressesForRegisteredOffice;
         //         if (!foundAddresses) {
         //             return;
         //         }
@@ -97,24 +97,24 @@ export const handleInputFieldChanged: ActionCreator<any> = (inputCategory: Input
         //         if (index === -1) {
         //             return;
         //         }
-        //         if (hasBusinessProfile(currentCopiedStudent)) {
+        //         if (hasUniProfile(currentCopiedStudent)) {
         //             currentCopiedStudent = {
         //                 ...currentCopiedStudent,
         //                 // @ts-ignore
-        //                 BusinessProfile: {
-        //                     ...currentCopiedStudent.BusinessProfile,
+        //                 UniProfile: {
+        //                     ...currentCopiedStudent.UniProfile,
         //                     registeredOffice: foundAddresses[index]
         //                 }
         //             }
         //             return dispatch(setCopiedStudent(currentCopiedStudent));
         //         } else {
-        //             newBusinessProfile = {
-        //                 ...newBusinessProfile,
+        //             newUniProfile = {
+        //                 ...newUniProfile,
         //                 registeredOffice: foundAddresses[index]
         //             };
         //             const updateNewBusinessStudentProfileAction: UpdateNewBusinessStudentProfileAction = {
-        //                 type: BusinessStudentProfileEvents.NewBusinessProfileChanged,
-        //                 updatedNewBusinessProfile: newBusinessProfile
+        //                 type: BusinessStudentProfileEvents.NewUniProfileChanged,
+        //                 updatedNewUniProfile: newUniProfile
         //             };
         //             return dispatch(updateNewBusinessStudentProfileAction);
         //         }
@@ -123,7 +123,7 @@ export const handleInputFieldChanged: ActionCreator<any> = (inputCategory: Input
         //         if (inputFieldValue === "none") {
         //             return;
         //         }
-        //         const foundAddresses: Address[] | undefined = getState().ProfileLocalState.BusinessProfileState.foundAddressesForRegisteredOffice;
+        //         const foundAddresses: Address[] | undefined = getState().ProfileLocalState.UniProfileState.foundAddressesForRegisteredOffice;
         //         if (!foundAddresses) {
         //             return;
         //         }
@@ -131,30 +131,30 @@ export const handleInputFieldChanged: ActionCreator<any> = (inputCategory: Input
         //         if (index === -1) {
         //             return;
         //         }
-        //         if (hasBusinessProfile(currentCopiedStudent)) {
+        //         if (hasUniProfile(currentCopiedStudent)) {
         //             currentCopiedStudent = {
         //                 ...currentCopiedStudent,
         //                 // @ts-ignore
-        //                 BusinessProfile: {
-        //                     ...currentCopiedStudent.BusinessProfile,
+        //                 UniProfile: {
+        //                     ...currentCopiedStudent.UniProfile,
         //                     tradingAddress: foundAddresses[index]
         //                 }
         //             }
         //             return dispatch(setCopiedStudent(currentCopiedStudent));
         //         } else {
-        //             newBusinessProfile = {
-        //                 ...newBusinessProfile,
+        //             newUniProfile = {
+        //                 ...newUniProfile,
         //                 tradingAddress: foundAddresses[index]
         //             };
         //             const updateNewBusinessStudentProfileAction: UpdateNewBusinessStudentProfileAction = {
-        //                 type: BusinessStudentProfileEvents.NewBusinessProfileChanged,
-        //                 updatedNewBusinessProfile: newBusinessProfile
+        //                 type: BusinessStudentProfileEvents.NewUniProfileChanged,
+        //                 updatedNewUniProfile: newUniProfile
         //             };
         //             return dispatch(updateNewBusinessStudentProfileAction);
         //         }
         //     }
-        //     case InputCategories.BusinessProfileCheckBox:
-        //         const businessProfileCheckBoxChangedAction: BusinessProfileCheckBoxChangedAction = {
+        //     case InputCategories.UniProfileCheckBox:
+        //         const businessProfileCheckBoxChangedAction: UniProfileCheckBoxChangedAction = {
         //             type: BusinessStudentProfileEvents.CheckBoxChanged,
         //             name: inputFieldName,
         //             value: inputFieldChecked

@@ -240,8 +240,8 @@ class InvitedStudents extends Component {
                                             onChange={handleInputChanged}
                                         >
                                             <MenuItem value={FILTER_COURSE_STUDENTS_ALL} key={FILTER_COURSE_STUDENTS_ALL}>All</MenuItem>
-                                            <MenuItem value={FILTER_HOME_STUDENTS} key={FILTER_HOME_STUDENTS}>Home members</MenuItem>
-                                            <MenuItem value={FILTER_PLATFORM_STUDENTS} key={FILTER_PLATFORM_STUDENTS}>Platform members</MenuItem>
+                                            <MenuItem value={FILTER_HOME_STUDENTS} key={FILTER_HOME_STUDENTS}>Core student members</MenuItem>
+                                            <MenuItem value={FILTER_PLATFORM_STUDENTS} key={FILTER_PLATFORM_STUDENTS}>Platform student members</MenuItem>
                                         </Select>
                                     </FormControl>
 
@@ -316,7 +316,7 @@ class InvitedStudents extends Component {
                     </Col>
                 </Row>
 
-                {/** Add members (only investors) from QIB to Silicon Gorge and vice versa */}
+                {/** Add members (only students) from QIB to Silicon Gorge and vice versa */}
                 {
                     !teacher.superTeacher
                         ?
@@ -703,11 +703,11 @@ class InvitedStudents extends Component {
                             <TableCell colSpan={1}>
                                 <Typography align="left"  variant="body2">
                                     {
-                                        invitedStudent.type === DB_CONST.TYPE_ISSUER
+                                        invitedStudent.type === DB_CONST.TYPE_TEACHER
                                             ?
-                                            "Issuer"
+                                            "Teacher"
                                             :
-                                            "Investor"
+                                            "Student"
                                     }
                                 </Typography>
                             </TableCell>
@@ -776,7 +776,7 @@ class InvitedStudents extends Component {
                 msgObj.color = 'error';
                 break;
             case DB_CONST.INVITED_STUDENT_STATUS_ACTIVE:
-                msgObj.msg = `Current ${invitedStudent.type === DB_CONST.TYPE_INVESTOR ? "student" : "teacher"}`;
+                msgObj.msg = `Current ${invitedStudent.type === DB_CONST.TYPE_STUDENT ? "student" : "teacher"}`;
                 msgObj.color = 'primary';
                 break;
             case DB_CONST.INVITED_STUDENT_DECLINED_TO_REGISTER:

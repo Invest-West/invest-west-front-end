@@ -1,68 +1,68 @@
 import {
-    AddNewSectorTextChangedAction,
-    CompletedSavingSectorsChangesAction,
-    ManageSectorsAction,
-    ManageSectorsEvents,
-    SetSectorsAction
-} from "./ManageSectorsActions";
+    AddNewCourseSectorTextChangedAction,
+    CompletedSavingCourseSectorsChangesAction,
+    ManageCourseSectorsAction,
+    ManageCourseSectorsEvents,
+    SetCourseSectorsAction
+} from "./ManageCourseSectorsActions";
 import Error from "../../../../models/error";
 
-export interface ManageSectorsState {
-    addingNewSector: boolean;
-    newSector: string;
+export interface ManageCourseSectorsState {
+    addingNewCourseSector: boolean;
+    newCourseSector: string;
     sectors: string[];
-    savingSectors: boolean;
-    errorSavingSectors?: Error;
+    savingCourseSectors: boolean;
+    errorSavingCourseSectors?: Error;
 }
 
-const initialState: ManageSectorsState = {
-    addingNewSector: false,
-    newSector: "",
+const initialState: ManageCourseSectorsState = {
+    addingNewCourseSector: false,
+    newCourseSector: "",
     sectors: [],
-    savingSectors: false
+    savingCourseSectors: false
 }
 
-export const isSavingSectorsChanges = (state: ManageSectorsState) => {
-    return state.savingSectors;
+export const isSavingCourseSectorsChanges = (state: ManageCourseSectorsState) => {
+    return state.savingCourseSectors;
 }
 
-export const manageSectorsReducer = (state = initialState, action: ManageSectorsAction) => {
+export const manageCourseSectorsReducer = (state = initialState, action: ManageCourseSectorsAction) => {
     switch (action.type) {
-        case ManageSectorsEvents.SetSectors:
-            const setSectorsAction: SetSectorsAction = action as SetSectorsAction;
+        case ManageCourseSectorsEvents.SetCourseSectors:
+            const setCourseSectorsAction: SetCourseSectorsAction = action as SetCourseSectorsAction;
             return {
                 ...state,
-                sectors: setSectorsAction.sectors
+                sectors: setCourseSectorsAction.sectors
             }
-        case ManageSectorsEvents.ToggleAddNewSector:
+        case ManageCourseSectorsEvents.ToggleAddNewCourseSector:
             return {
                 ...state,
-                addingNewSector: !state.addingNewSector,
-                newSector: ""
+                addingNewCourseSector: !state.addingNewCourseSector,
+                newCourseSector: ""
             }
-        case ManageSectorsEvents.AddNewSectorTextChanged:
-            const addNewSectorTextChangedAction: AddNewSectorTextChangedAction = action as AddNewSectorTextChangedAction;
+        case ManageCourseSectorsEvents.AddNewCourseSectorTextChanged:
+            const addNewCourseSectorTextChangedAction: AddNewCourseSectorTextChangedAction = action as AddNewCourseSectorTextChangedAction;
             return {
                 ...state,
-                newSector: addNewSectorTextChangedAction.value
+                newCourseSector: addNewCourseSectorTextChangedAction.value
             }
-        case ManageSectorsEvents.SavingSectorsChanges:
+        case ManageCourseSectorsEvents.SavingCourseSectorsChanges:
             return {
                 ...state,
-                savingSectors: true,
-                errorSavingSectors: undefined
+                savingCourseSectors: true,
+                errorSavingCourseSectors: undefined
             }
-        case ManageSectorsEvents.CompletedSavingSectorsChanges:
-            const completedSavingSectorsChanges: CompletedSavingSectorsChangesAction = action as CompletedSavingSectorsChangesAction;
+        case ManageCourseSectorsEvents.CompletedSavingCourseSectorsChanges:
+            const completedSavingCourseSectorsChanges: CompletedSavingCourseSectorsChangesAction = action as CompletedSavingCourseSectorsChangesAction;
             return {
                 ...state,
-                savingSectors: false,
-                errorSavingSectors: completedSavingSectorsChanges.error !== undefined
-                    ? {detail: completedSavingSectorsChanges.error} : state.errorSavingSectors
+                savingCourseSectors: false,
+                errorSavingCourseSectors: completedSavingCourseSectorsChanges.error !== undefined
+                    ? {detail: completedSavingCourseSectorsChanges.error} : state.errorSavingCourseSectors
             }
         default:
             return state;
     }
 }
 
-export default manageSectorsReducer;
+export default manageCourseSectorsReducer;

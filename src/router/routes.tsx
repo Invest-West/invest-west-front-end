@@ -1,13 +1,24 @@
 import Admin, {isAdmin} from "../models/admin";
+import Teacher, {isProf} from "../models/teacher";
 import GroupOfMembership, {getHomeGroup} from "../models/group_of_membership";
+import CourseOfMembership, {getHomeCourse} from "../models/course_of_membership";
 import {AuthenticationState} from "../redux-store/reducers/authenticationReducer";
+import {StudentAuthenticationState} from "../redux-store/reducers/studentAuthenticationReducer";
+import {ManageCourseUrlState} from "../redux-store/reducers/manageCourseUrlReducer";
 import {ManageGroupUrlState} from "../redux-store/reducers/manageGroupUrlReducer";
 import User, {isInvestor} from "../models/user";
+import Student, {isStudent} from "../models/student";
 
 export interface CreateProjectRouteParams {
     edit?: string;
     admin?: string;
     issuer?: string;
+}
+
+export interface CreateStudentProjectRouteParams {
+    edit?: string;
+    teacher?: string;
+    studentOffer?: string;
 }
 
 export default class Routes {
@@ -135,6 +146,20 @@ export default class Routes {
             && route !== Routes.nonGroupCreatePitchTermsAndConditions
             && route !== Routes.nonGroupMarketingPreferences
             && route !== Routes.nonGroupAuthAction
+            && route !== Routes.nonCourseFront
+            && route !== Routes.courseFront
+            && route !== Routes.nonCourseSignIn
+            && route !== Routes.courseSignIn
+            && route !== Routes.nonCourseSignUp
+            && route !== Routes.courseSignUp
+            && route !== Routes.nonCourseContactUs
+            && route !== Routes.courseContactUs
+            && route !== Routes.nonCoursePrivacyPolicy
+            && route !== Routes.nonCourseTermsOfUse
+            && route !== Routes.nonCourseRiskWarning
+            && route !== Routes.nonCourseCreatePitchTermsAndConditions
+            && route !== Routes.nonCourseMarketingPreferences
+            && route !== Routes.nonCourseAuthAction
             && route !== Routes.error404;
     }
 
@@ -150,7 +175,13 @@ export default class Routes {
             || route === Routes.nonGroupCreateOffer
             || route === Routes.nonGroupViewOffer
             || route === Routes.nonGroupViewPledge
-            || route === Routes.nonGroupViewGroup;
+            || route === Routes.nonGroupViewGroup
+            || route === Routes.nonCourseViewStudentProfile
+            || route === Routes.nonCourseEditStudentProfile
+            || route === Routes.nonCourseCreateOffer
+            || route === Routes.nonCourseViewOffer
+            || route === Routes.nonCourseViewPledge
+            || route === Routes.nonCourseViewCourse;
     }
 
     /**
@@ -163,12 +194,30 @@ export default class Routes {
     }
 
     /**
+     * Check if a route is dedicated for a course teacher
+     *
+     * @param route
+     */
+    public static isCourseTeacherRoute = (route: string) => {
+        return route === Routes.courseTeacherDashboard;
+    }
+
+    /**
      * Check if a route is dedicated for an issuer
      *
      * @param route
      */
     public static isIssuerDashboardRoute = (route: string) => {
         return route === Routes.groupIssuerDashboard;
+    }
+
+    /**
+     * Check if a route is dedicated for an Teacher
+     *
+     * @param route
+     */
+    public static isTeacherDashboardRoute = (route: string) => {
+        return route === Routes.courseTeacherDashboard;
     }
 
     /**
@@ -181,12 +230,30 @@ export default class Routes {
     }
 
     /**
+     * Check  if a route is dedicated for an student
+     *
+     * @param route
+     */
+    public static isStudentDashboardRoute = (route: string) => {
+        return route === Routes.courseStudentDashboard;
+    }
+
+    /**
      * Check if a route is a sign in route
      *
      * @param route
      */
     public static isSignInRoute = (route: string) => {
         return route === Routes.nonGroupSignIn || route === Routes.groupSignIn || route === Routes.superAdminSignIn;
+    }
+
+    /**
+     * Check if a route is a sign in route
+     *
+     * @param route
+     */
+    public static isStudentSignInRoute = (route: string) => {
+        return route === Routes.nonCourseSignIn || route === Routes.courseSignIn || route === Routes.superTeacherSignIn;
     }
 
     /**
@@ -199,12 +266,30 @@ export default class Routes {
     }
 
     /**
+     * Check if a route is a super admin sign in route
+     *
+     * @param route
+     */
+    public static isSuperTeacherSignInRoute = (route: string) => {
+        return route === Routes.superTeacherSignIn;
+    }
+
+    /**
      * Check if a route is a sign up route
      *
      * @param route
      */
     public static isSignUpRoute = (route: string) => {
         return route === Routes.nonGroupSignUp || route === Routes.groupSignUp;
+    }
+
+    /**
+     * Check if a route is a student sign up route
+     *
+     * @param route
+     */
+    public static isStudentSignUpRoute = (route: string) => {
+        return route === Routes.nonCourseSignUp || route === Routes.courseSignUp;
     }
 
     /**
@@ -226,7 +311,12 @@ export default class Routes {
             || route === Routes.nonGroupRiskWarning
             || route === Routes.nonGroupTermsOfUse
             || route === Routes.nonGroupCreatePitchTermsAndConditions
-            || route === Routes.nonGroupMarketingPreferences;
+            || route === Routes.nonGroupMarketingPreferences
+            || route === Routes.nonCoursePrivacyPolicy
+            || route === Routes.nonCourseRiskWarning
+            || route === Routes.nonCourseTermsOfUse
+            || route === Routes.nonCourseCreatePitchTermsAndConditions
+            || route === Routes.nonCourseMarketingPreferences;
     }
 
     /**
@@ -309,6 +399,65 @@ export default class Routes {
     }
 
     /**
+     * Construct student home route (navigate to Front page)
+     *
+     * @param routeParams
+     * @param ManageCourseUrlState
+     * @param StudentAuthenticationState
+     */
+    public static constructStudentHomeRoute = (routeParams: any, ManageCourseUrlState: ManageCourseUrlState,
+        StudentAuthenticationState: StudentAuthenticationState) => {
+        let route: string = "";
+
+        if (!StudentAuthenticationState.currentStudent) {
+            if (!routeParams.courseUserName) {
+                return Routes.nonCourseFront;
+            } else {
+                return Routes.courseFront.replace(":courseUserName", routeParams.courseUserName);
+            }
+        }
+
+        const currentTeacher: Teacher | null = isProf(StudentAuthenticationState.currentStudent);
+        // an admin MUST use the correct sign in page to sign in
+        if (currentTeacher) {
+        // current admin is a super admin
+        if (currentTeacher.superTeacher) {
+            route = Routes.nonCourseFront;
+        }
+        // current admin is not a super admin
+        else {
+                if (StudentAuthenticationState.coursesOfMembership.length === 1) {
+                    const adminCourse: CourseOfMembership = StudentAuthenticationState.coursesOfMembership[0];
+                    route = Routes.courseFront.replace(":courseUserName", adminCourse.course.courseUserName);
+                }
+            }
+        }
+        // an investor or an issuer can use any sign in page (course sign in page) to sign in,
+        // except the Invest West sign in page (with no course parameter) as it is reserved for the super admins only
+        else {
+            const uniCourse: CourseOfMembership | null = getHomeCourse(StudentAuthenticationState.coursesOfMembership);
+            if (routeParams.courseUserName) {
+            if (StudentAuthenticationState.coursesOfMembership
+            .filter(courseOfMembership =>
+                courseOfMembership.course.courseUserName === routeParams.courseUserName).length > 0
+            ) {
+                route = Routes.courseFront.replace(":courseUserName", routeParams.courseUserName);
+            } else if (uniCourse) {
+                route = Routes.courseFront.replace(":courseUserName", uniCourse.course.courseUserName);
+            }
+            } else if (uniCourse) {
+                route = Routes.courseFront.replace(":courseUserName", uniCourse.course.courseUserName);
+            }
+        }
+
+        if (!route) {
+            return Routes.nonCourseFront;
+        }
+
+            return route;
+        }
+
+    /**
      * Construct sign in route (navigate to Sign in page)
      *
      * @param routeParams
@@ -316,6 +465,19 @@ export default class Routes {
     public static constructSignInRoute = (routeParams: any) => {
         if (routeParams.groupUserName) {
             return Routes.groupSignIn.replace(":groupUserName", routeParams.groupUserName);
+        } else {
+            return Routes.nonGroupSignIn;
+        }
+    }
+
+    /**
+     * Construct student sign in route (navigate to Sign course in page)
+     *
+     * @param routeParams
+     */
+    public static constructStudentSignInRoute = (routeParams: any) => {
+        if (routeParams.courseUserName) {
+            return Routes.courseSignIn.replace(":courseUserName", routeParams.courseUserName);
         } else {
             return Routes.nonGroupSignIn;
         }
@@ -338,6 +500,22 @@ export default class Routes {
     }
 
     /**
+     * Construct student sign up route + with a default value of IW group
+     *
+     * @param courseUserName
+     * @param invitedStudentID
+     */
+    public static constructStudentSignUpRoute = (courseUserName: string, invitedStudentID?: string) => {
+        if (courseUserName) {
+            return Routes.courseSignUp
+                .replace(":courseUserName", courseUserName)
+                .replace(invitedStudentID ? ":id?" : "/:id?", invitedStudentID ?? "");
+        } else {
+            return Routes.nonGroupSignUp;
+        }
+    }
+
+    /**
      * Construct sign in route (navigate to Sign in page)
      *
      * @param routeParams
@@ -347,6 +525,19 @@ export default class Routes {
             return Routes.groupContactUs.replace(":groupUserName", routeParams.groupUserName);
         } else {
             return Routes.nonGroupContactUs;
+        }
+    }
+
+    /**
+     * Construct student sign in route (navigate to Sign in page)
+     *
+     * @param routeParams
+     */
+    public static constructStudentContactUsRoute = (routeParams: any) => {
+        if (routeParams.courseUserName) {
+            return Routes.courseContactUs.replace(":courseUserName", routeParams.courseUserName);
+        } else {
+            return Routes.nonCourseContactUs;
         }
     }
 
@@ -421,6 +612,75 @@ export default class Routes {
     }
 
     /**
+     * Construct student dashboard route (navigate to Dashboard page)
+     *
+     * @param routeParams
+     * @param ManageCourseUrlState
+     * @param StudentAuthenticationState
+     */
+    public static constructStudentDashboardRoute = (routeParams: any, ManageCourseUrlState: ManageCourseUrlState,
+                                             StudentAuthenticationState: StudentAuthenticationState) => {
+        let route: string = "";
+
+        if (!StudentAuthenticationState.currentStudent) {
+            return Routes.constructSignInRoute(routeParams);
+        }
+
+        const currentTeacher: Teacher | null = isProf(StudentAuthenticationState.currentStudent);
+        // an teacher MUST use the correct sign in page to sign in
+        if (currentTeacher) {
+            // current teacher is a super teacher
+            // --> redirect to super teacher dashboard
+            if (currentTeacher.superTeacher) {
+                route = Routes.nonCourseTeacherDashboard;
+            }
+                // current teacher is not a super teacher
+            // --> redirect to course teacher dashboard
+            else {
+                if (StudentAuthenticationState.coursesOfMembership.length === 1) {
+                    const teacherCourse: CourseOfMembership = StudentAuthenticationState.coursesOfMembership[0];
+                    route = Routes.courseTeacherDashboard.replace(":courseUserName", teacherCourse.course.courseUserName);
+                }
+            }
+        }
+            // an investor or an issuer can use any sign in page (course sign in page) to sign in,
+        // except the student sign in page (with no course parameter) as it is reserved for the super admins only
+        else {
+            const uniCourse: CourseOfMembership | null = getHomeCourse(StudentAuthenticationState.coursesOfMembership);
+            if (routeParams.courseUserName) {
+                if (StudentAuthenticationState.coursesOfMembership
+                    .filter(courseOfMembership =>
+                        courseOfMembership.course.courseUserName === routeParams.courseUserName).length > 0
+                ) {
+                    if (isStudent(StudentAuthenticationState.currentStudent as Student)) {
+                        route = Routes.courseStudentDashboard.replace(":courseUserName", routeParams.courseUserName);
+                    } else {
+                        route = Routes.courseTeacherDashboard.replace(":courseUserName", routeParams.courseUserName);
+                    }
+                } else if (uniCourse) {
+                    if (isStudent(StudentAuthenticationState.currentStudent as Student)) {
+                        route = Routes.courseStudentDashboard.replace(":courseUserName", uniCourse.course.courseUserName);
+                    } else {
+                        route = Routes.courseTeacherDashboard.replace(":courseUserName", uniCourse.course.courseUserName);
+                    }
+                }
+            } else if (uniCourse) {
+                if (isStudent(StudentAuthenticationState.currentStudent as Student)) {
+                    route = Routes.courseStudentDashboard.replace(":courseUserName", uniCourse.course.courseUserName);
+                } else {
+                    route = Routes.courseTeacherDashboard.replace(":courseUserName", uniCourse.course.courseUserName);
+                }
+            }
+        }
+
+        if (route === "") {
+            return Routes.constructStudentSignInRoute(routeParams);
+        }
+        route += "?tab=Home";
+        return route;
+    }
+
+    /**
      * Construct view project (offer) route
      *
      * @param groupUserName
@@ -434,6 +694,23 @@ export default class Routes {
             route = Routes.nonGroupViewOffer;
         }
         route = route.replace(":projectID", projectID);
+        return route;
+    }
+
+    /**
+     * Construct view student project (offer) route
+     *
+     * @param courseUserName
+     * @param studentProjectID
+     */
+    public static constructStudentProjectDetailRoute = (courseUserName: string | null, studentProjectID: string) => {
+        let route;
+        if (courseUserName) {
+            route = Routes.courseViewOffer.replace(":courseUserName", courseUserName);
+        } else {
+            route = Routes.nonGroupViewOffer;
+        }
+        route = route.replace(":studentProjectID", studentProjectID);
         return route;
     }
 
@@ -466,6 +743,34 @@ export default class Routes {
     }
 
     /**
+     * Construct create student project (offer) route
+     *
+     * @param courseUserName
+     * @param params
+     */
+    public static constructCreateStudentProjectRoute = (courseUserName: string | null, params?: CreateStudentProjectRouteParams) => {
+        let route;
+        if (courseUserName) {
+            route = Routes.courseCreateOffer.replace(":courseUserName", courseUserName);
+        } else {
+            route = Routes.nonCourseCreateOffer;
+        }
+
+        if (params !== undefined) {
+            // edit an offer
+            if (params.edit) {
+                route += `?edit=${params.edit}`;
+            }
+            // course admin creates an offer on behalf of an issuer
+            else if (params.teacher && params.studentOffer) {
+                route += `?teacher=${params.teacher}&student=${params.studentOffer}`;
+            }
+        }
+
+        return route;
+    }
+
+    /**
      * Construct view group route
      *
      * @param groupUserName
@@ -483,6 +788,23 @@ export default class Routes {
     }
 
     /**
+     * Construct student view course route
+     *
+     * @param courseUserName
+     * @param viewedCourseStudentName
+     */
+    public static constructCourseDetailRoute = (courseUserName: string | null, viewedCourseStudentName: string) => {
+        let route;
+        if (courseUserName) {
+            route = Routes.courseViewCourse.replace(":courseUserName", courseUserName);
+        } else {
+            route = Routes.nonCourseViewCourse;
+        }
+        route = route.replace(":viewedCourseStudentName", viewedCourseStudentName);
+        return route;
+    }
+
+    /**
      * Construct view resource detail route
      *
      * @param groupUserName
@@ -493,6 +815,24 @@ export default class Routes {
         if (groupUserName) {
             route = Routes.groupViewResourceDetail
                 .replace(":groupUserName", groupUserName)
+                .replace(":resourceName", resourceName);
+        } else {
+            route = Routes.nonGroupViewResourceDetail.replace(":resourceName", resourceName);
+        }
+        return route;
+    }
+
+    /**
+     * Construct student view resource detail route
+     *
+     * @param courseUserName
+     * @param resourceName
+     */
+    public static constructStudentViewResourceDetailRoute = (courseUserName: string | null, resourceName: string) => {
+        let route;
+        if (courseUserName) {
+            route = Routes.courseViewResourceDetail
+                .replace(":courseUserName", courseUserName)
                 .replace(":resourceName", resourceName);
         } else {
             route = Routes.nonGroupViewResourceDetail.replace(":resourceName", resourceName);
@@ -614,7 +954,7 @@ export const EDIT_OFFER_INVEST_WEST_SUPER = `${CREATE_OFFER_INVEST_WEST_SUPER}?e
 
 // create an offer under a course
 export const CREATE_OFFER_STUDENT = `${COURSE_PATH}/create-offer`;
-export const EDIT_OFFER_STUDENT = `${CREATE_OFFER_STUDENT}?edit=:projectID`;
+export const EDIT_OFFER_STUDENT = `${CREATE_OFFER_STUDENT}?edit=:studentProjectID`;
 export const COURSE_TEACHER_CREATE_OFFER_ON_BEHALF_OF_TEACHER = `${CREATE_OFFER_STUDENT}?teacher=:teacherID&teacher=:teacherID`;
 // create an offer under Invest West super admins
 export const CREATE_OFFER_STUDENT_SUPER = "/create-offer";
@@ -624,6 +964,10 @@ export const EDIT_OFFER_STUDENT_SUPER = `${CREATE_OFFER_STUDENT_SUPER}?edit=:pro
 export const PROJECT_DETAILS = `${GROUP_PATH}/projects/:projectID`;
 // view offer's details under Invest West super admins
 export const PROJECT_DETAILS_INVEST_WEST_SUPER = "/projects/:projectID";
+
+export const STUDENT_PROJECT_DETAILS = `${COURSE_PATH}/projects/:studentProjectID`;
+
+export const STUDENT_PROJECT_DETAILS_INVEST_WEST_SUPER = "/projects/:studentProjectID";
 
 // view offer's details under a course
 export const PROJECT_COURSE_DETAILS = `${COURSE_PATH}/projects/:projectID`;

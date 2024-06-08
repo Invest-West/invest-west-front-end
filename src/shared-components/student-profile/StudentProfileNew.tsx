@@ -5,71 +5,71 @@ import {ThunkDispatch} from "redux-thunk";
 import {AnyAction} from "redux";
 import {Box} from "@material-ui/core";
 import PersonalDetails from "./components/personal-details/PersonalDetails";
-import EditImageDialog from "./components/edit-image-dialog/EditImageDialog";
+import EditStudentImageDialog from "./components/edit-image-dialog/StudentEditImageDialog";
 import FeedbackSnackbarNew from "../feedback-snackbar/FeedbackSnackbarNew";
 import BusinessProfile from "./components/uni-profile/UniProfile";
-import {hasInitiallySetCopiedUser, ProfileState} from "./ProfileReducer";
-import {AuthenticationState, successfullyAuthenticated} from "../../redux-store/reducers/authenticationReducer";
-import User from "../../models/user";
-import {setCopiedUser} from "./StudentProfileActions";
+import {hasInitiallySetCopiedStudent, StudentProfileState} from "./StudentProfileReducer";
+import {StudentAuthenticationState, successfullyStudentAuthenticated} from "../../redux-store/reducers/studentAuthenticationReducer";
+import Student from "../../models/student";
+import {setCopiedStudent} from "./StudentProfileActions";
 
-interface ProfileProps {
-    // this must be set when an admin is viewing a user's profile
-    thirdViewUser?: User;
-    AuthenticationState: AuthenticationState;
-    ProfileLocalState: ProfileState;
-    setCopiedUser: (user: User | null, firstTimeSetCopiedUser?: true) => any;
+interface StudentProfileProps {
+    // this must be set when an admin is viewing a student's profile
+    thirdViewStudent?: Student;
+    StudentAuthenticationState: StudentAuthenticationState;
+    StudentProfileLocalState: StudentProfileState;
+    setCopiedStudent: (student: Student | null, firstTimeSetCopiedStudent?: true) => any;
 }
 
 const mapStateToProps = (state: AppState) => {
     return {
-        AuthenticationState: state.AuthenticationState,
-        ProfileLocalState: state.ProfileLocalState
+        StudentAuthenticationState: state.StudentAuthenticationState,
+        StudentProfileLocalState: state.StudentProfileLocalState
     }
 }
 
 const mapDispatchToProps = (dispatch: ThunkDispatch<any, any, AnyAction>) => {
     return {
-        setCopiedUser: (user: User | null, firstTimeSetCopiedUser?: true) => dispatch(setCopiedUser(user, firstTimeSetCopiedUser)),
+        setCopiedStudent: (student: Student | null, firstTimeSetCopiedStudent?: true) => dispatch(setCopiedStudent(student, firstTimeSetCopiedStudent)),
     }
 }
 
-class ProfileNew extends Component<ProfileProps, any> {
+class StudentProfileNew extends Component<StudentProfileProps, any> {
 
     componentDidMount() {
-        this.setCopiedUserForTheFirstTime();
+        this.setCopiedStudentForTheFirstTime();
     }
 
-    componentDidUpdate(prevProps: Readonly<ProfileProps>, prevState: Readonly<any>, snapshot?: any) {
-        this.setCopiedUserForTheFirstTime();
+    componentDidUpdate(prevProps: Readonly<StudentProfileProps>, prevState: Readonly<any>, snapshot?: any) {
+        this.setCopiedStudentForTheFirstTime();
     }
 
-    setCopiedUserForTheFirstTime = () => {
+    setCopiedStudentForTheFirstTime = () => {
         const {
-            thirdViewUser,
-            AuthenticationState,
-            ProfileLocalState,
-            setCopiedUser
+            thirdViewStudent,
+            StudentAuthenticationState,
+            StudentProfileLocalState,
+            setCopiedStudent
         } = this.props;
 
-        if (!hasInitiallySetCopiedUser(ProfileLocalState)) {
-            if (thirdViewUser) {
-                setCopiedUser(thirdViewUser, true);
-            } else if (successfullyAuthenticated(AuthenticationState)) {
-                const currentUser: User = AuthenticationState.currentUser as User;
-                setCopiedUser(currentUser, true);
+        if (!hasInitiallySetCopiedStudent(StudentProfileLocalState)) {
+            if (thirdViewStudent) {
+                setCopiedStudent(thirdViewStudent, true);
+            } else if (successfullyStudentAuthenticated(StudentAuthenticationState)) {
+                const currentStudent: Student = StudentAuthenticationState.currentStudent as Student;
+                setCopiedStudent(currentStudent, true);
             }
         }
     }
 
     render() {
         const {
-            ProfileLocalState
+            StudentProfileLocalState
         } = this.props;
 
-        const copiedUser: User | undefined = ProfileLocalState.copiedUser;
+        const copiedStudent: Student | undefined = StudentProfileLocalState.copiedStudent;
 
-        if (!copiedUser) {
+        if (!copiedStudent) {
             return null;
         }
 
@@ -77,9 +77,9 @@ class ProfileNew extends Component<ProfileProps, any> {
             <FeedbackSnackbarNew/>
             <PersonalDetails/>
             <BusinessProfile/>
-            <EditImageDialog/>
+            <EditStudentImageDialog/>
         </Box>;
     }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(ProfileNew);
+export default connect(mapStateToProps, mapDispatchToProps)(StudentProfileNew);

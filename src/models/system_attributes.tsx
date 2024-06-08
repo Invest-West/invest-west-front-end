@@ -9,6 +9,17 @@ export interface SystemAttributes {
     riskWarningFooter: string;
 }
 
+export interface StudentSystemAttributes {
+    PledgeFAQs: PledgeFAQ[];
+    CourseSectors: string[];
+    allowVideoUpload: boolean;
+    privacyPolicy: any;
+    termsOfUse: any;
+    createPitchTermsAndConditions: any;
+    studentMarketingPreferences: any;
+    riskWarningFooter: string;
+}
+
 export interface PledgeFAQ {
     id: string;
     question: string;

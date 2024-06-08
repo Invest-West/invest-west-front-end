@@ -2,16 +2,16 @@ import firebase from '../../firebase/firebaseApp';
 import * as realtimeDBUtils from '../../firebase/realtimeDBUtils';
 import * as DB_CONST from '../../firebase/databaseConsts';
 
-export const SET_GROUP_USER_NAME_FROM_PARAMS = 'SET_GROUP_USER_NAME_FROM_PARAMS';
-export const setGroupUserNameFromParams = groupUserName => {
+export const SET_COURSE_STUDENT_NAME_FROM_PARAMS = 'SET_COURSE_STUDENT_NAME_FROM_PARAMS';
+export const setCourseStudentFromParams = courseStudent => {
     return (dispatch, getState) => {
-        const prevGroupUserName = getState().manageGroupFromParams.groupUserName;
+        const prevCourseStudent = getState().manageCourseFromParams.courseStudent;
 
-        // if the newly set groupUserName is different from the current groupUserName, check again
-        if (prevGroupUserName !== groupUserName) {
+        // if the newly set courseStudent is different from the current courseStudent, check again
+        if (prevCourseStudent !== courseStudent) {
             dispatch({
-                type: SET_GROUP_USER_NAME_FROM_PARAMS,
-                groupUserName
+                type: SET_COURSE_STUDENT_NAME_FROM_PARAMS,
+                courseStudent
             });
         }
     }
@@ -26,85 +26,85 @@ export const setExpectedAndCurrentPathsForChecking = (expectedPath, currentPath)
     }
 };
 
-export const LOADING_ANGEL_NETWORK = 'LOADING_ANGEL_NETWORK';
-export const ANGEL_NETWORK_LOADED = 'ANGEL_NETWORK_LOADED';
-export const loadAngelNetwork = () => {
+export const LOADING_STUDENT_NETWORK = 'LOADING_STUDENT_NETWORK';
+export const STUDENT_NETWORK_LOADED = 'STUDENT_NETWORK_LOADED';
+export const loadStudentNetwork = () => {
     return (dispatch, getState) => {
         return new Promise((resolve, reject) => {
             const {
-                groupUserName,
-                groupProperties,
-                groupPropertiesLoaded,
-                angelNetworkBeingLoaded,
+                courseStudent,
+                courseProperties,
+                coursePropertiesLoaded,
+                studentNetworkBeingLoaded,
 
                 expectedPath,
                 currentPath
-            } = getState().manageGroupFromParams;
+            } = getState().manageCourseFromParams;
 
             const firebaseUser = firebase.auth().currentUser;
 
-            // angel network has not been loaded before
-            if (!groupProperties && !groupPropertiesLoaded && !angelNetworkBeingLoaded) {
+            // student network has not been loaded before
+            if (!courseProperties && !coursePropertiesLoaded && !studentNetworkBeingLoaded) {
                 dispatch({
-                    type: LOADING_ANGEL_NETWORK
+                    type: LOADING_STUDENT_NETWORK
                 });
 
                 // path expected and current path not matched
                 if (expectedPath !== currentPath) {
                     dispatch({
-                        type: ANGEL_NETWORK_LOADED,
-                        angelNetwork: null,
+                        type: STUDENT_NETWORK_LOADED,
+                        studentNetwork: null,
                         shouldLoadOtherData: false
                     });
                     resolve();
                     return;
                 }
 
-                // groupUserName is not specified --> Invest West super
-                if (!groupUserName) {
-                    // the user is logged in
+                // courseStudent is not specified --> Invest West super
+                if (!courseStudent) {
+                    // the student is logged in
                     if (firebaseUser) {
                         realtimeDBUtils
-                            .getUserBasedOnID(firebaseUser.uid)
-                            .then(user => {
-                                if (user.type === DB_CONST.TYPE_ADMIN) {
-                                    if (user.superAdmin) {
+                            .getStudentBasedOnID(firebaseUser.uid)
+                            .then(student => {
+                                if (student.type === DB_CONST.TYPE_PROF) {
+                                    if (student.superAdmin) {
                                         dispatch({
-                                            type: ANGEL_NETWORK_LOADED,
-                                            angelNetwork: null,
+                                            type: STUDENT_NETWORK_LOADED,
+                                            studentNetwork: null,
                                             shouldLoadOtherData: true
                                         });
                                     } else {
                                         dispatch({
-                                            type: ANGEL_NETWORK_LOADED,
-                                            angelNetwork: null,
+                                            type: STUDENT_NETWORK_LOADED,
+                                            studentNetwork: null,
                                             shouldLoadOtherData: false
                                         });
                                     }
                                 } else {
                                     dispatch({
-                                        type: ANGEL_NETWORK_LOADED,
-                                        angelNetwork: null,
+                                        type: STUDENT_NETWORK_LOADED,
+                                        studentNetwork: null,
                                         shouldLoadOtherData: false
                                     });
                                 }
                                 resolve();
                             })
                             .catch(error => {
-                                console.error('Error loading user:', error);
+                                console.error('Error loading student:', error);
                                 dispatch({
-                                    type: ANGEL_NETWORK_LOADED,
-                                    angelNetwork: null,
+                                    type: STUDENT_NETWORK_LOADED,
+                                    studentNetwork: null,
                                     shouldLoadOtherData: false
                                 });
                                 reject(error);
                             });
                     }
-                    // the user is not logged in
+                    // the student is not logged in
                     else {
                         dispatch({
-                            type: ANGEL_NETWORK_LOADED,
-                            angelNetwork: null,
+                            type: STUDENT_NETWORK_LOADED,
+                            studentNetwork: null,
                             shouldLoadOtherData: true
                         });
                         resolve();
@@ -113,47 +113,47 @@ export const loadAngelNetwork = () => {
                     return;
                 }
 
-                // angel network has been loaded before
-                if (groupProperties) {
-                    // if anid = null (Invest West) or anid = angel network's anid
-                    // do not need to load the angel network again
-                    if (groupUserName === groupProperties.groupUserName) {
+                // student network has been loaded before
+                if (courseProperties) {
+                    // if anid = null (Invest West) or anid = student network's anid
+                    // do not need to load the student network again
+                    if (courseStudent === courseProperties.courseStudent) {
                         dispatch({
-                            type: ANGEL_NETWORK_LOADED,
-                            angelNetwork: groupProperties,
+                            type: STUDENT_NETWORK_LOADED,
+                            studentNetwork: courseProperties,
                             shouldLoadOtherData: true
                         });
                         resolve();
                         return;
                     }
-                    // if the loaded angel network's anid is not the same as the anid specified in the URL --> load again
+                    // if the loaded student network's anid is not the same as the anid specified in the URL --> load again
                     else {
                         dispatch({
-                            type: SET_GROUP_USER_NAME_FROM_PARAMS,
-                            groupUserName
+                            type: SET_COURSE_STUDENT_NAME_FROM_PARAMS,
+                            courseStudent
                         });
 
                         dispatch({
-                            type: LOADING_ANGEL_NETWORK
+                            type: LOADING_STUDENT_NETWORK
                         });
                     }
                 }
 
                 realtimeDBUtils
-                    .loadAngelNetworkBasedOnGroupUserName(groupUserName)
-                    .then(angelNetwork => {
+                    .loadStudentNetworkBasedOnCourseStudentName(courseStudent)
+                    .then(studentNetwork => {
                         dispatch({
-                            type: ANGEL_NETWORK_LOADED,
-                            angelNetwork,
+                            type: STUDENT_NETWORK_LOADED,
+                            studentNetwork,
                             shouldLoadOtherData: true
                         });
                         resolve();
                     })
                     .catch(error => {
-                        console.error('Error loading angel network:', error);
+                        console.error('Error loading student network:', error);
                         dispatch({
-                            type: ANGEL_NETWORK_LOADED,
-                            angelNetwork: null,
+                            type: STUDENT_NETWORK_LOADED,
+                            studentNetwork: null,
                             shouldLoadOtherData: false
                         });
                         reject(error);
@@ -164,49 +164,49 @@ export const loadAngelNetwork = () => {
 };
 
 //----------------------------------------------------------------------------------------------------------------------
-let angelNetworkListener = null;
+let studentNetworkListener = null;
 
-export const ANGEL_NETWORK_PROPERTIES_CHANGED = 'ANGEL_NETWORK_PROPERTIES_CHANGED';
-export const startListeningForAngelNetworkChanged = () => {
+export const STUDENT_NETWORK_PROPERTIES_CHANGED = 'STUDENT_NETWORK_PROPERTIES_CHANGED';
+export const startListeningForStudentNetworkChanged = () => {
     return (dispatch, getState) => {
-        if (!angelNetworkListener) {
+        if (!studentNetworkListener) {
             const {
-                groupProperties
-            } = getState().manageGroupFromParams;
+                courseProperties
+            } = getState().manageCourseFromParams;
 
-            if (groupProperties) {
-                if (angelNetworkListener) {
+            if (courseProperties) {
+                if (studentNetworkListener) {
                     return;
                 }
-                angelNetworkListener = firebase
+                studentNetworkListener = firebase
                     .database()
-                    .ref(DB_CONST.GROUP_PROPERTIES_CHILD)
-                    .child(groupProperties.anid)
+                    .ref(DB_CONST.COURSE_PROPERTIES_CHILD)
+                    .child(courseProperties.anid)
                     .on('child_changed', snapshot => {
                         const key = snapshot.key;
                         const value = snapshot.val();
                         dispatch({
-                            type: ANGEL_NETWORK_PROPERTIES_CHANGED,
+                            type: STUDENT_NETWORK_PROPERTIES_CHANGED,
                             key,
                             value
                         });
                     });
             }
             else {
-                if (angelNetworkListener) {
-                    angelNetworkListener.off('child_changed');
-                    angelNetworkListener = null;
+                if (studentNetworkListener) {
+                    studentNetworkListener.off('child_changed');
+                    studentNetworkListener = null;
                 }
             }
         }
     }
 };
 
-export const stopListeningForAngelNetworkChanged = () => {
+export const stopListeningForStudentNetworkChanged = () => {
     return (dispatch, getState) => {
-        if (angelNetworkListener) {
-            angelNetworkListener.off('child_changed');
-            angelNetworkListener = null;
+        if (studentNetworkListener) {
+            studentNetworkListener.off('child_changed');
+            studentNetworkListener = null;
         }
     }
 };

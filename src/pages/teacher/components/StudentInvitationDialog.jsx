@@ -23,41 +23,41 @@ import FlexView from 'react-flexview';
 import {css} from 'aphrodite';
 
 import {connect} from 'react-redux';
-import * as invitationDialogActions from '../../../redux-store/actions/invitationDialogActions';
+import * as studentInvitationDialogActions from '../../../redux-store/actions/studentInvitationDialogActions';
 
 import * as DB_CONST from '../../../firebase/databaseConsts';
 import sharedStyles from '../../../shared-js-css-styles/SharedStyles';
 
-export const SEND_INVITATION_NONE = 0;
-export const SEND_INVITATION_PROCESSING = 1;
-export const SEND_INVITATION_INVITED_BEFORE = 2;
-export const SEND_INVITATION_USER_CANNOT_BE_INVITED = 3; // user is an issuer in another group or an admin
-export const SEND_INVITATION_ERROR_HAPPENED = 4;
-export const SEND_INVITATION_SUCCESS = 5;
+export const SEND_STUDENT_INVITATION_NONE = 0;
+export const SEND_STUDENT_INVITATION_PROCESSING = 1;
+export const SEND_STUDENT_INVITATION_INVITED_BEFORE = 2;
+export const SEND_STUDENT_INVITATION_STUDENT_CANNOT_BE_INVITED = 3; // student is an teacher in another group or an admin
+export const SEND_STUDENT_INVITATION_ERROR_HAPPENED = 4;
+export const SEND_STUDENT_INVITATION_SUCCESS = 5;
 
 const mapStateToProps = state => {
     return {
-        invitationDialogOpen: state.manageInvitationDialog.invitationDialogOpen,
-        title: state.manageInvitationDialog.title,
-        firstName: state.manageInvitationDialog.firstName,
-        lastName: state.manageInvitationDialog.lastName,
-        email: state.manageInvitationDialog.email,
-        userType: state.manageInvitationDialog.userType,
-        sendButtonClick: state.manageInvitationDialog.sendButtonClick,
-        sendResult: state.manageInvitationDialog.sendResult,
-        sendStatusExtraInfo: state.manageInvitationDialog.sendStatusExtraInfo
+        invitationDialogOpen: state.manageStudentInvitationDialog.invitationDialogOpen,
+        title: state.manageStudentInvitationDialog.title,
+        firstName: state.manageStudentInvitationDialog.firstName,
+        lastName: state.manageStudentInvitationDialog.lastName,
+        email: state.manageStudentInvitationDialog.email,
+        studentType: state.manageStudentInvitationDialog.studentType,
+        sendButtonClick: state.manageStudentInvitationDialog.sendButtonClick,
+        sendResult: state.manageStudentInvitationDialog.sendResult,
+        sendStatusExtraInfo: state.manageStudentInvitationDialog.sendStatusExtraInfo
     }
 };
 
 const mapDispatchToProps = dispatch => {
     return {
-        handleInputChanged: (event) => dispatch(invitationDialogActions.handleInputChanged(event)),
-        toggleInvitationDialog: () => dispatch(invitationDialogActions.toggleInvitationDialog()),
-        sendInvitation: () => dispatch(invitationDialogActions.sendInvitation())
+        handleInputChanged: (event) => dispatch(studentInvitationDialogActions.handleInputChanged(event)),
+        toggleStudentInvitationDialog: () => dispatch(studentInvitationDialogActions.toggleStudentInvitationDialog()),
+        sendInvitation: () => dispatch(studentInvitationDialogActions.sendInvitation())
     }
 };
 
-class InvitationDialog extends Component {
+class StudentInvitationDialog extends Component {
 
     render() {
         const {
@@ -67,36 +67,36 @@ class InvitationDialog extends Component {
             firstName,
             lastName,
             email,
-            userType,
+            studentType,
             sendButtonClick,
             sendResult,
             sendStatusExtraInfo,
-            toggleInvitationDialog,
+            toggleStudentInvitationDialog,
             handleInputChanged,
             sendInvitation,
             ...other
         } = this.props;
 
         return (
-            <Dialog ref={forwardedRef} open={invitationDialogOpen} fullWidth maxWidth="md" onClose={toggleInvitationDialog} {...other}>
+            <Dialog ref={forwardedRef} open={invitationDialogOpen} fullWidth maxWidth="md" onClose={toggleStudentInvitationDialog} {...other}>
                 <DialogTitle disableTypography>
                     <FlexView vAlignContent="center">
                         <FlexView grow={4}>
                             <Typography variant='h6' color='primary' align="left">Send invitation email</Typography>
                         </FlexView>
                         <FlexView grow={1} hAlignContent="right">
-                            <IconButton onClick={toggleInvitationDialog}>
+                            <IconButton onClick={toggleStudentInvitationDialog}>
                                 <CloseIcon/>
                             </IconButton>
                         </FlexView>
                     </FlexView>
                 </DialogTitle>
                 <DialogContent style={{ marginTop: 10}}>
-                    <FormControl required error={sendButtonClick && title === DB_CONST.USER_TITLES[0]}>
+                    <FormControl required error={sendButtonClick && title === DB_CONST.STUDENT_TITLES[0]}>
                         <FormLabel>Title</FormLabel>
                         <Select name="title" value={title} margin="dense" input={<OutlinedInput/>} onChange={handleInputChanged}>
                             {
-                                DB_CONST.USER_TITLES.map((title, id) => (
+                                DB_CONST.STUDENT_TITLES.map((title, id) => (
                                     <MenuItem
                                         key={id}
                                         value={title}
@@ -145,11 +145,11 @@ class InvitationDialog extends Component {
                         onChange={handleInputChanged}/>
 
                     <FlexView marginTop={20}>
-                        <FormControl required error={sendButtonClick && userType.length === 0}>
-                            <FormLabel>User type</FormLabel>
-                            <RadioGroup row name="userType" value={userType} onChange={handleInputChanged}>
-                                <FormControlLabel value={DB_CONST.TYPE_ISSUER.toString()} control={<Radio color='primary'/>} label="Issuer"/>
-                                <FormControlLabel value={DB_CONST.TYPE_INVESTOR.toString()} control={<Radio color='primary'/>} label="Investor"/>
+                        <FormControl required error={sendButtonClick && studentType.length === 0}>
+                            <FormLabel>Student type</FormLabel>
+                            <RadioGroup row name="studentType" value={studentType} onChange={handleInputChanged}>
+                                <FormControlLabel value={DB_CONST.TYPE_TEACHER.toString()} control={<Radio color='primary'/>} label="Teacher"/>
+                                <FormControlLabel value={DB_CONST.TYPE_STUDENT.toString()} control={<Radio color='primary'/>} label="Student"/>
                             </RadioGroup>
                         </FormControl>
                     </FlexView>
@@ -185,31 +185,31 @@ class InvitationDialog extends Component {
         };
 
         switch (sendResult) {
-            case SEND_INVITATION_NONE:
+            case SEND_STUDENT_INVITATION_NONE:
                 return null;
-            case SEND_INVITATION_PROCESSING:
+            case SEND_STUDENT_INVITATION_PROCESSING:
                 res.msg = "Checking...";
                 res.color = "primary";
                 break;
-            case SEND_INVITATION_INVITED_BEFORE:
+            case SEND_STUDENT_INVITATION_INVITED_BEFORE:
                 res.msg =
-                    sendStatusExtraInfo.hasOwnProperty('officialUserID')
+                    sendStatusExtraInfo.hasOwnProperty('officialStudentID')
                         ?
-                        `This user is already an ${sendStatusExtraInfo.type === DB_CONST.TYPE_INVESTOR ? 'investor' : 'issuer'} in your group.`
+                        `This student is already an ${sendStatusExtraInfo.type === DB_CONST.TYPE_STUDENT ? 'student' : 'teacher'} in your group.`
                         :
-                        `You have invited this user as an ${sendStatusExtraInfo.type === DB_CONST.TYPE_INVESTOR ? 'investor' : 'issuer'} before.`;
+                        `You have invited this student as an ${sendStatusExtraInfo.type === DB_CONST.TYPE_STUDENT ? 'student' : 'teacher'} before.`;
                 res.color = "error";
                 break;
-            case SEND_INVITATION_USER_CANNOT_BE_INVITED:
-                res.msg = "User is an admin or an issuer of another group.";
+            case SEND_STUDENT_INVITATION_STUDENT_CANNOT_BE_INVITED:
+                res.msg = "Student is an admin or an teacher of another group.";
                 res.color = "error";
                 break;
-            case SEND_INVITATION_ERROR_HAPPENED:
-                res.msg = "Error happened. Couldn't invite this user.";
+            case SEND_STUDENT_INVITATION_ERROR_HAPPENED:
+                res.msg = "Error happened. Couldn't invite this student.";
                 res.color = "error";
                 break;
-            case SEND_INVITATION_SUCCESS:
-                res.msg = "Invitation has been sent to this user.";
+            case SEND_STUDENT_INVITATION_SUCCESS:
+                res.msg = "Invitation has been sent to this student.";
                 res.color = "primary";
                 break;
             default:
@@ -228,5 +228,5 @@ class InvitationDialog extends Component {
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(
-    React.forwardRef((props, ref) => <InvitationDialog {...props} forwardedRef={ref}/>)
+    React.forwardRef((props, ref) => <StudentInvitationDialog {...props} forwardedRef={ref}/>)
 );

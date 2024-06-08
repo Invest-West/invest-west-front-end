@@ -26,7 +26,7 @@ import {css} from 'aphrodite';
 import {HashLoader} from 'react-spinners';
 
 import {connect} from 'react-redux';
-import * as manageJoinRequestsActions from '../../../redux-store/actions/manageJoinRequestsActions';
+import * as manageJoinStudentRequestsActions from '../../../redux-store/actions/manageJoinStudentRequestsActions';
 
 import sharedStyles, {StyledTableCell} from '../../../shared-js-css-styles/SharedStyles';
 import * as colors from '../../../values/colors';
@@ -35,41 +35,41 @@ import * as myUtils from '../../../utils/utils';
 
 const mapStateToProps = state => {
     return {
-        groupUserName: state.manageGroupFromParams.groupUserName,
-        groupProperties: state.manageGroupFromParams.groupProperties,
-        groupPropertiesLoaded: state.manageGroupFromParams.groupPropertiesLoaded,
-        shouldLoadOtherData: state.manageGroupFromParams.shouldLoadOtherData,
+        courseStudentName: state.manageCourseFromParams.courseStudentName,
+        courseProperties: state.manageCourseFromParams.courseProperties,
+        coursePropertiesLoaded: state.manageCourseFromParams.coursePropertiesLoaded,
+        shouldLoadOtherData: state.manageCourseFromParams.shouldLoadOtherData,
 
-        user: state.auth.user,
+        student: state.auth.student,
 
-        joinRequests: state.manageJoinRequests.joinRequests,
-        loadingJoinRequests: state.manageJoinRequests.loadingJoinRequests,
-        joinRequestsLoaded: state.manageJoinRequests.joinRequestsLoaded,
+        joinStudentRequests: state.manageJoinStudentRequests.joinStudentRequests,
+        loadingJoinStudentRequests: state.manageJoinStudentRequests.loadingJoinStudentRequests,
+        joinStudentRequestsLoaded: state.manageJoinStudentRequests.joinStudentRequestsLoaded,
 
-        searchText: state.manageJoinRequests.searchText,
-        inSearchMode: state.manageJoinRequests.inSearchMode,
-        matchedJoinRequests: state.manageJoinRequests.matchedJoinRequests,
+        searchText: state.manageJoinStudentRequests.searchText,
+        inSearchMode: state.manageJoinStudentRequests.inSearchMode,
+        matchedJoinStudentRequests: state.manageJoinStudentRequests.matchedJoinStudentRequests,
 
-        page: state.manageJoinRequests.page,
-        rowsPerPage: state.manageJoinRequests.rowsPerPage
+        page: state.manageJoinStudentRequests.page,
+        rowsPerPage: state.manageJoinStudentRequests.rowsPerPage
     }
 };
 
 const mapDispatchToProps = dispatch => {
     return {
-        loadJoinRequests: () => dispatch(manageJoinRequestsActions.loadJoinRequests()),
-        toggleSearchMode: () => dispatch(manageJoinRequestsActions.toggleSearchMode()),
-        changePage: (event, newPage) => dispatch(manageJoinRequestsActions.changePage(event, newPage)),
-        changeRowsPerPage: (event) => dispatch(manageJoinRequestsActions.changeRowsPerPage(event)),
-        handleJoinRequestsTableInputChanged: (event) => dispatch(manageJoinRequestsActions.handleJoinRequestsTableInputChanged(event)),
-        acceptJoinRequest: (request) => dispatch(manageJoinRequestsActions.acceptJoinRequest(request)),
-        rejectJoinRequest: (request) => dispatch(manageJoinRequestsActions.rejectJoinRequest(request)),
-        startListeningForJoinRequestsChanged: () => dispatch(manageJoinRequestsActions.startListeningForJoinRequestsChanged()),
-        stopListeningForJoinRequestsChanged: () => dispatch(manageJoinRequestsActions.stopListeningForJoinRequestsChanged())
+        loadJoinStudentRequests: () => dispatch(manageJoinStudentRequestsActions.loadJoinStudentRequests()),
+        toggleSearchMode: () => dispatch(manageJoinStudentRequestsActions.toggleSearchMode()),
+        changePage: (event, newPage) => dispatch(manageJoinStudentRequestsActions.changePage(event, newPage)),
+        changeRowsPerPage: (event) => dispatch(manageJoinStudentRequestsActions.changeRowsPerPage(event)),
+        handleJoinStudentRequestsTableInputChanged: (event) => dispatch(manageJoinStudentRequestsActions.handleJoinStudentRequestsTableInputChanged(event)),
+        acceptJoinRequest: (request) => dispatch(manageJoinStudentRequestsActions.acceptJoinRequest(request)),
+        rejectJoinRequest: (request) => dispatch(manageJoinStudentRequestsActions.rejectJoinRequest(request)),
+        startListeningForJoinStudentRequestsChanged: () => dispatch(manageJoinStudentRequestsActions.startListeningForJoinStudentRequestsChanged()),
+        stopListeningForJoinStudentRequestsChanged: () => dispatch(manageJoinStudentRequestsActions.stopListeningForJoinStudentRequestsChanged())
     }
 };
 
-class JoinRequests extends Component {
+class JoinStudentRequests extends Component {
 
     componentDidMount() {
         this.loadData();
@@ -79,13 +79,13 @@ class JoinRequests extends Component {
     componentDidUpdate(prevProps, prevState, snapshot) {
         const {
             shouldLoadOtherData,
-            user,
-            stopListeningForJoinRequestsChanged
+            student,
+            stopListeningForJoinStudentRequestsChanged
         } = this.props;
 
-        // cancel all listeners if user is set to null
-        if (!user || !shouldLoadOtherData) {
-            stopListeningForJoinRequestsChanged();
+        // cancel all listeners if student is set to null
+        if (!student || !shouldLoadOtherData) {
+            stopListeningForJoinStudentRequestsChanged();
             return;
         }
 
@@ -100,18 +100,18 @@ class JoinRequests extends Component {
         const {
             shouldLoadOtherData,
 
-            user,
+            student,
 
-            loadingJoinRequests,
-            joinRequestsLoaded,
+            loadingJoinStudentRequests,
+            joinStudentRequestsLoaded,
 
-            loadJoinRequests
+            loadJoinStudentRequests
         } = this.props;
 
         if (shouldLoadOtherData) {
-            if (user) {
-                if (!loadingJoinRequests && !joinRequestsLoaded) {
-                    loadJoinRequests();
+            if (student) {
+                if (!loadingJoinStudentRequests && !joinStudentRequestsLoaded) {
+                    loadJoinStudentRequests();
                 }
             }
         }
@@ -124,43 +124,43 @@ class JoinRequests extends Component {
         const {
             shouldLoadOtherData,
 
-            joinRequests,
-            joinRequestsLoaded,
+            joinStudentRequests,
+            joinStudentRequestsLoaded,
 
-            startListeningForJoinRequestsChanged
+            startListeningForJoinStudentRequestsChanged
         } = this.props;
 
         if (shouldLoadOtherData) {
-            if (joinRequests && joinRequestsLoaded) {
-                startListeningForJoinRequestsChanged();
+            if (joinStudentRequests && joinStudentRequestsLoaded) {
+                startListeningForJoinStudentRequestsChanged();
             }
         }
     };
 
     render() {
         const {
-            groupProperties,
-            groupPropertiesLoaded,
-            user,
-            joinRequests,
+            courseProperties,
+            coursePropertiesLoaded,
+            student,
+            joinStudentRequests,
             searchText,
             inSearchMode,
             page,
             rowsPerPage,
-            loadJoinRequests,
+            loadJoinStudentRequests,
             toggleSearchMode,
             changePage,
             changeRowsPerPage,
-            handleJoinRequestsTableInputChanged
+            handleJoinStudentRequestsTableInputChanged
         } = this.props;
 
-        if (!groupPropertiesLoaded || !user) {
+        if (!coursePropertiesLoaded || !student) {
             return null;
         }
 
         // sort join requests by request date (recent requests come first)
-        joinRequests.sort((joinRequest1, joinRequest2) => {
-            return (joinRequest2.requestedDate - joinRequest1.requestedDate);
+        joinStudentRequests.sort((joinStudentRequest1, joinStudentRequest2) => {
+            return (joinStudentRequest2.requestedDate - joinStudentRequest1.requestedDate);
         });
 
         return (
@@ -170,7 +170,7 @@ class JoinRequests extends Component {
                         <TableRow>
                             <StyledTableCell colSpan={3} cellColor={colors.blue_gray_50}
                                 component={
-                                    <InputBase name="searchText" value={searchText} onChange={handleJoinRequestsTableInputChanged} fullWidth placeholder="Search access request by email" type="text"
+                                    <InputBase name="searchText" value={searchText} onChange={handleJoinStudentRequestsTableInputChanged} fullWidth placeholder="Search access request by email" type="text"
                                         startAdornment={
                                             <InputAdornment position="start">
                                                 <OverlayTrigger trigger={['hover', 'focus']} flip placement="bottom"
@@ -207,7 +207,7 @@ class JoinRequests extends Component {
                                             overlay={
                                                 <Tooltip id={`tooltip-bottom`}>Refresh</Tooltip>
                                             }>
-                                            <IconButton onClick={loadJoinRequests} style={{marginLeft: 10}}>
+                                            <IconButton onClick={loadJoinStudentRequests} style={{marginLeft: 10}}>
                                                 <RefreshIcon/>
                                             </IconButton>
                                         </OverlayTrigger>
@@ -218,24 +218,24 @@ class JoinRequests extends Component {
                         <TableRow>
                             <StyledTableCell colSpan={2}
                                 cellColor={
-                                    !groupProperties
+                                    !courseProperties
                                         ?
                                         colors.primaryColor
                                         :
-                                        groupProperties.settings.primaryColor
+                                        courseProperties.settings.primaryColor
                                 }
                                 textColor={colors.white}
                                 component={
-                                    <Typography variant="body2" align="left" className={css(sharedStyles.white_text)}>User's name</Typography>
+                                    <Typography variant="body2" align="left" className={css(sharedStyles.white_text)}>Student's name</Typography>
                                 }
                             />
                             <StyledTableCell colSpan={1}
                                 cellColor={
-                                    !groupProperties
+                                    !courseProperties
                                         ?
                                         colors.primaryColor
                                         :
-                                        groupProperties.settings.primaryColor
+                                        courseProperties.settings.primaryColor
                                 }
                                 textColor={colors.white}
                                 component={
@@ -244,11 +244,11 @@ class JoinRequests extends Component {
                             />
                             <StyledTableCell colSpan={1}
                                 cellColor={
-                                    !groupProperties
+                                    !courseProperties
                                         ?
                                         colors.primaryColor
                                         :
-                                        groupProperties.settings.primaryColor
+                                        courseProperties.settings.primaryColor
                                 }
                                 textColor={colors.white}
                                 component={
@@ -257,11 +257,11 @@ class JoinRequests extends Component {
                             />
                             <StyledTableCell colSpan={1}
                                 cellColor={
-                                    !groupProperties
+                                    !courseProperties
                                         ?
                                         colors.primaryColor
                                         :
-                                        groupProperties.settings.primaryColor
+                                        courseProperties.settings.primaryColor
                                 }
                                 textColor={colors.white}
                                 component={
@@ -272,12 +272,12 @@ class JoinRequests extends Component {
                     </TableHead>
                     <TableBody>
                         {
-                            this.renderJoinRequestsRows()
+                            this.renderJoinStudentRequestsRows()
                         }
                     </TableBody>
                     <TableFooter>
                         <TableRow>
-                            <TablePagination rowsPerPageOptions={[5, 10, 25]} colSpan={5} count={joinRequests.length} rowsPerPage={rowsPerPage} page={page}
+                            <TablePagination rowsPerPageOptions={[5, 10, 25]} colSpan={5} count={joinStudentRequests.length} rowsPerPage={rowsPerPage} page={page}
                                 backIconButtonProps={{'aria-label': 'Previous Page',}}
                                 nextIconButtonProps={{'aria-label': 'Next Page',}}
                                 SelectProps={{ native: true,}}
@@ -295,13 +295,13 @@ class JoinRequests extends Component {
      *
      * @returns {*}
      */
-    renderJoinRequestsRows = () => {
+    renderJoinStudentRequestsRows = () => {
         const {
-            groupUserName,
-            groupProperties,
-            joinRequests,
-            joinRequestsLoaded,
-            matchedJoinRequests,
+            courseStudentName,
+            courseProperties,
+            joinStudentRequests,
+            joinStudentRequestsLoaded,
+            matchedJoinStudentRequests,
             inSearchMode,
             page,
             rowsPerPage,
@@ -309,21 +309,21 @@ class JoinRequests extends Component {
             rejectJoinRequest
         } = this.props;
 
-        let renderedJoinRequests = [];
+        let renderedJoinStudentRequests = [];
 
         if (inSearchMode) {
-            renderedJoinRequests = matchedJoinRequests;
+            renderedJoinStudentRequests = matchedJoinStudentRequests;
         } else {
-            renderedJoinRequests = joinRequests;
+            renderedJoinStudentRequests = joinStudentRequests;
         }
 
-        if (renderedJoinRequests.length === 0) {
+        if (renderedJoinStudentRequests.length === 0) {
             return (
                 <TableRow>
                     <TableCell colSpan={5}>
                         <FlexView style={{margin: 40}} hAlignContent="center" vAlignContent="center">
                             {
-                                joinRequestsLoaded
+                                joinStudentRequestsLoaded
                                     ?
                                     <Typography variant="h6" align="center">
                                         {
@@ -337,11 +337,11 @@ class JoinRequests extends Component {
                                     :
                                     <HashLoader
                                         color={
-                                            !groupProperties
+                                            !courseProperties
                                                 ?
                                                 colors.primaryColor
                                                 :
-                                                groupProperties.settings.primaryColor
+                                                courseProperties.settings.primaryColor
                                         }
                                     />
                             }
@@ -352,40 +352,40 @@ class JoinRequests extends Component {
         }
 
         return (
-            renderedJoinRequests.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map(joinRequest => (
-                <TableRow key={joinRequest.id} hover>
+            renderedJoinStudentRequests.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map(joinStudentRequest => (
+                <TableRow key={joinStudentRequest.id} hover>
                     <TableCell colSpan={2}>
                         <FlexView column>
                             <NavLink
                                 to={
-                                    groupUserName
+                                    courseStudentName
                                         ?
-                                        `${ROUTES.USER_PROFILE.replace(":groupUserName", groupUserName).replace(":userID", joinRequest.userID)}`
+                                        `${ROUTES.STUDENT_PROFILE.replace(":courseStudentName", courseStudentName).replace(":studentID", joinStudentRequest.studentID)}`
                                         :
-                                        `${ROUTES.USER_PROFILE_INVEST_WEST_SUPER.replace(":userID", joinRequest.userID)}`
+                                        `${ROUTES.STUDENT_PROFILE_STUDENT_SUPER.replace(":studentID", joinStudentRequest.studentID)}`
                                 }
                                 className={css(sharedStyles.nav_link_hover_without_changing_text_color)}
                             >
                                 <Typography align="left" variant="body1" color="primary">
-                                    {`${joinRequest.userProfile.title} ${joinRequest.userProfile.firstName} ${joinRequest.userProfile.lastName}`}
+                                    {`${joinStudentRequest.studentProfile.title} ${joinStudentRequest.studentProfile.firstName} ${joinStudentRequest.studentProfile.lastName}`}
                                 </Typography>
                             </NavLink>
                         </FlexView>
                     </TableCell>
                     <TableCell colSpan={1}>
                         <Typography align="left" variant="body1">
-                            {joinRequest.userProfile.email}
+                            {joinStudentRequest.studentProfile.email}
                         </Typography>
                     </TableCell>
                     <TableCell colSpan={1}>
                         <Typography align="left" variant="body1">
-                            {myUtils.dateInReadableFormat(joinRequest.requestedDate)}
+                            {myUtils.dateInReadableFormat(joinStudentRequest.requestedDate)}
                         </Typography>
                     </TableCell>
                     <TableCell colSpan={1}>
                         <FlexView>
-                            <Button variant="outlined" className={css(sharedStyles.no_text_transform)} color="secondary" onClick={() => rejectJoinRequest(joinRequest)} style={{marginRight: 6}}>Reject</Button>
-                            <Button variant="outlined" className={css(sharedStyles.no_text_transform)} color="primary" onClick={() => acceptJoinRequest(joinRequest)} style={{marginLeft: 6}}>Accept</Button>
+                            <Button variant="outlined" className={css(sharedStyles.no_text_transform)} color="secondary" onClick={() => rejectJoinRequest(joinStudentRequest)} style={{marginRight: 6}}>Reject</Button>
+                            <Button variant="outlined" className={css(sharedStyles.no_text_transform)} color="primary" onClick={() => acceptJoinRequest(joinStudentRequest)} style={{marginLeft: 6}}>Accept</Button>
                         </FlexView>
                     </TableCell>
                 </TableRow>
@@ -394,4 +394,4 @@ class JoinRequests extends Component {
     };
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(JoinRequests);
+export default connect(mapStateToProps, mapDispatchToProps)(JoinStudentRequests);

@@ -6,7 +6,7 @@ import {
 } from "./StudentSignInActions";
 import Error from "../../../models/error";
 
-export interface SignInState {
+export interface StudentSignInState {
     signInEmail: string;
     signInPassword: string;
     showPassword: boolean;
@@ -20,7 +20,7 @@ export interface SignInState {
     resetPasswordDialogError?: Error;
 }
 
-const initialState: SignInState = {
+const initialState: StudentSignInState = {
     signInEmail: "",
     signInPassword: "",
     showPassword: false,
@@ -33,19 +33,19 @@ const initialState: SignInState = {
     resetPasswordDialogEmailSent: false
 }
 
-export const successfullySentResetPassword = (state: SignInState) => {
+export const successfullySentResetPassword = (state: StudentSignInState) => {
     return state.resetPasswordDialogEmailSent && state.resetPasswordDialogError === undefined;
 }
 
-export const errorSendingResetPassword = (state: SignInState) => {
+export const errorSendingResetPassword = (state: StudentSignInState) => {
     return state.resetPasswordDialogError !== undefined;
 }
 
-export const isProcessingResetPasswordRequest = (state: SignInState) => {
+export const isProcessingResetPasswordRequest = (state: StudentSignInState) => {
     return state.resetPasswordDialogProcessing;
 }
 
-const signInReducer = (state: SignInState = initialState, action: SignInAction) => {
+const studentSignInReducer = (state: StudentSignInState = initialState, action: SignInAction) => {
     switch (action.type) {
         case SignInEvents.ResetAllStates:
             return {
@@ -105,4 +105,4 @@ const signInReducer = (state: SignInState = initialState, action: SignInAction) 
     }
 }
 
-export default signInReducer;
+export default studentSignInReducer;

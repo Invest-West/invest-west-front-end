@@ -4,10 +4,10 @@ import {AppState} from "../../redux-store/reducers";
 import {Box, Button, Card, CardActionArea, CardActions, colors, Typography} from "@material-ui/core";
 import CourseProperties, {getCourseLogo} from "../../models/course_properties";
 import {Image} from "react-bootstrap";
-import {AuthenticationState} from "../../redux-store/reducers/authenticationReducer";
+import {StudentAuthenticationState} from "../../redux-store/reducers/authenticationReducer";
 import {css} from "aphrodite";
 import sharedStyles from "../../shared-js-css-styles/SharedStyles";
-import {isTeacher} from "../../models/teacher";
+import {isProf} from "../../models/teacher";
 import {
     ExploreCoursesState,
     hasAccessRequestsBeenSatisfied,
@@ -18,7 +18,7 @@ import CourseOfMembership, {getHomeCourse} from "../../models/course_of_membersh
 import {CheckCircle} from "@material-ui/icons";
 import {ThunkDispatch} from "redux-thunk";
 import {AnyAction} from "redux";
-import {removeAccessRequest, sendAccessRequest} from "./ExploreCoursesActions";
+import {removeStudentAccessRequest, sendStudentAccessRequest} from "./ExploreCoursesActions";
 import CustomLink from "../../shared-js-css-styles/CustomLink";
 import Routes from "../../router/routes";
 import {ManageCourseUrlState} from "../../redux-store/reducers/manageCourseUrlReducer";
@@ -28,24 +28,24 @@ import * as DB_CONST from "../../firebase/databaseConsts";
 interface CourseItemProps {
     course: CourseProperties;
     ManageCourseUrlState: ManageCourseUrlState;
-    AuthenticationState: AuthenticationState;
+    StudentAuthenticationState: StudentAuthenticationState;
     ExploreCoursesLocalState: ExploreCoursesState;
-    sendAccessRequest: (courseID: string) => any;
-    removeAccessRequest: (courseID: string) => any;
+    sendStudentAccessRequest: (courseID: string) => any;
+    removeStudentAccessRequest: (courseID: string) => any;
 }
 
 const mapStateToProps = (state: AppState) => {
     return {
         ManageCourseUrlState: state.ManageCourseUrlState,
-        AuthenticationState: state.AuthenticationState,
+        StudentAuthenticationState: state.StudentAuthenticationState,
         ExploreCoursesLocalState: state.ExploreCoursesLocalState
     }
 }
 
 const mapDispatchToProps = (dispatch: ThunkDispatch<any, any, AnyAction>) => {
     return {
-        sendAccessRequest: (courseID: string) => dispatch(sendAccessRequest(courseID)),
-        removeAccessRequest: (courseID: string) => dispatch(removeAccessRequest(courseID))
+        sendStudentAccessRequest: (courseID: string) => dispatch(sendStudentAccessRequest(courseID)),
+        removeStudentAccessRequest: (courseID: string) => dispatch(removeStudentAccessRequest(courseID))
     }
 }
 
@@ -54,25 +54,25 @@ class CourseItem extends Component<CourseItemProps, any> {
         const {
             course,
             ManageCourseUrlState,
-            AuthenticationState,
+            StudentAuthenticationState,
             ExploreCoursesLocalState,
-            sendAccessRequest,
-            removeAccessRequest
+            sendStudentAccessRequest,
+            removeStudentAccessRequest
         } = this.props;
 
-        const currentStudent = AuthenticationState.currentStudent;
+        const currentStudent = StudentAuthenticationState.currentStudent;
 
         if (!currentStudent) {
             return null;
         }
 
-        let courseMember: CourseOfMembership | undefined = AuthenticationState.coursesOfMembership.find(
+        let courseMember: CourseOfMembership | undefined = StudentAuthenticationState.coursesOfMembership.find(
             courseOfMembership => courseOfMembership.course.anid === course.anid);
 
         let hasRequestedToAccessCourse: boolean = false;
         if (hasAccessRequestsBeenSatisfied(ExploreCoursesLocalState)) {
-            hasRequestedToAccessCourse = ExploreCoursesLocalState.accessRequestsInstances
-                ?.findIndex(accessRequestInstance => accessRequestInstance.course.anid === course.anid) !== -1;
+            hasRequestedToAccessCourse = ExploreCoursesLocalState.accessStudentRequestsInstances
+                ?.findIndex(accessStudentRequestInstance => accessStudentRequestInstance.course.anid === course.anid) !== -1;
         }
 
         return <Box
@@ -80,7 +80,7 @@ class CourseItem extends Component<CourseItemProps, any> {
         >
             <Card>
                 <CustomLink
-                    url={Routes.constructCourseDetailRoute(ManageCourseUrlState.courseNameFromUrl ?? null, course.courseStudentName)}
+                    url={Routes.constructCourseDetailRoute(ManageCourseUrlState.courseNameFromUrl ?? null, course.courseUserName)}
                     color="black"
                     activeColor="none"
                     activeUnderline={false}
@@ -89,13 +89,13 @@ class CourseItem extends Component<CourseItemProps, any> {
                         <CardActionArea
                             onClick={
                                 () => {
-                                    if (!isTeacher(currentStudent)) {
-                                        realtimeDBUtils.trackActivity({
+                                    if (!isProf(currentStudent)) {
+                                        realtimeDBUtils.trackStudentActivity({
                                             studentID: currentStudent.id,
                                             activityType: DB_CONST.ACTIVITY_TYPE_CLICK,
-                                            interactedObjectLocation: DB_CONST.GROUP_PROPERTIES_CHILD,
+                                            interactedObjectLocation: DB_CONST.COURSE_PROPERTIES_CHILD,
                                             interactedObjectID: course.anid,
-                                            activitySummary: realtimeDBUtils.ACTIVITY_SUMMARY_TEMPLATE_CLICKED_ON_GROUP_ITEM.replace("%course%", course.displayName),
+                                            activitySummary: realtimeDBUtils.ACTIVITY_SUMMARY_TEMPLATE_CLICKED_ON_COURSE_ITEM.replace("%course%", course.displayName),
                                             action: Routes.nonCourseViewCourse.replace(":courseID", course.anid)
                                         });
                                     }
@@ -124,7 +124,7 @@ class CourseItem extends Component<CourseItemProps, any> {
                                                 <Box width="6px" />
                                                 <Typography variant="body1" align="center" noWrap color="textSecondary" >
                                                     {
-                                                        getHomeCourse(AuthenticationState.coursesOfMembership)?.course.anid === courseMember.course.anid
+                                                        getHomeCourse(StudentAuthenticationState.coursesOfMembership)?.course.anid === courseMember.course.anid
                                                             ? "Home member"
                                                             : "Platform member"
                                                     }
@@ -138,7 +138,7 @@ class CourseItem extends Component<CourseItemProps, any> {
                 />
 
                 {
-                    isTeacher(currentStudent)
+                    isProf(currentStudent)
                         ? null
                         : courseMember
                         ? null
@@ -150,7 +150,7 @@ class CourseItem extends Component<CourseItemProps, any> {
                                             fullWidth
                                             variant="outlined"
                                             className={css(sharedStyles.no_text_transform)}
-                                            onClick={() => sendAccessRequest(course.anid)}
+                                            onClick={() => sendStudentAccessRequest(course.anid)}
                                             disabled={isSendingAccessRequest(ExploreCoursesLocalState, course.anid)}
                                         >
                                             {
@@ -162,7 +162,7 @@ class CourseItem extends Component<CourseItemProps, any> {
                                         : <Button
                                             variant="outlined"
                                             className={css(sharedStyles.no_text_transform)}
-                                            onClick={() => removeAccessRequest(course.anid)}
+                                            onClick={() => removeStudentAccessRequest(course.anid)}
                                             disabled={isRemovingAccessRequest(ExploreCoursesLocalState, course.anid)}
                                         >
                                             {

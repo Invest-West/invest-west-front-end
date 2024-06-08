@@ -4,17 +4,17 @@ import * as realtimeDBUtils from "../../firebase/realtimeDBUtils";
 import * as myUtils from "../../utils/utils";
 import * as feedbackSnackbarActions from "./feedbackSnackbarActions";
 
-export const COURSE_ADMIN_SETTINGS_INITIALIZE_COURSE_ATTRIBUTES_EDITED = 'COURSE_ADMIN_SETTINGS_INITIALIZE_COURSE_ATTRIBUTES_EDITED';
+export const COURSE_TEACHER_SETTINGS_INITIALIZE_COURSE_ATTRIBUTES_EDITED = 'COURSE_TEACHER_SETTINGS_INITIALIZE_COURSE_ATTRIBUTES_EDITED';
 export const initializeCourseAttributesEdited = () => {
     return (dispatch, getState) => {
         dispatch({
-            type: COURSE_ADMIN_SETTINGS_INITIALIZE_COURSE_ATTRIBUTES_EDITED,
+            type: COURSE_TEACHER_SETTINGS_INITIALIZE_COURSE_ATTRIBUTES_EDITED,
             course: getState().manageCourseFromParams.courseProperties
         });
     }
 };
 
-export const COURSE_ADMIN_SETTINGS_CHANGED = 'COURSE_ADMIN_SETTINGS_CHANGED';
+export const COURSE_TEACHER_SETTINGS_CHANGED = 'COURSE_TEACHER_SETTINGS_CHANGED';
 export const handleInputChanged = event => {
     return (dispatch, getState) => {
         const courseProperties = getState().manageCourseFromParams.courseProperties;
@@ -76,7 +76,7 @@ export const handleInputChanged = event => {
         }
 
         dispatch({
-            type: COURSE_ADMIN_SETTINGS_CHANGED,
+            type: COURSE_TEACHER_SETTINGS_CHANGED,
             name: target.name,
             value: target.type === 'checkbox' ? target.checked : target.value,
             isPropertyOfCourseAttributes
@@ -88,7 +88,7 @@ export const handlePitchExpiryDateChanged = date => {
     return (dispatch, getState) => {
         if (date && date === "Invalid Date") {
             dispatch({
-                type: COURSE_ADMIN_SETTINGS_CHANGED,
+                type: COURSE_TEACHER_SETTINGS_CHANGED,
                 isPropertyOfCourseAttributes: true,
                 name: "defaultPitchExpiryDate",
                 value: NaN
@@ -97,7 +97,7 @@ export const handlePitchExpiryDateChanged = date => {
         }
 
         dispatch({
-            type: COURSE_ADMIN_SETTINGS_CHANGED,
+            type: COURSE_TEACHER_SETTINGS_CHANGED,
             isPropertyOfCourseAttributes: true,
             name: "defaultPitchExpiryDate",
             value:
@@ -138,7 +138,7 @@ export const handleCancelEditingPitchExpiryDate = () => {
         const courseProperties = getState().manageCourseFromParams.courseProperties;
 
         dispatch({
-            type: COURSE_ADMIN_SETTINGS_CHANGED,
+            type: COURSE_TEACHER_SETTINGS_CHANGED,
             isPropertyOfCourseAttributes: true,
             name: "defaultPitchExpiryDate",
             value:
@@ -151,7 +151,7 @@ export const handleCancelEditingPitchExpiryDate = () => {
     }
 }
 
-export const COURSE_ADMIN_SETTINGS_PLEDGE_FAQ_PANEL_EXPANSION_CHANGED = 'COURSE_ADMIN_SETTINGS_PLEDGE_FAQ_PANEL_EXPANSION_CHANGED';
+export const COURSE_TEACHER_SETTINGS_PLEDGE_FAQ_PANEL_EXPANSION_CHANGED = 'COURSE_TEACHER_SETTINGS_PLEDGE_FAQ_PANEL_EXPANSION_CHANGED';
 export const handleExpandPledgeFAQPanel = (FAQ, isExpanded) => {
     return (dispatch, getState) => {
 
@@ -159,14 +159,14 @@ export const handleExpandPledgeFAQPanel = (FAQ, isExpanded) => {
 
         if (isExpanded) {
             dispatch({
-                type: COURSE_ADMIN_SETTINGS_PLEDGE_FAQ_PANEL_EXPANSION_CHANGED,
+                type: COURSE_TEACHER_SETTINGS_PLEDGE_FAQ_PANEL_EXPANSION_CHANGED,
                 expandedPledgeFAQ: FAQ,
                 editExpandedPledgeFAQ: false
             });
         } else {
             if (expandedPledgeFAQ && expandedPledgeFAQ.id === FAQ.id) {
                 dispatch({
-                    type: COURSE_ADMIN_SETTINGS_PLEDGE_FAQ_PANEL_EXPANSION_CHANGED,
+                    type: COURSE_TEACHER_SETTINGS_PLEDGE_FAQ_PANEL_EXPANSION_CHANGED,
                     expandedPledgeFAQ: null,
                     editExpandedPledgeFAQ: false
                 });
@@ -175,17 +175,17 @@ export const handleExpandPledgeFAQPanel = (FAQ, isExpanded) => {
     }
 };
 
-export const COURSE_ADMIN_SETTINGS_TOGGLE_EDIT_EXPANDED_PLEDGE_FAQ = 'COURSE_ADMIN_SETTINGS_TOGGLE_EDIT_EXPANDED_PLEDGE_FAQ';
+export const COURSE_TEACHER_SETTINGS_TOGGLE_EDIT_EXPANDED_PLEDGE_FAQ = 'COURSE_TEACHER_SETTINGS_TOGGLE_EDIT_EXPANDED_PLEDGE_FAQ';
 export const toggleEditExpandedPledgeFAQ = () => {
     return {
-        type: COURSE_ADMIN_SETTINGS_TOGGLE_EDIT_EXPANDED_PLEDGE_FAQ
+        type: COURSE_TEACHER_SETTINGS_TOGGLE_EDIT_EXPANDED_PLEDGE_FAQ
     }
 };
 
-export const COURSE_ADMIN_SETTINGS_TOGGLE_ADD_NEW_PLEDGE_FAQ = 'COURSE_ADMIN_SETTINGS_TOGGLE_ADD_NEW_PLEDGE_FAQ';
+export const COURSE_TEACHER_SETTINGS_TOGGLE_ADD_NEW_PLEDGE_FAQ = 'COURSE_TEACHER_SETTINGS_TOGGLE_ADD_NEW_PLEDGE_FAQ';
 export const toggleAddNewPledgeFAQ = () => {
     return {
-        type: COURSE_ADMIN_SETTINGS_TOGGLE_ADD_NEW_PLEDGE_FAQ
+        type: COURSE_TEACHER_SETTINGS_TOGGLE_ADD_NEW_PLEDGE_FAQ
     }
 };
 
@@ -225,7 +225,7 @@ export const submitNewPledgeFAQ = () => {
             .set(courseAttributesEdited[DB_CONST.PLEDGE_FAQS_CHILD])
             .then(() => {
                 dispatch({
-                    type: COURSE_ADMIN_SETTINGS_TOGGLE_ADD_NEW_PLEDGE_FAQ
+                    type: COURSE_TEACHER_SETTINGS_TOGGLE_ADD_NEW_PLEDGE_FAQ
                 });
             });
     }
@@ -264,7 +264,7 @@ export const saveEditedPledgeFAQ = () => {
             .set(courseAttributesEdited[DB_CONST.PLEDGE_FAQS_CHILD])
             .then(() => {
                 dispatch({
-                    type: COURSE_ADMIN_SETTINGS_TOGGLE_EDIT_EXPANDED_PLEDGE_FAQ
+                    type: COURSE_TEACHER_SETTINGS_TOGGLE_EDIT_EXPANDED_PLEDGE_FAQ
                 });
             });
     }
@@ -303,13 +303,13 @@ export const saveCourseDetails = (field, value) => {
     }
 };
 
-export const COURSE_ADMIN_SETTINGS_CANCEL_EDITING_COURSE_DETAILS = 'COURSE_ADMIN_SETTINGS_CANCEL_EDITING_COURSE_DETAILS';
+export const COURSE_TEACHER_SETTINGS_CANCEL_EDITING_COURSE_DETAILS = 'COURSE_TEACHER_SETTINGS_CANCEL_EDITING_COURSE_DETAILS';
 export const cancelEditingCourseDetails = (field) => {
     return (dispatch, getState) => {
         const course = getState().manageCourseFromParams.courseProperties;
 
         dispatch({
-            type: COURSE_ADMIN_SETTINGS_CANCEL_EDITING_COURSE_DETAILS,
+            type: COURSE_TEACHER_SETTINGS_CANCEL_EDITING_COURSE_DETAILS,
             name: field,
             value: course[field]
         });
@@ -331,14 +331,14 @@ export const saveColor = field => {
     }
 };
 
-export const COURSE_ADMIN_SETTINGS_CANCEL_EDITING_COLOR = 'COURSE_ADMIN_SETTINGS_CANCEL_EDITING_COLOR';
+export const COURSE_TEACHER_SETTINGS_CANCEL_EDITING_COLOR = 'COURSE_TEACHER_SETTINGS_CANCEL_EDITING_COLOR';
 export const cancelEditingColor = field => {
     return (dispatch, getState) => {
         const course = getState().manageCourseFromParams.courseProperties;
         const color = field === "primaryColor" ? course.settings.primaryColor : course.settings.secondaryColor;
 
         dispatch({
-            type: COURSE_ADMIN_SETTINGS_CANCEL_EDITING_COLOR,
+            type: COURSE_TEACHER_SETTINGS_CANCEL_EDITING_COLOR,
             field,
             color
         });

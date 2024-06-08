@@ -48,9 +48,6 @@ import * as editImageActions from '../../redux-store/actions/editImageActions';
 import * as editVideoActions from '../../redux-store/actions/editVideoActions';
 import * as uploadFilesActions from '../../redux-store/actions/uploadFilesActions';
 import * as legalDocumentsActions from '../../redux-store/actions/legalDocumentsActions';
-import * as investorSelfCertificationAgreementsActions
-    from '../../redux-store/actions/investorSelfCertificationAgreementsActions';
-    import { isCertificationExpired } from '../../redux-store/actions/investorSelfCertificationAgreementsActions';
 
 import {
     UPLOAD_LOGO_FIRST_TIME_MODE,
@@ -75,7 +72,7 @@ const mapStateToProps = state => {
 
         clubAttributes: state.manageClubAttributes.clubAttributes,
 
-        // Create new business profile state ----------------------------------------------------------------------------
+        // Create new uni profile state ----------------------------------------------------------------------------
         createuniCourseProfile: state.createuniCourseProfile,
         //--------------------------------------------------------------------------------------------------------------
 
@@ -109,7 +106,7 @@ const mapStateToProps = state => {
         fileUploadErrorSnackbarOpen: state.uploadFiles.fileUploadErrorSnackbarOpen,
         //--------------------------------------------------------------------------------------------------------------
 
-        // These states can be also be used when creating business profile ***********
+        // These states can be also be used when creating uni profile ***********
         addNewDirector: state.editStudent.addNewDirector,
         newDirectorText: state.editStudent.newDirectorText
         //***************************************************************************
@@ -119,15 +116,14 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
     return {
-        // Create new business profile functions ------------------------------------------------------------------------
+        // Create new uni profile functions ------------------------------------------------------------------------
         handleCreateuniCourseProfileTextChanged: (fieldType, event) => dispatch(createuniCourseProfileActions.handleTextChanged(fieldType, event)),
         searchAddress: (mode) => dispatch(createuniCourseProfileActions.searchAddresses(mode)),
         toggleEnterAddressManually: (field) => dispatch(createuniCourseProfileActions.toggleEnterAddressManually(field)),
-        toggleTradingAddressSameAsRegisteredOffice: (checked) => dispatch(createuniCourseProfileActions.toggleTradingAddressSameAsRegisteredOffice(checked)),
         resetCreatinguniCourseProfile: () => dispatch(createuniCourseProfileActions.clearAllFields()),
         handleRecommendedAddressSelected: (field, index) => dispatch(createuniCourseProfileActions.handleRecommendedAddressSelected(field, index)),
-        toggleExpanduniCourseProfileFillingForInvestor: () => dispatch(createuniCourseProfileActions.toggleExpanduniCourseProfileFillingForInvestor()),
-        uploaduniCourseProfile: () => dispatch(createuniCourseProfileActions.uploaduniCourseProfile()),
+        toggleExpandUniProfileFillingForStudent: () => dispatch(createuniCourseProfileActions.toggleExpandUniProfileFillingForStudent()),
+        uploadUniProfile: () => dispatch(createuniCourseProfileActions.uploadUniProfile()),
         //--------------------------------------------------------------------------------------------------------------
 
         // Edit student's profile functions --------------------------------------------------------------------------------
@@ -140,12 +136,15 @@ const mapDispatchToProps = dispatch => {
         //--------------------------------------------------------------------------------------------------------------
 
         // Investor self-certification agreement functions --------------------------------------------------------------
+        /*
         investorSelfCertificationAgreement_setStudent: (uid) => dispatch(investorSelfCertificationAgreementsActions.setStudent(uid)),
         loadInvestorSelfCertificationAgreement: () => dispatch(investorSelfCertificationAgreementsActions.loadInvestorSelfCertificationAgreement()),
         setInvestorSelfCertificationAgreement: () => dispatch(investorSelfCertificationAgreementsActions.setInvestorSelfCertificationAgreement()),
         investorSelfCertificationAgreement_handleCheckBoxChanged: (event) => dispatch(investorSelfCertificationAgreementsActions.handleTickBoxChanged(event)),
         investorSelfCertificationAgreement_handleStatementTypeChanged: (event) => dispatch(investorSelfCertificationAgreementsActions.handleStatementTypeChanged(event)),
+        */
         //--------------------------------------------------------------------------------------------------------------
+
 
         // Student's legal documents functions ----------------------------------------------------------------------------
         legalDocuments_setStudentID: (studentID) => dispatch(legalDocumentsActions.setStudentID(studentID)),
@@ -174,7 +173,7 @@ const mapDispatchToProps = dispatch => {
     }
 };
 
-class Profile extends Component {
+class StudentProfile extends Component {
 
     componentDidMount() {
         this.loadData();
@@ -258,17 +257,10 @@ class Profile extends Component {
     };
 
     /**
-     * Handle text changed when creating a new business profile
+     * Handle text changed when creating a new uni profile
      */
     handleCreateuniCourseProfileTextChanged = fieldType => event => {
         this.props.handleCreateuniCourseProfileTextChanged(fieldType, event);
-    };
-
-    /**
-     * Handle toggling if trading address is the same of registered office
-     */
-    toggleTradingAddressSameAsRegisteredOffice = event => {
-        this.props.toggleTradingAddressSameAsRegisteredOffice(event.target.checked);
     };
 
     /**
@@ -340,7 +332,7 @@ class Profile extends Component {
                                         ?
                                         ROUTES.STUDENT_PROFILE.replace(":courseStudentName", courseStudentName).replace(":studentID", studentEdited.id)
                                         :
-                                        ROUTES.STUDENT_PROFILE_INVEST_WEST_SUPER.replace(":studentID", studentEdited.id)
+                                        ROUTES.STUDENT_PROFILE_STUDENT_SUPER.replace(":studentID", studentEdited.id)
                                 }
                                 target={currentStudent.id === originalStudent.id ? "" : "_blank"}
                                 className={css(sharedStyles.nav_link_white_text_hover_without_changing_text_color)}
@@ -388,7 +380,7 @@ class Profile extends Component {
                             <Typography variant="h6" color="primary" >Personal details</Typography>
 
                             <Row noGutters style={{ marginTop: 20 }} >
-                                {/** Profile picture */}
+                                {/** StudentProfile picture */}
                                 <Col xs={12} sm={12} md={6} lg={4} >
                                     <FlexView column hAlignContent="center" style={{ padding: 10 }} >
                                         {
@@ -520,7 +512,7 @@ class Profile extends Component {
 
                                     <FlexView hAlignContent="right" marginTop={30} >
                                         <FlexView marginRight={20} >
-                                            <Button variant="outlined" color="primary" onClick={() => this.props.cancelEditingStudent(editStudentActions.RESET_PERSONAL_INFORMATION)} >Cancel</Button>
+                                            <Button variant="outlined" color="primary" onClick={() => this.props.cancelEditingStudent(editStudentActions.RESET_STUDENT_PERSONAL_INFORMATION)} >Cancel</Button>
                                         </FlexView>
                                         <FlexView>
                                             <Button
@@ -552,7 +544,7 @@ class Profile extends Component {
                                                         )
                                                     )
                                                 }
-                                                onClick={() => this.props.commitStudentProfileChanges(editStudentActions.COMMIT_PERSONAL_INFORMATION_CHANGES)}
+                                                onClick={() => this.props.commitStudentProfileChanges(editStudentActions.COMMIT_STUDENT_PERSONAL_INFORMATION_CHANGES)}
                                             >
                                                 Save
                                             </Button>
@@ -676,7 +668,7 @@ class Profile extends Component {
     }
 
     /**
-     * Render business profile section
+     * Render uni profile section
      *
      * @returns {*}
      */
@@ -694,15 +686,13 @@ class Profile extends Component {
             addNewDirector,
             newDirectorText,
 
-            searchAddress,
-            toggleEnterAddressManually,
             resetCreatinguniCourseProfile,
-            handleRecommendedAddressSelected,
-            toggleExpanduniCourseProfileFillingForInvestor,
-            uploaduniCourseProfile
+
+            toggleExpandUniProfileFillingForStudent,
+            uploadUniProfile
         } = this.props;
 
-        // student has already uploaded their business profile
+        // student has already uploaded their uni profile
         if (originalStudent.uniCourseProfile) {
             return (
                 /** Uni profile has been uploaded */
@@ -818,10 +808,10 @@ class Profile extends Component {
                             </FlexView>
                         </Col>
                         <Col xs={12} sm={12} md={6} lg={8} >
-                            {/** Company name */}
+                            {/** Student project name */}
                             <FlexView column>
                                 <FormControl>
-                                    <FormLabel><b>Company name</b></FormLabel>
+                                    <FormLabel><b>Student project name</b></FormLabel>
                                     <TextField
                                         name="companyName"
                                         placeholder="Enter company name"
@@ -829,134 +819,9 @@ class Profile extends Component {
                                         margin="dense"
                                         variant="outlined"
                                         fullWidth
-                                        onChange={this.handleEditStudent(editStudentActions.EDIT_ORDINARY_BUSINESS_PROFILE_INFORMATION)}
+                                        onChange={this.handleEditStudent(editStudentActions.EDIT_ORDINARY_UNI_PROFILE_INFORMATION)}
                                         error={studentEdited.uniCourseProfile.hasOwnProperty('companyName') && studentEdited.uniCourseProfile.companyName.trim().length === 0}
                                     />
-                                </FormControl>
-                            </FlexView>
-
-                            <Divider style={{ marginTop: 20, marginBottom: 20 }} />
-
-                            {/** Registration number */}
-                            <FlexView column >
-                                <FormControl>
-                                    <FormLabel><b>Registration number</b></FormLabel>
-                                    <TextField
-                                        name="registrationNo"
-                                        placeholder="Enter company registration number"
-                                        value={studentEdited.uniCourseProfile.hasOwnProperty('registrationNo') ? studentEdited.uniCourseProfile.registrationNo : ''}
-                                        margin="dense"
-                                        variant="outlined"
-                                        disabled={currentStudent.type !== DB_CONST.TYPE_PROF}
-                                        fullWidth
-                                        onChange={this.handleEditStudent(editStudentActions.EDIT_ORDINARY_BUSINESS_PROFILE_INFORMATION)}
-                                    />
-                                </FormControl>
-                            </FlexView>
-
-                            <Divider style={{ marginTop: 20, marginBottom: 20 }} />
-
-                            {/** Registered office */}
-                            <FlexView column>
-                                <FormControl>
-                                    <FormLabel><b>Registered office</b></FormLabel>
-                                    <FormGroup>
-                                        <FlexView column>
-                                            <TextField
-                                                name="address1"
-                                                placeholder="Address 1"
-                                                value={
-                                                    studentEdited.uniCourseProfile.hasOwnProperty('registeredOffice')
-                                                        ?
-                                                        studentEdited.uniCourseProfile.registeredOffice.address1
-                                                        :
-                                                        ''
-                                                }
-                                                margin="dense"
-                                                variant="outlined"
-                                                fullWidth
-                                                onChange={this.handleEditStudent(editStudentActions.EDIT_REGISTERED_OFFICE_BUSINESS_PROFILE)}
-                                                error={
-                                                    studentEdited.uniCourseProfile.hasOwnProperty('registeredOffice')
-                                                    && studentEdited.uniCourseProfile.registeredOffice.address1.trim().length === 0
-                                                }
-                                            />
-                                            <TextField
-                                                name="address2"
-                                                placeholder="Address 2"
-                                                value={
-                                                    studentEdited.uniCourseProfile.hasOwnProperty('registeredOffice')
-                                                        ?
-                                                        studentEdited.uniCourseProfile.registeredOffice.address2
-                                                        :
-                                                        ''
-                                                }
-                                                margin="dense"
-                                                variant="outlined"
-                                                fullWidth
-                                                onChange={this.handleEditStudent(editStudentActions.EDIT_REGISTERED_OFFICE_BUSINESS_PROFILE)}
-                                            />
-                                            <TextField
-                                                name="address3"
-                                                placeholder="Address 3"
-                                                value={
-                                                    studentEdited.uniCourseProfile.hasOwnProperty('registeredOffice')
-                                                        ?
-                                                        studentEdited.uniCourseProfile.registeredOffice.address3
-                                                        :
-                                                        ''
-                                                }
-                                                margin="dense"
-                                                variant="outlined"
-                                                fullWidth
-                                                onChange={this.handleEditStudent(editStudentActions.EDIT_REGISTERED_OFFICE_BUSINESS_PROFILE)}
-                                            />
-                                            <Row>
-                                                <Col xs={12} sm={12} md={6} lg={6} >
-                                                    <TextField
-                                                        name="townCity"
-                                                        placeholder="Town/City"
-                                                        value={
-                                                            studentEdited.uniCourseProfile.hasOwnProperty('registeredOffice')
-                                                                ?
-                                                                studentEdited.uniCourseProfile.registeredOffice.townCity
-                                                                :
-                                                                ''
-                                                        }
-                                                        margin="dense"
-                                                        variant="outlined"
-                                                        fullWidth
-                                                        onChange={this.handleEditStudent(editStudentActions.EDIT_REGISTERED_OFFICE_BUSINESS_PROFILE)}
-                                                        error={
-                                                            studentEdited.uniCourseProfile.hasOwnProperty('registeredOffice')
-                                                            && studentEdited.uniCourseProfile.registeredOffice.townCity.trim().length === 0
-                                                        }
-                                                    />
-                                                </Col>
-                                                <Col xs={12} sm={12} md={6} lg={6} >
-                                                    <TextField
-                                                        name="postcode"
-                                                        placeholder="Postcode"
-                                                        value={
-                                                            studentEdited.uniCourseProfile.hasOwnProperty('registeredOffice')
-                                                                ?
-                                                                studentEdited.uniCourseProfile.registeredOffice.postcode.toUpperCase()
-                                                                :
-                                                                ''
-                                                        }
-                                                        margin="dense"
-                                                        variant="outlined"
-                                                        fullWidth
-                                                        onChange={this.handleEditStudent(editStudentActions.EDIT_REGISTERED_OFFICE_BUSINESS_PROFILE)}
-                                                        error={
-                                                            studentEdited.uniCourseProfile.hasOwnProperty('registeredOffice')
-                                                            && studentEdited.uniCourseProfile.registeredOffice.postcode.trim().length === 0
-                                                        }
-                                                    />
-                                                </Col>
-                                            </Row>
-                                        </FlexView>
-                                    </FormGroup>
                                 </FormControl>
                             </FlexView>
 
@@ -981,7 +846,7 @@ class Profile extends Component {
                                                 margin="dense"
                                                 variant="outlined"
                                                 fullWidth
-                                                onChange={this.handleEditStudent(editStudentActions.EDIT_TRADING_ADDRESS_BUSINESS_PROFILE)}
+                                                onChange={this.handleEditStudent(editStudentActions.EDIT_TRADING_ADDRESS_UNI_PROFILE)}
                                                 error={
                                                     studentEdited.uniCourseProfile.hasOwnProperty('tradingAddress')
                                                     && studentEdited.uniCourseProfile.tradingAddress.address1.trim().length === 0
@@ -1000,7 +865,7 @@ class Profile extends Component {
                                                 margin="dense"
                                                 variant="outlined"
                                                 fullWidth
-                                                onChange={this.handleEditStudent(editStudentActions.EDIT_TRADING_ADDRESS_BUSINESS_PROFILE)}
+                                                onChange={this.handleEditStudent(editStudentActions.EDIT_TRADING_ADDRESS_UNI_PROFILE)}
                                             />
                                             <TextField
                                                 name="address3"
@@ -1015,7 +880,7 @@ class Profile extends Component {
                                                 margin="dense"
                                                 variant="outlined"
                                                 fullWidth
-                                                onChange={this.handleEditStudent(editStudentActions.EDIT_TRADING_ADDRESS_BUSINESS_PROFILE)}
+                                                onChange={this.handleEditStudent(editStudentActions.EDIT_TRADING_ADDRESS_UNI_PROFILE)}
                                             />
                                             <Row>
                                                 <Col xs={12} sm={12} md={6} lg={6} >
@@ -1032,7 +897,7 @@ class Profile extends Component {
                                                         margin="dense"
                                                         variant="outlined"
                                                         fullWidth
-                                                        onChange={this.handleEditStudent(editStudentActions.EDIT_TRADING_ADDRESS_BUSINESS_PROFILE)}
+                                                        onChange={this.handleEditStudent(editStudentActions.EDIT_TRADING_ADDRESS_UNI_PROFILE)}
                                                         error={
                                                             studentEdited.uniCourseProfile.hasOwnProperty('tradingAddress')
                                                             && studentEdited.uniCourseProfile.tradingAddress.townCity.trim().length === 0
@@ -1053,7 +918,7 @@ class Profile extends Component {
                                                         margin="dense"
                                                         variant="outlined"
                                                         fullWidth
-                                                        onChange={this.handleEditStudent(editStudentActions.EDIT_TRADING_ADDRESS_BUSINESS_PROFILE)}
+                                                        onChange={this.handleEditStudent(editStudentActions.EDIT_TRADING_ADDRESS_UNI_PROFILE)}
                                                         error={
                                                             studentEdited.uniCourseProfile.hasOwnProperty('tradingAddress')
                                                             && studentEdited.uniCourseProfile.tradingAddress.postcode.trim().length === 0
@@ -1086,7 +951,7 @@ class Profile extends Component {
                                                             :
                                                             ''
                                                     }
-                                                    onChange={this.handleEditStudent(editStudentActions.EDIT_ORDINARY_BUSINESS_PROFILE_INFORMATION)}
+                                                    onChange={this.handleEditStudent(editStudentActions.EDIT_ORDINARY_UNI_PROFILE_INFORMATION)}
                                                     input={<OutlinedInput/>}
                                                     margin="dense"
                                                 >
@@ -1216,7 +1081,7 @@ class Profile extends Component {
                                         margin="dense"
                                         variant="outlined"
                                         fullWidth
-                                        onChange={this.handleEditStudent(editStudentActions.EDIT_ORDINARY_BUSINESS_PROFILE_INFORMATION)}
+                                        onChange={this.handleEditStudent(editStudentActions.EDIT_ORDINARY_UNI_PROFILE_INFORMATION)}
                                         error={
                                             (studentEdited.uniCourseProfile.hasOwnProperty('companyWebsite')
                                                 && studentEdited.uniCourseProfile.companyWebsite.trim().length === 0)
@@ -1245,7 +1110,7 @@ class Profile extends Component {
 
                             <FlexView hAlignContent="right" marginTop={30} >
                                 <FlexView marginRight={20} >
-                                    <Button variant="outlined" color="primary" onClick={() => this.props.cancelEditingStudent(editStudentActions.RESET_BUSINESS_PROFILE)}>Cancel</Button>
+                                    <Button variant="outlined" color="primary" onClick={() => this.props.cancelEditingStudent(editStudentActions.RESET_UNI_PROFILE)}>Cancel</Button>
                                 </FlexView>
                                 <FlexView>
                                     <Button
@@ -1272,7 +1137,7 @@ class Profile extends Component {
                                             )
                                             || JSON.stringify(originalStudent.uniCourseProfile) === JSON.stringify(studentEdited.uniCourseProfile)
                                         }
-                                        onClick={() => this.props.commitStudentProfileChanges(editStudentActions.COMMIT_BUSINESS_PROFILE_CHANGES)}
+                                        onClick={() => this.props.commitStudentProfileChanges(editStudentActions.COMMIT_UNI_PROFILE_CHANGES)}
                                     >
                                         Save
                                     </Button>
@@ -1292,7 +1157,7 @@ class Profile extends Component {
                 </FlexView>
             );
         }
-        // student has not uploaded their business profile yet
+        // student has not uploaded their uni profile yet
         else {
             // if the student is not a super student
             if (currentStudent.type !== DB_CONST.TYPE_PROF) {
@@ -1318,7 +1183,7 @@ class Profile extends Component {
                                                 }
                                                 variant="outlined"
                                                 size="medium"
-                                                onClick={toggleExpanduniCourseProfileFillingForInvestor}
+                                                onClick={toggleExpandUniProfileFillingForStudent}
                                                 style={{ marginTop: 25, marginBottom: 20 }}
                                             >
                                                 {
@@ -1340,11 +1205,11 @@ class Profile extends Component {
                                 ?
                                 // start filling in Uni profile
                                 <FlexView column marginTop={20} >
-                                    {/** Company name */}
+                                    {/** Student project name */}
                                     <FlexView column >
                                         <FormControl required >
                                             <FormLabel>
-                                                <b>Company name</b>
+                                                <b>Student project name</b>
                                             </FormLabel>
                                             <TextField
                                                 placeholder="Enter company name"
@@ -1354,411 +1219,9 @@ class Profile extends Component {
                                                 variant="outlined"
                                                 margin="dense"
                                                 onChange={
-                                                    this.handleCreateuniCourseProfileTextChanged(createuniCourseProfileActions.ORDINARY_BUSINESS_PROFILE_FIELDS_CHANGED)
+                                                    this.handleCreateuniCourseProfileTextChanged(createuniCourseProfileActions.ORDINARY_UNI_PROFILE_FIELDS_CHANGED)
                                                 }
                                             />
-                                        </FormControl>
-                                    </FlexView>
-
-                                    <Divider style={{ marginTop: 20, marginBottom: 20 }} />
-
-                                    {/** Registration number */}
-                                    <FlexView column >
-                                        <FormControl required >
-                                            <FormLabel>
-                                                <b>Registration number</b>
-                                            </FormLabel>
-                                            <TextField
-                                                placeholder="Enter company registration number"
-                                                name="registrationNo"
-                                                value={createuniCourseProfile.uniCourseProfile.registrationNo}
-                                                fullWidth
-                                                variant="outlined"
-                                                margin="dense"
-                                                onChange={
-                                                    this.handleCreateuniCourseProfileTextChanged(createuniCourseProfileActions.ORDINARY_BUSINESS_PROFILE_FIELDS_CHANGED)
-                                                }
-                                            />
-                                        </FormControl>
-                                    </FlexView>
-
-                                    <Divider style={{ marginTop: 20, marginBottom: 20 }} />
-
-                                    {/** Registered office */}
-                                    <FlexView column >
-                                        <FormControl required >
-                                            <Container fluid style={{ padding: 0 }} >
-                                                <Row noGutters >
-                                                    <Col xs={12} sm={12} md={6} lg={4} >
-                                                        <FormLabel>
-                                                            <b>Registered office</b>
-                                                        </FormLabel>
-                                                        <FormHelperText>Enter a UK postcode to search for address or click on "Enter address manually" to enter your address manually.</FormHelperText>
-                                                        <FormGroup>
-                                                            {/** Search postcode field */}
-                                                            <FlexView>
-                                                                <TextField
-                                                                    placeholder="Enter UK postcode"
-                                                                    name="registeredOfficeSearchPostcode"
-                                                                    value={createuniCourseProfile.registeredOfficeSearchPostcode.toUpperCase()}
-                                                                    fullWidth
-                                                                    variant="outlined"
-                                                                    margin="dense"
-                                                                    onChange={
-                                                                        this.handleCreateuniCourseProfileTextChanged(createuniCourseProfileActions.BUSINESS_PROFILE_CONTROL_FIELDS_CHANGED)
-                                                                    }
-                                                                    InputProps={{
-                                                                        startAdornment:
-                                                                            <InputAdornment position="start" >
-                                                                                <IconButton
-                                                                                    disableRipple
-                                                                                    style={{ width: 48, height: 48 }}
-                                                                                    onClick={() => searchAddress(createuniCourseProfileActions.SEARCHING_REGISTERED_OFFICE_ADDRESSES)}
-                                                                                >
-                                                                                    <SearchIcon/>
-                                                                                </IconButton>
-                                                                            </InputAdornment>
-                                                                    }}
-                                                                />
-                                                            </FlexView>
-
-                                                            {
-                                                                !createuniCourseProfile.registeredOfficeEnterAddressManually
-                                                                    ?
-                                                                    null
-                                                                    :
-                                                                    <FlexView column >
-                                                                        <TextField
-                                                                            placeholder="Address 1:*"
-                                                                            name="address1"
-                                                                            value={createuniCourseProfile.uniCourseProfile.registeredOffice.address1}
-                                                                            fullWidth
-                                                                            variant="outlined"
-                                                                            required
-                                                                            margin="dense"
-                                                                            onChange={
-                                                                                this.handleCreateuniCourseProfileTextChanged(createuniCourseProfileActions.REGISTERED_OFFICE_BUSINESS_PROFILE_FIELDS_CHANGED)
-                                                                            }
-                                                                        />
-
-                                                                        <TextField
-                                                                            placeholder="Address 2:"
-                                                                            name="address2"
-                                                                            value={createuniCourseProfile.uniCourseProfile.registeredOffice.address2}
-                                                                            fullWidth
-                                                                            variant="outlined"
-                                                                            margin="dense"
-                                                                            onChange={
-                                                                                this.handleCreateuniCourseProfileTextChanged(createuniCourseProfileActions.REGISTERED_OFFICE_BUSINESS_PROFILE_FIELDS_CHANGED)
-                                                                            }
-                                                                        />
-
-                                                                        <TextField
-                                                                            placeholder="Address 3:"
-                                                                            name="address3"
-                                                                            value={createuniCourseProfile.uniCourseProfile.registeredOffice.address3}
-                                                                            fullWidth
-                                                                            variant="outlined"
-                                                                            margin="dense"
-                                                                            onChange={
-                                                                                this.handleCreateuniCourseProfileTextChanged(createuniCourseProfileActions.REGISTERED_OFFICE_BUSINESS_PROFILE_FIELDS_CHANGED)
-                                                                            }
-                                                                        />
-
-                                                                        <Row
-                                                                        >
-                                                                            <Col xs={12} sm={12} md={6} lg={6} >
-                                                                                <TextField
-                                                                                    placeholder="Town/City:*"
-                                                                                    name="townCity"
-                                                                                    value={createuniCourseProfile.uniCourseProfile.registeredOffice.townCity}
-                                                                                    fullWidth
-                                                                                    variant="outlined"
-                                                                                    required
-                                                                                    margin="dense"
-                                                                                    onChange={
-                                                                                        this.handleCreateuniCourseProfileTextChanged(createuniCourseProfileActions.REGISTERED_OFFICE_BUSINESS_PROFILE_FIELDS_CHANGED)
-                                                                                    }
-                                                                                />
-                                                                            </Col>
-                                                                            <Col xs={12} sm={12} md={6} lg={6} >
-                                                                                <TextField
-                                                                                    placeholder="Postcode:*"
-                                                                                    name="postcode"
-                                                                                    value={createuniCourseProfile.uniCourseProfile.registeredOffice.postcode.toUpperCase()}
-                                                                                    fullWidth
-                                                                                    variant="outlined"
-                                                                                    required
-                                                                                    margin="dense"
-                                                                                    onChange={
-                                                                                        this.handleCreateuniCourseProfileTextChanged(createuniCourseProfileActions.REGISTERED_OFFICE_BUSINESS_PROFILE_FIELDS_CHANGED)
-                                                                                    }
-                                                                                />
-                                                                            </Col>
-                                                                        </Row>
-                                                                    </FlexView>
-                                                            }
-                                                        </FormGroup>
-                                                    </Col>
-                                                </Row>
-
-                                                <Row
-                                                    noGutters
-                                                >
-                                                    <Col xs={12} sm={12} md={6} lg={4} >
-                                                        {
-                                                            createuniCourseProfile.registeredOfficeRecommendedAddresses
-                                                            && createuniCourseProfile.registeredOfficeRecommendedAddresses.error
-                                                                ?
-                                                                <Typography variant="body2" color="error" align="left" style={{ marginTop: 4, marginBottom: 4 }} >Sorry, we can't find your address, please check the details entered and search again, alternatively you can enter your address manually below.</Typography>
-                                                                :
-                                                                null
-                                                        }
-
-                                                        {
-                                                            !createuniCourseProfile.registeredOfficeRecommendedAddresses
-                                                                ?
-                                                                null
-                                                                :
-                                                                // error happened while finding addresses
-                                                                createuniCourseProfile.registeredOfficeRecommendedAddresses.error
-                                                                    ?
-                                                                    null
-                                                                    :
-                                                                    <List
-                                                                        className={css(styles.address_list)}
-                                                                    >
-                                                                        {
-                                                                            createuniCourseProfile.registeredOfficeRecommendedAddresses.formattedAddresses.map((address, index) => (
-                                                                                <ListItem
-                                                                                    button
-                                                                                    key={index}
-                                                                                    onClick={() => handleRecommendedAddressSelected(createuniCourseProfileActions.SELECT_REGISTERED_OFFICE_RECOMMENDED_ADDRESS, index)}
-                                                                                >
-                                                                                    <ListItemText primary={address} />
-                                                                                </ListItem>
-                                                                            ))
-                                                                        }
-                                                                    </List>
-                                                        }
-
-                                                        {
-                                                            createuniCourseProfile.registeredOfficeEnterAddressManually
-                                                                ?
-                                                                null
-                                                                :
-                                                                <Typography
-                                                                    variant="body2"
-                                                                    color="primary"
-                                                                    align="left"
-                                                                    className={css(styles.enter_address_manually)}
-                                                                    onClick={() => toggleEnterAddressManually(createuniCourseProfileActions.TOGGLE_REGISTERED_OFFICE_ENTER_ADDRESS_MANUALLY)}
-                                                                >
-                                                                    Enter address manually.
-                                                                </Typography>
-                                                        }
-                                                    </Col>
-                                                </Row>
-                                            </Container>
-                                        </FormControl>
-                                    </FlexView>
-
-                                    <Divider style={{ marginTop: 20, marginBottom: 20 }} />
-
-                                    {/** Trading address */}
-                                    <FlexView column >
-                                        <FormControl required >
-                                            <Container fluid style={{ padding: 0 }} >
-                                                <Row noGutters >
-                                                    <Col xs={12} sm={12} md={6} lg={4} >
-                                                        <FormLabel>
-                                                            <b>Trading address</b>
-                                                        </FormLabel>
-                                                    </Col>
-                                                </Row>
-
-                                                <Row noGutters >
-                                                    <Col xs={12} sm={12} md={6} lg={4} >
-                                                        <FormGroup>
-                                                            <FormControlLabel
-                                                                label="Same as registered office address"
-                                                                labelPlacement="end"
-                                                                control={
-                                                                    <Checkbox checked={createuniCourseProfile.tradingAddressSameAsRegisteredOffice} color="primary" onChange={this.toggleTradingAddressSameAsRegisteredOffice} />
-                                                                }
-                                                            />
-                                                        </FormGroup>
-                                                    </Col>
-                                                </Row>
-
-                                                {
-                                                    createuniCourseProfile.tradingAddressSameAsRegisteredOffice
-                                                        ?
-                                                        null
-                                                        :
-                                                        <Row noGutters >
-                                                            <Col xs={12} sm={12} md={6} lg={4} >
-                                                                <FormGroup>
-                                                                    <FormHelperText>Enter a UK postcode to search for address or click on "Enter address manually" to enter your address manually.</FormHelperText>
-                                                                    <FlexView>
-                                                                        <TextField
-                                                                            placeholder="Enter UK postcode"
-                                                                            name="tradingAddressSearchPostcode"
-                                                                            value={createuniCourseProfile.tradingAddressSearchPostcode.toUpperCase()}
-                                                                            fullWidth
-                                                                            variant="outlined"
-                                                                            margin="dense"
-                                                                            onChange={
-                                                                                this.handleCreateuniCourseProfileTextChanged(createuniCourseProfileActions.BUSINESS_PROFILE_CONTROL_FIELDS_CHANGED)
-                                                                            }
-                                                                            InputProps={{
-                                                                                startAdornment:
-                                                                                    <InputAdornment position="start" >
-                                                                                        <IconButton disableRipple style={{ width: 48, height: 48 }} onClick={() => searchAddress(createuniCourseProfileActions.SEARCHING_TRADING_ADDRESSES)} >
-                                                                                            <SearchIcon/>
-                                                                                        </IconButton>
-                                                                                    </InputAdornment>
-                                                                            }}
-                                                                        />
-                                                                    </FlexView>
-
-                                                                    {
-                                                                        !createuniCourseProfile.tradingAddressEnterAddressManually
-                                                                            ?
-                                                                            null
-                                                                            :
-                                                                            <FlexView column >
-                                                                                <TextField
-                                                                                    placeholder="Address 1:*"
-                                                                                    name="address1"
-                                                                                    value={createuniCourseProfile.uniCourseProfile.tradingAddress.address1}
-                                                                                    fullWidth
-                                                                                    variant="outlined"
-                                                                                    required
-                                                                                    margin="dense"
-                                                                                    onChange={
-                                                                                        this.handleCreateuniCourseProfileTextChanged(createuniCourseProfileActions.TRADING_ADDRESS_BUSINESS_PROFILE_FIELDS_CHANGED)
-                                                                                    }
-                                                                                />
-
-                                                                                <TextField
-                                                                                    placeholder="Address 2:"
-                                                                                    name="address2"
-                                                                                    value={createuniCourseProfile.uniCourseProfile.tradingAddress.address2}
-                                                                                    fullWidth
-                                                                                    variant="outlined"
-                                                                                    margin="dense"
-                                                                                    onChange={
-                                                                                        this.handleCreateuniCourseProfileTextChanged(createuniCourseProfileActions.TRADING_ADDRESS_BUSINESS_PROFILE_FIELDS_CHANGED)
-                                                                                    }
-                                                                                />
-
-                                                                                <TextField
-                                                                                    placeholder="Address 3:"
-                                                                                    name="address3"
-                                                                                    value={createuniCourseProfile.uniCourseProfile.tradingAddress.address3}
-                                                                                    fullWidth
-                                                                                    variant="outlined"
-                                                                                    margin="dense"
-                                                                                    onChange={
-                                                                                        this.handleCreateuniCourseProfileTextChanged(createuniCourseProfileActions.TRADING_ADDRESS_BUSINESS_PROFILE_FIELDS_CHANGED)
-                                                                                    }
-                                                                                />
-
-                                                                                <Row
-                                                                                >
-                                                                                    <Col xs={12} sm={12} md={6} lg={6} >
-                                                                                        <TextField
-                                                                                            placeholder="Town/City:*"
-                                                                                            name="townCity"
-                                                                                            value={createuniCourseProfile.uniCourseProfile.tradingAddress.townCity}
-                                                                                            fullWidth
-                                                                                            variant="outlined"
-                                                                                            required
-                                                                                            margin="dense"
-                                                                                            onChange={
-                                                                                                this.handleCreateuniCourseProfileTextChanged(createuniCourseProfileActions.TRADING_ADDRESS_BUSINESS_PROFILE_FIELDS_CHANGED)
-                                                                                            }
-                                                                                        />
-                                                                                    </Col>
-                                                                                    <Col xs={12} sm={12} md={6} lg={6} >
-                                                                                        <TextField
-                                                                                            placeholder="Postcode:*"
-                                                                                            name="postcode"
-                                                                                            value={createuniCourseProfile.uniCourseProfile.tradingAddress.postcode.toUpperCase()}
-                                                                                            fullWidth
-                                                                                            variant="outlined"
-                                                                                            required
-                                                                                            margin="dense"
-                                                                                            onChange={
-                                                                                                this.handleCreateuniCourseProfileTextChanged(createuniCourseProfileActions.TRADING_ADDRESS_BUSINESS_PROFILE_FIELDS_CHANGED)
-                                                                                            }
-                                                                                        />
-                                                                                    </Col>
-                                                                                </Row>
-                                                                            </FlexView>
-                                                                    }
-                                                                </FormGroup>
-                                                            </Col>
-                                                        </Row>
-                                                }
-
-                                                {
-                                                    createuniCourseProfile.tradingAddressSameAsRegisteredOffice
-                                                        ?
-                                                        null
-                                                        :
-                                                        <Row noGutters >
-                                                            <Col xs={12} sm={12} md={6} lg={4} >
-                                                                {
-                                                                    createuniCourseProfile.tradingAddressRecommendedAddresses
-                                                                    && createuniCourseProfile.tradingAddressRecommendedAddresses.error
-                                                                        ?
-                                                                        <Typography variant="body2" color="error" align="left" style={{ marginTop: 4, marginBottom: 4 }} >Sorry, we can't find your address, please check the details entered and search again, alternatively you can enter your address manually below.</Typography>
-                                                                        :
-                                                                        null
-                                                                }
-
-                                                                {
-                                                                    !createuniCourseProfile.tradingAddressRecommendedAddresses
-                                                                        ?
-                                                                        null
-                                                                        :
-                                                                        // error happened while finding addresses
-                                                                        createuniCourseProfile.tradingAddressRecommendedAddresses.error
-                                                                            ?
-                                                                            null
-                                                                            :
-                                                                            <List
-                                                                                className={css(styles.address_list)}
-                                                                            >
-                                                                                {
-                                                                                    createuniCourseProfile.tradingAddressRecommendedAddresses.formattedAddresses.map((address, index) => (
-                                                                                        <ListItem
-                                                                                            button
-                                                                                            key={index}
-                                                                                            onClick={() => handleRecommendedAddressSelected(createuniCourseProfileActions.SELECT_TRADING_ADDRESS_RECOMMENDED_ADDRESS, index)}
-                                                                                        >
-                                                                                            <ListItemText
-                                                                                                primary={address}
-                                                                                            />
-                                                                                        </ListItem>
-                                                                                    ))
-                                                                                }
-                                                                            </List>
-                                                                }
-
-                                                                {
-                                                                    createuniCourseProfile.tradingAddressEnterAddressManually
-                                                                        ?
-                                                                        null
-                                                                        :
-                                                                        <Typography variant="body2" color="primary" align="left" className={css(styles.enter_address_manually)} onClick={() => toggleEnterAddressManually(createuniCourseProfileActions.TOGGLE_TRADING_ADDRESS_ENTER_ADDRESS_MANUALLY)} >Enter address manually.</Typography>
-                                                                }
-                                                            </Col>
-                                                        </Row>
-                                                }
-                                            </Container>
                                         </FormControl>
                                     </FlexView>
 
@@ -1855,9 +1318,9 @@ class Profile extends Component {
                                                 value={createuniCourseProfile.uniCourseProfile.sector}
                                                 input={<OutlinedInput/>}
                                                 margin="dense"
-                                                onChange={ this.handleCreateuniCourseProfileTextChanged(createuniCourseProfileActions.ORDINARY_BUSINESS_PROFILE_FIELDS_CHANGED) }
+                                                onChange={ this.handleCreateuniCourseProfileTextChanged(createuniCourseProfileActions.ORDINARY_UNI_PROFILE_FIELDS_CHANGED) }
                                             >
-                                                <MenuItem key={-1} value={'None'} >Choose business sector</MenuItem>
+                                                <MenuItem key={-1} value={'None'} >Choose uni sector</MenuItem>
                                                 {
                                                     clubAttributes
                                                         ?
@@ -1887,7 +1350,7 @@ class Profile extends Component {
                                                 variant="outlined"
                                                 margin="dense"
                                                 onChange={
-                                                    this.handleCreateuniCourseProfileTextChanged(createuniCourseProfileActions.ORDINARY_BUSINESS_PROFILE_FIELDS_CHANGED)
+                                                    this.handleCreateuniCourseProfileTextChanged(createuniCourseProfileActions.ORDINARY_UNI_PROFILE_FIELDS_CHANGED)
                                                 }
                                             />
                                             {
@@ -1937,7 +1400,7 @@ class Profile extends Component {
                                                             placement="top"
                                                             flip
                                                             overlay={
-                                                                <Tooltip id={`tooltip-top`} >Introduction video helps other members understand more about your business.</Tooltip>
+                                                                <Tooltip id={`tooltip-top`} >Introduction video helps other members understand more about your uni.</Tooltip>
                                                             }>
                                                             <InfoIcon
                                                                 fontSize="default"
@@ -1979,7 +1442,7 @@ class Profile extends Component {
                                             <Button variant="outlined" color="primary" onClick={resetCreatinguniCourseProfile}>Cancel</Button>
                                         </FlexView>
                                         <FlexView>
-                                            <Button variant="contained" color="primary" onClick={uploaduniCourseProfile} disabled={this.shouldUploadButtonBeDisabled()}>Save</Button>
+                                            <Button variant="contained" color="primary" onClick={uploadUniProfile} disabled={this.shouldUploadButtonBeDisabled()}>Save</Button>
                                         </FlexView>
                                     </FlexView>
                                 </FlexView>
@@ -2000,7 +1463,7 @@ class Profile extends Component {
     };
 
     /**
-     * Check if the student can upload business profile --> only allow upload when all the required information has been provided
+     * Check if the student can upload uni profile --> only allow upload when all the required information has been provided
      *
      * @returns {boolean}
      */
@@ -2017,14 +1480,6 @@ class Profile extends Component {
                 || createuniCourseProfile.uniCourseProfile.registeredOffice.address1.trim().length === 0
                 || createuniCourseProfile.uniCourseProfile.registeredOffice.townCity.trim().length === 0
                 || createuniCourseProfile.uniCourseProfile.registeredOffice.postcode.trim().length === 0
-                || (
-                    !createuniCourseProfile.tradingAddressSameAsRegisteredOffice
-                    && (
-                        createuniCourseProfile.uniCourseProfile.tradingAddress.address1.trim().length === 0
-                        || createuniCourseProfile.uniCourseProfile.tradingAddress.townCity.trim().length === 0
-                        || createuniCourseProfile.uniCourseProfile.tradingAddress.postcode.trim().length === 0
-                    )
-                )
                 || createuniCourseProfile.uniCourseProfile.directors.length === 0
                 || createuniCourseProfile.uniCourseProfile.sector === 'None'
                 || createuniCourseProfile.uniCourseProfile.companyWebsite.trim().length === 0
@@ -2043,14 +1498,6 @@ class Profile extends Component {
                     || createuniCourseProfile.uniCourseProfile.registeredOffice.address1.trim().length === 0
                     || createuniCourseProfile.uniCourseProfile.registeredOffice.townCity.trim().length === 0
                     || createuniCourseProfile.uniCourseProfile.registeredOffice.postcode.trim().length === 0
-                    || (
-                        !createuniCourseProfile.tradingAddressSameAsRegisteredOffice
-                        && (
-                            createuniCourseProfile.uniCourseProfile.tradingAddress.address1.trim().length === 0
-                            || createuniCourseProfile.uniCourseProfile.tradingAddress.townCity.trim().length === 0
-                            || createuniCourseProfile.uniCourseProfile.tradingAddress.postcode.trim().length === 0
-                        )
-                    )
                     || createuniCourseProfile.uniCourseProfile.directors.length === 0
                     || createuniCourseProfile.uniCourseProfile.sector === 'None'
                     || createuniCourseProfile.uniCourseProfile.companyWebsite.trim().length === 0
@@ -2069,7 +1516,7 @@ class Profile extends Component {
     }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(Profile);
+export default connect(mapStateToProps, mapDispatchToProps)(StudentProfile);
 
 const styles = StyleSheet.create({
     upload_files_area_style: {

@@ -1,4 +1,4 @@
-import * as createLearnersProfileActions from '../actions/createLearnersProfileActions';
+import * as createLearnersProfileActions from '../actions/createuniCourseProfileActions';
 import * as editStudentActions from '../actions/editStudentActions';
 import * as editImageActions from '../actions/editImageActions';
 import * as editVideoActions from '../actions/editVideoActions';

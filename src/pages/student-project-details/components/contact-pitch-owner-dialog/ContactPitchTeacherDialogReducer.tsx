@@ -1,51 +1,51 @@
 import {
     CompleteSendingContactEmailAction,
-    ContactPitchOwnerDialogAction,
-    ContactPitchOwnerDialogEvents,
+    ContactPitchTeacherDialogAction,
+    ContactPitchTeacherDialogEvents,
     ToggleContactDialogAction
-} from "./ContactPitchOwnerDialogActions";
+} from "./ContactPitchTeacherDialogActions";
 import Error from "../../../../models/error";
 
-export interface ContactPitchOwnerDialogState {
-    projectName: string | null;
-    projectOwnerEmail: string | null;
+export interface ContactPitchTeacherDialogState {
+    studentProjectName: string | null;
+    studentProjectTeacherEmail: string | null;
     contactDialogOpen: boolean;
     sendingContactEmail: boolean;
     errorSendingContactEmail?: Error;
 }
 
-const initialState: ContactPitchOwnerDialogState = {
-    projectName: null,
-    projectOwnerEmail: null,
+const initialState: ContactPitchTeacherDialogState = {
+    studentProjectName: null,
+    studentProjectTeacherEmail: null,
     contactDialogOpen: false,
     sendingContactEmail: false
 }
 
-export const isSendingContactEmail = (state: ContactPitchOwnerDialogState) => {
+export const isSendingContactEmail = (state: ContactPitchTeacherDialogState) => {
     return state.sendingContactEmail;
 }
 
-export const hasErrorSendingContactEmail = (state: ContactPitchOwnerDialogState) => {
+export const hasErrorSendingContactEmail = (state: ContactPitchTeacherDialogState) => {
     return !state.sendingContactEmail && state.errorSendingContactEmail !== undefined;
 }
 
-const contactPitchOwnerDialogReducer = (state = initialState, action: ContactPitchOwnerDialogAction) => {
+const contactPitchTeacherDialogReducer = (state = initialState, action: ContactPitchTeacherDialogAction) => {
     switch (action.type) {
-        case ContactPitchOwnerDialogEvents.ToggleContactDialog:
+        case ContactPitchTeacherDialogEvents.ToggleContactDialog:
             const toggleContactDialogAction: ToggleContactDialogAction = action as ToggleContactDialogAction;
             return {
                 ...state,
                 contactDialogOpen: !state.contactDialogOpen,
-                projectName: toggleContactDialogAction.projectName,
-                projectOwnerEmail: toggleContactDialogAction.projectOwnerEmail
+                projectName: toggleContactDialogAction.studentProjectName,
+                projectTeacherEmail: toggleContactDialogAction.studentProjectTeacherEmail
             }
-        case ContactPitchOwnerDialogEvents.SendingContactEmail:
+        case ContactPitchTeacherDialogEvents.SendingContactEmail:
             return {
                 ...state,
                 sendingContactEmail: true,
                 errorSendingContactEmail: undefined
             }
-        case ContactPitchOwnerDialogEvents.CompleteSendingContactEmail:
+        case ContactPitchTeacherDialogEvents.CompleteSendingContactEmail:
             const completeSendingContactEmailFunction: CompleteSendingContactEmailAction = action as CompleteSendingContactEmailAction;
             return {
                 ...state,
@@ -60,4 +60,4 @@ const contactPitchOwnerDialogReducer = (state = initialState, action: ContactPit
     }
 }
 
-export default contactPitchOwnerDialogReducer;
+export default contactPitchTeacherDialogReducer;

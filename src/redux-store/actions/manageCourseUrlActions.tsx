@@ -12,7 +12,7 @@ export enum ManageCourseUrlEvents {
 
 export interface ManageCourseUrlAction extends Action {
     path?: string;
-    courseUserName?: string | null;
+    courseStudentName?: string | null;
     course?: CourseProperties | null;
     validCourseUrl?: boolean;
     error?: Error
@@ -20,7 +20,7 @@ export interface ManageCourseUrlAction extends Action {
 
 export interface SetCourseUrlAction extends ManageCourseUrlAction {
     path: string;
-    courseUserName: string | null;
+    courseStudentName: string | null;
 }
 
 export interface ValidatingCourseUrlAction extends ManageCourseUrlAction {
@@ -32,7 +32,7 @@ export interface FinishedValidatingCourseUrlAction extends ManageCourseUrlAction
     error?: Error
 }
 
-export const validateCourseUrl: ActionCreator<any> = (path: string, courseUserName: string | null) => {
+export const validateCourseUrl: ActionCreator<any> = (path: string, courseStudentName: string | null) => {
     return async (dispatch: Dispatch, getState: () => AppState) => {
         const {
             routePath,
@@ -45,7 +45,7 @@ export const validateCourseUrl: ActionCreator<any> = (path: string, courseUserNa
         const setCourseUrlAction: SetCourseUrlAction = {
             type: ManageCourseUrlEvents.SetCourseUrl,
             path,
-            courseUserName
+            courseStudentName
         }
 
         let shouldValidateCourseUrl = false;
@@ -56,7 +56,7 @@ export const validateCourseUrl: ActionCreator<any> = (path: string, courseUserNa
         }
         // routePath and courseNameFromUrl have been defined
         else {
-            if (courseNameFromUrl !== courseUserName) {
+            if (courseNameFromUrl !== courseStudentName) {
                 shouldValidateCourseUrl = true;
             }
         }
@@ -82,13 +82,13 @@ export const validateCourseUrl: ActionCreator<any> = (path: string, courseUserNa
             }
 
             // course name is not specified in the url
-            if (!courseUserName) {
+            if (!courseStudentName) {
                 finishedLoadingCourseUrlAction.validCourseUrl = true;
                 return dispatch(finishedLoadingCourseUrlAction);
             }
 
             try {
-                const response = await new CourseRepository().getCourse(courseUserName);
+                const response = await new CourseRepository().getCourse(courseStudentName);
                 const retrievedCourse: CourseProperties | null = response.data;
                 finishedLoadingCourseUrlAction.course = retrievedCourse;
                 finishedLoadingCourseUrlAction.validCourseUrl = retrievedCourse !== null;

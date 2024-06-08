@@ -26,7 +26,7 @@ export interface CompleteLoadingDataAction extends CourseDetailsAction {
     course?: CourseProperties;
     members?: InvitedStudentWithProfile[];
     studentOffers?: StudentProjectInstance[];
-    accessRequestInstances?: AccessStudentRequestInstance[];
+    accessStudentRequestInstances?: AccessStudentRequestInstance[];
     error?: string;
 }
 
@@ -89,7 +89,7 @@ export const loadData: ActionCreator<any> = (courseStudent: string) => {
                         student: currentStudent.id,
                         orderBy: "student"
                     });
-                    completeAction.accessRequestInstances = accessRequestInstancesResponse.data;
+                    completeAction.accessStudentRequestInstances = accessRequestInstancesResponse.data;
                 }
             }
 
@@ -128,15 +128,15 @@ export const sendAccessRequest: ActionCreator<any> = () => {
 
         try {
             const response = await new AccessStudentRequestRepository().createStudentAccessRequest(currentStudent.id, course.anid);
-            const accessRequestInstance: AccessStudentRequestInstance = response.data;
+            const accessStudentRequestInstance: AccessStudentRequestInstance = response.data;
             const currentStudentAccessRequestInstances: AccessStudentRequestInstance[] | undefined = getState().ExploreCoursesLocalState.accessRequestsInstances;
             if (currentStudentAccessRequestInstances !== undefined) {
                 completeAction.updatedAccessRequestInstances = [
                     ...currentStudentAccessRequestInstances,
-                    accessRequestInstance
+                    accessStudentRequestInstance
                 ];
             } else {
-                completeAction.updatedAccessRequestInstances = [accessRequestInstance];
+                completeAction.updatedAccessRequestInstances = [accessStudentRequestInstance];
             }
             return dispatch(completeAction);
         } catch (error) {
@@ -174,7 +174,7 @@ export const removeAccessRequest: ActionCreator<any> = () => {
                 return dispatch(completeAction);
             }
             const accessRequestIndex = currentStudentAccessRequestInstances.findIndex(
-                accessRequestInstance => accessRequestInstance.course.anid === course.anid && accessRequestInstance.student.id === currentStudent.id);
+                accessStudentRequestInstance => accessStudentRequestInstance.course.anid === course.anid && accessStudentRequestInstance.student.id === currentStudent.id);
             if (accessRequestIndex === -1) {
                 return dispatch(completeAction);
             }

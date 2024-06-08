@@ -14,7 +14,7 @@ import {AccessStudentRequestInstance} from "../../models/access_request";
 export interface CourseDetailsState {
     course?: CourseProperties;
     members?: InvitedStudentWithProfile[];
-    offers?: StudentProjectInstance[];
+    studentOffers?: StudentProjectInstance[];
     accessRequestsInstances?: AccessStudentRequestInstance[];
 
     loadingData: boolean;
@@ -46,7 +46,7 @@ export const isLoadingData = (state: CourseDetailsState) => {
 }
 
 export const successfullyLoadedData = (state: CourseDetailsState) => {
-    return state.dataLoaded && !state.loadingData && state.course && state.members && state.offers && state.error === undefined;
+    return state.dataLoaded && !state.loadingData && state.course && state.members && state.studentOffers && state.error === undefined;
 }
 
 export const hasAccessRequestsBeenSatisfied = (state: CourseDetailsState) => {
@@ -93,11 +93,11 @@ const courseDetailsReducer = (state = initialState, action: CourseDetailsAction)
                 members: completeLoadingDataAction.members !== undefined
                     ? [...completeLoadingDataAction.members]
                     : state.members,
-                offers: completeLoadingDataAction.studentOffers !== undefined
+                studentOffers: completeLoadingDataAction.studentOffers !== undefined    
                     ? [...completeLoadingDataAction.studentOffers]
-                    : state.offers,
-                accessRequestsInstances: completeLoadingDataAction.accessRequestInstances !== undefined
-                    ? [...completeLoadingDataAction.accessRequestInstances]
+                    : state.studentOffers,
+                accessRequestsInstances: completeLoadingDataAction.accessStudentRequestInstances !== undefined
+                    ? [...completeLoadingDataAction.accessStudentRequestInstances]
                     : state.accessRequestsInstances,
                 error: completeLoadingDataAction.error !== undefined
                     ? {detail: completeLoadingDataAction.error}

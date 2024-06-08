@@ -378,6 +378,33 @@ export const getLogoFromGroup = (getLogoType, groupProperties) => {
     }
 };
 
+export const GET_STUDENT_PLAIN_LOGO = 1;
+export const GET_STUDENT_LOGO_WITH_TEXT = 2;
+export const getLogoFromCourse = (getLogoType, courseProperties) => {
+    if (!courseProperties) {
+        return null;
+    }
+
+    switch (getLogoType) {
+        case GET_PLAIN_LOGO:
+            if (!courseProperties.hasOwnProperty('plainLogo')
+                || (courseProperties.hasOwnProperty('plainLogo') && courseProperties.plainLogo === null)
+            ) {
+                return null;
+            }
+            return courseProperties.plainLogo[courseProperties.plainLogo.findIndex(logo => !logo.hasOwnProperty('removed'))].url;
+        case GET_LOGO_WITH_TEXT:
+            if (!courseProperties.hasOwnProperty('logoWithText')
+                || (courseProperties.hasOwnProperty('logoWithText') && courseProperties.logoWithText === null)
+            ) {
+                return null;
+            }
+            return courseProperties.logoWithText[courseProperties.logoWithText.findIndex(logo => !logo.hasOwnProperty('removed'))].url;
+        default:
+            return null;
+    }
+};
+
 /**
  * Get the user's home group
  *
@@ -391,6 +418,58 @@ export const getUserHomeGroup = groupsUserIsIn => {
     } else {
         return null;
     }
+};
+
+/**
+ * Get the user's home course
+ *
+ * @param coursesStudentIsIn
+ * @returns {*}
+ */
+export const getStudentHomeCourse = coursesStudentIsIn => {
+    const index = coursesStudentIsIn.findIndex(course => course.invitedStudent.requestedToJoin === false);
+    if (index !== -1) {
+        return coursesStudentIsIn[index];
+    } else {
+        return null;
+    }
+};
+
+/**
+ * Check if a project can be edited
+ *
+ * @param user
+ * @param studentProject
+ * @returns {boolean}
+ */
+export const shouldAStudentProjectBeEdited = (user, studentProject) => {
+    if (user.type === DB_CONST.TYPE_INVESTOR) {
+        return false;
+    }
+
+    if (user.type === DB_CONST.TYPE_ADMIN) {
+        return !(studentProject.status === DB_CONST.PROJECT_STATUS_SUCCESSFUL
+            || studentProject.status === DB_CONST.PROJECT_STATUS_FAILED
+            || studentProject.status === DB_CONST.PROJECT_STATUS_REJECTED
+        );
+    }
+
+    // user is an issuer, but not the owner of the studentProject
+    if (user.id !== studentProject.issuerID) {
+        return false;
+    }
+
+    if (studentProject.status === DB_CONST.PROJECT_STATUS_DRAFT
+        || studentProject.status === DB_CONST.PROJECT_STATUS_BEING_CHECKED
+    ) {
+        return true;
+    }
+
+    if (studentProject.status === DB_CONST.PROJECT_STATUS_PITCH_PHASE) {
+        return studentProject.Pitch.status === DB_CONST.PITCH_STATUS_ON_GOING;
+    }
+
+    return false;
 };
 
 /**
@@ -588,4 +667,133 @@ export const isProjectFailed = project => {
  */
 export const isProjectTemporarilyClosed = project => {
     return project.hasOwnProperty('temporarilyClosed') && project.temporarilyClosed === true;
+};
+
+
+
+/**
+ * Check if a student project is live
+ *
+ * @param studentProject
+ * @returns {boolean}
+ */
+export const isStudentProjectLive = studentProject => {
+    return isStudentProjectInLivePitchPhase(studentProject) || isStudentProjectInLivePledgePhase(studentProject);
+};
+
+/**
+ * Check if a studentProject is a draft
+ *
+ * @param studentProject
+ * @returns {boolean}
+ */
+export const isStudentDraftProject = studentProject => {
+    return studentProject.status === DB_CONST.STUDENT_PROJECT_STATUS_DRAFT;
+};
+
+/**
+ * Check if a studentProject is waiting to go live
+ *
+ * @param studentProject
+ * @returns {boolean}
+ */
+export const isStudentProjectWaitingToGoLive = studentProject => {
+    return studentProject.status === DB_CONST.STUDENT_PROJECT_STATUS_BEING_CHECKED;
+};
+
+/**
+ * Check if a studentProject is rejected to go live
+ *
+ * @param studentProject
+ * @returns {boolean}
+ */
+export const isStudentProjectRejectedToGoLive = studentProject => {
+    return studentProject.status === DB_CONST.STUDENT_PROJECT_STATUS_REJECTED;
+};
+
+/**
+ * Check if a studentProject is in live pitch phase
+ *
+ * @param studentProject
+ * @returns {boolean}
+ */
+export const isStudentProjectInLivePitchPhase = studentProject => {
+    return studentProject.status === DB_CONST.PROJECT_STATUS_PITCH_PHASE
+        && studentProject.Pitch.status === DB_CONST.STUDENT_PITCH_STATUS_ON_GOING;
+};
+
+/**
+ * Check if the pitch has expired and waiting for admin to make decision
+ *
+ * @param studentProject
+ * @returns {boolean}
+ */
+export const isStudentProjectPitchExpiredWaitingForAdminToCheck = studentProject => {
+    return studentProject.status === DB_CONST.PROJECT_STATUS_PITCH_PHASE_EXPIRED_WAITING_TO_BE_CHECKED
+        && studentProject.Pitch.status === DB_CONST.STUDENT_PITCH_STATUS_WAITING_FOR_ADMIN;
+};
+
+/**
+ * Check if a studentProject has been moved to pledge phase and waiting for the pledge page to be created
+ *
+ * @param studentProject
+ * @returns {boolean|boolean}
+ */
+export const isStudentProjectWaitingForPledgeToBeCreated = studentProject => {
+    return (studentProject.status === DB_CONST.PROJECT_STATUS_PITCH_PHASE_EXPIRED_WAITING_TO_BE_CHECKED
+            && studentProject.Pitch.status === DB_CONST.STUDENT_PITCH_STATUS_ACCEPTED_CREATE_PRIMARY_OFFER
+        )
+        || (
+            studentProject.status === DB_CONST.PROJECT_STATUS_PITCH_PHASE
+            && studentProject.Pitch.status === DB_CONST.STUDENT_PITCH_STATUS_ACCEPTED_CREATE_PRIMARY_OFFER
+        );
+}
+
+/**
+ * Check if a studentProject's pledge is waiting to be checked
+ *
+ * @param studentProject
+ * @returns {boolean}
+ */
+export const isStudentProjectWaitingForPledgeToBeChecked = studentProject => {
+    return studentProject.status === DB_CONST.STUDENT_PROJECT_STATUS_PRIMARY_OFFER_CREATED_WAITING_TO_BE_CHECKED;
+}
+
+/**
+ * Check if a project is in live pledge phase
+ *
+ * @param studentProject
+ * @returns {boolean}
+ */
+export const isStudentProjectInLivePledgePhase = studentProject => {
+    return studentProject.status === DB_CONST.STUDENT_PROJECT_STATUS_PRIMARY_OFFER_PHASE;
+};
+
+/**
+ * Check if a project has ended with at least 1 pledge
+ *
+ * @param studentProject
+ * @returns {boolean}
+ */
+export const isStudentProjectSuccessful = studentProject => {
+    return studentProject.status === DB_CONST.STUDENT_PROJECT_STATUS_SUCCESSFUL;
+};
+
+/**
+ * Check if a studentProject has ended with no pledges
+ * @param studentProject
+ * @returns {boolean}
+ */
+export const isStudentProjectFailed = studentProject => {
+    return studentProject.status === DB_CONST.STUDENT_PROJECT_STATUS_FAILED;
+};
+
+/**
+ * Check if a project is temporarily closed
+ *
+ * @param studentProject
+ * @returns {boolean}
+ */
+export const isStudentProjectTemporarilyClosed = studentProject => {
+    return studentProject.hasOwnProperty('temporarilyClosed') && studentProject.temporarilyClosed === true;
 };

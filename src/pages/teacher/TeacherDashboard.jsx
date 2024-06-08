@@ -23,16 +23,16 @@ import SidebarContent, {
     SETTINGS_TAB
 } from '../../shared-components/nav-bars/StudentSidebarContent';
 import {STUDENT_AUTH_SUCCESS} from '../signin/studentSignIn/Studentsignin';
-import InvitationDialog from './components/InvitationDialog';
+import StudentInvitationDialog from './components/StudentInvitationDialog';
 import PageNotFoundWhole from '../../shared-components/page-not-found/PageNotFoundWhole';
 import SuperTeacherSettings from './components/SuperTeacherSettings';
 import CourseAdminSettings from './components/CourseAdminSettings';
-import InvitedStudents from './components/InvitedStudents';
-import AngelNetWorks from './components/AngelNetworks';
-import AddAngelNetWorkDialog from './components/AddAngelNetWorkDialog';
+import InvitedStudents from './components/StudentInvited';
+import StudentNetWorks from './components/StudentNetworks';
+import AddStudentNetWorkDialog from './components/AddStudentNetWorkDialog';
 import NotificationsBox from '../../shared-components/notifications/NotificationsBox';
 import ChangePasswordPage from '../../shared-components/change-password/ChangePasswordPage';
-import JoinRequests from './components/JoinRequests';
+import JoinRequests from './components/StudentJoinRequests';
 import ActivitiesTable from '../../shared-components/activities-components/ActivitiesTable';
 import CourseAdminsTable from './components/CourseAdminsTable';
 
@@ -45,8 +45,8 @@ import {connect} from 'react-redux';
 import * as dashboardSidebarActions from '../../redux-store/actions/dashboardSidebarActions';
 import * as manageCourseFromParamsActions from '../../redux-store/actions/manageCourseFromParamsActions';
 import * as notificationsActions from '../../redux-store/actions/notificationsActions';
-import * as activitiesTableActions from '../../redux-store/actions/activitiesTableActions';
-import * as courseAdminsTableActions from '../../redux-store/actions/courseAdminsTableActions';
+import * as studentActivitiesTableActions from '../../redux-store/actions/studentActivitiesTableActions';
+import * as courseAdminsTableActions from '../../redux-store/actions/courseTeacherTableActions';
 import ExploreOffers from "../../shared-components/explore-offers/ExploreOffers";
 import OffersTable from "../../shared-components/offers-table/OffersTable";
 import {successfullyFetchedOffers} from "../../shared-components/offers-table/OffersTableReducer";
@@ -84,8 +84,8 @@ const mapStateToProps = state => {
         notificationsAnchorEl: state.manageNotifications.notificationsAnchorEl,
         notificationBellRef: state.manageNotifications.notificationBellRef,
 
-        joinRequests: state.manageJoinRequests.joinRequests,
-        joinRequestsLoaded: state.manageJoinRequests.joinRequestsLoaded
+        joinStudentRequests: state.manageJoinRequests.joinStudentRequests,
+        joinStudentRequestsLoaded: state.manageJoinRequests.joinStudentRequestsLoaded
     }
 };
 
@@ -93,11 +93,11 @@ const mapDispatchToProps = dispatch => {
     return {
         setCourseStudentFromParams: (courseStudent) => dispatch(manageCourseFromParamsActions.setCourseStudentFromParams(courseStudent)),
         setExpectedAndCurrentPathsForChecking: (expectedPath, currentPath) => dispatch(manageCourseFromParamsActions.setExpectedAndCurrentPathsForChecking(expectedPath, currentPath)),
-        loadAngelNetwork: () => dispatch(manageCourseFromParamsActions.loadAngelNetwork()),
+        loadStudentNetwork: () => dispatch(manageCourseFromParamsActions.loadStudentNetwork()),
 
         toggleSidebar: (checkSidebarDocked) => dispatch(dashboardSidebarActions.toggleSidebar(checkSidebarDocked)),
 
-        activitiesTable_setStudent: (student) => dispatch(activitiesTableActions.setTableStudent(student)),
+        activitiesTable_setStudent: (student) => dispatch(studentActivitiesTableActions.setTableStudent(student)),
 
         courseAdminsTable_setCourse: (course) => dispatch(courseAdminsTableActions.setCourse(course)),
 
@@ -160,7 +160,7 @@ class AdminDashboard extends Component {
 
             setCourseStudentFromParams,
             setExpectedAndCurrentPathsForChecking,
-            loadAngelNetwork,
+            loadStudentNetwork,
 
             notificationRefUpdated,
 
@@ -175,9 +175,9 @@ class AdminDashboard extends Component {
         }
 
         setCourseStudentFromParams(match.params.hasOwnProperty('courseStudent') ? match.params.courseStudent : null);
-        setExpectedAndCurrentPathsForChecking(match.params.hasOwnProperty('courseStudent') ? ROUTES.PROF : ROUTES.TEACHER_INVEST_WEST_SUPER, match.path);
+        setExpectedAndCurrentPathsForChecking(match.params.hasOwnProperty('courseStudent') ? ROUTES.TEACHER : ROUTES.TEACHER_STUDENT_SUPER, match.path);
 
-        loadAngelNetwork();
+        loadStudentNetwork();
 
         if (coursePropertiesLoaded && shouldLoadOtherData) {
             this.setDataForComponents();
@@ -191,12 +191,12 @@ class AdminDashboard extends Component {
             coursePropertiesLoaded,
             shouldLoadOtherData,
 
-            loadAngelNetwork,
+            loadStudentNetwork,
 
             notificationRefUpdated
         } = this.props;
 
-        loadAngelNetwork();
+        loadStudentNetwork();
 
         if (coursePropertiesLoaded && shouldLoadOtherData) {
             this.setDataForComponents();
@@ -215,8 +215,8 @@ class AdminDashboard extends Component {
 
             currentStudent,
 
-            joinRequests,
-            joinRequestsLoaded
+            joinStudentRequests,
+            joinStudentRequestsLoaded
         } = this.props;
 
         const params = queryString.parse(this.props.location.search);
@@ -255,7 +255,7 @@ class AdminDashboard extends Component {
                                     </AccordionSummary>
                                     <AccordionDetails>
                                         <FlexView column width="100%">
-                                            <AngelNetWorks/>
+                                            <StudentNetWorks/>
                                         </FlexView>
                                     </AccordionDetails>
                                 </Accordion>
@@ -309,17 +309,17 @@ class AdminDashboard extends Component {
                                                     <OverlayTrigger trigger={['hover', 'focus']} placement="top-start" flip
                                                         overlay={
                                                             <Tooltip id={`tooltip-top`}>
-                                                                {joinRequests.length} access requests
+                                                                {joinStudentRequests.length} access requests
                                                                 are awaiting your review.
                                                             </Tooltip>
                                                         }>
-                                                        <Badge badgeContent={!joinRequestsLoaded ? 0 : joinRequests.length} color="error"
+                                                        <Badge badgeContent={!joinStudentRequestsLoaded ? 0 : joinStudentRequests.length} color="error"
                                                             invisible={
-                                                                !joinRequestsLoaded
+                                                                !joinStudentRequestsLoaded
                                                                     ?
                                                                     true
                                                                     :
-                                                                    joinRequests.length === 0
+                                                                    joinStudentRequests.length === 0
                                                             }/>
                                                     </OverlayTrigger>
                                                 </FlexView>
@@ -638,10 +638,10 @@ class AdminDashboard extends Component {
             }
 
             {/** Student invitation dialog */}
-            <InvitationDialog/>
+            <StudentInvitationDialog/>
 
             {/** Add angel network dialog */}
-            <AddAngelNetWorkDialog/>
+            <AddStudentNetWorkDialog/>
         </Sidebar>;
     }
 

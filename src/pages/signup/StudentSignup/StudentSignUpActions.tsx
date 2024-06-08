@@ -5,7 +5,7 @@ import StudentRepository from "../../../api/repositories/StudentRepository";
 import React from "react";
 import {checkPasswordStrength, PASSWORD_VERY_WEAK} from "../../../utils/passwordUtils";
 import {isValidEmailAddress} from "../../../utils/emailUtils";
-import {studentSignIn} from "../../../redux-store/actions/authenticationActions";
+import {studentSignIn} from "../../../redux-store/actions/studentAuthenticationActions";
 
 export enum StudentSignUpEvents {
     LoadingInvitedStudent = "StudentSignUpEvents.LoadingInvitedStudent",

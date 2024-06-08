@@ -32,24 +32,24 @@ import sharedStyles from '../../../shared-js-css-styles/SharedStyles';
 
 import {connect} from 'react-redux';
 import * as authActions from '../../../redux-store/actions/authActions';
-import * as manageGroupFromParamsActions from '../../../redux-store/actions/manageGroupFromParamsActions';
+import * as manageCourseFromParamsActions from '../../../redux-store/actions/manageCourseFromParamsActions';
 
 export const INVALID_STUDENT_AUTH_NONE = 0;
-export const INVALID_STUDENT_AUTH_USER_NOT_EXIST = 1;
-export const INVALID_STUDENT_AUTH_USER_DECLINED_TO_REGISTER = 2;
-export const INVALID_STUDENT_AUTH_USER_LEFT = 3;
-export const INVALID_STUDENT_AUTH_USER_KICKED_OUT = 4;
+export const INVALID_AUTH_STUDENT_NOT_EXIST = 1;
+export const INVALID_AUTH_STUDENT_DECLINED_TO_REGISTER = 2;
+export const INVALID_AUTH_STUDENT_LEFT = 3;
+export const INVALID_AUTH_STUDENT_KICKED_OUT = 4;
 export const STUDENT_AUTH_SUCCESS = 5;
 
 const mapStateToProps = state => {
     return {
-        groupUserName: state.manageGroupFromParams.groupUserName,
-        groupProperties: state.manageGroupFromParams.groupProperties,
-        groupPropertiesLoaded: state.manageGroupFromParams.groupPropertiesLoaded,
-        shouldLoadOtherData: state.manageGroupFromParams.shouldLoadOtherData,
+        courseStudentName: state.manageCourseFromParams.courseStudentName,
+        courseProperties: state.manageCourseFromParams.courseProperties,
+        coursePropertiesLoaded: state.manageCourseFromParams.coursePropertiesLoaded,
+        shouldLoadOtherData: state.manageCourseFromParams.shouldLoadOtherData,
 
-        user: state.auth.user,
-        userLoaded: state.auth.userLoaded,
+        student: state.auth.student,
+        studentLoaded: state.auth.studentLoaded,
 
         authenticating: state.auth.authenticating,
         authStatus: state.auth.authStatus
@@ -58,9 +58,9 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
     return {
-        setGroupUserNameFromParams: (groupUserName) => dispatch(manageGroupFromParamsActions.setGroupUserNameFromParams(groupUserName)),
-        setExpectedAndCurrentPathsForChecking: (expectedPath, currentPath) => dispatch(manageGroupFromParamsActions.setExpectedAndCurrentPathsForChecking(expectedPath, currentPath)),
-        loadAngelNetwork: () => dispatch(manageGroupFromParamsActions.loadAngelNetwork()),
+        setCourseStudentFromParams: (courseStudentName) => dispatch(manageCourseFromParamsActions.setCourseStudentFromParams(courseStudentName)),
+        setExpectedAndCurrentPathsForChecking: (expectedPath, currentPath) => dispatch(manageCourseFromParamsActions.setExpectedAndCurrentPathsForChecking(expectedPath, currentPath)),
+        loadStudentNetwork: () => dispatch(manageCourseFromParamsActions.loadStudentNetwork()),
 
         resetAuthStatus: () => dispatch(authActions.resetAuthStatus()),
         signin: (email, password) => dispatch(authActions.signin(email, password))
@@ -98,61 +98,61 @@ class Signin extends Component {
 
     componentDidMount() {
         const {
-            groupPropertiesLoaded,
+            coursePropertiesLoaded,
             shouldLoadOtherData,
             resetAuthStatus,
 
-            setGroupUserNameFromParams,
+            setCourseStudentFromParams,
             setExpectedAndCurrentPathsForChecking,
-            loadAngelNetwork
+            loadStudentNetwork
         } = this.props;
 
         const match = this.props.match;
 
-        setGroupUserNameFromParams(match.params.hasOwnProperty('groupUserName') ? match.params.groupUserName : null);
-        setExpectedAndCurrentPathsForChecking(match.params.hasOwnProperty('groupUserName') ? ROUTES.SIGN_IN : ROUTES.SIGN_IN_INVEST_WEST_SUPER, match.path);
+        setCourseStudentFromParams(match.params.hasOwnProperty('courseStudentName') ? match.params.courseStudentName : null);
+        setExpectedAndCurrentPathsForChecking(match.params.hasOwnProperty('courseStudentName') ? ROUTES.SIGN_IN_STUDENT : ROUTES.SIGN_IN_STUDENT_SUPER, match.path);
 
-        loadAngelNetwork();
+        loadStudentNetwork();
 
-        if (groupPropertiesLoaded && shouldLoadOtherData) {
+        if (coursePropertiesLoaded && shouldLoadOtherData) {
             resetAuthStatus();
         }
     }
 
     componentDidUpdate(prevProps, prevState, snapshot) {
         const {
-            groupPropertiesLoaded,
+            coursePropertiesLoaded,
             shouldLoadOtherData,
-            groupUserName,
+            courseStudentName,
 
             authenticating,
-            user,
+            student,
 
             authStatus,
 
-            loadAngelNetwork
+            loadStudentNetwork
         } = this.props;
 
-        loadAngelNetwork();
+        loadStudentNetwork();
 
-        if (groupPropertiesLoaded && shouldLoadOtherData) {
+        if (coursePropertiesLoaded && shouldLoadOtherData) {
             if (!authenticating && authStatus === STUDENT_AUTH_SUCCESS) {
-                switch (user.type) {
+                switch (student.type) {
                     case DB_CONST.TYPE_ADMIN:
                         this.props.history.push({
-                            pathname: groupUserName ? ROUTES.ADMIN.replace(":groupUserName", groupUserName) : ROUTES.ADMIN_INVEST_WEST_SUPER,
+                            pathname: courseStudentName ? ROUTES.ADMIN.replace(":courseStudentName", courseStudentName) : ROUTES.ADMIN_INVEST_WEST_SUPER,
                             search: '?tab=Home'
                         });
                         return;
                     case DB_CONST.TYPE_INVESTOR:
                         this.props.history.push({
-                            pathname: groupUserName ? ROUTES.DASHBOARD_INVESTOR.replace(":groupUserName", groupUserName) : ROUTES.DASHBOARD_INVESTOR_INVEST_WEST_SUPER,
+                            pathname: courseStudentName ? ROUTES.DASHBOARD_INVESTOR.replace(":courseStudentName", courseStudentName) : ROUTES.DASHBOARD_INVESTOR_INVEST_WEST_SUPER,
                             search: '?tab=Home'
                         });
                         return;
                     case DB_CONST.TYPE_ISSUER:
                         this.props.history.push({
-                            pathname: groupUserName ? ROUTES.DASHBOARD_ISSUER.replace(":groupUserName", groupUserName) : ROUTES.DASHBOARD_ISSUER_INVEST_WEST_SUPER,
+                            pathname: courseStudentName ? ROUTES.DASHBOARD_ISSUER.replace(":courseStudentName", courseStudentName) : ROUTES.DASHBOARD_ISSUER_INVEST_WEST_SUPER,
                             search: '?tab=Home'
                         });
                         return;
@@ -187,7 +187,7 @@ class Signin extends Component {
     };
 
     /**
-     * Check if pre-conditions met (password and email are filled?) before signing the user in.
+     * Check if pre-conditions met (password and email are filled?) before signing the student in.
      */
     handleSignin = event => {
         event.preventDefault();
@@ -274,14 +274,14 @@ class Signin extends Component {
     };
 
     /**
-     * Send an email reset password to the user.
+     * Send an email reset password to the student.
      */
     handleSendResetEmail = () => {
         const email = this.state.resetPassword.resetEmail;
         this.setState({
             resetPassword: {
                 ...this.state.resetPassword,
-                // set resetChecking state to true to indicate that the email the user input is being checked
+                // set resetChecking state to true to indicate that the email the student input is being checked
                 resetChecking: true
             }
         });
@@ -322,7 +322,7 @@ class Signin extends Component {
      */
     renderAuthStatus = () => {
         const {
-            groupProperties,
+            courseProperties,
             authenticating,
             authStatus
         } = this.props;
@@ -348,11 +348,11 @@ class Signin extends Component {
                     <FlexView hAlignContent="center" marginBottom={20} >
                         <HashLoader
                             color={
-                                !groupProperties
+                                !courseProperties
                                     ?
                                     colors.primaryColor
                                     :
-                                    groupProperties.settings.primaryColor
+                                    courseProperties.settings.primaryColor
                             }
                         />
                     </FlexView>
@@ -360,21 +360,21 @@ class Signin extends Component {
             } else {
                 let errorMsg = '';
                 switch (authStatus) {
-                    case INVALID_AUTH_NONE:
+                    case INVALID_STUDENT_AUTH_NONE:
                         return null;
                     case STUDENT_AUTH_SUCCESS:
                         return null;
-                    case INVALID_AUTH_USER_NOT_EXIST:
-                        errorMsg = "Email or password is invalid, or you are not a member of this group.";
+                    case INVALID_AUTH_STUDENT_NOT_EXIST:
+                        errorMsg = "Email or password is invalid, or you are not a member of this course.";
                         break;
-                    case INVALID_AUTH_USER_DECLINED_TO_REGISTER:
-                        errorMsg = "You decided not to join this group.";
+                    case INVALID_AUTH_STUDENT_DECLINED_TO_REGISTER:
+                        errorMsg = "You decided not to join this course.";
                         break;
-                    case INVALID_AUTH_USER_LEFT:
-                        errorMsg = "You have left this group.";
+                    case INVALID_AUTH_STUDENT_LEFT:
+                        errorMsg = "You have left this course.";
                         break;
-                    case INVALID_AUTH_USER_KICKED_OUT:
-                        errorMsg = "Unfortunately, you are no longer a member of this group.";
+                    case INVALID_AUTH_STUDENT_KICKED_OUT:
+                        errorMsg = "Unfortunately, you are no longer a member of this course.";
                         break;
                     default:
                         return null;
@@ -400,12 +400,12 @@ class Signin extends Component {
 
     render() {
         const {
-            groupProperties,
-            groupPropertiesLoaded,
+            courseProperties,
+            coursePropertiesLoaded,
             shouldLoadOtherData
         } = this.props;
 
-        if (!groupPropertiesLoaded) {
+        if (!coursePropertiesLoaded) {
             return (
                 <FlexView marginTop={30} hAlignContent="center" >
                     <HashLoader color={colors.primaryColor} />
@@ -470,11 +470,11 @@ class Signin extends Component {
                                         <FlexView marginTop={35} marginBottom={45} >
                                             <Typography variant="body1" align="left" >
                                                 By clicking Sign In, you agree to our
-                                                <NavLink to={ROUTES.TERMS_OF_USE} target="_blank" className={css(sharedStyles.nav_link_hover)} style={{ color: !groupProperties ? colors.primaryColor : groupProperties.settings.primaryColor }}>
+                                                <NavLink to={ROUTES.TERMS_OF_USE} target="_blank" className={css(sharedStyles.nav_link_hover)} style={{ color: !courseProperties ? colors.primaryColor : courseProperties.settings.primaryColor }}>
                                                     <b> &nbsp;Terms of use&nbsp; </b>
                                                 </NavLink>
                                                 and our
-                                                <NavLink to={ROUTES.PRIVACY_POLICY} target="_blank" className={css(sharedStyles.nav_link_hover)} style={{ color: !groupProperties ? colors.primaryColor : groupProperties.settings.primaryColor }} >
+                                                <NavLink to={ROUTES.PRIVACY_POLICY} target="_blank" className={css(sharedStyles.nav_link_hover)} style={{ color: !courseProperties ? colors.primaryColor : courseProperties.settings.primaryColor }} >
                                                     <b> &nbsp;Privacy policy. </b>
                                                 </NavLink>
                                             </Typography>
@@ -494,7 +494,7 @@ class Signin extends Component {
                     </Col>
                 </Row>
 
-                <ResetPasswordDialog groupProperties={groupProperties} open={this.state.resetPassword.resetPasswordDialogOpen} onClose={this.handleCloseResetPasswordDialog} onTextChanged={this.handleTextChanged} resetEmail={this.state.resetPassword.resetEmail} onSendEmailClick={this.handleSendResetEmail} resetChecking={this.state.resetPassword.resetChecking} resetError={this.state.resetPassword.resetError} />
+                <ResetPasswordDialog courseProperties={courseProperties} open={this.state.resetPassword.resetPasswordDialogOpen} onClose={this.handleCloseResetPasswordDialog} onTextChanged={this.handleTextChanged} resetEmail={this.state.resetPassword.resetEmail} onSendEmailClick={this.handleSendResetEmail} resetChecking={this.state.resetPassword.resetChecking} resetError={this.state.resetPassword.resetError} />
             </Container>
         );
     }
@@ -518,7 +518,7 @@ class ResetPasswordDialog extends Component {
 
     renderReset = () => {
         const {
-            groupProperties,
+            courseProperties,
             resetChecking,
             resetError
         } = this.props;
@@ -527,11 +527,11 @@ class ResetPasswordDialog extends Component {
                 <FlexView hAlignContent="center" marginBottom={30} >
                     <HashLoader
                         color={
-                            !groupProperties
+                            !courseProperties
                                 ?
                                 colors.primaryColor
                                 :
-                                groupProperties.settings.primaryColor
+                                courseProperties.settings.primaryColor
                         }
                     />
                 </FlexView>
@@ -551,7 +551,7 @@ class ResetPasswordDialog extends Component {
 
     render() {
         const {
-            groupProperties,
+            courseProperties,
             resetEmail,
             resetError,
             resetChecking,

@@ -10,13 +10,13 @@ import {
 } from "./ExploreCoursesActions";
 import CourseProperties from "../../models/course_properties";
 import Error from "../../models/error";
-import {AccessRequestInstance} from "../../models/access_request";
+import {AccessStudentRequestInstance} from "../../models/access_request";
 
 export const maxCoursesPerPage: number = 12;
 
 export interface ExploreCoursesState {
     courses: CourseProperties[];
-    accessRequestsInstances?: AccessRequestInstance[]; // only available for issuer or investor
+    accessStudentRequestsInstances?: AccessStudentRequestInstance[]; // only available for issuer or investor
     fetchingCourses: boolean;
     coursesFetched: boolean;
 
@@ -70,7 +70,7 @@ export const hasCoursesForCurrentFilters = (state: ExploreCoursesState) => {
 }
 
 export const hasAccessRequestsBeenSatisfied = (state: ExploreCoursesState) => {
-    return successfullyFetchedCourses(state) && state.accessRequestsInstances !== undefined;
+    return successfullyFetchedCourses(state) && state.accessStudentRequestsInstances !== undefined;
 }
 
 export const calculatePaginationPages = (state: ExploreCoursesState) => {
@@ -127,9 +127,9 @@ const exploreCoursesReducer = (state = initialState, action: ExploreCoursesActio
             return {
                 ...state,
                 courses: [...completeFetchingCoursesAction.courses],
-                accessRequestsInstances: completeFetchingCoursesAction.accessRequestInstances !== undefined
-                    ? [...completeFetchingCoursesAction.accessRequestInstances]
-                    : state.accessRequestsInstances,
+                accessStudentRequestsInstances: completeFetchingCoursesAction.accessStudentRequestInstances !== undefined
+                    ? [...completeFetchingCoursesAction.accessStudentRequestInstances]
+                    : state.accessStudentRequestsInstances,
                 fetchingCourses: false,
                 coursesFetched: true,
                 currentPage: 1,
@@ -178,9 +178,9 @@ const exploreCoursesReducer = (state = initialState, action: ExploreCoursesActio
             return {
                 ...state,
                 sendingAccessRequestToCourse: undefined,
-                accessRequestsInstances: completeSendingAccessRequestAction.updatedAccessRequestInstances !== undefined
-                    ? [...completeSendingAccessRequestAction.updatedAccessRequestInstances]
-                    : state.accessRequestsInstances,
+                accessStudentRequestsInstances: completeSendingAccessRequestAction.updatedAccessStudentRequestInstances !== undefined
+                    ? [...completeSendingAccessRequestAction.updatedAccessStudentRequestInstances]
+                    : state.accessStudentRequestsInstances,
                 errorSendingAccessRequest: completeSendingAccessRequestAction.error !== undefined
                     ? {detail: completeSendingAccessRequestAction.error} : state.errorSendingAccessRequest
             }
@@ -196,9 +196,9 @@ const exploreCoursesReducer = (state = initialState, action: ExploreCoursesActio
             return {
                 ...state,
                 removingAccessRequestFromCourse: undefined,
-                accessRequestsInstances: completeRemovingAccessRequestAction.updatedAccessRequestInstances !== undefined
-                    ? [...completeRemovingAccessRequestAction.updatedAccessRequestInstances]
-                    : state.accessRequestsInstances,
+                accessStudentRequestsInstances: completeRemovingAccessRequestAction.updatedAccessStudentRequestInstances !== undefined
+                    ? [...completeRemovingAccessRequestAction.updatedAccessStudentRequestInstances]
+                    : state.accessStudentRequestsInstances,
                 errorRemovingAccessRequest: completeRemovingAccessRequestAction.error !== undefined
                     ? {detail: completeRemovingAccessRequestAction.error} : state.errorRemovingAccessRequest
             }

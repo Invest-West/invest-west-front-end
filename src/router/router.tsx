@@ -1,10 +1,14 @@
 import React from "react";
 import {BrowserRouter, Route, Switch} from "react-router-dom";
 import IssuerDashboard from "../pages/dashboard-issuer/IssuerDashboard";
+import StudentViewerDashboard from "../pages/dashboard-student-view/StudentViewDashboard";
 import InvestorDashboard from "../pages/dashboard-investor/InvestorDashboard";
+import StudentDashboard from "../pages/student-dashboard/StudentDashboard";
 import AdminDashboard from "../pages/admin/AdminDashboard";
+import TeacherDashboard from "../pages/teacher/TeacherDashboard";
 import CreatePitchPage from "../pages/create-project/CreateProject";
 import UserProfile from "../pages/profile/ProfilePageViewOnly";
+import StudentProfile from "../pages/student-profile/StudentProfilePageViewOnly";
 import ProjectDetails from "../pages/project-details/ProjectDetails";
 import PrivacyPolicyPage from "../pages/system-public-pages/PrivacyPolicyPage";
 import TermsOfUsePage from "../pages/system-public-pages/TermsOfUsePage";
@@ -22,6 +26,7 @@ import PageNotFound from "../shared-components/page-not-found/PageNotFoundNew";
 import ErrorBoundary from './ErrorBoundary';
 import Routes from "./routes";
 import GroupRoute from "./GroupRoute";
+import CourseDetails from "../pages/course-details/CourseDetails";
 import CourseRoute from "./CourseRoute";
 import ResetPassword from "../pages/reset-password/ResetPassword";
 import ResourceDetail from "../pages/resources/pages/ResourceDetail";
@@ -312,11 +317,11 @@ const AppRouter = () => (
                    render={props => <CourseRoute {...props} showHeader={true}
                                                 component={<ResourceDetail {...props}/>}/>}/>
 
-            <Route path={Routes.nonCourseEditUserProfile} exact
+            <Route path={Routes.nonCourseEditStudentProfile} exact
                 // @ts-ignore
                    render={props => <CourseRoute {...props} showHeader={true}
                                                 component={<ProfilePageEditable {...props}/>}/>}/>
-            <Route path={Routes.courseEditUserProfile} exact
+            <Route path={Routes.courseEditStudentProfile} exact
                 // @ts-ignore
                    render={props => <CourseRoute {...props} showHeader={true}
                                                 component={<ProfilePageEditable {...props}/>}/>}/>

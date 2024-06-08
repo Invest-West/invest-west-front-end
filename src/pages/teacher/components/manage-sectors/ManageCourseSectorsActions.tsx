@@ -1,110 +1,110 @@
 import {Action, ActionCreator, Dispatch} from "redux";
 import {AppState} from "../../../../redux-store/reducers";
 import React from "react";
-import {SystemAttributes} from "../../../../models/system_attributes";
-import SystemAttributesRepository from "../../../../api/repositories/SystemAttributesRepository";
+import {StudentSystemAttributes} from "../../../../models/system_attributes";
+import StudentSystemAttributesRepository from "../../../../api/repositories/StudentSystemAttributesRepository";
 import {openFeedbackSnackbar} from "../../../../shared-components/feedback-snackbar/FeedbackSnackbarActions";
 import {FeedbackSnackbarTypes} from "../../../../shared-components/feedback-snackbar/FeedbackSnackbarReducer";
 
-export enum ManageSectorsEvents {
-    SetSectors = "ManageSectorsEvents.SetSectors",
-    ToggleAddNewSector = "ManageSectorsEvents.ToggleAddNewSector",
-    AddNewSectorTextChanged = "ManageSectorsEvents.AddNewSectorTextChanged",
-    SavingSectorsChanges = "ManageSectorsEvents.SavingSectorsChanges",
-    CompletedSavingSectorsChanges = "ManageSectorsEvents.CompletedSavingSectorsChanges"
+export enum ManageCourseSectorsEvents {
+    SetCourseSectors = "ManageCourseSectorsEvents.SetCourseSectors",
+    ToggleAddNewCourseSector = "ManageCourseSectorsEvents.ToggleAddNewCourseSector",
+    AddNewCourseSectorTextChanged = "ManageCourseSectorsEvents.AddNewCourseSectorTextChanged",
+    SavingCourseSectorsChanges = "ManageCourseSectorsEvents.SavingCourseSectorsChanges",
+    CompletedSavingCourseSectorsChanges = "ManageCourseSectorsEvents.CompletedSavingCourseSectorsChanges"
 }
 
-export interface ManageSectorsAction extends Action {
+export interface ManageCourseSectorsAction extends Action {
 
 }
 
-export interface SetSectorsAction extends ManageSectorsAction {
+export interface SetCourseSectorsAction extends ManageCourseSectorsAction {
     sectors: string[];
 }
 
-export interface AddNewSectorTextChangedAction extends ManageSectorsAction {
+export interface AddNewCourseSectorTextChangedAction extends ManageCourseSectorsAction {
     value: string;
 }
 
-export interface CompletedSavingSectorsChangesAction extends ManageSectorsAction {
+export interface CompletedSavingCourseSectorsChangesAction extends ManageCourseSectorsAction {
     error?: string;
 }
 
-export const setSectors: ActionCreator<any> = (sectors: string[]) => {
+export const setCourseSectors: ActionCreator<any> = (sectors: string[]) => {
     return (dispatch: Dispatch, getState: () => AppState) => {
-        const action: SetSectorsAction = {
-            type: ManageSectorsEvents.SetSectors,
+        const action: SetCourseSectorsAction = {
+            type: ManageCourseSectorsEvents.SetCourseSectors,
             sectors: [...sectors]
         };
         return dispatch(action);
     }
 }
 
-export const toggleAddNewSector: ActionCreator<any> = () => {
+export const toggleAddNewCourseSector: ActionCreator<any> = () => {
     return (dispatch: Dispatch, getState: () => AppState) => {
         return dispatch({
-            type: ManageSectorsEvents.ToggleAddNewSector
+            type: ManageCourseSectorsEvents.ToggleAddNewCourseSector
         });
     }
 }
 
 export const onTextChanged: ActionCreator<any> = (event: React.ChangeEvent<HTMLInputElement>) => {
     return (dispatch: Dispatch, getState: () => AppState) => {
-        const action: AddNewSectorTextChangedAction = {
-            type: ManageSectorsEvents.AddNewSectorTextChanged,
+        const action: AddNewCourseSectorTextChangedAction = {
+            type: ManageCourseSectorsEvents.AddNewCourseSectorTextChanged,
             value: event.target.value
         };
         return dispatch(action);
     }
 }
 
-export const addNewSector: ActionCreator<any> = () => {
+export const addNewCourseSector: ActionCreator<any> = () => {
     return (dispatch: Dispatch, getState: () => AppState) => {
-        const sectors: string[] = [...getState().ManageSectorsLocalState.sectors];
-        const newSector: string = getState().ManageSectorsLocalState.newSector;
-        sectors.push(newSector);
-        dispatch(setSectors(sectors));
-        return dispatch(toggleAddNewSector());
+        const sectors: string[] = [...getState().ManageCourseSectorsLocalState.sectors];
+        const newCourseSector: string = getState().ManageCourseSectorsLocalState.newCourseSector;
+        sectors.push(newCourseSector);
+        dispatch(setCourseSectors(sectors));
+        return dispatch(toggleAddNewCourseSector());
     }
 }
 
-export const deleteSector: ActionCreator<any> = (sector: string) => {
+export const deleteCourseSector: ActionCreator<any> = (sector: string) => {
     return (dispatch: Dispatch, getState: () => AppState) => {
-        const sectors: string[] = [...getState().ManageSectorsLocalState.sectors];
-        const index = sectors.findIndex(eSector => eSector === sector);
+        const sectors: string[] = [...getState().ManageCourseSectorsLocalState.sectors];
+        const index = sectors.findIndex(eCourseSector => eCourseSector === sector);
         if (index !== -1) {
             sectors.splice(index, 1);
         }
-        return dispatch(setSectors(sectors));
+        return dispatch(setCourseSectors(sectors));
     }
 }
 
-export const cancelSectorsChanges: ActionCreator<any> = () => {
+export const cancelCourseSectorsChanges: ActionCreator<any> = () => {
     return (dispatch: Dispatch, getState: () => AppState) => {
-        const systemAttributes: SystemAttributes | null = getState().ManageSystemAttributesState.systemAttributes;
-        if (!systemAttributes) {
+        const studentSystemAttributes: StudentSystemAttributes | null = getState().ManageStudentSystemAttributesState.studentSystemAttributes;
+        if (!studentSystemAttributes) {
             return;
         }
-        return dispatch(setSectors([...systemAttributes.Sectors]));
+        return dispatch(setCourseSectors([...studentSystemAttributes.CourseSectors]));
     }
 }
 
-export const saveSectorsChanges: ActionCreator<any> = () => {
+export const saveCourseSectorsChanges: ActionCreator<any> = () => {
     return async (dispatch: Dispatch, getState: () => AppState) => {
-        const systemAttributes: SystemAttributes | null = JSON.parse(JSON.stringify(getState().ManageSystemAttributesState.systemAttributes));
-        if (!systemAttributes) {
+        const studentSystemAttributes: StudentSystemAttributes | null = JSON.parse(JSON.stringify(getState().ManageStudentSystemAttributesState.studentSystemAttributes));
+        if (!studentSystemAttributes) {
             return;
         }
-        const sectors: string[] = [...getState().ManageSectorsLocalState.sectors];
-        const completeAction: CompletedSavingSectorsChangesAction = {
-            type: ManageSectorsEvents.CompletedSavingSectorsChanges
+        const CourseSectors: string[] = [...getState().ManageCourseSectorsLocalState.CourseSectors];
+        const completeAction: CompletedSavingCourseSectorsChangesAction = {
+            type: ManageCourseSectorsEvents.CompletedSavingCourseSectorsChanges
         };
         try {
-            systemAttributes.Sectors = sectors;
+            studentSystemAttributes.CourseSectors = CourseSectors;
             dispatch({
-                type: ManageSectorsEvents.SavingSectorsChanges
+                type: ManageCourseSectorsEvents.SavingCourseSectorsChanges
             });
-            await new SystemAttributesRepository().updateSystemAttributes(systemAttributes);
+            await new StudentSystemAttributesRepository().updateStudentSystemAttributes(studentSystemAttributes);
             return dispatch(completeAction);
         } catch (error) {
             completeAction.error = error.toString();

@@ -30,41 +30,41 @@ import {NavLink} from 'react-router-dom';
 import * as DB_CONST from '../../../firebase/databaseConsts';
 import * as colors from '../../../values/colors';
 import {connect} from 'react-redux';
-import * as superAdminSettingsActions from '../../../redux-store/actions/superAdminSettingsActions';
-import ManageSectors from "./manage-sectors/ManageSectors";
+import * as superTeacherSettingsActions from '../../../redux-store/actions/superTeacherSettingsActions';
+import ManageCourseSectors from "./manage-sectors/ManageCourseSectors";
 import FeedbackSnackbarNew from "../../../shared-components/feedback-snackbar/FeedbackSnackbarNew";
 
 const mapStateToProps = state => {
     return {
         clubAttributes: state.manageClubAttributes.clubAttributes,
-        clubAttributesEdited: state.superAdminSettings.clubAttributesEdited,
+        clubAttributesEdited: state.superTeacherSettings.clubAttributesEdited,
 
-        addNewPledgeFAQ: state.superAdminSettings.addNewPledgeFAQ,
-        addedPledgeQuestion: state.superAdminSettings.addedPledgeQuestion,
-        addedPledgeAnswer: state.superAdminSettings.addedPledgeAnswer,
-        expandedPledgeFAQ: state.superAdminSettings.expandedPledgeFAQ,
-        editExpandedPledgeFAQ: state.superAdminSettings.editExpandedPledgeFAQ,
-        editedPledgeQuestion: state.superAdminSettings.editedPledgeQuestion,
-        editedPledgeAnswer: state.superAdminSettings.editedPledgeAnswer
+        addNewPledgeFAQ: state.superTeacherSettings.addNewPledgeFAQ,
+        addedPledgeQuestion: state.superTeacherSettings.addedPledgeQuestion,
+        addedPledgeAnswer: state.superTeacherSettings.addedPledgeAnswer,
+        expandedPledgeFAQ: state.superTeacherSettings.expandedPledgeFAQ,
+        editExpandedPledgeFAQ: state.superTeacherSettings.editExpandedPledgeFAQ,
+        editedPledgeQuestion: state.superTeacherSettings.editedPledgeQuestion,
+        editedPledgeAnswer: state.superTeacherSettings.editedPledgeAnswer
     }
 };
 
 const mapDispatchToProps = dispatch => {
     return {
-        initializeClubAttributesEdited: () => dispatch(superAdminSettingsActions.initializeClubAttributesEdited()),
-        handleInputChanged: (event) => dispatch(superAdminSettingsActions.handleInputChanged(event)),
-        handleExpandPledgeFAQPanel: (FAQ, isExpanded) => dispatch(superAdminSettingsActions.handleExpandPledgeFAQPanel(FAQ, isExpanded)),
-        toggleAddNewPledgeFAQ: () => dispatch(superAdminSettingsActions.toggleAddNewPledgeFAQ()),
-        submitNewPledgeFAQ: () => dispatch(superAdminSettingsActions.submitNewPledgeFAQ()),
-        toggleEditExpandedPledgeFAQ: () => dispatch(superAdminSettingsActions.toggleEditExpandedPledgeFAQ()),
-        saveEditedPledgeFAQ: () => dispatch(superAdminSettingsActions.saveEditedPledgeFAQ()),
-        deleteExistingPledgeFAQ: () => dispatch(superAdminSettingsActions.deleteExistingPledgeFAQ()),
-        handleQuillEditorChanged: (fieldName, content, delta, source, editor) => dispatch(superAdminSettingsActions.handleQuillEditorChanged(fieldName, content, delta, source, editor)),
-        saveEditedQuill: (fieldName) => dispatch(superAdminSettingsActions.saveEditedQuill(fieldName))
+        initializeClubAttributesEdited: () => dispatch(superTeacherSettingsActions.initializeClubAttributesEdited()),
+        handleInputChanged: (event) => dispatch(superTeacherSettingsActions.handleInputChanged(event)),
+        handleExpandPledgeFAQPanel: (FAQ, isExpanded) => dispatch(superTeacherSettingsActions.handleExpandPledgeFAQPanel(FAQ, isExpanded)),
+        toggleAddNewPledgeFAQ: () => dispatch(superTeacherSettingsActions.toggleAddNewPledgeFAQ()),
+        submitNewPledgeFAQ: () => dispatch(superTeacherSettingsActions.submitNewPledgeFAQ()),
+        toggleEditExpandedPledgeFAQ: () => dispatch(superTeacherSettingsActions.toggleEditExpandedPledgeFAQ()),
+        saveEditedPledgeFAQ: () => dispatch(superTeacherSettingsActions.saveEditedPledgeFAQ()),
+        deleteExistingPledgeFAQ: () => dispatch(superTeacherSettingsActions.deleteExistingPledgeFAQ()),
+        handleQuillEditorChanged: (fieldName, content, delta, source, editor) => dispatch(superTeacherSettingsActions.handleQuillEditorChanged(fieldName, content, delta, source, editor)),
+        saveEditedQuill: (fieldName) => dispatch(superTeacherSettingsActions.saveEditedQuill(fieldName))
     }
 };
 
-class SuperAdminSettings extends Component {
+class SuperTeacherSettings extends Component {
 
     handleExpandPledgeFAQPanel = FAQ => (event, isExpanded) => {
         this.props.handleExpandPledgeFAQPanel(FAQ, isExpanded);
@@ -163,7 +163,7 @@ class SuperAdminSettings extends Component {
 
                     {/** Edit sectors */}
                     <Col xs={12}sm={12} md={12} lg={12}>
-                        <ManageSectors/>
+                        <ManageCourseSectors/>
                     </Col>
 
                     {/** Divider */}
@@ -413,7 +413,7 @@ class SuperAdminSettings extends Component {
     }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(SuperAdminSettings);
+export default connect(mapStateToProps, mapDispatchToProps)(SuperTeacherSettings);
 
 const modules = {
     toolbar: [

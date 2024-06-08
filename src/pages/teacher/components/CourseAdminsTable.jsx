@@ -39,51 +39,51 @@ import * as colors from '../../../values/colors';
 import sharedStyles, {StyledTableCell} from '../../../shared-js-css-styles/SharedStyles';
 
 import {connect} from 'react-redux';
-import * as groupAdminsTableActions from '../../../redux-store/actions/groupAdminsTableActions';
+import * as courseTeachersTableActions from '../../../redux-store/actions/courseTeacherTableActions';
 
-export const ADD_NEW_GROUP_ADMIN_STATUS_NONE = 0;
-export const ADD_NEW_GROUP_ADMIN_STATUS_MISSING_EMAIL = 1;
-export const ADD_NEW_GROUP_ADMIN_STATUS_CHECKING = 2;
-export const ADD_NEW_GROUP_ADMIN_STATUS_EMAIL_USED = 3;
-export const ADD_NEW_GROUP_ADMIN_STATUS_SUCCESS = 4;
+export const ADD_NEW_COURSE_TEACHER_STATUS_NONE = 0;
+export const ADD_NEW_COURSE_TEACHER_STATUS_MISSING_EMAIL = 1;
+export const ADD_NEW_COURSE_TEACHER_STATUS_CHECKING = 2;
+export const ADD_NEW_COURSE_TEACHER_STATUS_EMAIL_USED = 3;
+export const ADD_NEW_COURSE_TEACHER_STATUS_SUCCESS = 4;
 
 const mapStateToProps = state => {
     return {
-        groupUserName: state.manageGroupFromParams.groupUserName,
-        groupProperties: state.manageGroupFromParams.groupProperties,
-        shouldLoadOtherData: state.manageGroupFromParams.shouldLoadOtherData,
-        currentUser: state.auth.user,
-        tableGroup: state.manageGroupAdminsTable.tableGroup,
-        groupAdmins: state.manageGroupAdminsTable.groupAdmins,
-        groupAdminsLoaded: state.manageGroupAdminsTable.groupAdminsLoaded,
-        loadingGroupAdmins: state.manageGroupAdminsTable.loadingGroupAdmins,
-        page: state.manageGroupAdminsTable.page,
-        rowsPerPage: state.manageGroupAdminsTable.rowsPerPage,
-        searchText: state.manageGroupAdminsTable.searchText,
-        inSearchMode: state.manageGroupAdminsTable.inSearchMode,
+        courseStudentName: state.manageCourseFromParams.courseStudentName,
+        courseProperties: state.manageCourseFromParams.courseProperties,
+        shouldLoadOtherData: state.manageCourseFromParams.shouldLoadOtherData,
+        currentStudent: state.auth.student,
+        tableCourse: state.manageCourseTeachersTable.tableCourse,
+        courseTeachers: state.manageCourseTeachersTable.courseTeachers,
+        courseTeachersLoaded: state.manageCourseTeachersTable.courseTeachersLoaded,
+        loadingCourseTeachers: state.manageCourseTeachersTable.loadingCourseTeachers,
+        page: state.manageCourseTeachersTable.page,
+        rowsPerPage: state.manageCourseTeachersTable.rowsPerPage,
+        searchText: state.manageCourseTeachersTable.searchText,
+        inSearchMode: state.manageCourseTeachersTable.inSearchMode,
 
-        addNewGroupAdminDialogOpen: state.manageGroupAdminsTable.addNewGroupAdminDialogOpen,
-        newGroupAdminEmail: state.manageGroupAdminsTable.newGroupAdminEmail,
-        addNewGroupAdminStatus: state.manageGroupAdminsTable.addNewGroupAdminStatus
+        addNewCourseTeacherDialogOpen: state.manageCourseTeachersTable.addNewCourseTeacherDialogOpen,
+        newCourseTeacherEmail: state.manageCourseTeachersTable.newCourseTeacherEmail,
+        addNewCourseTeacherStatus: state.manageCourseTeachersTable.addNewCourseTeacherStatus
     }
 };
 
 const mapDispatchToProps = dispatch => {
     return {
-        loadGroupAdmins: () => dispatch(groupAdminsTableActions.loadGroupAdmins()),
-        changePage: (event, newPage) => dispatch(groupAdminsTableActions.changePage(event, newPage)),
-        changeRowsPerPage: (event) => dispatch(groupAdminsTableActions.changeRowsPerPage(event)),
-        handleInputChanged: (event) => dispatch(groupAdminsTableActions.handleInputChanged(event)),
-        toggleSearchMode: () => dispatch(groupAdminsTableActions.toggleSearchMode()),
-        startListeningForGroupAdminsChanged: () => dispatch(groupAdminsTableActions.startListeningForGroupAdminsChanged()),
-        stopListeningForGroupAdminsChanged: () => dispatch(groupAdminsTableActions.stopListeningForGroupAdminsChanged()),
-        handleAddNewGroupAdmin: () => dispatch(groupAdminsTableActions.handleAddNewGroupAdmin()),
+        loadCourseTeachers: () => dispatch(courseTeachersTableActions.loadCourseTeachers()),
+        changePage: (event, newPage) => dispatch(courseTeachersTableActions.changePage(event, newPage)),
+        changeRowsPerPage: (event) => dispatch(courseTeachersTableActions.changeRowsPerPage(event)),
+        handleInputChanged: (event) => dispatch(courseTeachersTableActions.handleInputChanged(event)),
+        toggleSearchMode: () => dispatch(courseTeachersTableActions.toggleSearchMode()),
+        startListeningForCourseTeachersChanged: () => dispatch(courseTeachersTableActions.startListeningForCourseTeachersChanged()),
+        stopListeningForCourseTeachersChanged: () => dispatch(courseTeachersTableActions.stopListeningForCourseTeachersChanged()),
+        handleAddNewCourseTeacher: () => dispatch(courseTeachersTableActions.handleAddNewCourseTeacher()),
 
-        toggleAddNewGroupAdminDialog: () => dispatch(groupAdminsTableActions.toggleAddNewGroupAdminDialog())
+        toggleAddNewCourseTeacherDialog: () => dispatch(courseTeachersTableActions.toggleAddNewCourseTeacherDialog())
     }
 };
 
-class GroupAdminsTable extends Component {
+class CourseTeachersTable extends Component {
 
     componentDidMount() {
         this.loadData();
@@ -94,13 +94,13 @@ class GroupAdminsTable extends Component {
 
         const {
             shouldLoadOtherData,
-            tableGroup,
-            stopListeningForGroupAdminsChanged
+            tableCourse,
+            stopListeningForCourseTeachersChanged
         } = this.props;
 
-        // cancel all listeners if tableGroup is set to null
-        if (!tableGroup || !shouldLoadOtherData) {
-            stopListeningForGroupAdminsChanged();
+        // cancel all listeners if tableCourse is set to null
+        if (!tableCourse || !shouldLoadOtherData) {
+            stopListeningForCourseTeachersChanged();
             return;
         }
 
@@ -114,15 +114,15 @@ class GroupAdminsTable extends Component {
     loadData = () => {
         const {
             shouldLoadOtherData,
-            tableGroup,
-            loadingGroupAdmins,
-            groupAdminsLoaded,
-            loadGroupAdmins
+            tableCourse,
+            loadingCourseTeachers,
+            courseTeachersLoaded,
+            loadCourseTeachers
         } = this.props;
 
         if (shouldLoadOtherData) {
-            if (tableGroup && !loadingGroupAdmins && !groupAdminsLoaded) {
-                loadGroupAdmins();
+            if (tableCourse && !loadingCourseTeachers && !courseTeachersLoaded) {
+                loadCourseTeachers();
             }
         }
     };
@@ -133,38 +133,38 @@ class GroupAdminsTable extends Component {
     addListeners = () => {
         const {
             shouldLoadOtherData,
-            groupAdmins,
-            groupAdminsLoaded,
-            startListeningForGroupAdminsChanged
+            courseTeachers,
+            courseTeachersLoaded,
+            startListeningForCourseTeachersChanged
         } = this.props;
 
         if (shouldLoadOtherData) {
-            if (groupAdmins && groupAdminsLoaded) {
-                startListeningForGroupAdminsChanged();
+            if (courseTeachers && courseTeachersLoaded) {
+                startListeningForCourseTeachersChanged();
             }
         }
     };
 
     render() {
         const {
-            groupProperties,
-            currentUser,
-            tableGroup,
+            courseProperties,
+            currentStudent,
+            tableCourse,
             page,
             rowsPerPage,
             searchText,
             inSearchMode,
-            addNewGroupAdminDialogOpen,
-            newGroupAdminEmail,
-            addNewGroupAdminStatus,
+            addNewCourseTeacherDialogOpen,
+            newCourseTeacherEmail,
+            addNewCourseTeacherStatus,
             changePage,
             changeRowsPerPage,
-            loadGroupAdmins,
+            loadCourseTeachers,
             handleInputChanged,
             toggleSearchMode,
-            handleAddNewGroupAdmin,
+            handleAddNewCourseTeacher,
 
-            toggleAddNewGroupAdminDialog
+            toggleAddNewCourseTeacherDialog
         } = this.props;
 
         return (
@@ -208,18 +208,18 @@ class GroupAdminsTable extends Component {
                                 <StyledTableCell colSpan={2} cellColor={colors.blue_gray_50} component={
                                         <FlexView hAlignContent="right" vAlignContent="center">
                                             {
-                                                currentUser.superGroupAdmin
-                                                && tableGroup !== null
-                                                && currentUser.anid === tableGroup.anid
+                                                currentStudent.superCourseTeacher
+                                                && tableCourse !== null
+                                                && currentStudent.anid === tableCourse.anid
                                                     ?
-                                                    <Button variant="outlined" color="primary" className={css(sharedStyles.no_text_transform)} onClick={toggleAddNewGroupAdminDialog} style={{ marginRight: 8}}>Add new group admin</Button>
+                                                    <Button variant="outlined" color="primary" className={css(sharedStyles.no_text_transform)} onClick={toggleAddNewCourseTeacherDialog} style={{ marginRight: 8}}>Add new course teacher</Button>
                                                     :
                                                     null
                                             }
                                             <OverlayTrigger trigger={['hover', 'focus']} placement="bottom" flip
                                                 overlay={
                                                     <Tooltip id={`tooltip-bottom`}>Refresh</Tooltip>}>
-                                                <IconButton onClick={loadGroupAdmins} style={{marginLeft: 10}}>
+                                                <IconButton onClick={loadCourseTeachers} style={{marginLeft: 10}}>
                                                     <RefreshIcon/>
                                                 </IconButton>
                                             </OverlayTrigger>
@@ -230,31 +230,31 @@ class GroupAdminsTable extends Component {
                             <TableRow>
                                 <StyledTableCell colSpan={2}
                                     cellColor={
-                                        !groupProperties
+                                        !courseProperties
                                             ?
                                             colors.primaryColor
                                             :
-                                            groupProperties.settings.primaryColor
+                                            courseProperties.settings.primaryColor
                                     }
                                     component={
                                         <Typography variant="body2" align="left" className={css(sharedStyles.white_text)}>Email</Typography>}/>
                                 <StyledTableCell colSpan={1}
                                     cellColor={
-                                        !groupProperties
+                                        !courseProperties
                                             ?
                                             colors.primaryColor
                                             :
-                                            groupProperties.settings.primaryColor
+                                            courseProperties.settings.primaryColor
                                     }
                                     component={
                                         <Typography variant="body2" align="left"  className={css(sharedStyles.white_text)}>Type</Typography>}/>
                                 <StyledTableCell colSpan={1}
                                     cellColor={
-                                        !groupProperties
+                                        !courseProperties
                                             ?
                                             colors.primaryColor
                                             :
-                                            groupProperties.settings.primaryColor
+                                            courseProperties.settings.primaryColor
                                     }
                                     component={
                                         <Typography variant="body2" align="left" className={css(sharedStyles.white_text)}>Date added</Typography>}/>
@@ -270,7 +270,7 @@ class GroupAdminsTable extends Component {
                                 <TablePagination
                                     style={{backgroundColor: colors.blue_gray_50}}
                                     rowsPerPageOptions={[10, 30, 50]}
-                                    count={this.getRenderedGroupAdmins().length}
+                                    count={this.getRenderedCourseTeachers().length}
                                     rowsPerPage={rowsPerPage}
                                     page={page}
                                     backIconButtonProps={{
@@ -290,14 +290,14 @@ class GroupAdminsTable extends Component {
                     </Table>
                 </Paper>
 
-                <AddGroupAdminDialog
-                    groupProperties={groupProperties}
-                    addNewGroupAdminDialogOpen={addNewGroupAdminDialogOpen}
-                    newGroupAdminEmail={newGroupAdminEmail}
-                    addNewGroupAdminStatus={addNewGroupAdminStatus}
-                    toggleAddNewGroupAdminDialog={toggleAddNewGroupAdminDialog}
+                <AddCourseTeacherDialog
+                    courseProperties={courseProperties}
+                    addNewCourseTeacherDialogOpen={addNewCourseTeacherDialogOpen}
+                    newCourseTeacherEmail={newCourseTeacherEmail}
+                    addNewCourseTeacherStatus={addNewCourseTeacherStatus}
+                    toggleAddNewCourseTeacherDialog={toggleAddNewCourseTeacherDialog}
                     handleInputChanged={handleInputChanged}
-                    handleAddNewGroupAdmin={handleAddNewGroupAdmin}
+                    handleAddNewCourseTeacher={handleAddNewCourseTeacher}
                 />
             </div>
         );
@@ -310,38 +310,38 @@ class GroupAdminsTable extends Component {
      */
     renderTableRows = () => {
         const {
-            groupProperties,
-            groupAdminsLoaded,
+            courseProperties,
+            courseTeachersLoaded,
             page,
             rowsPerPage,
             inSearchMode
         } = this.props;
 
-        if (this.getRenderedGroupAdmins().length === 0) {
+        if (this.getRenderedCourseTeachers().length === 0) {
             return (
                 <TableRow>
                     <TableCell colSpan={4}>
                         <FlexView hAlignContent="center" vAlignContent="center" style={{margin: 20}}>
                             {
-                                groupAdminsLoaded
+                                courseTeachersLoaded
                                     ?
                                     <Typography variant="body1" align="center">
                                         {
                                             inSearchMode
                                                 ?
-                                                "No group admins found."
+                                                "No course teachers found."
                                                 :
-                                                "No group admins."
+                                                "No course teachers."
                                         }
                                     </Typography>
                                     :
                                     <HashLoader
                                         color={
-                                            !groupProperties
+                                            !courseProperties
                                                 ?
                                                 colors.primaryColor
                                                 :
-                                                groupProperties.settings.primaryColor
+                                                courseProperties.settings.primaryColor
                                         }
                                     />
                             }
@@ -352,28 +352,28 @@ class GroupAdminsTable extends Component {
         }
 
         return (
-            this.getRenderedGroupAdmins()
-                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map(groupAdmin => (
-                    <TableRow key={groupAdmin.id} hover>
+            this.getRenderedCourseTeachers()
+                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map(courseTeacher => (
+                    <TableRow key={courseTeacher.id} hover>
                         <TableCell colSpan={2}>
                             <Typography variant="body2" align="left">
-                                {groupAdmin.email}
+                                {courseTeacher.email}
                             </Typography>
                         </TableCell>
                         <TableCell colSpan={1}>
                             <Typography variant="body2" align="left">
                                 {
-                                    groupAdmin.superGroupAdmin
+                                    courseTeacher.superCourseTeacher
                                         ?
-                                        "Super group admin"
+                                        "Super course teacher"
                                         :
-                                        "Group admin"
+                                        "Course teacher"
                                 }
                             </Typography>
                         </TableCell>
                         <TableCell colSpan={1}>
                             <Typography variant="body2" align="left">
-                                {utils.dateTimeInReadableFormat(groupAdmin.dateAdded)}
+                                {utils.dateTimeInReadableFormat(courseTeacher.dateAdded)}
                             </Typography>
                         </TableCell>
                     </TableRow>
@@ -383,53 +383,53 @@ class GroupAdminsTable extends Component {
     };
 
     /**
-     * Get rendered group admins
+     * Get rendered course teachers
      *
      * @returns {*[]}
      */
-    getRenderedGroupAdmins = () => {
+    getRenderedCourseTeachers = () => {
         const {
             searchText,
             inSearchMode,
-            groupAdmins
+            courseTeachers
         } = this.props;
 
-        let searchedGroupAdmins = [...groupAdmins];
+        let searchedCourseTeachers = [...courseTeachers];
 
         if (inSearchMode) {
-            searchedGroupAdmins = searchedGroupAdmins
-                .filter(groupAdmin => groupAdmin.email.includes(searchText.toLowerCase()));
+            searchedCourseTeachers = searchedCourseTeachers
+                .filter(courseTeacher => courseTeacher.email.includes(searchText.toLowerCase()));
         }
 
-        return searchedGroupAdmins.sort((groupAdmin1, groupAdmin2) => {
-            return groupAdmin2.time - groupAdmin1.time;
+        return searchedCourseTeachers.sort((courseTeacher1, courseTeacher2) => {
+            return courseTeacher2.time - courseTeacher1.time;
         });
     };
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(GroupAdminsTable);
+export default connect(mapStateToProps, mapDispatchToProps)(CourseTeachersTable);
 
-class AddGroupAdminDialog extends Component {
+class AddCourseTeacherDialog extends Component {
     render() {
         const {
             forwardedRef,
-            addNewGroupAdminDialogOpen,
-            newGroupAdminEmail,
-            toggleAddNewGroupAdminDialog,
+            addNewCourseTeacherDialogOpen,
+            newCourseTeacherEmail,
+            toggleAddNewCourseTeacherDialog,
             handleInputChanged,
-            handleAddNewGroupAdmin
+            handleAddNewCourseTeacher
         } = this.props;
 
         return (
-            <Dialog open={addNewGroupAdminDialogOpen} ref={forwardedRef} fullWidth maxWidth="md" onClose={toggleAddNewGroupAdminDialog}>
+            <Dialog open={addNewCourseTeacherDialogOpen} ref={forwardedRef} fullWidth maxWidth="md" onClose={toggleAddNewCourseTeacherDialog}>
                 <DialogTitle disableTypography>
                     <FlexView vAlignContent="center">
                         <FlexView grow={4}>
-                            <Typography variant='h6' color='primary' align="left">Add new group admin
+                            <Typography variant='h6' color='primary' align="left">Add new course teacher
                             </Typography>
                         </FlexView>
                         <FlexView grow={1} hAlignContent="right">
-                            <IconButton onClick={toggleAddNewGroupAdminDialog}>
+                            <IconButton onClick={toggleAddNewCourseTeacherDialog}>
                                 <CloseIcon/>
                             </IconButton>
                         </FlexView>
@@ -439,9 +439,9 @@ class AddGroupAdminDialog extends Component {
                     <TextField
                         variant="outlined"
                         label="Email"
-                        name="newGroupAdminEmail"
+                        name="newCourseTeacherEmail"
                         placeholder="Write email here"
-                        value={newGroupAdminEmail}
+                        value={newCourseTeacherEmail}
                         onChange={handleInputChanged}
                         fullWidth
                         required
@@ -452,7 +452,7 @@ class AddGroupAdminDialog extends Component {
                         {
                             this.renderStatusMessage()
                         }
-                        <Button variant="outlined" color="primary" onClick={handleAddNewGroupAdmin} size="medium" className={css(sharedStyles.no_text_transform)} style={{marginLeft: 20}}>Add<AddIcon fontSize="small" style={{ marginLeft: 8}}/>
+                        <Button variant="outlined" color="primary" onClick={handleAddNewCourseTeacher} size="medium" className={css(sharedStyles.no_text_transform)} style={{marginLeft: 20}}>Add<AddIcon fontSize="small" style={{ marginLeft: 8}}/>
                         </Button>
                     </FlexView>
                 </DialogActions>
@@ -467,8 +467,8 @@ class AddGroupAdminDialog extends Component {
      */
     renderStatusMessage = () => {
         const {
-            addNewGroupAdminStatus,
-            groupProperties
+            addNewCourseTeacherStatus,
+            courseProperties
         } = this.props;
 
         let msg = {
@@ -476,30 +476,30 @@ class AddGroupAdminDialog extends Component {
             color: ''
         };
 
-        switch (addNewGroupAdminStatus) {
-            case ADD_NEW_GROUP_ADMIN_STATUS_NONE:
+        switch (addNewCourseTeacherStatus) {
+            case ADD_NEW_COURSE_TEACHER_STATUS_NONE:
                 return null;
-            case ADD_NEW_GROUP_ADMIN_STATUS_MISSING_EMAIL:
+            case ADD_NEW_COURSE_TEACHER_STATUS_MISSING_EMAIL:
                 msg.tex = "Please fill in the email.";
                 msg.color = "error";
                 break;
-            case ADD_NEW_GROUP_ADMIN_STATUS_CHECKING:
+            case ADD_NEW_COURSE_TEACHER_STATUS_CHECKING:
                 return (
                     <BeatLoader size={10}
                         color={
-                            !groupProperties
+                            !courseProperties
                                 ?
                                 colors.primaryColor
                                 :
-                                groupProperties.settings.primaryColor
+                                courseProperties.settings.primaryColor
                         }
                     />
                 );
-            case ADD_NEW_GROUP_ADMIN_STATUS_EMAIL_USED:
+            case ADD_NEW_COURSE_TEACHER_STATUS_EMAIL_USED:
                 msg.text = "This email has been used by another account.";
                 msg.color = "error";
                 break;
-            case ADD_NEW_GROUP_ADMIN_STATUS_SUCCESS:
+            case ADD_NEW_COURSE_TEACHER_STATUS_SUCCESS:
                 return null;
             default:
                 return null;

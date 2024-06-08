@@ -18,14 +18,14 @@ import {
     TextField,
     Typography
 } from "@material-ui/core";
-import {AuthenticationState} from "../../../../redux-store/reducers/authenticationReducer";
+import {StudentAuthenticationState} from "../../../../redux-store/reducers/studentAuthenticationReducer";
 import {
     hasErrorFindingAddressForRegisteredOffice,
     hasErrorFindingAddressForTradingAddress,
-    ProfileState
-} from "../../ProfileReducer";
-import User, {hasBusinessProfile} from "../../../../models/user";
-import Admin, {isAdmin} from "../../../../models/admin";
+    StudentProfileState
+} from "../../StudentProfileReducer";
+import Student, {hasuniCourseProfile} from "../../../../models/student";
+import Teacher, {isProf} from "../../../../models/teacher";
 import {css} from "aphrodite";
 import sharedStyles from "../../../../shared-js-css-styles/SharedStyles";
 import AddIcon from "@material-ui/icons/Add";
@@ -35,10 +35,10 @@ import {KeyboardArrowRight} from "@material-ui/icons";
 import {findAddress} from "./UniProfileActions";
 import {getFormattedAddress} from "../../../../models/address";
 
-interface BusinessProfileProps {
-    AuthenticationState: AuthenticationState;
+interface UniProfileProps {
+    StudentAuthenticationState: StudentAuthenticationState;
     ManageSystemAttributesState: ManageSystemAttributesState;
-    ProfileLocalState: ProfileState;
+    StudentProfileLocalState: StudentProfileState;
     handleInputFieldChanged: (inputCategory: InputCategories, event: React.ChangeEvent<HTMLInputElement>) => any;
     findAddress: (mode: "registeredOffice" | "tradingAddress") => any;
     // changeAddressFindingState: (mode: "registeredOffice" | "tradingAddress", addressFindingState: AddressFindingStates) => any;
@@ -46,9 +46,9 @@ interface BusinessProfileProps {
 
 const mapStateToProps = (state: AppState) => {
     return {
-        AuthenticationState: state.AuthenticationState,
+        StudentAuthenticationState: state.StudentAuthenticationState,
         ManageSystemAttributesState: state.ManageSystemAttributesState,
-        ProfileLocalState: state.ProfileLocalState
+        StudentProfileLocalState: state.StudentProfileLocalState
     }
 }
 
@@ -60,7 +60,7 @@ const mapDispatchToProps = (dispatch: ThunkDispatch<any, any, AnyAction>) => {
     }
 }
 
-class BusinessProfile extends Component<BusinessProfileProps, any> {
+class UniProfile extends Component<UniProfileProps, any> {
 
     onInputFieldChanged = (inputCategory: InputCategories) => (event: React.ChangeEvent<HTMLInputElement>) => {
         this.props.handleInputFieldChanged(inputCategory, event);
@@ -68,20 +68,20 @@ class BusinessProfile extends Component<BusinessProfileProps, any> {
 
     render() {
         const {
-            AuthenticationState,
-            ProfileLocalState
+            StudentAuthenticationState,
+            StudentProfileLocalState
         } = this.props;
 
-        const currentUser: User | Admin | null = AuthenticationState.currentUser;
-        if (!currentUser) {
+        const currentStudent: Student | Teacher | null = StudentAuthenticationState.currentStudent;
+        if (!currentStudent) {
             return null;
         }
 
-        const currentAdmin: Admin | null = isAdmin(currentUser);
+        const currentTeacher: Teacher | null = isProf(currentStudent);
 
-        const copiedUser: User | undefined = ProfileLocalState.copiedUser;
+        const copiedStudent: Student | undefined = StudentProfileLocalState.copiedStudent;
 
-        if (!copiedUser) {
+        if (!copiedStudent) {
             return null;
         }
 
@@ -96,7 +96,7 @@ class BusinessProfile extends Component<BusinessProfileProps, any> {
             <Box height="25px" />
             {/** Edit Business profile */}
             {
-                this.renderEditBusinessProfile()
+                this.renderEditUniProfile()
             }
         </Box>;
     }
@@ -104,15 +104,15 @@ class BusinessProfile extends Component<BusinessProfileProps, any> {
     /**
      * Render Business profile in Edit mode
      */
-    renderEditBusinessProfile = () => {
+    renderEditUniProfile = () => {
         const {
             ManageSystemAttributesState,
-            ProfileLocalState
+            StudentProfileLocalState
         } = this.props;
 
-        const copiedUser: User | undefined = ProfileLocalState.copiedUser;
+        const copiedStudent: Student | undefined = StudentProfileLocalState.copiedStudent;
 
-        if (!copiedUser) {
+        if (!copiedStudent) {
             return null;
         }
 
@@ -127,14 +127,14 @@ class BusinessProfile extends Component<BusinessProfileProps, any> {
                     name="companyName"
                     placeholder="Enter company name"
                     // value={
-                    //     hasBusinessProfile(copiedUser)
-                    //         ? copiedUser.BusinessProfile?.companyName
-                    //         : ProfileLocalState.BusinessProfileState.newBusinessProfile.companyName
+                    //     hasuniCourseProfile(copiedStudent)
+                    //         ? copiedStudent.UniProfile?.companyName
+                    //         : StudentProfileLocalState.UniProfileState.newUniProfile.companyName
                     // }
                     margin="dense"
                     variant="outlined"
-                    onChange={this.onInputFieldChanged(InputCategories.BusinessProfile)}
-                    // error={copiedUser.firstName.trim().length === 0}
+                    onChange={this.onInputFieldChanged(InputCategories.UniProfile)}
+                    // error={copiedStudent.firstName.trim().length === 0}
                 />
             </FormControl>
 
@@ -145,14 +145,14 @@ class BusinessProfile extends Component<BusinessProfileProps, any> {
                     name="registrationNo"
                     placeholder="Enter company registration number"
                     // value={
-                    //     hasBusinessProfile(copiedUser)
-                    //         ? copiedUser.BusinessProfile?.registrationNo
-                    //         : ProfileLocalState.BusinessProfileState.newBusinessProfile.registrationNo
+                    //     hasuniCourseProfile(copiedStudent)
+                    //         ? copiedStudent.UniProfile?.registrationNo
+                    //         : StudentProfileLocalState.UniProfileState.newUniProfile.registrationNo
                     // }
                     margin="dense"
                     variant="outlined"
-                    onChange={this.onInputFieldChanged(InputCategories.BusinessProfile)}
-                    // error={copiedUser.firstName.trim().length === 0}
+                    onChange={this.onInputFieldChanged(InputCategories.UniProfile)}
+                    // error={copiedStudent.firstName.trim().length === 0}
                 />
             </FormControl>
 
@@ -187,7 +187,7 @@ class BusinessProfile extends Component<BusinessProfileProps, any> {
                         // value={newDirectorText}
                         fullWidth
                         variant="outlined"
-                        // onChange={this.handleEditUser(editUserActions.ADDING_NEW_DIRECTOR)}
+                        // onChange={this.handleEditStudent(editStudentActions.ADDING_NEW_DIRECTOR)}
                         margin="dense"
                     />
 
@@ -221,14 +221,14 @@ class BusinessProfile extends Component<BusinessProfileProps, any> {
                 <Select
                     name="sector"
                     // value={
-                    //     hasBusinessProfile(copiedUser)
-                    //         ? copiedUser.BusinessProfile?.sector
-                    //         : ProfileLocalState.BusinessProfileState.newBusinessProfile.sector
+                    //     hasuniCourseProfile(copiedStudent)
+                    //         ? copiedStudent.UniProfile?.sector
+                    //         : StudentProfileLocalState.UniProfileState.newUniProfile.sector
                     // }
                     input={<OutlinedInput/>}
                     margin="dense"
                     // @ts-ignore
-                    onChange={this.onInputFieldChanged(InputCategories.BusinessProfile)}
+                    onChange={this.onInputFieldChanged(InputCategories.UniProfile)}
                 >
                     <MenuItem key={-1} value={"none"}>Choose business sector</MenuItem>
                     {
@@ -248,15 +248,15 @@ class BusinessProfile extends Component<BusinessProfileProps, any> {
                     placeholder="Enter company website"
                     name="companyWebsite"
                     // value={
-                    //     hasBusinessProfile(copiedUser)
-                    //         ? copiedUser.BusinessProfile?.companyWebsite
-                    //         : ProfileLocalState.BusinessProfileState.newBusinessProfile.companyWebsite
+                    //     hasuniCourseProfile(copiedStudent)
+                    //         ? copiedStudent.UniProfile?.companyWebsite
+                    //         : StudentProfileLocalState.UniProfileState.newUniProfile.companyWebsite
                     // }
                     fullWidth
                     variant="outlined"
                     required
                     margin="dense"
-                    onChange={this.onInputFieldChanged(InputCategories.BusinessProfile)}
+                    onChange={this.onInputFieldChanged(InputCategories.UniProfile)}
                 />
             </FormControl>
 
@@ -292,14 +292,14 @@ class BusinessProfile extends Component<BusinessProfileProps, any> {
      */
     renderAddressInput = (mode: "registeredOffice" | "tradingAddress") => {
         const {
-            ProfileLocalState,
+            StudentProfileLocalState,
             findAddress,
             // changeAddressFindingState
         } = this.props;
 
-        const copiedUser: User | undefined = ProfileLocalState.copiedUser;
+        const copiedStudent: Student | undefined = StudentProfileLocalState.copiedStudent;
 
-        if (!copiedUser) {
+        if (!copiedStudent) {
             return null;
         }
 
@@ -325,9 +325,9 @@ class BusinessProfile extends Component<BusinessProfileProps, any> {
                             control={
                                 <Checkbox
                                     name="tradingAddressSameAsRegisteredOffice"
-                                    checked={ProfileLocalState.BusinessProfileState.tradingAddressSameAsRegisteredOffice}
+                                    checked={StudentProfileLocalState.UniProfileState.tradingAddressSameAsRegisteredOffice}
                                     color="primary"
-                                    onChange={this.onInputFieldChanged(InputCategories.BusinessProfileCheckBox)}
+                                    onChange={this.onInputFieldChanged(InputCategories.UniProfileCheckBox)}
                                 />
                             }
                         />
@@ -336,7 +336,7 @@ class BusinessProfile extends Component<BusinessProfileProps, any> {
                 {/** Trading address - showed when Trading address is different from Registered office */}
                 {
                     mode === "tradingAddress"
-                    && ProfileLocalState.BusinessProfileState.tradingAddressSameAsRegisteredOffice
+                    && StudentProfileLocalState.UniProfileState.tradingAddressSameAsRegisteredOffice
                         ? null
                         : <Box display="flex" flexDirection="column" >
                             <FormHelperText> Enter a UK postcode </FormHelperText>
@@ -344,9 +344,9 @@ class BusinessProfile extends Component<BusinessProfileProps, any> {
                             {/** Enter postcode to find address automatically */}
                             {
                                 (mode === "registeredOffice")
-                                // && ProfileLocalState.BusinessProfileState.addressFindingStateForRegisteredOffice !== AddressFindingStates.DisplayFoundAddresses)
+                                // && StudentProfileLocalState.UniProfileState.addressFindingStateForRegisteredOffice !== AddressFindingStates.DisplayFoundAddresses)
                                 || (mode === "tradingAddress")
-                                    // && ProfileLocalState.BusinessProfileState.addressFindingStateForRegisteredOffice !== AddressFindingStates.DisplayFoundAddresses)
+                                    // && StudentProfileLocalState.UniProfileState.addressFindingStateForRegisteredOffice !== AddressFindingStates.DisplayFoundAddresses)
                                     ? <Box
                                         display="flex"
                                         flexDirection="column"
@@ -355,24 +355,24 @@ class BusinessProfile extends Component<BusinessProfileProps, any> {
                                             name="postcode"
                                             placeholder="Postcode"
                                             // value={
-                                            //     hasBusinessProfile(copiedUser)
+                                            //     hasuniCourseProfile(copiedStudent)
                                             //         ? mode === "registeredOffice"
-                                            //         ? copiedUser.BusinessProfile?.registeredOffice.postcode
-                                            //         : copiedUser.BusinessProfile?.tradingAddress.postcode
+                                            //         ? copiedStudent.UniProfile?.registeredOffice.postcode
+                                            //         : copiedStudent.UniProfile?.tradingAddress.postcode
                                             //         : mode === "registeredOffice"
-                                            //         ? ProfileLocalState.BusinessProfileState.newBusinessProfile.registeredOffice.postcode
-                                            //         : ProfileLocalState.BusinessProfileState.newBusinessProfile.tradingAddress.postcode
+                                            //         ? StudentProfileLocalState.UniProfileState.newUniProfile.registeredOffice.postcode
+                                            //         : StudentProfileLocalState.UniProfileState.newUniProfile.tradingAddress.postcode
                                             // }
                                             margin="dense"
                                             variant="outlined"
                                             onChange={this.onInputFieldChanged(mode === "registeredOffice" ? InputCategories.RegisteredOffice : InputCategories.TradingAddress)}
-                                            // error={copiedUser.firstName.trim().length === 0}
+                                            // error={copiedStudent.firstName.trim().length === 0}
                                         />
 
                                         {/** Error text - displayed when postcode cannot be found */}
                                         {
-                                            (mode === "registeredOffice" && hasErrorFindingAddressForRegisteredOffice(ProfileLocalState.BusinessProfileState))
-                                            || (mode === "tradingAddress" && hasErrorFindingAddressForTradingAddress(ProfileLocalState.BusinessProfileState))
+                                            (mode === "registeredOffice" && hasErrorFindingAddressForRegisteredOffice(StudentProfileLocalState.UniProfileState))
+                                            || (mode === "tradingAddress" && hasErrorFindingAddressForTradingAddress(StudentProfileLocalState.UniProfileState))
                                                 ? <Typography variant="body2" color="error" align="left">
                                                     Sorry, we can't find your address, please check the details entered and search
                                                     again.
@@ -384,9 +384,9 @@ class BusinessProfile extends Component<BusinessProfileProps, any> {
                                             <Button className={css(sharedStyles.no_text_transform)} variant="contained" color="primary" onClick={() => findAddress(mode)} >
                                                 {
                                                     (mode === "registeredOffice")
-                                                    // && ProfileLocalState.BusinessProfileState.addressFindingStateForRegisteredOffice === AddressFindingStates.FindingAddresses)
+                                                    // && StudentProfileLocalState.UniProfileState.addressFindingStateForRegisteredOffice === AddressFindingStates.FindingAddresses)
                                                     || (mode === "tradingAddress")
-                                                        // && ProfileLocalState.BusinessProfileState.addressFindingStateForTradingAddress === AddressFindingStates.FindingAddresses)
+                                                        // && StudentProfileLocalState.UniProfileState.addressFindingStateForTradingAddress === AddressFindingStates.FindingAddresses)
                                                         ? "Finding address ..."
                                                         : "Find address"
                                                 }
@@ -400,8 +400,8 @@ class BusinessProfile extends Component<BusinessProfileProps, any> {
 
                             {/** Select address from found addresses */}
                             {
-                                (mode === "registeredOffice") // && ProfileLocalState.BusinessProfileState.addressFindingStateForRegisteredOffice === AddressFindingStates.DisplayFoundAddresses)
-                                || (mode === "tradingAddress") // && ProfileLocalState.BusinessProfileState.addressFindingStateForTradingAddress === AddressFindingStates.DisplayFoundAddresses)
+                                (mode === "registeredOffice") // && StudentProfileLocalState.UniProfileState.addressFindingStateForRegisteredOffice === AddressFindingStates.DisplayFoundAddresses)
+                                || (mode === "tradingAddress") // && StudentProfileLocalState.UniProfileState.addressFindingStateForTradingAddress === AddressFindingStates.DisplayFoundAddresses)
                                     ? <Box display="flex" flexDirection="column" >
                                         <Box display="flex" flexDirection="row" >
                                             <Typography variant="body1" align="left" > Select an address </Typography>
@@ -416,13 +416,13 @@ class BusinessProfile extends Component<BusinessProfileProps, any> {
                                         <Select
                                             name={mode}
                                             value={
-                                                hasBusinessProfile(copiedUser)
+                                                hasuniCourseProfile(copiedStudent)
                                                     ? mode === "registeredOffice"
-                                                    ? getFormattedAddress(copiedUser.BusinessProfile?.registeredOffice)
-                                                    : getFormattedAddress(copiedUser.BusinessProfile?.tradingAddress)
+                                                    ? getFormattedAddress(copiedStudent.UniProfile?.registeredOffice)
+                                                    : getFormattedAddress(copiedStudent.UniProfile?.tradingAddress)
                                                     : mode === "registeredOffice"
-                                                    ? getFormattedAddress(ProfileLocalState.BusinessProfileState.editedBusinessProfile.registeredOffice)
-                                                    : getFormattedAddress(ProfileLocalState.BusinessProfileState.editedBusinessProfile.tradingAddress)
+                                                    ? getFormattedAddress(StudentProfileLocalState.UniProfileState.editedUniProfile.registeredOffice)
+                                                    : getFormattedAddress(StudentProfileLocalState.UniProfileState.editedUniProfile.tradingAddress)
                                             }
                                             input={<OutlinedInput/>}
                                             margin="dense"
@@ -432,15 +432,15 @@ class BusinessProfile extends Component<BusinessProfileProps, any> {
                                         >
                                             <MenuItem key={-1} value={"none"}>Addresses found</MenuItem>
                                             {
-                                                mode === "registeredOffice" && ProfileLocalState.BusinessProfileState.foundAddressesForRegisteredOffice
-                                                    ? ProfileLocalState.BusinessProfileState.foundAddressesForRegisteredOffice.map(address => (
+                                                mode === "registeredOffice" && StudentProfileLocalState.UniProfileState.foundAddressesForRegisteredOffice
+                                                    ? StudentProfileLocalState.UniProfileState.foundAddressesForRegisteredOffice.map(address => (
                                                         <MenuItem key={getFormattedAddress(address)} value={getFormattedAddress(address)}>{getFormattedAddress(address)}</MenuItem>
                                                     ))
                                                     : null
                                             }
                                             {
-                                                mode === "tradingAddress" && ProfileLocalState.BusinessProfileState.foundAddressesForTradingAddress
-                                                    ? ProfileLocalState.BusinessProfileState.foundAddressesForTradingAddress.map(address => (
+                                                mode === "tradingAddress" && StudentProfileLocalState.UniProfileState.foundAddressesForTradingAddress
+                                                    ? StudentProfileLocalState.UniProfileState.foundAddressesForTradingAddress.map(address => (
                                                         <MenuItem key={getFormattedAddress(address)} value={getFormattedAddress(address)} >{getFormattedAddress(address)}</MenuItem>
                                                     ))
                                                     : null
@@ -456,4 +456,4 @@ class BusinessProfile extends Component<BusinessProfileProps, any> {
     }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(BusinessProfile);
+export default connect(mapStateToProps, mapDispatchToProps)(UniProfile);

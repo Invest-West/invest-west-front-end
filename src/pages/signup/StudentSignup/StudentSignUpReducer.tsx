@@ -7,7 +7,7 @@ import {
 } from "./StudentSignUpActions";
 import Error from "../../../models/error";
 import InvitedStudent from "../../../models/invited_student";
-import {StudentAuthenticationEvents} from "../../../redux-store/actions/authenticationActions";
+import {StudentAuthenticationEvents} from "../../../redux-store/actions/studentAuthenticationActions";
 
 export interface StudentSignUpState {
     invitedStudent?: InvitedStudent;
@@ -72,7 +72,7 @@ export const hasErrorCreatingAccount = (state: StudentSignUpState) => {
     return !state.creatingAccount && state.errorCreatingAccount !== undefined;
 }
 
-const signUpReducer = (state = initialState, action: StudentSignUpAction) => {
+const studentSignUpReducer = (state = initialState, action: StudentSignUpAction) => {
     switch (action.type) {
         case StudentAuthenticationEvents.StudentSignOut:
             return initialState;
@@ -132,4 +132,4 @@ const signUpReducer = (state = initialState, action: StudentSignUpAction) => {
     }
 }
 
-export default signUpReducer;
+export default studentSignUpReducer;

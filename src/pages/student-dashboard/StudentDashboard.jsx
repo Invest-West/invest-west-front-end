@@ -19,12 +19,12 @@ import SidebarContent, {
     CHANGE_PASSWORD_TAB,
     EXPLORE_COURSES_TAB,
     HOME_TAB,
-    MY_OFFERS_TAB,
+    MY_STUDENT_OFFERS_TAB,
     PROFILE_TAB,
     RESOURCES_TAB
-} from "../../shared-components/nav-bars/SidebarContent";
+} from "../../shared-components/nav-bars/StudentSidebarContent";
 import {AUTH_SUCCESS} from "../signin/Signin";
-import ProfileTab from "../../shared-components/profile/Profile";
+import StudentProfileTab from "../../shared-components/student-profile/StudentProfile";
 import NotificationsBox from "../../shared-components/notifications/NotificationsBox";
 
 import * as colors from "../../values/colors";
@@ -39,7 +39,7 @@ import * as dashboardSidebarActions from "../../redux-store/actions/dashboardSid
 import * as editStudentActions from "../../redux-store/actions/editStudentActions";
 import * as notificationsActions from "../../redux-store/actions/notificationsActions";
 import ExploreStudentOffers from "../../shared-components/explore-student-offers/ExploreStudentOffers";
-import OffersTable from "../../shared-components/offers-table/OffersTable";
+import StudentOffersTable from "../../shared-components/student-offers-table/StudentOffersTable";
 import ExploreCourses from "../../shared-components/explore-courses/ExploreCourses";
 import Resources from "../resources/Resources";
 
@@ -69,9 +69,9 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
     return {
-        setCourseStudentNameFromParams: (courseStudentName) => dispatch(manageCourseFromParamsActions.setCourseStudentNameFromParams(courseStudentName)),
+        setCourseStudentFromParams: (courseStudentName) => dispatch(manageCourseFromParamsActions.setCourseStudentFromParams(courseStudentName)),
         setExpectedAndCurrentPathsForChecking: (expectedPath, currentPath) => dispatch(manageCourseFromParamsActions.setExpectedAndCurrentPathsForChecking(expectedPath, currentPath)),
-        loadAngelNetwork: () => dispatch(manageCourseFromParamsActions.loadAngelNetwork()),
+        loadStudentNetwork: () => dispatch(manageCourseFromParamsActions.loadStudentNetwork()),
 
         toggleSidebar: (checkSidebarDocked) => dispatch(dashboardSidebarActions.toggleSidebar(checkSidebarDocked)),
 
@@ -100,9 +100,9 @@ class TeacherDashboard extends Component {
             coursePropertiesLoaded,
             shouldLoadOtherData,
 
-            setCourseStudentNameFromParams,
+            setCourseStudentFromParams,
             setExpectedAndCurrentPathsForChecking,
-            loadAngelNetwork,
+            loadStudentNetwork,
 
             notificationRefUpdated,
 
@@ -116,10 +116,10 @@ class TeacherDashboard extends Component {
             history.push(redirectTo);
         }
 
-        setCourseStudentNameFromParams(match.params.hasOwnProperty('courseStudentName') ? match.params.courseStudentName : null);
-        setExpectedAndCurrentPathsForChecking(match.params.hasOwnProperty('courseStudentName') ? ROUTES.DASHBOARD_TEACHER : ROUTES.DASHBOARD_TEACHER_INVEST_WEST_SUPER, match.path);
+        setCourseStudentFromParams(match.params.hasOwnProperty('courseStudentName') ? match.params.courseStudentName : null);
+        setExpectedAndCurrentPathsForChecking(match.params.hasOwnProperty('courseStudentName') ? ROUTES.DASHBOARD_STUDENT : ROUTES.DASHBOARD_STUDENT_INVEST_WEST_SUPER, match.path);
 
-        loadAngelNetwork();
+        loadStudentNetwork();
 
         if (coursePropertiesLoaded && shouldLoadOtherData) {
             this.setDataForComponents();
@@ -133,12 +133,12 @@ class TeacherDashboard extends Component {
             coursePropertiesLoaded,
             shouldLoadOtherData,
 
-            loadAngelNetwork,
+            loadStudentNetwork,
 
             notificationRefUpdated
         } = this.props;
 
-        loadAngelNetwork();
+        loadStudentNetwork();
 
         if (coursePropertiesLoaded && shouldLoadOtherData) {
             this.setDataForComponents();
@@ -189,14 +189,14 @@ class TeacherDashboard extends Component {
         /**
          * MY OFFERS TAB
          */
-        if (params.tab === MY_OFFERS_TAB) {
+        if (params.tab === MY_STUDENT_OFFERS_TAB) {
             return (
                 <div
                     style={{
                         margin: 30
                     }}
                 >
-                    <OffersTable/>
+                    <StudentOffersTable/>
                 </div>
             );
         }
@@ -206,7 +206,7 @@ class TeacherDashboard extends Component {
          */
         if (params.tab === PROFILE_TAB) {
             return (
-                <ProfileTab/>
+                <StudentProfileTab/>
             );
         }
 
@@ -396,8 +396,8 @@ class TeacherDashboard extends Component {
             case HOME_TAB:
                 title = HOME_TAB;
                 break;
-            case MY_OFFERS_TAB:
-                title = MY_OFFERS_TAB;
+            case MY_STUDENT_OFFERS_TAB:
+                title = MY_STUDENT_OFFERS_TAB;
                 break;
             case PROFILE_TAB:
                 title = PROFILE_TAB;

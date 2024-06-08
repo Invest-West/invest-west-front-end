@@ -1,38 +1,38 @@
 import {Action, ActionCreator, Dispatch} from "redux";
 import {AppState} from "../../../../redux-store/reducers";
-import EmailRepository, {
+import StudentEmailRepository, {
     ClientEmailTypes,
-    ContactPitchOwnerEmailData
-} from "../../../../api/repositories/EmailRepository";
+    ContactPitchTeacherEmailData
+} from "../../../../api/repositories/StudentEmailRepository";
 import Student from "../../../../models/student";
 import {openFeedbackSnackbar} from "../../../../shared-components/feedback-snackbar/FeedbackSnackbarActions";
 import {FeedbackSnackbarTypes} from "../../../../shared-components/feedback-snackbar/FeedbackSnackbarReducer";
 
-export enum ContactPitchOwnerDialogEvents {
-    ToggleContactDialog = "ContactPitchOwnerDialogEvents.ToggleContactDialog",
-    SendingContactEmail = "ContactPitchOwnerDialogEvents.SendingContactEmail",
-    CompleteSendingContactEmail = "ContactPitchOwnerDialogEvents.CompleteSendingContactEmail"
+export enum ContactPitchTeacherDialogEvents {
+    ToggleContactDialog = "ContactPitchTeacherDialogEvents.ToggleContactDialog",
+    SendingContactEmail = "ContactPitchTeacherDialogEvents.SendingContactEmail",
+    CompleteSendingContactEmail = "ContactPitchTeacherDialogEvents.CompleteSendingContactEmail"
 }
 
-export interface ContactPitchOwnerDialogAction extends Action {
+export interface ContactPitchTeacherDialogAction extends Action {
 
 }
 
-export interface ToggleContactDialogAction extends ContactPitchOwnerDialogAction {
+export interface ToggleContactDialogAction extends ContactPitchTeacherDialogAction {
     studentProjectName: string | null;
-    studentProjectOwnerEmail: string | null;
+    studentProjectTeacherEmail: string | null;
 }
 
-export interface CompleteSendingContactEmailAction extends ContactPitchOwnerDialogAction {
+export interface CompleteSendingContactEmailAction extends ContactPitchTeacherDialogAction {
     error?: string;
 }
 
-export const toggleContactPitchOwnerDialog: ActionCreator<any> = (studentProjectName?: string, studentProjectOwnerEmail?: string) => {
+export const toggleContactPitchTeacherDialog: ActionCreator<any> = (studentProjectName?: string, studentProjectTeacherEmail?: string) => {
     return (dispatch: Dispatch, getState: () => AppState) => {
         const action: ToggleContactDialogAction = {
-            type: ContactPitchOwnerDialogEvents.ToggleContactDialog,
+            type: ContactPitchTeacherDialogEvents.ToggleContactDialog,
             studentProjectName: studentProjectName ?? null,
-            studentProjectOwnerEmail: studentProjectOwnerEmail ?? null
+            studentProjectTeacherEmail: studentProjectTeacherEmail ?? null
         };
         return dispatch(action);
     }
@@ -42,44 +42,44 @@ export const sendContactEmail: ActionCreator<any> = () => {
     return async (dispatch: Dispatch, getState: () => AppState) => {
         const {
             studentProjectName,
-            studentProjectOwnerEmail,
+            studentProjectTeacherEmail,
             sendingContactEmail
-        } = getState().ContactPitchOwnerDialogLocalState;
+        } = getState().ContactPitchTeacherDialogLocalState;
 
         if (sendingContactEmail) {
             return;
         }
 
-        if (!studentProjectName || !studentProjectOwnerEmail) {
+        if (!studentProjectName || !studentProjectTeacherEmail) {
             return;
         }
 
         const {
             currentStudent
-        } = getState().AuthenticationState;
+        } = getState().StudentAuthenticationState;
 
         if (!currentStudent) {
             return;
         }
 
         dispatch({
-            type: ContactPitchOwnerDialogEvents.SendingContactEmail
+            type: ContactPitchTeacherDialogEvents.SendingContactEmail
         });
 
         const completeAction: CompleteSendingContactEmailAction = {
-            type: ContactPitchOwnerDialogEvents.CompleteSendingContactEmail
+            type: ContactPitchTeacherDialogEvents.CompleteSendingContactEmail
         };
 
         try {
-            const emailInfo: ContactPitchOwnerEmailData = {
-                receiver: studentProjectOwnerEmail,
+            const emailInfo: ContactPitchTeacherEmailData = {
+                receiver: studentProjectTeacherEmail,
                 sender: currentStudent.email,
-                userName: `${(currentStudent as Student).firstName} ${(currentStudent as Student).lastName}`,
+                studentName: `${(currentStudent as Student).firstName} ${(currentStudent as Student).lastName}`,
                 studentProjectName: studentProjectName
             };
 
-            await new EmailRepository().sendEmail({
-                emailType: ClientEmailTypes.ContactPitchOwner,
+            await new StudentEmailRepository().sendEmail({
+                emailType: ClientEmailTypes.ContactPitchTeacher,
                 emailInfo: emailInfo
             });
 

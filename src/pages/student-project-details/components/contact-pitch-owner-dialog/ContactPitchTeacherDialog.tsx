@@ -5,39 +5,39 @@ import {ThunkDispatch} from "redux-thunk";
 import {Box, Button, Dialog, DialogActions, DialogContent, Typography} from "@material-ui/core";
 import {css} from "aphrodite";
 import sharedStyles from "../../../../shared-js-css-styles/SharedStyles";
-import {ContactPitchOwnerDialogState, isSendingContactEmail} from "./ContactPitchTeacherDialogReducer";
+import {ContactPitchTeacherDialogState, isSendingContactEmail} from "./ContactPitchTeacherDialogReducer";
 import {AnyAction} from "redux";
-import {sendContactEmail, toggleContactPitchOwnerDialog} from "./ContactPitchTeacherDialogActions";
+import {sendContactEmail, toggleContactPitchTeacherDialog} from "./ContactPitchTeacherDialogActions";
 
-interface ContactPitchOwnerDialogProps {
-    ContactPitchOwnerDialogLocalState: ContactPitchOwnerDialogState;
+interface ContactPitchTeacherDialogProps {
+    ContactPitchTeacherDialogLocalState: ContactPitchTeacherDialogState;
     toggleContactDialog: () => any;
     sendContactEmail: () => any;
 }
 
 const mapStateToProps = (state: AppState) => {
     return {
-        ContactPitchOwnerDialogLocalState: state.ContactPitchOwnerDialogLocalState
+        ContactPitchTeacherDialogLocalState: state.ContactPitchTeacherDialogLocalState
     }
 }
 
 const mapDispatchToProps = (dispatch: ThunkDispatch<any, any, AnyAction>) => {
     return {
-        toggleContactDialog: () => dispatch(toggleContactPitchOwnerDialog()),
+        toggleContactDialog: () => dispatch(toggleContactPitchTeacherDialog()),
         sendContactEmail: () => dispatch(sendContactEmail())
     }
 }
 
-class ContactPitchOwnerDialog extends Component<ContactPitchOwnerDialogProps, any> {
+class ContactPitchTeacherDialog extends Component<ContactPitchTeacherDialogProps, any> {
     render() {
         const {
-            ContactPitchOwnerDialogLocalState,
+            ContactPitchTeacherDialogLocalState,
             toggleContactDialog,
             sendContactEmail
         } = this.props;
 
         return <Dialog
-            open={ContactPitchOwnerDialogLocalState.contactDialogOpen}
+            open={ContactPitchTeacherDialogLocalState.contactDialogOpen}
             onClose={() => toggleContactDialog()}
         >
             <DialogContent>
@@ -49,17 +49,17 @@ class ContactPitchOwnerDialog extends Component<ContactPitchOwnerDialogProps, an
             </DialogContent>
             <DialogActions>
                 {
-                    isSendingContactEmail(ContactPitchOwnerDialogLocalState)
+                    isSendingContactEmail(ContactPitchTeacherDialogLocalState)
                         ? null
                         : <Button
                             onClick={() => toggleContactDialog()}
                             className={css(sharedStyles.no_text_transform)}
                         >Cancel</Button>
                 }
-                <Button color="primary" variant="contained" className={css(sharedStyles.no_text_transform)} disabled={isSendingContactEmail(ContactPitchOwnerDialogLocalState)} onClick={() => sendContactEmail()}>
+                <Button color="primary" variant="contained" className={css(sharedStyles.no_text_transform)} disabled={isSendingContactEmail(ContactPitchTeacherDialogLocalState)} onClick={() => sendContactEmail()}>
                     {
-                        isSendingContactEmail(ContactPitchOwnerDialogLocalState)
-                            ? `Sending email to ${ContactPitchOwnerDialogLocalState.projectOwnerEmail} ...`
+                        isSendingContactEmail(ContactPitchTeacherDialogLocalState)
+                            ? `Sending email to ${ContactPitchTeacherDialogLocalState.studentProjectTeacherEmail} ...`
                             : "Yes"
                     }
                 </Button>
@@ -68,4 +68,4 @@ class ContactPitchOwnerDialog extends Component<ContactPitchOwnerDialogProps, an
     }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(ContactPitchOwnerDialog);
+export default connect(mapStateToProps, mapDispatchToProps)(ContactPitchTeacherDialog);

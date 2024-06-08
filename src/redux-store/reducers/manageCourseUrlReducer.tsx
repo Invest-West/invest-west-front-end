@@ -69,7 +69,7 @@ const manageCourseUrlReducer = (state: ManageCourseUrlState = initialState, acti
             return {
                 ...state,
                 routePath: setCourseUrlAction.path,
-                courseNameFromUrl: setCourseUrlAction.courseStudent
+                courseNameFromUrl: setCourseUrlAction.courseStudentName
             }
         case ManageCourseUrlEvents.ValidatingCourseUrl:
             return {

@@ -106,7 +106,7 @@ export const setStudent: ActionCreator<any> = (student?: Student | Teacher) => {
                     }
                 }
                 dispatch(action);
-                return dispatch(fetchOffers());
+                return dispatch(fetchStudentOffers());
             } catch (error) {
                 action.error = error.toString();
                 return dispatch(action);
@@ -115,7 +115,7 @@ export const setStudent: ActionCreator<any> = (student?: Student | Teacher) => {
     }
 }
 
-export const fetchOffers: ActionCreator<any> = () => {
+export const fetchStudentOffers: ActionCreator<any> = () => {
     return async (dispatch: Dispatch, getState: () => AppState) => {
         const {
             tableStudent,
@@ -133,7 +133,7 @@ export const fetchOffers: ActionCreator<any> = () => {
 
         const currentTeacher: Teacher | null = isProf(currentStudent);
 
-        const fetchOffersOptions: FetchStudentProjectsOptions = {
+        const fetchStudentOffersOptions: FetchStudentProjectsOptions = {
             visibility: visibilityFilter,
             course: courseFilter,
             phase: phaseFilter
@@ -169,15 +169,15 @@ export const fetchOffers: ActionCreator<any> = () => {
 
         if (shouldFetchOffers) {
             if (isTeacher(tableStudent)) {
-                fetchOffersOptions.issuer = tableStudent.id;
-                fetchOffersOptions.orderBy = FetchStudentProjectsOrderByOptions.Teacher;
+                fetchStudentOffersOptions.issuer = tableStudent.id;
+                fetchStudentOffersOptions.orderBy = FetchStudentProjectsOrderByOptions.Teacher;
             } else if (isStudent(tableStudent)) {
-                fetchOffersOptions.investor = tableStudent.id;
-                fetchOffersOptions.orderBy = FetchStudentProjectsOrderByOptions.Student;
+                fetchStudentOffersOptions.investor = tableStudent.id;
+                fetchStudentOffersOptions.orderBy = FetchStudentProjectsOrderByOptions.Student;
             } else if (currentTeacher) {
                 if (!currentTeacher.superTeacher) {
-                    fetchOffersOptions.course = currentTeacher.anid;
-                    fetchOffersOptions.orderBy = FetchStudentProjectsOrderByOptions.Course;
+                    fetchStudentOffersOptions.course = currentTeacher.anid;
+                    fetchStudentOffersOptions.orderBy = FetchStudentProjectsOrderByOptions.Course;
                 }
             } else {
                 completeAction.error = "Invalid student reference.";
@@ -193,7 +193,7 @@ export const fetchOffers: ActionCreator<any> = () => {
         });
 
         try {
-            const response = await new StudentOfferRepository().fetchOffers(fetchOffersOptions);
+            const response = await new StudentOfferRepository().fetchStudentOffers(fetchStudentOffersOptions);
             completeAction.offerInstances = response.data;
             dispatch(completeAction);
             return dispatch(filterOffersByName());
@@ -216,7 +216,7 @@ export const filterChanged: ActionCreator<any> = (event: any) => {
         }
         dispatch(action);
         if (name !== "nameFilter") {
-            dispatch(fetchOffers());
+            dispatch(fetchStudentOffers());
         }
     }
 }

@@ -9,6 +9,14 @@ export const setUserID = userID => {
     }
 };
 
+export const LEGAL_DOCUMENTS_SET_STUDENT = 'LEGAL_DOCUMENTS_SET_STUDENT';
+export const setStudentID = userID => {
+    return {
+        type: LEGAL_DOCUMENTS_SET_STUDENT,
+        userID
+    }
+};
+
 export const LOADING_LEGAL_DOCUMENTS = 'LOADING_LEGAL_DOCUMENTS';
 export const FINISHED_LOADING_LEGAL_DOCUMENTS = 'FINISHED_LOADING_LEGAL_DOCUMENTS';
 export const getLegalDocuments = () => {

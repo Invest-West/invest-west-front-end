@@ -25,7 +25,7 @@ import * as ROUTES from "../../router/routes";
 import Routes from "../../router/routes";
 import * as utils from "../../utils/utils";
 import sharedStyles from "../../shared-js-css-styles/SharedStyles";
-import {studentSignOut} from "../../redux-store/actions/authenticationActions";
+import {studentSignOut} from "../../redux-store/actions/studentAuthenticationActions";
 import {School} from "@material-ui/icons";
 
 export const HOME_TAB = "Home";

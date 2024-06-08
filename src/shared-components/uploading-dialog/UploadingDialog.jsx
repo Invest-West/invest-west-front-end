@@ -14,7 +14,7 @@ import * as uploadingStatusActions from '../../redux-store/actions/uploadingStat
 
 // Upload states
 export const UPLOAD_NONE = 0;
-export const UPLOAD_LOGO_FIRST_TIME_MODE = 1; // upload logo first time together with business profile information
+export const UPLOAD_LOGO_FIRST_TIME_MODE = 1; // upload logo first time together with uni profile information
 export const UPLOAD_LOGO_MODE = 2; // upload logo separately later times
 export const UPLOAD_PROFILE_PICTURE_MODE = 3;
 export const UPLOAD_VIDEO_FIRST_TIME_MODE = 4;
@@ -26,6 +26,7 @@ export const UPLOAD_PITCH_PRESENTATION_DOCUMENT_MODE = 9;
 export const UPLOAD_PITCH_SUPPORTING_DOCUMENTS_MODE = 10;
 export const UPLOAD_DONE_MODE = 11;
 export const UPLOAD_ERROR = 12;
+export const UPLOAD_UNI_PROFILE_GENERAL_INFORMATION = 13;
 //--------------------------------------------------------------------
 
 const mapStateToProps = state => {
@@ -84,7 +85,7 @@ class UploadingDialog extends Component {
                                                     (
                                                         mode === UPLOAD_BUSINESS_PROFILE_GENERAL_INFORMATION
                                                             ?
-                                                            "Uploading business profile"
+                                                            "Uploading uni profile"
                                                             :
                                                             (
                                                                 mode === UPLOAD_ERROR

@@ -1,7 +1,7 @@
 import React, {Component} from "react";
 import {connect} from "react-redux";
 import {AppState} from "../../redux-store/reducers";
-import {AuthenticationState} from "../../redux-store/reducers/authenticationReducer";
+import {StudentAuthenticationState} from "../../redux-store/reducers/authenticationReducer";
 import {
     calculatePaginationIndices,
     calculatePaginationPages,
@@ -37,14 +37,14 @@ import {
 } from "./ExploreCoursesActions";
 import {BeatLoader} from "react-spinners";
 import CourseItem from "./CourseItem";
-import {isTeacher} from "../../models/teacher";
+import {isProf} from "../../models/teacher";
 import {MediaQueryState} from "../../redux-store/reducers/mediaQueryReducer";
 import {Pagination} from "@material-ui/lab";
 
 interface ExploreCoursesProps {
     MediaQueryState: MediaQueryState;
     ManageCourseUrlState: ManageCourseUrlState;
-    AuthenticationState: AuthenticationState;
+    StudentAuthenticationState: StudentAuthenticationState;
     ExploreCoursesLocalState: ExploreCoursesState;
     fetchCourses: () => any;
     filterChanged: (event: any) => any;
@@ -57,7 +57,7 @@ const mapStateToProps = (state: AppState) => {
     return {
         MediaQueryState: state.MediaQueryState,
         ManageCourseUrlState: state.ManageCourseUrlState,
-        AuthenticationState: state.AuthenticationState,
+        StudentAuthenticationState: state.StudentAuthenticationState,
         ExploreCoursesLocalState: state.ExploreCoursesLocalState
     }
 }
@@ -84,7 +84,7 @@ class ExploreCourses extends Component<ExploreCoursesProps, any> {
         const {
             MediaQueryState,
             ManageCourseUrlState,
-            AuthenticationState,
+            StudentAuthenticationState,
             ExploreCoursesLocalState,
             fetchCourses,
             filterChanged,
@@ -93,7 +93,7 @@ class ExploreCourses extends Component<ExploreCoursesProps, any> {
             paginationChanged
         } = this.props;
 
-        if (!AuthenticationState.currentStudent) {
+        if (!StudentAuthenticationState.currentStudent) {
             return null;
         }
 
@@ -152,7 +152,7 @@ class ExploreCourses extends Component<ExploreCoursesProps, any> {
 
             {/** Filters (only available for teacher and investor) */}
             {
-                isTeacher(AuthenticationState.currentStudent)
+                isProf(StudentAuthenticationState.currentStudent)
                     ? null
                     : <Row noGutters >
                         <Col xs={8} sm={8} md={3} lg={2} >

@@ -2,9 +2,9 @@ import {Action, ActionCreator, Dispatch} from "redux";
 import CourseProperties from "../../models/course_properties";
 import {AppState} from "../../redux-store/reducers";
 import CourseRepository from "../../api/repositories/CourseRepository";
-import AccessRequest, {AccessRequestInstance} from "../../models/access_request";
-import AccessRequestRepository from "../../api/repositories/AccessRequestRepository";
-import Teacher, {isTeacher} from "../../models/teacher";
+import AccessStudentRequest, {AccessStudentRequestInstance} from "../../models/access_request";
+import AccessStudentRequestRepository from "../../api/repositories/AccessStudentRequestRepository";
+import Teacher, {isProf} from "../../models/teacher";
 import React from "react";
 
 export enum ExploreCoursesEvents {
@@ -27,7 +27,7 @@ export interface ExploreCoursesAction extends Action {
 
 export interface CompleteFetchingCoursesAction extends ExploreCoursesAction {
     courses: CourseProperties[];
-    accessRequestInstances?: AccessRequestInstance[];
+    accessStudentRequestInstances?: AccessStudentRequestInstance[];
     error?: string;
 }
 
@@ -50,7 +50,7 @@ export interface SendingAccessRequestAction extends ExploreCoursesAction {
 
 export interface CompleteSendingAccessRequestAction extends ExploreCoursesAction {
     error?: string;
-    updatedAccessRequestInstances?: AccessRequestInstance[]
+    updatedAccessStudentRequestInstances?: AccessStudentRequestInstance[]
 }
 
 export interface RemovingAccessRequestAction extends ExploreCoursesAction {
@@ -59,13 +59,13 @@ export interface RemovingAccessRequestAction extends ExploreCoursesAction {
 
 export interface CompleteRemovingAccessRequestAction extends ExploreCoursesAction {
     error?: string;
-    updatedAccessRequestInstances?: AccessRequestInstance[]
+    updatedAccessStudentRequestInstances?: AccessStudentRequestInstance[]
 }
 
 export const fetchCourses: ActionCreator<any> = () => {
     return async (dispatch: Dispatch, getState: () => AppState) => {
         const {
-            accessRequestsInstances,
+            accessStudentRequestsInstances,
             nameFilter
         } = getState().ExploreCoursesLocalState;
 
@@ -73,7 +73,7 @@ export const fetchCourses: ActionCreator<any> = () => {
             type: ExploreCoursesEvents.FetchingCourses
         });
 
-        const currentStudent = getState().AuthenticationState.currentStudent;
+        const currentStudent = getState().StudentAuthenticationState.currentStudent;
 
         const completeAction: CompleteFetchingCoursesAction = {
             type: ExploreCoursesEvents.CompleteFetchingCourses,
@@ -91,16 +91,16 @@ export const fetchCourses: ActionCreator<any> = () => {
             );
             completeAction.courses = coursesResponse.data;
 
-            const teacher: Teacher | null = isTeacher(currentStudent);
+            const teacher: Teacher | null = isProf(currentStudent);
             if (!teacher || (teacher && !teacher.superTeacher)) {
                 // student is an issuer, investor, or course teacher
                 // and access requests have not been fetched
-                if (!accessRequestsInstances) {
-                    const accessRequestInstancesResponse = await new AccessRequestRepository().fetchAccessRequests({
+                if (!accessStudentRequestsInstances) {
+                    const accessStudentRequestInstancesResponse = await new AccessStudentRequestRepository().fetchStudentAccessRequests({
                         student: currentStudent.id,
                         orderBy: "student"
                     });
-                    completeAction.accessRequestInstances = accessRequestInstancesResponse.data;
+                    completeAction.accessStudentRequestInstances = accessStudentRequestInstancesResponse.data;
                 }
             }
             dispatch(completeAction);
@@ -153,12 +153,12 @@ const filterCoursesByCourseFilter: ActionCreator<any> = () => {
     return async (dispatch: Dispatch, getState: () => AppState) => {
         const {
             courseFilter,
-            accessRequestsInstances,
+            accessStudentRequestsInstances,
             courses
         } = getState().ExploreCoursesLocalState;
 
-        const AuthenticationState = getState().AuthenticationState;
-        const currentStudent = AuthenticationState.currentStudent;
+        const StudentAuthenticationState = getState().StudentAuthenticationState;
+        const currentStudent = StudentAuthenticationState.currentStudent;
 
         if (!currentStudent) {
             return;
@@ -170,25 +170,25 @@ const filterCoursesByCourseFilter: ActionCreator<any> = () => {
             let satisfiedFilter = false;
             switch (courseFilter) {
                 case "all":
-                    const teacher: Teacher | null = isTeacher(currentStudent);
+                    const teacher: Teacher | null = isProf(currentStudent);
                     if (teacher && teacher.superTeacher) {
                         satisfiedFilter = true;
                     } else {
-                        satisfiedFilter = AuthenticationState.coursesOfMembership.findIndex(
+                        satisfiedFilter = StudentAuthenticationState.coursesOfMembership.findIndex(
                             courseOfMembership => courseOfMembership.course.anid === course.anid) === -1
-                            && accessRequestsInstances !== undefined
-                            && accessRequestsInstances.findIndex(
-                                accessRequestInstance => accessRequestInstance.course.anid === course.anid) === -1;
+                            && accessStudentRequestsInstances !== undefined
+                            && accessStudentRequestsInstances.findIndex(
+                                accessStudentRequestInstance => accessStudentRequestInstance.course.anid === course.anid) === -1;
                     }
                     break;
                 case "coursesOfMembership":
-                    satisfiedFilter = AuthenticationState.coursesOfMembership.findIndex(
+                    satisfiedFilter = StudentAuthenticationState.coursesOfMembership.findIndex(
                         courseOfMembership => courseOfMembership.course.anid === course.anid) !== -1;
                     break;
                 case "coursesOfPendingRequest":
-                    satisfiedFilter = accessRequestsInstances !== undefined
-                        && accessRequestsInstances.findIndex(
-                            accessRequestInstance => accessRequestInstance.course.anid === course.anid) !== -1;
+                    satisfiedFilter = accessStudentRequestsInstances !== undefined
+                        && accessStudentRequestsInstances.findIndex(
+                            accessStudentRequestInstance => accessStudentRequestInstance.course.anid === course.anid) !== -1;
                     break;
                 default:
                     break;
@@ -217,9 +217,9 @@ export const paginationChanged: ActionCreator<any> = (event: React.ChangeEvent<u
     }
 }
 
-export const sendAccessRequest: ActionCreator<any> = (courseID: string) => {
+export const sendStudentAccessRequest: ActionCreator<any> = (courseID: string) => {
     return async (dispatch: Dispatch, getState: () => AppState) => {
-        const currentStudent = getState().AuthenticationState.currentStudent;
+        const currentStudent = getState().StudentAuthenticationState.currentStudent;
         if (!currentStudent) {
             return;
         }
@@ -235,16 +235,16 @@ export const sendAccessRequest: ActionCreator<any> = (courseID: string) => {
         };
 
         try {
-            const response = await new AccessRequestRepository().createAccessRequest(currentStudent.id, courseID);
-            const accessRequestInstance: AccessRequestInstance = response.data;
-            const currentAccessRequestInstances: AccessRequestInstance[] | undefined = getState().ExploreCoursesLocalState.accessRequestsInstances;
-            if (currentAccessRequestInstances !== undefined) {
-                completeAction.updatedAccessRequestInstances = [
-                    ...currentAccessRequestInstances,
-                    accessRequestInstance
+            const response = await new AccessStudentRequestRepository().createStudentAccessRequest(currentStudent.id, courseID);
+            const accessStudentRequestInstance: AccessStudentRequestInstance = response.data;
+            const currentAccessStudentRequestInstances: AccessStudentRequestInstance[] | undefined = getState().ExploreCoursesLocalState.accessStudentRequestsInstances;
+            if (currentAccessStudentRequestInstances !== undefined) {
+                completeAction.updatedAccessStudentRequestInstances = [
+                    ...currentAccessStudentRequestInstances,
+                    accessStudentRequestInstance
                 ];
             } else {
-                completeAction.updatedAccessRequestInstances = [accessRequestInstance];
+                completeAction.updatedAccessStudentRequestInstances = [accessStudentRequestInstance];
             }
             dispatch(completeAction);
             return dispatch(filterCoursesByCourseFilter());
@@ -255,9 +255,9 @@ export const sendAccessRequest: ActionCreator<any> = (courseID: string) => {
     }
 }
 
-export const removeAccessRequest: ActionCreator<any> = (courseID: string) => {
+export const removeStudentAccessRequest: ActionCreator<any> = (courseID: string) => {
     return async (dispatch: Dispatch, getState: () => AppState) => {
-        const currentStudent = getState().AuthenticationState.currentStudent;
+        const currentStudent = getState().StudentAuthenticationState.currentStudent;
         if (!currentStudent) {
             return;
         }
@@ -273,21 +273,21 @@ export const removeAccessRequest: ActionCreator<any> = (courseID: string) => {
         };
 
         try {
-            const currentAccessRequestInstances: AccessRequestInstance[] | undefined = getState().ExploreCoursesLocalState.accessRequestsInstances;
-            if (!currentAccessRequestInstances) {
+            const currentAccessStudentRequestInstances: AccessStudentRequestInstance[] | undefined = getState().ExploreCoursesLocalState.accessStudentRequestsInstances;
+            if (!currentAccessStudentRequestInstances) {
                 return dispatch(completeAction);
             }
-            const accessRequestIndex = currentAccessRequestInstances.findIndex(
-                accessRequestInstance => accessRequestInstance.course.anid === courseID && accessRequestInstance.student.id === currentStudent.id);
+            const accessRequestIndex = currentAccessStudentRequestInstances.findIndex(
+                accessStudentRequestInstance => accessStudentRequestInstance.course.anid === courseID && accessStudentRequestInstance.student.id === currentStudent.id);
             if (accessRequestIndex === -1) {
                 return dispatch(completeAction);
             }
-            let updatedAccessRequestInstances: AccessRequestInstance[] = [...currentAccessRequestInstances];
-            const accessRequest: AccessRequest = updatedAccessRequestInstances[accessRequestIndex].request;
-            await new AccessRequestRepository().removeAccessRequest(accessRequest.id);
-            updatedAccessRequestInstances.splice(accessRequestIndex, 1);
+            let updatedAccessStudentRequestInstances: AccessStudentRequestInstance[] = [...currentAccessStudentRequestInstances];
+            const accessRequest: AccessStudentRequest = updatedAccessStudentRequestInstances[accessRequestIndex].request;
+            await new AccessStudentRequestRepository().removeStudentAccessRequest(accessRequest.id);
+            updatedAccessStudentRequestInstances.splice(accessRequestIndex, 1);
 
-            completeAction.updatedAccessRequestInstances = updatedAccessRequestInstances;
+            completeAction.updatedAccessStudentRequestInstances = updatedAccessStudentRequestInstances;
             dispatch(completeAction);
             return dispatch(filterCoursesByCourseFilter());
         } catch (error) {

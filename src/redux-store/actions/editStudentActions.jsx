@@ -27,20 +27,20 @@ export const setOriginalStudentAndEditedStudent = student => {
             return;
         }
 
-        if (student.hasOwnProperty('groupsStudentIsIn')
-            && currentStudent.type === DB_CONST.TYPE_ADMIN
+        if (student.hasOwnProperty('coursesStudentIsIn')
+            && currentStudent.type === DB_CONST.TYPE_PROF
             && !currentStudent.superAdmin
         ) {
-            let studentHomeGroup = utils.getStudentHomeGroup(student.groupsStudentIsIn);
-            // studentHomeGroup is null --> failed to find student's home group
-            // do not let any group admins to edit this student's profile
-            if (!studentHomeGroup) {
+            let studentHomeCourse = utils.getStudentHomeCourse(student.coursesStudentIsIn);
+            // studentHomeCourse is null --> failed to find student's home course
+            // do not let any course admins to edit this student's profile
+            if (!studentHomeCourse) {
                 allowEditing = false;
             }
-            // studentHomeGroup is not null
+            // studentHomeCourse is not null
             else {
-                // this current group admin does not belong to the studentHomeGroup
-                if (currentStudent.anid !== studentHomeGroup.anid) {
+                // this current course admin does not belong to the studentHomeCourse
+                if (currentStudent.anid !== studentHomeCourse.anid) {
                     allowEditing = false;
                 }
             }
@@ -98,7 +98,7 @@ export const deleteDirectorTemporarily = (index, isEditingExistingBusinessProfil
     }
 };
 
-export const RESET_PERSONAL_INFORMATION = 'RESET_PERSONAL_INFORMATION';
+export const RESET_STUDENT_PERSONAL_INFORMATION = 'RESET_STUDENT_PERSONAL_INFORMATION';
 export const RESET_UNI_PROFILE = 'RESET_UNI_PROFILE';
 export const cancelEditingStudent = type => {
     return {
@@ -106,7 +106,7 @@ export const cancelEditingStudent = type => {
     }
 };
 
-export const COMMIT_PERSONAL_INFORMATION_CHANGES = 'COMMIT_PERSONAL_INFORMATION_CHANGES';
+export const COMMIT_STUDENT_PERSONAL_INFORMATION_CHANGES = 'COMMIT_STUDENT_PERSONAL_INFORMATION_CHANGES';
 export const COMMIT_UNI_PROFILE_CHANGES = 'COMMIT_UNI_PROFILE_CHANGES';
 export const commitStudentProfileChanges = type => {
     return (dispatch, getState) => {
@@ -120,7 +120,7 @@ export const commitStudentProfileChanges = type => {
             .ref(DB_CONST.STUDENTS_CHILD)
             .child(studentEdited.id);
 
-        if (type === COMMIT_PERSONAL_INFORMATION_CHANGES) {
+        if (type === COMMIT_STUDENT_PERSONAL_INFORMATION_CHANGES) {
             studentRef
                 .update({
                     title: studentEdited.title,
@@ -138,7 +138,7 @@ export const commitStudentProfileChanges = type => {
                     dispatch({
                         type: feedbackSnackbarActions.SET_FEEDBACK_SNACKBAR_CONTENT,
                         message:
-                            currentStudent.type === DB_CONST.TYPE_ADMIN
+                            currentStudent.type === DB_CONST.TYPE_PROF
                                 ?
                                 // an admin is editing the student's profile
                                 "Student's personal details have been updated."
@@ -163,7 +163,7 @@ export const commitStudentProfileChanges = type => {
                                     realtimeDBUtils.ACTIVITY_SUMMARY_TEMPLATE_UPDATED_PERSONAL_DETAILS
                                     :
                                     // admin is editing student's details
-                                    realtimeDBUtils.ACTIVITY_SUMMARY_TEMPLATE_ADMIN_UPDATED_STUDENT_PERSONAL_DETAILS
+                                    realtimeDBUtils.ACTIVITY_SUMMARY_TEMPLATE_TEACHER_UPDATED_STUDENT_PERSONAL_DETAILS
                                         .replace("%student%", studentEdited.firstName + " " + studentEdited.lastName)
                             ,
                             action:
@@ -173,7 +173,7 @@ export const commitStudentProfileChanges = type => {
                                     null
                                     :
                                     // admin is editing student's details
-                                    ROUTES.STUDENT_PROFILE_INVEST_WEST_SUPER.replace(":studentID", studentEdited.id)
+                                    ROUTES.STUDENT_PROFILE_STUDENT_SUPER.replace(":studentID", studentEdited.id)
                             ,
                             value: {
                                 before: originalStudent,
@@ -185,7 +185,7 @@ export const commitStudentProfileChanges = type => {
                     dispatch({
                         type: feedbackSnackbarActions.SET_FEEDBACK_SNACKBAR_CONTENT,
                         message:
-                            currentStudent.type === DB_CONST.TYPE_ADMIN
+                            currentStudent.type === DB_CONST.TYPE_PROF
                                 ?
                                 // an admin is editing the student's profile
                                 "Error happened. Couldn't update this student's personal details."
@@ -211,7 +211,7 @@ export const commitStudentProfileChanges = type => {
                     dispatch({
                         type: feedbackSnackbarActions.SET_FEEDBACK_SNACKBAR_CONTENT,
                         message:
-                            currentStudent.type === DB_CONST.TYPE_ADMIN
+                            currentStudent.type === DB_CONST.TYPE_PROF
                                 ?
                                 // an admin is editing the student's profile
                                 "Student's business profile has been updated."
@@ -236,7 +236,7 @@ export const commitStudentProfileChanges = type => {
                                     realtimeDBUtils.ACTIVITY_SUMMARY_TEMPLATE_UPDATED_UNI_PROFILE
                                     :
                                     // admin is editing student's details
-                                    realtimeDBUtils.ACTIVITY_SUMMARY_TEMPLATE_ADMIN_UPDATED_STUDENT_UNI_PROFILE
+                                    realtimeDBUtils.ACTIVITY_SUMMARY_TEMPLATE_TEACHER_UPDATED_STUDENT_UNI_PROFILE
                                         .replace("%student%", studentEdited.firstName + " " + studentEdited.lastName)
                             ,
                             action:
@@ -246,7 +246,7 @@ export const commitStudentProfileChanges = type => {
                                     null
                                     :
                                     // admin is editing student's details
-                                    ROUTES.STUDENT_PROFILE_INVEST_WEST_SUPER.replace(":studentID", studentEdited.id)
+                                    ROUTES.STUDENT_PROFILE_STUDENT_SUPER.replace(":studentID", studentEdited.id)
                             ,
                             value: {
                                 before: originalStudent,
@@ -258,7 +258,7 @@ export const commitStudentProfileChanges = type => {
                     dispatch({
                         type: feedbackSnackbarActions.SET_FEEDBACK_SNACKBAR_CONTENT,
                         message:
-                            currentStudent.type === DB_CONST.TYPE_ADMIN
+                            currentStudent.type === DB_CONST.TYPE_PROF
                                 ?
                                 // an admin is editing the student's profile
                                 "Error happened. Couldn't update this student's business profile."
@@ -304,7 +304,7 @@ export const startOriginalStudentChangedListener = () => {
                     let studentChanged = snapshot.val();
 
                     if (studentChanged) {
-                        studentChanged.groupsStudentIsIn = originalStudent.groupsStudentIsIn;
+                        studentChanged.coursesStudentIsIn = originalStudent.coursesStudentIsIn;
 
                         dispatch({
                             type: EDIT_STUDENT_ORIGINAL_STUDENT_CHANGED,

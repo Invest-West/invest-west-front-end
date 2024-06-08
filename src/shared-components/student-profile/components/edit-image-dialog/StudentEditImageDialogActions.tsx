@@ -6,7 +6,7 @@ import {FeedbackSnackbarTypes} from "../../../feedback-snackbar/FeedbackSnackbar
 import {EditImageDialogModes, isDeletingProfilePicture, isSavingProfilePicture} from "../../StudentProfileReducer";
 import StudentRepository from "../../../../api/repositories/StudentRepository";
 import Student from "../../../../models/student";
-import {updateStudentChanges} from "../../../../redux-store/actions/authenticationActions";
+import {updateStudentChanges} from "../../../../redux-store/actions/studentAuthenticationActions";
 import FileRepository from "../../../../api/repositories/FileRepository";
 import {getCurrentDate} from "../../../../utils/utils";
 import {STUDENT_PROFILE_PICTURES_CHILD, STUDENTS_CHILD} from "../../../../firebase/databaseConsts";

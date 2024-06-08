@@ -3,7 +3,7 @@ import {connect} from "react-redux";
 import {ThunkDispatch} from "redux-thunk";
 import {AnyAction} from "redux";
 import {AppState} from "../../../../redux-store/reducers";
-import {ProfileState} from "../../ProfileReducer";
+import {StudentProfileState} from "../../StudentProfileReducer";
 import {handleInputFieldChanged, InputCategories} from "../../StudentProfileActions";
 import {
     Box,
@@ -16,27 +16,27 @@ import {
     TextField,
     Typography
 } from "@material-ui/core";
-import User, {getProfilePicture, UserTitles} from "../../../../models/user";
+import Student, {getStudentProfilePicture, StudentTitles} from "../../../../models/student";
 import LetterAvatar from "../../../avatars/LetterAvatar";
 import {Col, Image, Row} from "react-bootstrap";
-import {AuthenticationState} from "../../../../redux-store/reducers/authenticationReducer";
-import Admin, {isAdmin} from "../../../../models/admin";
+import {StudentAuthenticationState} from "../../../../redux-store/reducers/studentAuthenticationReducer";
+import Teacher, {isProf} from "../../../../models/teacher";
 import {css} from "aphrodite";
 import sharedStyles from "../../../../shared-js-css-styles/SharedStyles";
 import * as utils from "../../../../utils/utils";
 import {toggleDialog} from "../edit-image-dialog/StudentEditImageDialogActions";
 
-interface PersonalDetailsProps {
-    AuthenticationState: AuthenticationState;
-    ProfileLocalState: ProfileState;
+interface StudentPersonalDetailsProps {
+    StudentAuthenticationState: StudentAuthenticationState;
+    StudentProfileLocalState: StudentProfileState;
     handleInputFieldChanged: (inputCategory: InputCategories, event: React.ChangeEvent<HTMLInputElement>) => any;
     toggleUpdateProfilePhotoDialog: (image?: string) => any;
 }
 
 const mapStateToProps = (state: AppState) => {
     return {
-        AuthenticationState: state.AuthenticationState,
-        ProfileLocalState: state.ProfileLocalState
+        StudentAuthenticationState: state.StudentAuthenticationState,
+        StudentProfileLocalState: state.StudentProfileLocalState
     }
 }
 
@@ -47,7 +47,7 @@ const mapDispatchToProps = (dispatch: ThunkDispatch<any, any, AnyAction>) => {
     }
 }
 
-class PersonalDetails extends Component<PersonalDetailsProps, any> {
+class StudentPersonalDetails extends Component<StudentPersonalDetailsProps, any> {
 
     onInputFieldChanged = (inputCategory: InputCategories) => (event: React.ChangeEvent<HTMLInputElement>) => {
         this.props.handleInputFieldChanged(inputCategory, event);
@@ -55,21 +55,21 @@ class PersonalDetails extends Component<PersonalDetailsProps, any> {
 
     render() {
         const {
-            AuthenticationState,
-            ProfileLocalState,
+            StudentAuthenticationState,
+            StudentProfileLocalState,
             toggleUpdateProfilePhotoDialog
         } = this.props;
 
-        const currentUser: User | Admin | null = AuthenticationState.currentUser;
-        if (!currentUser) {
+        const currentStudent: Student | Teacher | null = StudentAuthenticationState.currentStudent;
+        if (!currentStudent) {
             return null;
         }
 
-        const currentAdmin: Admin | null = isAdmin(currentUser);
+        const currentTeacher: Teacher | null = isProf(currentStudent);
 
-        const copiedUser: User | undefined = ProfileLocalState.copiedUser;
+        const copiedStudent: Student | undefined = StudentProfileLocalState.copiedStudent;
 
-        if (!copiedUser) {
+        if (!copiedStudent) {
             return null;
         }
 
@@ -89,17 +89,17 @@ class PersonalDetails extends Component<PersonalDetailsProps, any> {
                         <Box display="flex" flexDirection="column" >
                             {/** Display profile picture */}
                             {
-                                getProfilePicture(copiedUser) === null
-                                    ? <LetterAvatar firstName={copiedUser.firstName} lastName={copiedUser.lastName} width={196} height={196} textVariant="h5" />
-                                    : <Image roundedCircle thumbnail src={getProfilePicture(copiedUser) ?? ""} width={256} height={256} style={{ objectFit: "contain" }} />
+                                getStudentProfilePicture(copiedStudent) === null
+                                    ? <LetterAvatar firstName={copiedStudent.firstName} lastName={copiedStudent.lastName} width={196} height={196} textVariant="h5" />
+                                    : <Image roundedCircle thumbnail src={getStudentProfilePicture(copiedStudent) ?? ""} width={256} height={256} style={{ objectFit: "contain" }} />
                             }
 
-                            {/** Button to update profile picture (not available when current user is an admin) */}
+                            {/** Button to update profile picture (not available when current student is an admin) */}
                             {
-                                currentAdmin
+                                currentTeacher
                                     ? null
                                     : <Box marginY="20px" >
-                                        <Button size="small" className={css(sharedStyles.no_text_transform)} variant="outlined" color="primary" onClick={() => toggleUpdateProfilePhotoDialog(getProfilePicture(copiedUser) ?? undefined)}>Update profile photo</Button>
+                                        <Button size="small" className={css(sharedStyles.no_text_transform)} variant="outlined" color="primary" onClick={() => toggleUpdateProfilePhotoDialog(getStudentProfilePicture(copiedStudent) ?? undefined)}>Update profile photo</Button>
                                     </Box>
                             }
                         </Box>
@@ -113,16 +113,16 @@ class PersonalDetails extends Component<PersonalDetailsProps, any> {
                                 <FormLabel> <b>Title</b> </FormLabel>
                                 <Select
                                     name="title"
-                                    value={copiedUser.title}
+                                    value={copiedStudent.title}
                                     defaultValue="-1"
                                     // @ts-ignore
-                                    onChange={this.onInputFieldChanged(InputCategories.PersonalDetails)}
+                                    onChange={this.onInputFieldChanged(InputCategories.StudentPersonalDetails)}
                                     input={ <OutlinedInput/> }
                                     margin="dense"
                                 >
                                     <MenuItem key="-1" value="-1">Please select</MenuItem>
                                     {
-                                        UserTitles.map(title => (
+                                        StudentTitles.map(title => (
                                             <MenuItem key={title} value={title}>{title}</MenuItem>
                                         ))
                                     }
@@ -134,7 +134,7 @@ class PersonalDetails extends Component<PersonalDetailsProps, any> {
                             {/** First name */}
                             <FormControl fullWidth>
                                 <FormLabel><b>First name</b></FormLabel>
-                                <TextField name="firstName" placeholder="Enter first name" value={copiedUser.firstName} margin="dense" variant="outlined" onChange={this.onInputFieldChanged(InputCategories.PersonalDetails)} error={copiedUser.firstName.trim().length === 0} />
+                                <TextField name="firstName" placeholder="Enter first name" value={copiedStudent.firstName} margin="dense" variant="outlined" onChange={this.onInputFieldChanged(InputCategories.StudentPersonalDetails)} error={copiedStudent.firstName.trim().length === 0} />
                             </FormControl>
 
                             <Box height="22px"/>
@@ -142,21 +142,21 @@ class PersonalDetails extends Component<PersonalDetailsProps, any> {
                             {/** Last name */}
                             <FormControl fullWidth>
                                 <FormLabel><b>Last name</b></FormLabel>
-                                <TextField name="lastName" placeholder="Enter last name" value={copiedUser.lastName} margin="dense" variant="outlined" onChange={this.onInputFieldChanged(InputCategories.PersonalDetails)} error={copiedUser.lastName.trim().length === 0}/>
+                                <TextField name="lastName" placeholder="Enter last name" value={copiedStudent.lastName} margin="dense" variant="outlined" onChange={this.onInputFieldChanged(InputCategories.StudentPersonalDetails)} error={copiedStudent.lastName.trim().length === 0}/>
                             </FormControl>
                             <Box height="22px"/>
 
                             {/** Email */}
                             <FormControl fullWidth>
                                 <FormLabel><b>Email</b></FormLabel>
-                                <TextField name="email" placeholder="Enter email" value={copiedUser.email} margin="dense" variant="outlined" onChange={this.onInputFieldChanged(InputCategories.PersonalDetails)} disabled={true} error={copiedUser.email.trim().length === 0} />
+                                <TextField name="email" placeholder="Enter email" value={copiedStudent.email} margin="dense" variant="outlined" onChange={this.onInputFieldChanged(InputCategories.StudentPersonalDetails)} disabled={true} error={copiedStudent.email.trim().length === 0} />
                             </FormControl>
                             <Box height="22px"/>
 
                             {/** LinkedIn */}
                             <FormControl fullWidth>
                                 <FormLabel><b>LinkedIn</b></FormLabel>
-                                <TextField name="linkedin" placeholder="Enter your LinkedIn profile" value={copiedUser.linkedin ?? ""} margin="dense" variant="outlined" onChange={this.onInputFieldChanged(InputCategories.PersonalDetails)} error={!utils.isValidLinkedInURL(copiedUser.linkedin)}/>
+                                <TextField name="linkedin" placeholder="Enter your LinkedIn profile" value={copiedStudent.linkedin ?? ""} margin="dense" variant="outlined" onChange={this.onInputFieldChanged(InputCategories.StudentPersonalDetails)} error={!utils.isValidLinkedInURL(copiedStudent.linkedin)}/>
                             </FormControl>
                         </Box>
                     </Col>
@@ -166,4 +166,4 @@ class PersonalDetails extends Component<PersonalDetailsProps, any> {
     }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(PersonalDetails);
+export default connect(mapStateToProps, mapDispatchToProps)(StudentPersonalDetails);

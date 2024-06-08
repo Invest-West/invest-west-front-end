@@ -11,6 +11,10 @@ export class ApiRoutes {
     static retrieveSystemAttributesRoute = ApiRoutes.systemAttributesBaseRoute + "/retrieve";
     static updateSystemAttributesRoute = ApiRoutes.systemAttributesBaseRoute + "/update";
 
+    static systemStudentAttributesBaseRoute = "/system-attributes";
+    static retrieveStudentSystemAttributesRoute = ApiRoutes.systemAttributesBaseRoute + "/retrieve";
+    static updateStudentSystemAttributesRoute = ApiRoutes.systemAttributesBaseRoute + "/update";
+
     static authBaseRoute = "/auth";
     static requestResetPasswordRoute = ApiRoutes.authBaseRoute + "/request-reset-password";
     static verifyAuthRoute = ApiRoutes.authBaseRoute + "/verify";

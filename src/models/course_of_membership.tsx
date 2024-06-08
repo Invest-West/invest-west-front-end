@@ -4,7 +4,7 @@ export default interface CourseOfMembership {
     course: CourseProperties;
     joinedDate: number;
     isHomeCourse: boolean;
-    userInCourseStatus: number;
+    studentInCourseStatus: number;
 }
 
 export const getHomeCourse = (courses: CourseOfMembership[]): CourseOfMembership | null => {

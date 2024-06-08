@@ -21,7 +21,7 @@ import {
 import Address from "../../models/address";
 
 // State for Personal details section
-export interface PersonalDetailsState {
+export interface StudentPersonalDetailsState {
 
 }
 
@@ -76,13 +76,13 @@ export interface EditImageDialogState {
 export interface StudentProfileState {
     copiedStudent?: Student;
     hasInitiallySetCopiedStudent: boolean;
-    PersonalDetailsState: PersonalDetailsState;
+    StudentPersonalDetailsState: StudentPersonalDetailsState;
     UniProfileState: UniProfileState;
     EditImageDialogState: EditImageDialogState;
 }
 
 // initial state for Personal details section
-const initialPersonalDetailsState: PersonalDetailsState = {}
+const initialStudentPersonalDetailsState: StudentPersonalDetailsState = {}
 
 // initial state for Uni profile section
 const initialUniProfileState: UniProfileState = {
@@ -118,7 +118,7 @@ const initialEditImageDialogState: EditImageDialogState = {
 // initial state for the whole Profile page
 const initialState: StudentProfileState = {
     hasInitiallySetCopiedStudent: false,
-    PersonalDetailsState: initialPersonalDetailsState,
+    StudentPersonalDetailsState: initialStudentPersonalDetailsState,
     UniProfileState: initialUniProfileState,
     EditImageDialogState: initialEditImageDialogState
 }

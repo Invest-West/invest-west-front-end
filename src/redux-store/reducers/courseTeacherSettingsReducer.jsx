@@ -60,7 +60,7 @@ const courseTeacherSettingsReducer = (state = initState, action) => {
                     [action.name]: action.value
                 };
             }
-        case manageANIDFromParamsActions.ANGEL_NETWORK_PROPERTIES_CHANGED:
+        case manageANIDFromParamsActions.STUDENT_NETWORK_PROPERTIES_CHANGED:
             if (action.key === 'settings') {
                 return {
                     ...state,

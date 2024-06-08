@@ -6,7 +6,7 @@ const initState = {
 
     courseProperties: null,
     coursePropertiesLoaded: false,
-    angelNetworkBeingLoaded: false,
+    studentNetworkBeingLoaded: false,
 
     expectedPath: null,
     currentPath: null,
@@ -21,7 +21,7 @@ const manageCourseFromParamsReducer = (state = initState, action) => {
                 courseStudent: action.courseStudent,
                 courseProperties: null,
                 coursePropertiesLoaded: false,
-                angelNetworkBeingLoaded: false
+                studentNetworkBeingLoaded: false
             };
         case manageANIDFromParamsActions.SET_EXPECTED_AND_CURRENT_PATHS_FOR_CHECKING:
             return {
@@ -29,23 +29,23 @@ const manageCourseFromParamsReducer = (state = initState, action) => {
                 expectedPath: action.expectedPath,
                 currentPath: action.currentPath
             };
-        case manageANIDFromParamsActions.LOADING_ANGEL_NETWORK:
+        case manageANIDFromParamsActions.LOADING_STUDENT_NETWORK:
             return {
                 ...state,
                 courseProperties: null,
                 coursePropertiesLoaded: false,
-                angelNetworkBeingLoaded: true,
+                studentNetworkBeingLoaded: true,
                 shouldLoadOtherData: false
             };
-        case manageANIDFromParamsActions.ANGEL_NETWORK_LOADED:
+        case manageANIDFromParamsActions.STUDENT_NETWORK_LOADED:
             return {
                 ...state,
-                courseProperties: JSON.parse(JSON.stringify(action.angelNetwork)),
+                courseProperties: JSON.parse(JSON.stringify(action.studentNetwork)),
                 coursePropertiesLoaded: true,
-                angelNetworkBeingLoaded: false,
+                studentNetworkBeingLoaded: false,
                 shouldLoadOtherData: action.shouldLoadOtherData
             };
-        case manageANIDFromParamsActions.ANGEL_NETWORK_PROPERTIES_CHANGED:
+        case manageANIDFromParamsActions.STUDENT_NETWORK_PROPERTIES_CHANGED:
             return {
                 ...state,
                 courseProperties: {

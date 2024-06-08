@@ -39,7 +39,7 @@ import * as colors from '../../../values/colors';
 import sharedStyles, {StyledTableCell} from '../../../shared-js-css-styles/SharedStyles';
 
 import {connect} from 'react-redux';
-import * as courseTeachersTableActions from '../../../redux-store/actions/courseTeachersTableActions';
+import * as courseTeachersTableActions from '../../../redux-store/actions/courseTeacherTableActions';
 
 export const ADD_NEW_COURSE_TEACHER_STATUS_NONE = 0;
 export const ADD_NEW_COURSE_TEACHER_STATUS_MISSING_EMAIL = 1;
@@ -49,10 +49,10 @@ export const ADD_NEW_COURSE_TEACHER_STATUS_SUCCESS = 4;
 
 const mapStateToProps = state => {
     return {
-        courseUserName: state.manageCourseFromParams.courseUserName,
+        courseStudentName: state.manageCourseFromParams.courseStudentName,
         courseProperties: state.manageCourseFromParams.courseProperties,
         shouldLoadOtherData: state.manageCourseFromParams.shouldLoadOtherData,
-        currentUser: state.auth.user,
+        currentStudent: state.auth.student,
         tableCourse: state.manageCourseTeachersTable.tableCourse,
         courseTeachers: state.manageCourseTeachersTable.courseTeachers,
         courseTeachersLoaded: state.manageCourseTeachersTable.courseTeachersLoaded,
@@ -148,7 +148,7 @@ class CourseTeachersTable extends Component {
     render() {
         const {
             courseProperties,
-            currentUser,
+            currentStudent,
             tableCourse,
             page,
             rowsPerPage,
@@ -208,9 +208,9 @@ class CourseTeachersTable extends Component {
                                 <StyledTableCell colSpan={2} cellColor={colors.blue_gray_50} component={
                                         <FlexView hAlignContent="right" vAlignContent="center">
                                             {
-                                                currentUser.superCourseTeacher
+                                                currentStudent.superCourseTeacher
                                                 && tableCourse !== null
-                                                && currentUser.anid === tableCourse.anid
+                                                && currentStudent.anid === tableCourse.anid
                                                     ?
                                                     <Button variant="outlined" color="primary" className={css(sharedStyles.no_text_transform)} onClick={toggleAddNewCourseTeacherDialog} style={{ marginRight: 8}}>Add new course teacher</Button>
                                                     :
