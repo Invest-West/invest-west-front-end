@@ -1,8 +1,8 @@
 {
   "files": {
     "main.css": "https://demo.investwest.online/static/css/main.6e8d5085.chunk.css",
-    "main.js": "https://demo.investwest.online/static/js/main.7412b4fc.chunk.js",
-    "main.js.map": "https://demo.investwest.online/static/js/main.7412b4fc.chunk.js.map",
+    "main.js": "https://demo.investwest.online/static/js/main.d510e201.chunk.js",
+    "main.js.map": "https://demo.investwest.online/static/js/main.d510e201.chunk.js.map",
     "runtime-main.js": "https://demo.investwest.online/static/js/runtime-main.3b1e71ac.js",
     "runtime-main.js.map": "https://demo.investwest.online/static/js/runtime-main.3b1e71ac.js.map",
     "static/css/2.dca312d0.chunk.css": "https://demo.investwest.online/static/css/2.dca312d0.chunk.css",
@@ -86,6 +86,6 @@
     "static/css/2.dca312d0.chunk.css",
     "static/js/2.6f84872b.chunk.js",
     "static/css/main.6e8d5085.chunk.css",
-    "static/js/main.7412b4fc.chunk.js"
+    "static/js/main.d510e201.chunk.js"
   ]
 }

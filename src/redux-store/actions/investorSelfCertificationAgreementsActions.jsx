@@ -39,36 +39,38 @@ export const loadInvestorSelfCertificationAgreement = () => {
       });
   
       firebase
-        .database()
-        .ref(DB_CONST.INVESTOR_SELF_CERTIFICATION_AGREEMENTS_CHILD)
-        .orderByChild('userID')
-        .equalTo(userID)
-        .once('value', snapshots => {
-          if (!snapshots || !snapshots.exists()) {
-            dispatch({
-              type: FINISHED_LOADING_INVESTOR_SELF_CERTIFICATION_AGREEMENT,
-              result: null
-            });
-          }
-  
-          snapshots.forEach(snapshot => {
-            const agreementData = snapshot.val();
-  
-            if (isCertificationExpired(agreementData.selfCertificationTimestamp)) {
-                console.log("Expired")
-              // Certification has expired
-              // Prompt the user to reapply for self-certification
-              // You can use dispatch to update the UI, show a modal, or navigate to another screen
-            }
-  
-            dispatch({
-              type: FINISHED_LOADING_INVESTOR_SELF_CERTIFICATION_AGREEMENT,
-              result: agreementData
-            });
+      .database()
+      .ref(DB_CONST.INVESTOR_SELF_CERTIFICATION_AGREEMENTS_CHILD)
+      .orderByChild('userID')
+      .equalTo(userID)
+      .once('value', snapshots => {
+        if (!snapshots || !snapshots.exists()) {
+          dispatch({
+            type: FINISHED_LOADING_INVESTOR_SELF_CERTIFICATION_AGREEMENT,
+            result: null
           });
+          return;
+        }
+
+        let agreementData = null;
+        snapshots.forEach(snapshot => {
+          agreementData = snapshot.val();
+          // We only need the first match, so we can break the loop
+          return true;
         });
-    }
-  };
+
+        if (agreementData && isCertificationExpired(agreementData.selfCertificationTimestamp)) {
+          console.log("Certification has expired");
+          // You can dispatch an action here to update the UI or show a notification
+        }
+
+        dispatch({
+          type: FINISHED_LOADING_INVESTOR_SELF_CERTIFICATION_AGREEMENT,
+          result: agreementData
+        });
+      });
+  }
+};
   
 
 export const INVESTOR_SELF_CERTIFICATION_AGREEMENT_TICK_BOX_CHANGED = 'INVESTOR_SELF_CERTIFICATION_AGREEMENT_TICK_BOX_CHANGED';
