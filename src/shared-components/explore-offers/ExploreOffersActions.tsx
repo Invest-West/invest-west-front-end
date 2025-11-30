@@ -81,7 +81,7 @@ export const fetchOffers: ActionCreator<any> = () => {
         } catch (error) {
             dispatch({
                 type: ExploreOffersEvents.CompleteFetchingOffers,
-                error: error.toString(),
+                error: String(error),
                 offerInstances: [],
             });
         }

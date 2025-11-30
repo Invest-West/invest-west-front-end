@@ -117,7 +117,7 @@ export const onSendResetPasswordClick: ActionCreator<any> = (email: string) => {
             dispatch(toggleResetPasswordDialog());
             return dispatch(completeAction);
         } catch (error) {
-            completeAction.error = error.toString();
+            completeAction.error = String(error);
             return dispatch(completeAction);
         }
     }

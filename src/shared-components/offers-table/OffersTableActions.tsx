@@ -108,7 +108,7 @@ export const setUser: ActionCreator<any> = (user?: User | Admin) => {
                 dispatch(action);
                 return dispatch(fetchOffers());
             } catch (error) {
-                action.error = error.toString();
+                action.error = String(error);
                 return dispatch(action);
             }
         }
@@ -198,7 +198,7 @@ export const fetchOffers: ActionCreator<any> = () => {
             dispatch(completeAction);
             return dispatch(filterOffersByName());
         } catch (error) {
-            completeAction.error = error.toString();
+            completeAction.error = String(error);
             return dispatch(completeAction);
         }
     }
@@ -306,7 +306,7 @@ export const exportCsv: ActionCreator<any> = () => {
             );
             return dispatch(completeAction);
         } catch (error) {
-            completeAction.error = error.toString();
+            completeAction.error = String(error);
             return dispatch(completeAction);
         }
     }

@@ -71,24 +71,11 @@ const authenticationReducer = (state = initialState, action: AuthenticationActio
                 error: completeAuthenticationAction.error
             }
         case AuthenticationEvents.SignOut:
+            // Always clear all user state on sign out - no conditional logic
+            // This prevents stale data when switching between accounts
             return {
-                ...state,
-                status: state.status === AuthenticationStatus.NotInitialized
-                || state.status === AuthenticationStatus.Authenticated
-                    ? AuthenticationStatus.Unauthenticated
-                    : state.status,
-                currentUser: state.status === AuthenticationStatus.NotInitialized
-                || state.status === AuthenticationStatus.Authenticated
-                    ? null
-                    : state.currentUser,
-                groupsOfMembership: state.status === AuthenticationStatus.NotInitialized
-                || state.status === AuthenticationStatus.Authenticated
-                    ? []
-                    : state.groupsOfMembership,
-                error: state.status === AuthenticationStatus.NotInitialized
-                || state.status === AuthenticationStatus.Authenticated
-                    ? undefined
-                    : state.error
+                ...initialState,
+                status: AuthenticationStatus.Unauthenticated
             }
         case AuthenticationEvents.UpdateUserChanges:
             const updateUserChangesAction: UpdateUserChangesAction = action as UpdateUserChangesAction;

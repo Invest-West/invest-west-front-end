@@ -107,7 +107,7 @@ export const saveSectorsChanges: ActionCreator<any> = () => {
             await new SystemAttributesRepository().updateSystemAttributes(systemAttributes);
             return dispatch(completeAction);
         } catch (error) {
-            completeAction.error = error.toString();
+            completeAction.error = String(error);
             dispatch(openFeedbackSnackbar(FeedbackSnackbarTypes.Error, completeAction.error));
             return dispatch(completeAction);
         }

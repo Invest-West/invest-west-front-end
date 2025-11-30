@@ -98,7 +98,7 @@ export const loadData: ActionCreator<any> = (groupUserName: string) => {
             completeAction.offers = offers;
             return dispatch(completeAction);
         } catch (error) {
-            completeAction.error = error.toString();
+            completeAction.error = String(error);
             return dispatch(completeAction);
         }
     }
@@ -140,7 +140,7 @@ export const sendAccessRequest: ActionCreator<any> = () => {
             }
             return dispatch(completeAction);
         } catch (error) {
-            completeAction.error = error.toString();
+            completeAction.error = String(error);
             return dispatch(completeAction);
         }
     }
@@ -186,7 +186,7 @@ export const removeAccessRequest: ActionCreator<any> = () => {
             completeAction.updatedAccessRequestInstances = updatedAccessRequestInstances;
             return dispatch(completeAction);
         } catch (error) {
-            completeAction.error = error.toString();
+            completeAction.error = String(error);
             return dispatch(completeAction);
         }
     }

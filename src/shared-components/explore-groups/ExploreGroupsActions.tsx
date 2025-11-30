@@ -106,7 +106,7 @@ export const fetchGroups: ActionCreator<any> = () => {
             dispatch(completeAction);
             return dispatch(filterGroupsByGroupFilter());
         } catch (error) {
-            completeAction.error = error.toString();
+            completeAction.error = String(error);
             return dispatch(completeAction);
         }
     }
@@ -249,7 +249,7 @@ export const sendAccessRequest: ActionCreator<any> = (groupID: string) => {
             dispatch(completeAction);
             return dispatch(filterGroupsByGroupFilter());
         } catch (error) {
-            completeAction.error = error.toString();
+            completeAction.error = String(error);
             return dispatch(completeAction);
         }
     }
@@ -291,7 +291,7 @@ export const removeAccessRequest: ActionCreator<any> = (groupID: string) => {
             dispatch(completeAction);
             return dispatch(filterGroupsByGroupFilter());
         } catch (error) {
-            completeAction.error = error.toString();
+            completeAction.error = String(error);
             return dispatch(completeAction);
         }
     }

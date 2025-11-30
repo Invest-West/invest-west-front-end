@@ -35,7 +35,7 @@ export interface CompleteAuthenticationAction extends AuthenticationAction {
 }
 
 /* TODO: remove console logs */
-export const signIn: ActionCreator<any> = (email?: string, password?: string) => {
+export const signIn: ActionCreator<any> = (email?: string, password?: string, forceReAuth: boolean = false) => {
     return async (dispatch: Dispatch, getState: () => AppState) => {
         const {
             ManageGroupUrlState,
@@ -58,8 +58,19 @@ export const signIn: ActionCreator<any> = (email?: string, password?: string) =>
 
             // user is currently signed in with Firebase
             if (currentFirebaseUser) {
-                if (successfullyAuthenticated(AuthenticationState)) {
+                // Check if a different user is logging in (account switch scenario)
+                const currentReduxUserId = AuthenticationState.currentUser?.id;
+                const firebaseUserId = currentFirebaseUser.uid;
+                const isDifferentUser = currentReduxUserId && currentReduxUserId !== firebaseUserId;
+
+                // Only skip re-auth if same user and already authenticated (not forcing)
+                if (successfullyAuthenticated(AuthenticationState) && !isDifferentUser && !forceReAuth) {
                     return;
+                }
+
+                // If different user detected, clear old state first
+                if (isDifferentUser) {
+                    await dispatch(signOut());
                 }
 
                 dispatch({
@@ -152,7 +163,7 @@ export const signIn: ActionCreator<any> = (email?: string, password?: string) =>
             await dispatch(signOut());
             authenticationCompleteAction.status = AuthenticationStatus.Unauthenticated;
             authenticationCompleteAction.error = {
-                detail: error.toString()
+                detail: String(error)
             }
             return dispatch(authenticationCompleteAction);
         }
@@ -164,7 +175,7 @@ export const signOut: ActionCreator<any> = () => {
         try {
             await firebase.auth().signOut();
         } catch (error) {
-            console.log(`Error signing out: ${error.toString()}`);
+            console.log(`Error signing out: ${String(error)}`);
         }
         return dispatch({
             type: AuthenticationEvents.SignOut

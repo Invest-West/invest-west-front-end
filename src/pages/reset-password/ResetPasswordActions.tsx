@@ -53,7 +53,7 @@ export const verifyCode: ActionCreator<any> = (code: string | null) => {
             completeAction.email = await firebase.auth().verifyPasswordResetCode(code);
             return dispatch(completeAction);
         } catch (error) {
-            completeAction.error = error.toString();
+            completeAction.error = String(error);
             return dispatch(completeAction);
         }
     }

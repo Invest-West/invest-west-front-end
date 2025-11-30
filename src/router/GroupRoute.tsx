@@ -41,7 +41,7 @@ interface GroupRouteProps extends GroupRouteLocalProps {
     AuthenticationState: AuthenticationState;
     loadSystemAttributes: () => any;
     validateGroupUrl: (path: string, groupUserName: string | null) => any;
-    signIn: () => any;
+    signIn: (email?: string, password?: string, forceReAuth?: boolean) => any;
     signOut: () => any;
 }
 
@@ -75,7 +75,7 @@ const mapDispatchToProps = (dispatch: ThunkDispatch<any, any, AnyAction>) => {
     return {
         loadSystemAttributes: () => dispatch(loadSystemAttributes()),
         validateGroupUrl: (path: string, groupUserName: string | null) => dispatch(validateGroupUrl(path, groupUserName)),
-        signIn: () => dispatch(signIn()),
+        signIn: (email?: string, password?: string, forceReAuth?: boolean) => dispatch(signIn(email, password, forceReAuth)),
         signOut: () => dispatch(signOut())
     }
 }
@@ -148,6 +148,12 @@ class GroupRoute extends Component<GroupRouteProps & Readonly<RouteComponentProp
                 navigatingFromSignInOrSignUpToDashboard: true
             });
             this.props.history.push(dashboardRoute);
+            return; // Exit early to prevent further processing during navigation
+        }
+
+        // Skip permission checks if still authenticating - prevents false 404s during account switch
+        if (isAuthenticating(this.props.AuthenticationState)) {
+            return;
         }
 
         // redirect the user to 404 page if they are trying to access routes that are not meant for them
@@ -159,34 +165,87 @@ class GroupRoute extends Component<GroupRouteProps & Readonly<RouteComponentProp
 
                 if (Routes.isRouteReservedForSuperAdmin(this.routePath)) {
                     if (!currentAdmin || (currentAdmin && !currentAdmin.superAdmin)) {
-                        shouldRedirectToError = true;
+                        // Non-super-admin trying to access super admin route
+                        // Redirect to their correct dashboard instead of 404
+                        const correctDashboard = Routes.constructDashboardRoute(
+                            this.routeParams,
+                            this.props.ManageGroupUrlState,
+                            this.props.AuthenticationState
+                        );
+                        this.props.history.replace(correctDashboard);
+                        return;
                     }
                 } else if (Routes.isGroupAdminRoute(this.routePath)) {
                     if (!currentAdmin) {
-                        shouldRedirectToError = true;
+                        // Non-admin trying to access admin route
+                        // Redirect to their correct dashboard instead of 404
+                        const correctDashboard = Routes.constructDashboardRoute(
+                            this.routeParams,
+                            this.props.ManageGroupUrlState,
+                            this.props.AuthenticationState
+                        );
+                        this.props.history.replace(correctDashboard);
+                        return;
                     } else {
-                        const adminGroup: GroupOfMembership = this.props.AuthenticationState.groupsOfMembership[0];
-                        if (adminGroup.group.groupUserName !== this.routeParams.groupUserName) {
-                            shouldRedirectToError = true;
+                        const adminGroup: GroupOfMembership | undefined = this.props.AuthenticationState.groupsOfMembership[0];
+                        if (!adminGroup || adminGroup.group.groupUserName !== this.routeParams.groupUserName) {
+                            // Admin accessing wrong group - redirect to their correct admin dashboard
+                            const correctDashboard = Routes.constructDashboardRoute(
+                                {}, // Don't pass invalid groupUserName
+                                this.props.ManageGroupUrlState,
+                                this.props.AuthenticationState
+                            );
+                            this.props.history.replace(correctDashboard);
+                            return;
                         }
                     }
                 } else if (Routes.isIssuerDashboardRoute(this.routePath)) {
                     if (!isIssuer(currentUser)) {
-                        shouldRedirectToError = true;
+                        // User is not an issuer but trying to access issuer dashboard
+                        // Redirect to correct dashboard instead of 404
+                        const correctDashboard = Routes.constructDashboardRoute(
+                            this.routeParams,
+                            this.props.ManageGroupUrlState,
+                            this.props.AuthenticationState
+                        );
+                        this.props.history.replace(correctDashboard);
+                        return;
                     } else if (this.props.AuthenticationState.groupsOfMembership
                         .filter(groupOfMembership =>
                             groupOfMembership.group.groupUserName === this.routeParams.groupUserName).length === 0
                     ) {
-                        shouldRedirectToError = true;
+                        // User is issuer but not member of this group - redirect to their correct group
+                        const correctDashboard = Routes.constructDashboardRoute(
+                            {}, // Don't pass the invalid groupUserName
+                            this.props.ManageGroupUrlState,
+                            this.props.AuthenticationState
+                        );
+                        this.props.history.replace(correctDashboard);
+                        return;
                     }
                 } else if (Routes.isInvestorDashboardRoute(this.routePath)) {
                     if (!isInvestor(currentUser)) {
-                        shouldRedirectToError = true;
+                        // User is not an investor but trying to access investor dashboard
+                        // Redirect to correct dashboard instead of 404
+                        const correctDashboard = Routes.constructDashboardRoute(
+                            this.routeParams,
+                            this.props.ManageGroupUrlState,
+                            this.props.AuthenticationState
+                        );
+                        this.props.history.replace(correctDashboard);
+                        return;
                     } else if (this.props.AuthenticationState.groupsOfMembership
                         .filter(groupOfMembership =>
                             groupOfMembership.group.groupUserName === this.routeParams.groupUserName).length === 0
                     ) {
-                        shouldRedirectToError = true;
+                        // User is investor but not member of this group - redirect to their correct group
+                        const correctDashboard = Routes.constructDashboardRoute(
+                            {}, // Don't pass the invalid groupUserName
+                            this.props.ManageGroupUrlState,
+                            this.props.AuthenticationState
+                        );
+                        this.props.history.replace(correctDashboard);
+                        return;
                     }
                 }
 
@@ -327,9 +386,24 @@ class GroupRoute extends Component<GroupRouteProps & Readonly<RouteComponentProp
         } = this.props;
 
         if (successfullyValidatedGroupUrl(ManageGroupUrlState) && !this.authListener) {
-            this.authListener = firebase.auth().onAuthStateChanged(firebaseUser => {
+            this.authListener = firebase.auth().onAuthStateChanged(async (firebaseUser) => {
+                const { AuthenticationState } = this.props;
+                const currentReduxUserId = AuthenticationState.currentUser?.id;
+
                 if (firebaseUser) {
-                    this.props.signIn();
+                    const firebaseUserId = firebaseUser.uid;
+                    const isDifferentUser = currentReduxUserId && currentReduxUserId !== firebaseUserId;
+
+                    if (isDifferentUser) {
+                        // Different user detected - sign out first, then sign in
+                        // This ensures clean state transition between accounts
+                        await this.props.signOut();
+                        // Force re-authentication for the new user
+                        this.props.signIn(undefined, undefined, true);
+                    } else {
+                        // Same user or no previous user - normal sign in
+                        this.props.signIn();
+                    }
                 } else {
                     this.props.signOut();
                 }

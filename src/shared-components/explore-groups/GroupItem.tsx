@@ -97,7 +97,7 @@ class GroupItem extends Component<GroupItemProps, any> {
                                             interactedObjectID: group.anid,
                                             activitySummary: realtimeDBUtils.ACTIVITY_SUMMARY_TEMPLATE_CLICKED_ON_GROUP_ITEM.replace("%group%", group.displayName),
                                             action: Routes.nonGroupViewGroup.replace(":groupID", group.anid)
-                                        });
+                                        } as any);
                                     }
                                 }
                             }
