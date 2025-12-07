@@ -78,6 +78,7 @@
     "@types/react-redux": "^7.1.16",
     "@types/react-router-dom": "^5.1.7",
     "sass": "^1.94.0",
+    "source-map-explorer": "^2.5.3",
     "typescript": "^5.9.3"
   },
   "overrides": {

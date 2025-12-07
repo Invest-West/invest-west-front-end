@@ -8,6 +8,18 @@
             content="width=device-width, initial-scale=1, shrink-to-fit=no"
     />
     <meta name="theme-color" content="#000000"/>
+
+    <!-- Preconnect to external origins for faster resource loading -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin/>
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+    <link rel="preconnect" href="https://use.fontawesome.com" crossorigin/>
+    <link rel="preconnect" href="https://maxcdn.bootstrapcdn.com" crossorigin/>
+    <link rel="preconnect" href="https://cdn.quilljs.com" crossorigin/>
+
+    <!-- DNS prefetch for Firebase services -->
+    <link rel="dns-prefetch" href="https://firebaseio.com"/>
+    <link rel="dns-prefetch" href="https://firebasestorage.googleapis.com"/>
+
     <!--
       manifest.json provides metadata used when your web app is added to the
       homescreen on Android. See https://developers.google.com/web/fundamentals/web-app-manifest/
@@ -20,23 +32,40 @@
     -->
     <title>Invest West</title>
 
-    <!-- Google fonts -->
-    <link href="https://fonts.googleapis.com/css?family=Open+Sans:800|Open+Sans|Mukta|Muli" rel="stylesheet">
+    <!-- Google fonts - with font-display:swap for better performance -->
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;800&family=Mukta&family=Muli&display=swap" rel="stylesheet">
 
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.1/css/all.css"
+    <!-- Font Awesome - load asynchronously to prevent render blocking -->
+    <link rel="preload" href="https://use.fontawesome.com/releases/v5.7.1/css/all.css"
+          as="style"
+          onload="this.onload=null;this.rel='stylesheet'"
           integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+    <noscript>
+        <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.1/css/all.css"
+              integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+    </noscript>
 
-    <!-- React bootstrap -->
+    <!-- React bootstrap - load asynchronously -->
     <link
-            rel="stylesheet"
+            rel="preload"
             href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css"
+            as="style"
+            onload="this.onload=null;this.rel='stylesheet'"
             integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk"
             crossorigin="anonymous"
     />
+    <noscript>
+        <link
+                rel="stylesheet"
+                href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css"
+                integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk"
+                crossorigin="anonymous"
+        />
+    </noscript>
 
-    <!-- React Quill - text editor -->
-    <link rel="stylesheet" href="//cdn.quilljs.com/1.2.6/quill.snow.css"/>
+    <!-- React Quill - text editor (only needed on CreateProject page, defer loading) -->
+    <link rel="preload" href="https://cdn.quilljs.com/1.2.6/quill.snow.css" as="style" onload="this.onload=null;this.rel='stylesheet'"/>
+    <noscript><link rel="stylesheet" href="https://cdn.quilljs.com/1.2.6/quill.snow.css"/></noscript>
 </head>
 <body>
 <noscript>You need to enable JavaScript to run this app.</noscript>

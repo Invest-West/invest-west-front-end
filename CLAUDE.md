@@ -14,7 +14,7 @@ npm test                 # Run tests in watch mode
 
 ## Architecture Overview
 
-This is a React 17 + Redux investment platform frontend with TypeScript support. It uses Firebase for authentication/realtime database and communicates with a backend API.
+This is a React 20 + Redux investment platform frontend with TypeScript support. It uses Firebase for authentication/realtime database and communicates with a backend API.
 
 ### Key Directories
 

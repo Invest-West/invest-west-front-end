@@ -13,7 +13,9 @@
       "Bash(git remote set-url:*)",
       "Bash(npm run build:*)",
       "Bash(npm run build:demo:*)",
-      "Bash(cat:*)"
+      "Bash(cat:*)",
+      "Bash(npx source-map-explorer:*)",
+      "Bash(du:*)"
     ],
     "deny": [],
     "ask": []

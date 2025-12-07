@@ -1,0 +1,1 @@
+{"version":3,"file":"static/css/system-pages.98ed4d79.chunk.css","mappings":"AAAA,aACE,WAGF,EACE","sources":["pages/system-public-pages/SystemPublicPagesSharedCSS.scss"],"sourcesContent":["img.ql-image {\n  width: 100%\n}\n\np {\n  text-align: justify;\n}"],"names":[],"ignoreList":[],"sourceRoot":""}

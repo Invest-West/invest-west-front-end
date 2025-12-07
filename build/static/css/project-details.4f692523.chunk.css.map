@@ -1,0 +1,1 @@
+{"version":3,"file":"static/css/project-details.4f692523.chunk.css","mappings":"AAAA,aACI,WAGJ,EACI","sources":["pages/project-details/ProjectDetails.scss"],"sourcesContent":["img.ql-image {\n    width: 100%\n}\n\np {\n    text-align: justify;\n}"],"names":[],"ignoreList":[],"sourceRoot":""}
