@@ -231,7 +231,7 @@ class SignUpNew extends Component<SignUpProps & Readonly<RouteComponentProps<Rou
 
                             {/** Error message */}
                             {
-                                !hasErrorCreatingAccount(SignUpLocalState)
+                                hasErrorCreatingAccount(SignUpLocalState)
                                     ? <Box
                                         marginY="20px"
                                     >

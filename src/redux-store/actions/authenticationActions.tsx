@@ -11,6 +11,15 @@ import InvestorSelfCertificationRepository from "../../api/repositories/Investor
 import Routes from "../../router/routes";
 import Firebase from "firebase";
 import UserRepository from "../../api/repositories/UserRepository";
+// Import old auth action types for backward compatibility with legacy components
+import {
+    USER_PROFILE_LOADED,
+    FINISHED_AUTHENTICATING,
+    AUTH_GROUPS_USER_IS_IN_LOADED,
+    AUTHENTICATING,
+    LOG_OUT
+} from "./authActions";
+import { AUTH_SUCCESS } from "../../pages/signin/Signin";
 
 export enum AuthenticationEvents {
     StartAuthenticating = "AuthenticationEvents.StartAuthenticating",
@@ -76,6 +85,8 @@ export const signIn: ActionCreator<any> = (email?: string, password?: string, fo
                 dispatch({
                     type: AuthenticationEvents.StartAuthenticating
                 });
+                // Sync with old auth reducer
+                dispatch({ type: AUTHENTICATING });
             }
             // user is currently not signed in with Firebase
             else {
@@ -90,13 +101,17 @@ export const signIn: ActionCreator<any> = (email?: string, password?: string, fo
                 dispatch({
                     type: AuthenticationEvents.StartAuthenticating
                 });
+                // Sync with old auth reducer
+                dispatch({ type: AUTHENTICATING });
 
                 // set persistence state to SESSION
                 await firebase.auth().setPersistence(Firebase.auth.Auth.Persistence.LOCAL);
 
                 // sign in with Firebase using email and password
+                console.log('[Auth] Attempting Firebase sign in with email:', email);
                 const credential: firebase.default.auth.UserCredential =
                     await firebase.auth().signInWithEmailAndPassword(email, password);
+                console.log('[Auth] Firebase sign in successful, uid:', credential.user?.uid);
 
                 currentFirebaseUser = credential.user;
             }
@@ -150,6 +165,24 @@ export const signIn: ActionCreator<any> = (email?: string, password?: string, fo
                 authenticationCompleteAction.groupsOfMembership = listGroupsOfMembershipResponse.data;
 
                 authenticationCompleteAction.status = AuthenticationStatus.Authenticated;
+
+                console.log('[Auth] Authentication complete. User:', currentUser?.id, 'Groups:', listGroupsOfMembershipResponse.data.length);
+
+                // Sync with old auth reducer for backward compatibility with legacy components
+                // This ensures dashboards and other components that depend on the old auth state work correctly
+                dispatch({
+                    type: USER_PROFILE_LOADED,
+                    user: currentUser
+                });
+                dispatch({
+                    type: AUTH_GROUPS_USER_IS_IN_LOADED,
+                    groups: listGroupsOfMembershipResponse.data.map((gom: GroupOfMembership) => gom.group)
+                });
+                dispatch({
+                    type: FINISHED_AUTHENTICATING,
+                    authStatus: AUTH_SUCCESS
+                });
+
                 return dispatch(authenticationCompleteAction);
             } else {
                 await dispatch(signOut());
@@ -177,6 +210,8 @@ export const signOut: ActionCreator<any> = () => {
         } catch (error) {
             console.log(`Error signing out: ${String(error)}`);
         }
+        // Sync with old auth reducer
+        dispatch({ type: LOG_OUT });
         return dispatch({
             type: AuthenticationEvents.SignOut
         });

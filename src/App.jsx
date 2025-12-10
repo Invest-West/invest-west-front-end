@@ -27,6 +27,7 @@ import * as editUserActions from './redux-store/actions/editUserActions';
 import * as manageSystemGroupsActions from './redux-store/actions/manageSystemGroupsActions';
 import {signIn} from "./redux-store/actions/authenticationActions";
 import {getGroupRouteTheme} from "./redux-store/reducers/manageGroupUrlReducer";
+import {successfullyAuthenticated, isAuthenticating} from "./redux-store/reducers/authenticationReducer";
 import IdleTimer from "react-idle-timer";
 import {activeTimeOut} from "./redux-store/reducers/manageSystemIdleTimeReducer";
 import {onIdle} from "./redux-store/actions/manageSystemIdleTimeActions";
@@ -35,6 +36,7 @@ import {onIdle} from "./redux-store/actions/manageSystemIdleTimeActions";
 const mapStateToProps = state => {
     return {
         ManageGroupUrlState: state.ManageGroupUrlState,
+        AuthenticationState: state.AuthenticationState,
 
         /**
          * Old state --------------------------------------------------------------------------------------------------
@@ -322,6 +324,18 @@ class App extends Component {
             // listen for auth state changed
             this.authListener = this.firebaseAuth
                 .onAuthStateChanged(firebaseUser => {
+                    const { AuthenticationState } = this.props;
+
+                    // Skip old auth validation if new auth system is handling authentication
+                    // This prevents conflicts between the two auth systems
+                    if (successfullyAuthenticated(AuthenticationState) || isAuthenticating(AuthenticationState)) {
+                        // New auth system is in control, just load system groups if user is authenticated
+                        if (firebaseUser) {
+                            this.loadSystemGroups();
+                        }
+                        return;
+                    }
+
                     // call this function to always set userLoaded to false when user is signed out
                     initializeAuthState();
                     // if user is authenticated

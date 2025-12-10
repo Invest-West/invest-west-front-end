@@ -144,11 +144,24 @@ class GroupRoute extends Component<GroupRouteProps & Readonly<RouteComponentProp
             && !this.state.navigatingFromSignInOrSignUpToDashboard
         ) {
             const dashboardRoute: string = Routes.constructDashboardRoute(this.routeParams, this.props.ManageGroupUrlState, this.props.AuthenticationState);
-            this.setState({
-                navigatingFromSignInOrSignUpToDashboard: true
+            // Only navigate if the dashboard route is different from current sign-in route
+            // This prevents getting stuck if constructDashboardRoute returns sign-in route
+            const currentSignInRoute = Routes.constructSignInRoute(this.routeParams);
+            console.log('[GroupRoute] Attempting navigation after auth. dashboardRoute:', dashboardRoute, 'currentSignInRoute:', currentSignInRoute);
+            console.log('[GroupRoute] AuthState:', {
+                currentUser: this.props.AuthenticationState.currentUser?.id,
+                groupsOfMembership: this.props.AuthenticationState.groupsOfMembership.length
             });
-            this.props.history.push(dashboardRoute);
-            return; // Exit early to prevent further processing during navigation
+            if (dashboardRoute !== currentSignInRoute && !dashboardRoute.includes('/signin') && !dashboardRoute.includes('/signup')) {
+                this.setState({
+                    navigatingFromSignInOrSignUpToDashboard: true
+                });
+                console.log('[GroupRoute] Navigating to dashboard:', dashboardRoute);
+                this.props.history.push(dashboardRoute);
+                return; // Exit early to prevent further processing during navigation
+            } else {
+                console.log('[GroupRoute] Navigation blocked - dashboardRoute is signin/signup or matches current route');
+            }
         }
 
         // Skip permission checks if still authenticating - prevents false 404s during account switch
