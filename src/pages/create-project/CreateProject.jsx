@@ -1705,16 +1705,39 @@ class CreatePitchPageMain extends Component {
                                                                         });
 
                                                                     }).catch(error => {
-
+                                                                        console.error("Failed to send notifications:", error);
                                                                         this.setState({
                                                                             createProject: {
                                                                                 ...this.state.createProject,
                                                                                 uploadFileMode: UPLOAD_DONE_MODE,
-                                                                                uploadFileProgress: 100
+                                                                                uploadFileProgress: 100,
+                                                                                projectID: projectEdited.id
                                                                             }
                                                                         });
                                                                     });
+                                                                })
+                                                                .catch(error => {
+                                                                    console.error("Failed to load pledges:", error);
+                                                                    this.setState({
+                                                                        createProject: {
+                                                                            ...this.state.createProject,
+                                                                            uploadFileMode: UPLOAD_DONE_MODE,
+                                                                            uploadFileProgress: 100,
+                                                                            projectID: projectEdited.id
+                                                                        }
+                                                                    });
                                                                 });
+                                                        })
+                                                        .catch(error => {
+                                                            console.error("Failed to load votes:", error);
+                                                            this.setState({
+                                                                createProject: {
+                                                                    ...this.state.createProject,
+                                                                    uploadFileMode: UPLOAD_DONE_MODE,
+                                                                    uploadFileProgress: 100,
+                                                                    projectID: projectEdited.id
+                                                                }
+                                                            });
                                                         });
                                                 }
                                                 // a draft offer is published
@@ -1732,19 +1755,23 @@ class CreatePitchPageMain extends Component {
                                                         .ref(DB_CONST.ACCEPTED_CREATE_PITCH_TERM_AND_CONDITIONS_CHILD)
                                                         .push(acceptedTCsObj)
                                                         .then(async () => {
-                                                            await new Api().request(
-                                                                "post",
-                                                                ApiRoutes.sendEmailRoute,
-                                                                {
-                                                                    queryParameters: null,
-                                                                    requestBody: {
-                                                                        emailType: 3,
-                                                                        emailInfo: {
-                                                                            projectID: projectEdited.id
+                                                            try {
+                                                                await new Api().request(
+                                                                    "post",
+                                                                    ApiRoutes.sendEmailRoute,
+                                                                    {
+                                                                        queryParameters: null,
+                                                                        requestBody: {
+                                                                            emailType: 3,
+                                                                            emailInfo: {
+                                                                                projectID: projectEdited.id
+                                                                            }
                                                                         }
                                                                     }
-                                                                }
-                                                            );
+                                                                );
+                                                            } catch (error) {
+                                                                console.error("Failed to send email notification:", error);
+                                                            }
 
                                                             // track activity for creating a new project from a draft one
                                                             realtimeDBUtils
@@ -1772,6 +1799,17 @@ class CreatePitchPageMain extends Component {
                                                                     });
                                                             }
 
+                                                            this.setState({
+                                                                createProject: {
+                                                                    ...this.state.createProject,
+                                                                    uploadFileMode: UPLOAD_DONE_MODE,
+                                                                    uploadFileProgress: 100,
+                                                                    projectID: projectEdited.id
+                                                                }
+                                                            });
+                                                        })
+                                                        .catch(error => {
+                                                            console.error("Failed to save terms and conditions:", error);
                                                             this.setState({
                                                                 createProject: {
                                                                     ...this.state.createProject,
@@ -1814,8 +1852,15 @@ class CreatePitchPageMain extends Component {
                                             }
                                         })
                                         .catch(error => {
-                                            // handle error
-                                            return error;
+                                            console.error("Failed to update project:", error);
+                                            this.setState({
+                                                createProject: {
+                                                    ...this.state.createProject,
+                                                    uploadFileMode: UPLOAD_DONE_MODE,
+                                                    uploadFileProgress: 100,
+                                                    projectID: projectEdited ? projectEdited.id : null
+                                                }
+                                            });
                                         });
                                 });
                         });
@@ -2196,12 +2241,29 @@ class CreatePitchPageMain extends Component {
                                                                 projectID: projectID
                                                             }
                                                         });
+                                                    })
+                                                    .catch(error => {
+                                                        console.error("Failed to save terms and conditions:", error);
+                                                        this.setState({
+                                                            createProject: {
+                                                                ...this.state.createProject,
+                                                                uploadFileMode: UPLOAD_DONE_MODE,
+                                                                uploadFileProgress: 100,
+                                                                projectID: projectID
+                                                            }
+                                                        });
                                                     });
                                             }
                                         })
                                         .catch(error => {
-                                            // handle error
-                                            return error;
+                                            console.error("Failed to create project:", error);
+                                            this.setState({
+                                                createProject: {
+                                                    ...this.state.createProject,
+                                                    uploadFileMode: UPLOAD_DONE_MODE,
+                                                    uploadFileProgress: 100
+                                                }
+                                            });
                                         });
                                 });
                         });

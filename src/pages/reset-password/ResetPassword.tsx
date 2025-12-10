@@ -54,7 +54,7 @@ class ResetPassword extends Component<ResetPasswordProps & Readonly<RouteCompone
     componentDidMount() {
         const params = queryString.parse(this.props.location.search);
         if (params.oobCode) {
-            const actionCode: string | string[] | null | undefined = params.oobCode;
+            const actionCode = params.oobCode;
             if (actionCode) {
                 this.props.verifyCode(actionCode as string);
             } else {

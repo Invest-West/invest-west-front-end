@@ -50,7 +50,7 @@ export const loadInvitedUser: ActionCreator<any> = (invitedUserID: string) => {
             completeAction.invitedUser = JSON.parse(JSON.stringify(invitedUser));
             return dispatch(completeAction);
         } catch (error) {
-            completeAction.error = error.toString();
+            completeAction.error = String(error);
             return dispatch(completeAction);
         }
     }
@@ -145,7 +145,7 @@ export const createAccount: ActionCreator<any> = () => {
             dispatch(completeAction);
             return dispatch(signIn(email, password));
         } catch (error) {
-            completeAction.error = error.toString();
+            completeAction.error = String(error);
             return dispatch(completeAction);
         }
     }

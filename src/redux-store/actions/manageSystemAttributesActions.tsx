@@ -44,7 +44,7 @@ export const loadSystemAttributes: ActionCreator<any> = () => {
                 return dispatch(finishedAction);
             } catch (error) {
                 finishedAction.error = {
-                    detail: error.toString()
+                    detail: String(error)
                 };
                 return dispatch(finishedAction);
             }

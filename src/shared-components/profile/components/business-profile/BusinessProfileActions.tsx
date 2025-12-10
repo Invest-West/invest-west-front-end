@@ -83,7 +83,7 @@ export const findAddress: ActionCreator<any> = (mode: "registeredOffice" | "trad
             dispatch(finishedFindingAddressAction);
             return dispatch(changeAddressFindingState(mode, AddressStates.DisplayFoundAddresses));
         } catch (error) {
-            finishedFindingAddressAction.error = error.toString();
+            finishedFindingAddressAction.error = String(error);
             dispatch(finishedFindingAddressAction);
             return dispatch(changeAddressFindingState(mode, AddressStates.EnterPostcode));
         }

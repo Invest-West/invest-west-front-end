@@ -95,7 +95,7 @@ export const validateGroupUrl: ActionCreator<any> = (path: string, groupUserName
                 return dispatch(finishedLoadingGroupUrlAction);
             } catch (error) {
                 finishedLoadingGroupUrlAction.error = {
-                    detail: error.toString()
+                    detail: String(error)
                 }
                 return dispatch(finishedLoadingGroupUrlAction);
             }

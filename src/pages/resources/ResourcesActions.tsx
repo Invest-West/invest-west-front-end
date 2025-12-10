@@ -73,7 +73,7 @@ export const sendContactEmail: ActionCreator<any> = (receiver: string | string[]
             dispatch(completeAction);
             return dispatch(openFeedbackSnackbar(FeedbackSnackbarTypes.Success, "Email sent."));
         } catch (error) {
-            completeAction.error = error.toString();
+            completeAction.error = String(error);
             dispatch(completeAction);
             return dispatch(openFeedbackSnackbar(FeedbackSnackbarTypes.Error, completeAction.error));
         }

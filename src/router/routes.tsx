@@ -328,7 +328,7 @@ export default class Routes {
                 // current admin is not a super admin
             // --> redirect to group admin dashboard
             else {
-                if (AuthenticationState.groupsOfMembership.length === 1) {
+                if (AuthenticationState.groupsOfMembership.length >= 1) {
                     const adminGroup: GroupOfMembership = AuthenticationState.groupsOfMembership[0];
                     route = Routes.groupAdminDashboard.replace(":groupUserName", adminGroup.group.groupUserName);
                 }
@@ -338,29 +338,40 @@ export default class Routes {
         // except the Invest West sign in page (with no group parameter) as it is reserved for the super admins only
         else {
             const homeGroup: GroupOfMembership | null = getHomeGroup(AuthenticationState.groupsOfMembership);
+            // Get the first available group as ultimate fallback
+            const firstGroup: GroupOfMembership | null = AuthenticationState.groupsOfMembership.length > 0
+                ? AuthenticationState.groupsOfMembership[0]
+                : null;
+
+            // Helper to construct dashboard route for a group
+            const buildDashboardRoute = (groupUserName: string): string => {
+                if (isInvestor(AuthenticationState.currentUser as User)) {
+                    return Routes.groupInvestorDashboard.replace(":groupUserName", groupUserName);
+                } else {
+                    return Routes.groupIssuerDashboard.replace(":groupUserName", groupUserName);
+                }
+            };
+
             if (routeParams.groupUserName) {
-                if (AuthenticationState.groupsOfMembership
+                // Check if user is member of the group from URL
+                const isMemberOfUrlGroup = AuthenticationState.groupsOfMembership
                     .filter(groupOfMembership =>
-                        groupOfMembership.group.groupUserName === routeParams.groupUserName).length > 0
-                ) {
-                    if (isInvestor(AuthenticationState.currentUser as User)) {
-                        route = Routes.groupInvestorDashboard.replace(":groupUserName", routeParams.groupUserName);
-                    } else {
-                        route = Routes.groupIssuerDashboard.replace(":groupUserName", routeParams.groupUserName);
-                    }
+                        groupOfMembership.group.groupUserName === routeParams.groupUserName).length > 0;
+
+                if (isMemberOfUrlGroup) {
+                    route = buildDashboardRoute(routeParams.groupUserName);
                 } else if (homeGroup) {
-                    if (isInvestor(AuthenticationState.currentUser as User)) {
-                        route = Routes.groupInvestorDashboard.replace(":groupUserName", homeGroup.group.groupUserName);
-                    } else {
-                        route = Routes.groupIssuerDashboard.replace(":groupUserName", homeGroup.group.groupUserName);
-                    }
+                    // User not member of URL group, use home group
+                    route = buildDashboardRoute(homeGroup.group.groupUserName);
+                } else if (firstGroup) {
+                    // No home group, use first available group
+                    route = buildDashboardRoute(firstGroup.group.groupUserName);
                 }
             } else if (homeGroup) {
-                if (isInvestor(AuthenticationState.currentUser as User)) {
-                    route = Routes.groupInvestorDashboard.replace(":groupUserName", homeGroup.group.groupUserName);
-                } else {
-                    route = Routes.groupIssuerDashboard.replace(":groupUserName", homeGroup.group.groupUserName);
-                }
+                route = buildDashboardRoute(homeGroup.group.groupUserName);
+            } else if (firstGroup) {
+                // No home group set, use first available group
+                route = buildDashboardRoute(firstGroup.group.groupUserName);
             }
         }
 

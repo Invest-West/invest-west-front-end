@@ -209,7 +209,7 @@ export default class Api {
 
             return this.parseResponse(response);
         } catch (exception) {
-            const error = Api.parseError(exception);
+            const error = Api.parseError(exception as AxiosError);
             console.log(`Failed to request. Status code: ${error.statusCode}. Cause: ${error.message}`);
             throw new Error(error.statusCode + " " + error.message);
         }

@@ -603,8 +603,8 @@ class OffersTable extends Component<OffersTableProps, any> {
                             SelectProps={{
                                 native: true,
                             }}
-                            onChangePage={changePage}
-                            onChangeRowsPerPage={changeRowsPerPage}
+                            onPageChange={changePage}
+                            onRowsPerPageChange={changeRowsPerPage}
                         />
                     </TableRow>
                 </TableFooter>

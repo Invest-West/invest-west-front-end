@@ -125,7 +125,7 @@ const signUpReducer = (state = initialState, action: SignUpAction) => {
                 ...state,
                 creatingAccount: false,
                 errorCreatingAccount: completeCreatingAccountAction.error
-                    ? {detail: completeCreatingAccountAction.error} : state.errorCreatingAccount
+                    ? {detail: completeCreatingAccountAction.error} : undefined
             }
         default:
             return state;
