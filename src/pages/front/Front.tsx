@@ -23,6 +23,7 @@ import {getGroupLogo} from "../../models/group_properties";
 import {MediaQueryState} from "../../redux-store/reducers/mediaQueryReducer";
 import Routes from "../../router/routes";
 import {toRGBWithOpacity} from "../../utils/colorUtils";
+import defaultLogo from "../../img/logo.png";
 
 const logoHeightMobile: number = 160;
 const logoHeight: number = 220;
@@ -118,8 +119,8 @@ class Front extends Component<FrontProps & Readonly<RouteComponentProps<RoutePar
                                         alt="logo"
                                         src={
                                             !routeContainsGroupName(ManageGroupUrlState)
-                                                ? require("../../img/logo.png").default
-                                                : getGroupLogo(ManageGroupUrlState.group)
+                                                ? defaultLogo
+                                                : getGroupLogo(ManageGroupUrlState.group) ?? defaultLogo
                                         }
                                         style={{
                                             width: "auto",

@@ -1,5 +1,12 @@
 import Api, {ApiRoutes} from "../Api";
 
+export interface CreateSelfCertificationParams {
+    userID: string;
+    agreedDate: string;
+    type: number;
+    selfCertificationTimestamp?: number;
+}
+
 export default class InvestorSelfCertificationRepository {
 
     /**
@@ -22,22 +29,23 @@ export default class InvestorSelfCertificationRepository {
     }
 
     /**
-     * Update investor self certification
+     * Create or update investor self certification
      *
-     * @param userID
-     * @param updatedAgreedDate
+     * @param params
      */
-    public async updateInvestorSelfCertification(userID: string, updatedAgreedDate: string) {
+    public async createInvestorSelfCertification(params: CreateSelfCertificationParams) {
         return await new Api()
             .request(
-                "patch",
-                ApiRoutes.updateInvestorSelfCertificationRoute,
+                "post",
+                ApiRoutes.createInvestorSelfCertificationRoute,
                 {
                     requestBody: {
-                        userID,
-                        updatedAgreedDate
+                        userID: params.userID,
+                        agreedDate: params.agreedDate,
+                        type: params.type,
+                        selfCertificationTimestamp: params.selfCertificationTimestamp || Date.now()
                     },
-                    queryParameters: {} // Add this empty object
+                    queryParameters: null
                 }
             );
     }
