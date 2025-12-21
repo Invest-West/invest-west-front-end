@@ -75,6 +75,7 @@ import RiskWarning from "../../shared-components/risk-warning/RiskWarning";
 import {toggleContactPitchOwnerDialog} from "./components/contact-pitch-owner-dialog/ContactPitchOwnerDialogActions";
 import ContactPitchOwnerDialog from "./components/contact-pitch-owner-dialog/ContactPitchOwnerDialog";
 import FeedbackSnackbarNew from "../../shared-components/feedback-snackbar/FeedbackSnackbarNew";
+import {ProjectFeedbackPanel, RejectWithFeedbackDialog} from "./components/project-feedback";
 import {hasAuthenticationError, isAuthenticating} from "../../redux-store/reducers/authenticationReducer";
 
 const ADMIN_OFFER_STATES_PUBLISH_PITCH = 0;
@@ -203,6 +204,8 @@ class ProjectDetailsMain extends Component {
             addingRejectFeedback: false,
             rejectFeedback: "",
             sendingProjectBack: false,
+            rejectDialogOpen: false,
+            showFeedbackFromUrl: false,
 
             // pitch's details
             projectDetail: {
@@ -265,6 +268,13 @@ class ProjectDetailsMain extends Component {
         );
 
         loadAngelNetwork();
+
+        // Check if URL has ?showFeedback=true to auto-expand feedback panel
+        const urlParams = new URLSearchParams(window.location.search);
+        const showFeedback = urlParams.get('showFeedback') === 'true';
+        if (showFeedback) {
+            this.setState({showFeedbackFromUrl: true});
+        }
 
         if (groupPropertiesLoaded && shouldLoadOtherData) {
             if (!userBeingLoaded && userLoaded) {
@@ -452,7 +462,7 @@ class ProjectDetailsMain extends Component {
             .loadAParticularProject(projectID)
             .then(project => {
                 // track activity for investors only
-                if (user.type === DB_CONST.TYPE_INVESTOR) {
+                if (user && user.type === DB_CONST.TYPE_INVESTOR) {
                     realtimeDBUtils
                         .trackActivity({
                             userID: user.id,
@@ -474,7 +484,7 @@ class ProjectDetailsMain extends Component {
                         projectLoaded: true
                     },
                     mainBody:
-                        user.type === DB_CONST.TYPE_ADMIN
+                        user && user.type === DB_CONST.TYPE_ADMIN
                             ?
                             user.anid === project.anid
                                 ?
@@ -519,8 +529,8 @@ class ProjectDetailsMain extends Component {
                             .then(pledges => {
 
                                 // if the current user is an investor, check if they pledged this project
-                                if (user.type === DB_CONST.TYPE_INVESTOR) {
-                                    let currentUserPledgeIndex = pledges.findIndex(pledge => pledge.investorID === user.id && pledge.amount !== '');
+                                if (user && user.type === DB_CONST.TYPE_INVESTOR) {
+                                    let currentUserPledgeIndex = pledges.findIndex(pledge => pledge && pledge.investorID === user.id && pledge.amount !== '');
                                     // this investor has pledges this project before
                                     if (currentUserPledgeIndex !== -1) {
                                         this.setState({
@@ -660,7 +670,7 @@ class ProjectDetailsMain extends Component {
                             let vote = snapshot.val();
 
                             const votes = this.state.projectDetail.votes;
-                            let voteIndex = votes.findIndex(existingVote => existingVote.id === vote.id);
+                            let voteIndex = votes.findIndex(existingVote => existingVote && existingVote.id === vote.id);
                             if (voteIndex === -1) {
                                 realtimeDBUtils
                                     .getUserBasedOnID(vote.investorID)
@@ -682,7 +692,7 @@ class ProjectDetailsMain extends Component {
                             let vote = snapshot.val();
 
                             const votes = this.state.projectDetail.votes;
-                            let voteIndex = votes.findIndex(existingVote => existingVote.id === vote.id);
+                            let voteIndex = votes.findIndex(existingVote => existingVote && existingVote.id === vote.id);
 
                             if (voteIndex !== -1) {
                                 let updatedVotes = votes;
@@ -705,7 +715,7 @@ class ProjectDetailsMain extends Component {
                             let voteRemovedID = snapshot.key;
 
                             const votes = this.state.projectDetail.votes;
-                            let voteIndex = votes.findIndex(existingVote => existingVote.id === voteRemovedID);
+                            let voteIndex = votes.findIndex(existingVote => existingVote && existingVote.id === voteRemovedID);
 
                             if (voteIndex !== -1) {
                                 let updatedVotes = votes;
@@ -742,7 +752,7 @@ class ProjectDetailsMain extends Component {
                             let pledge = snapshot.val();
 
                             let pledges = [...this.state.projectDetail.pledges];
-                            let pledgeIndex = pledges.findIndex(existingPledge => existingPledge.id === pledge.id);
+                            let pledgeIndex = pledges.findIndex(existingPledge => existingPledge && existingPledge.id === pledge.id);
                             if (pledgeIndex === -1) {
                                 realtimeDBUtils
                                     .getUserBasedOnID(pledge.investorID)
@@ -764,7 +774,7 @@ class ProjectDetailsMain extends Component {
                             let pledge = snapshot.val();
 
                             let pledges = [...this.state.projectDetail.pledges];
-                            let pledgeIndex = pledges.findIndex(existingPledge => existingPledge.id === pledge.id);
+                            let pledgeIndex = pledges.findIndex(existingPledge => existingPledge && existingPledge.id === pledge.id);
 
                             if (pledgeIndex !== -1) {
                                 let updatedPledges = pledges;
@@ -790,7 +800,7 @@ class ProjectDetailsMain extends Component {
                                                 currentPledge
                                             :
                                             // current pledge is null
-                                            pledge.investorID === user.id
+                                            user && pledge.investorID === user.id
                                                 ?
                                                 pledge.amount === ""
                                                     ?
@@ -814,7 +824,7 @@ class ProjectDetailsMain extends Component {
                             let pledgeRemovedID = snapshot.key;
 
                             let pledges = [...this.state.projectDetail.pledges];
-                            let pledgeIndex = pledges.findIndex(existingPledge => existingPledge.id === pledgeRemovedID);
+                            let pledgeIndex = pledges.findIndex(existingPledge => existingPledge && existingPledge.id === pledgeRemovedID);
 
                             if (pledgeIndex !== -1) {
                                 let updatedPledges = pledges;
@@ -893,7 +903,7 @@ class ProjectDetailsMain extends Component {
                                             }
 
                                             let comments = [...this.state.comments];
-                                            let commentIndex = comments.findIndex(existingComment => existingComment.id === comment.id);
+                                            let commentIndex = comments.findIndex(existingComment => existingComment && existingComment.id === comment.id);
 
                                             if (commentIndex === -1) {
                                                 realtimeDBUtils
@@ -913,7 +923,7 @@ class ProjectDetailsMain extends Component {
                                             let comment = snapshot.val();
 
                                             let comments = [...this.state.comments];
-                                            let commentIndex = comments.findIndex(existingComment => existingComment.id === comment.id);
+                                            let commentIndex = comments.findIndex(existingComment => existingComment && existingComment.id === comment.id);
 
                                             if (commentIndex !== -1) {
                                                 let updatedComments = [...comments];
@@ -952,12 +962,12 @@ class ProjectDetailsMain extends Component {
 
                                             let comments = [...this.state.comments];
 
-                                            const correspondingCommentIndex = comments.findIndex(comment => comment.id === reply.commentID);
+                                            const correspondingCommentIndex = comments.findIndex(comment => comment && comment.id === reply.commentID);
 
                                             // ensure the comment exists locally
                                             if (correspondingCommentIndex !== -1) {
                                                 let comment = comments[correspondingCommentIndex];
-                                                const replyIndex = comment.replies.findIndex(existingReply => existingReply.id === reply.id);
+                                                const replyIndex = comment.replies ? comment.replies.findIndex(existingReply => existingReply && existingReply.id === reply.id) : -1;
 
                                                 // the newly added reply does not exist in the local replies list of this comment
                                                 if (replyIndex === -1) {
@@ -986,12 +996,12 @@ class ProjectDetailsMain extends Component {
 
                                             let comments = [...this.state.comments];
 
-                                            const correspondingCommentIndex = comments.findIndex(comment => comment.id === reply.commentID);
+                                            const correspondingCommentIndex = comments.findIndex(comment => comment && comment.id === reply.commentID);
 
                                             // ensure the comment exists locally
                                             if (correspondingCommentIndex !== -1) {
                                                 let comment = comments[correspondingCommentIndex];
-                                                const replyIndex = comment.replies.findIndex(existingReply => existingReply.id === reply.id);
+                                                const replyIndex = comment.replies ? comment.replies.findIndex(existingReply => existingReply && existingReply.id === reply.id) : -1;
 
                                                 // the newly added reply does not exist in the local replies list of this comment
                                                 if (replyIndex !== -1) {
@@ -1792,12 +1802,11 @@ class ProjectDetailsMain extends Component {
     }
 
     /**
-     * Toggle reject feedback
+     * Toggle reject feedback dialog
      */
     toggleRejectFeedback = () => {
         this.setState({
-            addingRejectFeedback: !this.state.addingRejectFeedback,
-            rejectFeedback: ""
+            rejectDialogOpen: !this.state.rejectDialogOpen
         });
     }
 
@@ -1979,6 +1988,7 @@ class ProjectDetailsMain extends Component {
                     addingRejectFeedback={addingRejectFeedback}
                     rejectFeedback={rejectFeedback}
                     sendingProjectBack={sendingProjectBack}
+                    showFeedbackFromUrl={this.state.showFeedbackFromUrl}
                     project={project}
                     projectLoaded={projectLoaded}
                     votes={votes}
@@ -2029,6 +2039,13 @@ class ProjectDetailsMain extends Component {
                 <CreatePledgeDialog/>
 
                 <ContactPitchOwnerDialog/>
+
+                <RejectWithFeedbackDialog
+                    projectID={project ? project.id : ""}
+                    open={this.state.rejectDialogOpen}
+                    onClose={this.toggleRejectFeedback}
+                    onSuccess={() => this.loadData()}
+                />
 
                 <FeedbackSnackbarNew/>
             </div>
@@ -2283,7 +2300,7 @@ class ProjectDetails extends Component {
             // the user is an investor/issuer that is not in the group that owns this project
             || (
                 project.visibility === DB_CONST.PROJECT_VISIBILITY_PRIVATE
-                && (user.type === DB_CONST.TYPE_INVESTOR || user.type === DB_CONST.TYPE_ISSUER)
+                && user && (user.type === DB_CONST.TYPE_INVESTOR || user.type === DB_CONST.TYPE_ISSUER)
                 && (groupsUserIsIn !== null && groupsUserIsIn.findIndex(group => group.anid === project.anid) === -1)
             )
         ) {
@@ -2300,7 +2317,7 @@ class ProjectDetails extends Component {
         // only display its content to the super admins,
         // group admins that own this project, and the issuer of this project
         if (utils.isProjectTemporarilyClosed(project)
-            && (
+            && user && (
                 (user.type === DB_CONST.TYPE_ISSUER && user.id !== project.issuerID)
                 || (user.type === DB_CONST.TYPE_INVESTOR)
                 || (user.type === DB_CONST.TYPE_ADMIN && !user.superAdmin && user.anid !== project.anid)
@@ -2320,7 +2337,7 @@ class ProjectDetails extends Component {
         // the project is private
         // the user is a group admin that does not own this project
         if (project.visibility === DB_CONST.PROJECT_VISIBILITY_PRIVATE
-            && (user.type === DB_CONST.TYPE_ADMIN)
+            && user && (user.type === DB_CONST.TYPE_ADMIN)
             && !user.superAdmin
             && user.anid !== project.anid
         ) {
@@ -2343,7 +2360,7 @@ class ProjectDetails extends Component {
                 return (comment1.commentedDate - comment2.commentedDate);
             });
 
-            let currentCommentIndex = sortedComments.findIndex(comment => comment.commentedBy === user.id);
+            let currentCommentIndex = user ? sortedComments.findIndex(comment => comment.commentedBy === user.id) : -1;
             if (currentCommentIndex !== -1) {
                 const currentComment = comments[currentCommentIndex];
                 sortedComments.splice(currentCommentIndex, 1);
@@ -2450,8 +2467,8 @@ class ProjectDetails extends Component {
                                 }
                             </Typography>
                             {
-                                user.type === DB_CONST.TYPE_ADMIN
-                                || (user.type === DB_CONST.TYPE_ISSUER && user.id === project.issuerID)
+                                user && (user.type === DB_CONST.TYPE_ADMIN
+                                || (user.type === DB_CONST.TYPE_ISSUER && user.id === project.issuerID))
                                     ?
                                     <FlexView width="100%" hAlignContent="center" vAlignContent="center" marginTop={20}>
                                         {
@@ -2726,7 +2743,7 @@ class ProjectDetails extends Component {
                                     : <Col xs={12} sm={12} md={{span: 10, offset: 1, order: 5}} lg={{span: 12, offset: 0, order: 7}} style={{marginTop: 15}}>
                                         <FlexView column hAlignContent="left">
                                             <FlexView hAlignContent="center" vAlignContent="center">
-                                                <Button color="primary" variant="contained" className={css(sharedStyles.no_text_transform)} disabled={this.shouldHideInformation() || (user.type === TYPE_INVESTOR && !investorSelfCertificationAgreement)} onClick={() => this.toggleContactPitchOwnerDialog()}>Contact us</Button>
+                                                <Button color="primary" variant="contained" className={css(sharedStyles.no_text_transform)} disabled={this.shouldHideInformation() || (user && user.type === TYPE_INVESTOR && !investorSelfCertificationAgreement)} onClick={() => this.toggleContactPitchOwnerDialog()}>Contact us</Button>
                                                 {/*<Button*/}
                                                 {/*    size="medium"*/}
                                                 {/*    variant={getInvestorVote(votes, user) && getInvestorVote(votes, user).voted ? "contained" : "outlined"}*/}
@@ -2779,7 +2796,7 @@ class ProjectDetails extends Component {
                                         {
                                             this.shouldHideInformation()
                                                 ?
-                                                user.type === DB_CONST.TYPE_ADMIN
+                                                user && user.type === DB_CONST.TYPE_ADMIN
                                                     ?
                                                     <FlexView column marginTop={20}>
                                                         <Typography align="left" variant="body2" color="textSecondary">You cannot see detailed information of this restricted offer.</Typography>
@@ -2812,7 +2829,7 @@ class ProjectDetails extends Component {
                                     null
                                     :
                                     (
-                                        user.type !== DB_CONST.TYPE_INVESTOR
+                                        !user || user.type !== DB_CONST.TYPE_INVESTOR
                                             ?
                                             (
                                                 <Col xs={12} sm={12} md={{span: 10, offset: 1, order: 6}} lg={{span: 12, offset: 0, order: 6}} style={{marginTop: 30}}>
@@ -2833,12 +2850,12 @@ class ProjectDetails extends Component {
                                                     <Col xs={12} sm={12} md={{span: 10, offset: 1, order: 6}} lg={{span: 12, offset: 0, order: 6}} style={{marginTop: 30}}>
 
                                                         {
-                                                            user.type === DB_CONST.TYPE_INVESTOR
+                                                            user && user.type === DB_CONST.TYPE_INVESTOR
                                                             && !investorSelfCertificationAgreement
                                                                 ?
                                                                 <Button style={{marginBottom: 14}} className={css(sharedStyles.no_text_transform)} fullWidth variant="outlined" color="primary" size="medium"
                                                                     disabled={
-                                                                        user.type === DB_CONST.TYPE_INVESTOR
+                                                                        user && user.type === DB_CONST.TYPE_INVESTOR
                                                                         && !investorSelfCertificationAgreement
                                                                     }
                                                                 >
@@ -2875,6 +2892,24 @@ class ProjectDetails extends Component {
                     </Col>
                 </Row>
 
+                {/** Project Feedback Panel - Shows for rejected projects */}
+                {
+                    project && (isProjectRejectedToGoLive(project) || isProjectWaitingToGoLive(project))
+                        ?
+                        <Row noGutters style={{marginTop: 20, paddingLeft: 10, paddingRight: 10}}>
+                            <Col xs={{span: 12, offset: 0}} sm={{span: 12, offset: 0}} md={{span: 12, offset: 0}} lg={{span: 8, offset: 2}}>
+                                <ProjectFeedbackPanel
+                                    projectID={project.id}
+                                    isIssuer={user && user.type === DB_CONST.TYPE_ISSUER && user.id === project.issuerID}
+                                    isRejected={isProjectRejectedToGoLive(project)}
+                                    showFeedbackFromUrl={this.props.showFeedbackFromUrl || false}
+                                />
+                            </Col>
+                        </Row>
+                        :
+                        null
+                }
+
                 {/** Sections bar */}
                 <Row noGutters className={css(styles.sticky_body_sections_bar)}>
                     <Col xs={12} sm={12} md={12} lg={12}>
@@ -2887,7 +2922,7 @@ class ProjectDetails extends Component {
                                 {
                                     // user is a super admin
                                     // or a group admin that owns the project
-                                    (user.type === DB_CONST.TYPE_ADMIN
+                                    (user && user.type === DB_CONST.TYPE_ADMIN
                                         && (user.superAdmin || (!user.superAdmin && user.anid === project.anid))
                                     )
                                     // project is not a draft
@@ -2988,62 +3023,18 @@ class ProjectDetails extends Component {
                                                                     <Divider style={{marginTop: 35, marginBottom: 25}}/>
 
                                                                     {
-                                                                        !addingRejectFeedback
+                                                                        isProjectCreatedByGroupAdmin(project)
                                                                             ?
-                                                                            null
+                                                                            <Button fullWidth color="primary" variant="contained" className={css(sharedStyles.no_text_transform)} disabled={user.superAdmin} onClick={() => this.onMakeProjectGoLiveDecision({decision: true, projectVisibilitySetting})}>Publish pitch</Button>
                                                                             :
-                                                                            <FlexView column>
-                                                                                <TextField
-                                                                                    label="Feedback"
-                                                                                    placeholder="Feedback for issuer"
-                                                                                    name="rejectFeedback"
-                                                                                    value={rejectFeedback}
-                                                                                    fullWidth
-                                                                                    margin="normal"
-                                                                                    variant="outlined"
-                                                                                    required
-                                                                                    multiline
-                                                                                    rows={5}
-                                                                                    rowsMax={5}
-                                                                                    onChange={this.onTextChanged}
-                                                                                />
-
-                                                                                <FlexView width="100%" hAlignContent="right" marginTop={10}>
-                                                                                    <FlexView marginRight={6}>
-                                                                                        <Button fullWidth color="primary" variant="contained" className={css(sharedStyles.no_text_transform)} disabled={rejectFeedback.trim().length === 0} onClick={() => this.sendProjectBackToIssuer()}>
-                                                                                            {
-                                                                                                sendingProjectBack
-                                                                                                    ?
-                                                                                                    "Sending..."
-                                                                                                    :
-                                                                                                    "Send"
-                                                                                            }
-                                                                                        </Button>
-                                                                                    </FlexView>
-                                                                                    <FlexView marginLeft={6}>
-                                                                                        <Button fullWidth color="secondary" variant="outlined" className={css(sharedStyles.no_text_transform)} onClick={() => this.toggleRejectFeedback()}>Cancel</Button>
-                                                                                    </FlexView>
+                                                                            <FlexView>
+                                                                                <FlexView grow marginRight={10}>
+                                                                                    <Button fullWidth color="primary" variant="contained" className={css(sharedStyles.no_text_transform)} disabled={user.superAdmin} onClick={() => this.onMakeProjectGoLiveDecision({decision: true, projectVisibilitySetting})}>Publish pitch</Button>
+                                                                                </FlexView>
+                                                                                <FlexView grow marginLeft={10}>
+                                                                                    <Button fullWidth color="secondary" variant="outlined" className={css(sharedStyles.no_text_transform)} disabled={user.superAdmin} onClick={() => this.toggleRejectFeedback()}>Send back to issuer</Button>
                                                                                 </FlexView>
                                                                             </FlexView>
-                                                                    }
-
-                                                                    {
-                                                                        addingRejectFeedback
-                                                                            ?
-                                                                            null
-                                                                            :
-                                                                            isProjectCreatedByGroupAdmin(project)
-                                                                                ?
-                                                                                <Button fullWidth color="primary" variant="contained" className={css(sharedStyles.no_text_transform)} disabled={user.superAdmin} onClick={() => this.onMakeProjectGoLiveDecision({decision: true, projectVisibilitySetting})}>Publish pitch</Button>
-                                                                                :
-                                                                                <FlexView>
-                                                                                    <FlexView grow marginRight={10}>
-                                                                                        <Button fullWidth color="primary" variant="contained" className={css(sharedStyles.no_text_transform)} disabled={user.superAdmin} onClick={() => this.onMakeProjectGoLiveDecision({decision: true, projectVisibilitySetting})}>Publish pitch</Button>
-                                                                                    </FlexView>
-                                                                                    <FlexView grow marginLeft={10}>
-                                                                                        <Button fullWidth color="secondary" variant="outlined" className={css(sharedStyles.no_text_transform)} disabled={user.superAdmin} onClick={() => this.toggleRejectFeedback()}>Send back to issuer</Button>
-                                                                                    </FlexView>
-                                                                                </FlexView>
                                                                     }
 
                                                                     {
@@ -4304,6 +4295,11 @@ class ProjectDetails extends Component {
             groupsUserIsIn
         } = this.props;
 
+        // If no user, hide information
+        if (!user) {
+            return true;
+        }
+
         // user is an admin
         if (user.type === DB_CONST.TYPE_ADMIN) {
             // user is a super admin
@@ -4529,11 +4525,11 @@ class ProjectDetails extends Component {
  * @returns {null|*}
  */
 const getInvestorVote = (votes, user) => {
-    if (votes.length === 0) {
+    if (!votes || votes.length === 0 || !user) {
         return null;
     }
 
-    let investorVoteIndex = votes.findIndex(vote => vote.investorID === user.id);
+    let investorVoteIndex = votes.findIndex(vote => vote && vote.investorID === user.id);
     // investor has voted
     if (investorVoteIndex !== -1) {
         return votes[investorVoteIndex];

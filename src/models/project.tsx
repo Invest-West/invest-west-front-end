@@ -132,14 +132,39 @@ export interface ProjectPledge {
 }
 
 /**
+ * Project reject feedback status
+ */
+export type ProjectRejectFeedbackStatus = 'pending' | 'addressed' | 'resolved';
+
+/**
  * Project reject feedback
  */
 export interface ProjectRejectFeedback {
+    id: string;
     projectID: string;
     sentBy: string;
     date: number;
     feedback: string;
+    status: ProjectRejectFeedbackStatus;
+    addressedDate?: number;
+    adminResponse?: string;
+    adminName?: string; // Joined from backend
 }
+
+/**
+ * Helper functions for ProjectRejectFeedback
+ */
+export const isFeedbackPending = (feedback: ProjectRejectFeedback): boolean =>
+    feedback.status === 'pending';
+
+export const isFeedbackAddressed = (feedback: ProjectRejectFeedback): boolean =>
+    feedback.status === 'addressed';
+
+export const isFeedbackResolved = (feedback: ProjectRejectFeedback): boolean =>
+    feedback.status === 'resolved';
+
+export const getPendingFeedbackCount = (feedbacks: ProjectRejectFeedback[]): number =>
+    feedbacks.filter(isFeedbackPending).length;
 
 /**
  * Project - pitch cover interface

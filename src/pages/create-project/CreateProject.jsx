@@ -2163,10 +2163,31 @@ class CreatePitchPageMain extends Component {
                                         }
                                     };
 
-                                    projectRef
-                                        .child(projectID)
-                                        .set(projectObj)
-                                        .then(() => {
+                                    // Build the request body
+                                    const requestBody = {
+                                        project: projectObj
+                                    };
+
+                                    // For non-draft projects, include the T&C acceptance
+                                    if (!saveProgress) {
+                                        requestBody.agreement = {
+                                            issuerID: AuthenticationState.currentUser.id,
+                                            date: utils.getCurrentDate()
+                                        };
+                                    }
+
+                                    // Use the backend API to create the project
+                                    new Api().request(
+                                        "post",
+                                        ApiRoutes.createProjectRoute,
+                                        {
+                                            queryParameters: null,
+                                            requestBody: requestBody
+                                        }
+                                    )
+                                        .then((response) => {
+                                            const createdProjectId = response.data.projectId || projectID;
+
                                             // save button is clicked
                                             if (saveProgress) {
                                                 // don't need to track activity for draft project
@@ -2178,7 +2199,7 @@ class CreatePitchPageMain extends Component {
 
                                                 this.setState({
                                                     requestToLoadData: true,
-                                                    projectIDToBeLoadedAfterSavingFirstTime: projectID,
+                                                    projectIDToBeLoadedAfterSavingFirstTime: createdProjectId,
                                                     saveProgress: false,
                                                     progressBeingSaved: false,
                                                     projectEditedLoaded: false,
@@ -2198,7 +2219,7 @@ class CreatePitchPageMain extends Component {
 
                                                 this.navigateToTheSamePageWithActiveStepSaved(
                                                     activeStep,
-                                                    projectID
+                                                    createdProjectId
                                                 );
                                             }
                                             // publish button is clicked
@@ -2209,50 +2230,20 @@ class CreatePitchPageMain extends Component {
                                                         userID: AuthenticationState.currentUser.id,
                                                         activityType: DB_CONST.ACTIVITY_TYPE_POST,
                                                         interactedObjectLocation: DB_CONST.PROJECTS_CHILD,
-                                                        interactedObjectID: projectID,
+                                                        interactedObjectID: createdProjectId,
                                                         activitySummary: realtimeDBUtils.ACTIVITY_SUMMARY_TEMPLATE_CREATED_PROJECT.replace("%project%", projectObj.projectName),
-                                                        action: ROUTES.PROJECT_DETAILS_INVEST_WEST_SUPER.replace(":projectID", projectObj.id),
+                                                        action: ROUTES.PROJECT_DETAILS_INVEST_WEST_SUPER.replace(":projectID", createdProjectId),
                                                         value: projectObj
                                                     });
 
-                                                const id = this.firebaseDB
-                                                    .ref(DB_CONST.ACCEPTED_CREATE_PITCH_TERM_AND_CONDITIONS_CHILD)
-                                                    .push()
-                                                    .key;
-
-                                                // don't need to check for prior TCs acceptance because this is create new mode
-                                                const acceptedTCsObj = {
-                                                    id,
-                                                    issuerID: AuthenticationState.currentUser.id,
-                                                    projectID: projectID,
-                                                    date: utils.getCurrentDate()
-                                                };
-
-                                                this.firebaseDB
-                                                    .ref(DB_CONST.ACCEPTED_CREATE_PITCH_TERM_AND_CONDITIONS_CHILD)
-                                                    .child(id)
-                                                    .set(acceptedTCsObj)
-                                                    .then(() => {
-                                                        this.setState({
-                                                            createProject: {
-                                                                ...this.state.createProject,
-                                                                uploadFileMode: UPLOAD_DONE_MODE,
-                                                                uploadFileProgress: 100,
-                                                                projectID: projectID
-                                                            }
-                                                        });
-                                                    })
-                                                    .catch(error => {
-                                                        console.error("Failed to save terms and conditions:", error);
-                                                        this.setState({
-                                                            createProject: {
-                                                                ...this.state.createProject,
-                                                                uploadFileMode: UPLOAD_DONE_MODE,
-                                                                uploadFileProgress: 100,
-                                                                projectID: projectID
-                                                            }
-                                                        });
-                                                    });
+                                                this.setState({
+                                                    createProject: {
+                                                        ...this.state.createProject,
+                                                        uploadFileMode: UPLOAD_DONE_MODE,
+                                                        uploadFileProgress: 100,
+                                                        projectID: createdProjectId
+                                                    }
+                                                });
                                             }
                                         })
                                         .catch(error => {
