@@ -391,7 +391,7 @@ export const startListeningForGroupsUserIsIn = () => {
                         userInGroupStatus: invitedUser.status
                     };
 
-                    const index = groupsUserIsIn.findIndex(group => group.invitedUser.id === groupUserIsIn.invitedUser.id);
+                    const index = groupsUserIsIn.findIndex(group => group && group.invitedUser && group.invitedUser.id === groupUserIsIn.invitedUser.id);
                     if (index === -1) {
                         realtimeDBUtils
                             .loadAngelNetworkBasedOnANID(groupUserIsIn.anid)
@@ -418,7 +418,7 @@ export const startListeningForGroupsUserIsIn = () => {
                         userInGroupStatus: invitedUser.status
                     };
 
-                    const index = groupsUserIsIn.findIndex(group => group.invitedUser.id === groupUserIsIn.invitedUser.id);
+                    const index = groupsUserIsIn.findIndex(group => group && group.invitedUser && group.invitedUser.id === groupUserIsIn.invitedUser.id);
                     if (index !== -1) {
                         realtimeDBUtils
                             .loadAngelNetworkBasedOnANID(groupsUserIsIn.anid)

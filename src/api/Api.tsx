@@ -34,9 +34,13 @@ export class ApiRoutes {
     static listGroupMembers = ApiRoutes.groupsBaseRoute + "/:group/list-members";
 
     static projectsBaseRoute = "/projects";
+    static createProjectRoute = ApiRoutes.projectsBaseRoute + "/create";
     static listProjectsRoute = ApiRoutes.projectsBaseRoute + "/list";
     static sendProjectBackToIssuerRoute = ApiRoutes.projectsBaseRoute + "/send-back-to-issuer";
     static exportProjectsToCsvRoute = ApiRoutes.projectsBaseRoute + "/export";
+    static projectFeedbacksRoute = ApiRoutes.projectsBaseRoute + "/:projectID/feedbacks";
+    static projectResubmitRoute = ApiRoutes.projectsBaseRoute + "/:projectID/resubmit";
+    static updateProjectFeedbackRoute = ApiRoutes.projectsBaseRoute + "/:projectID/feedbacks/:feedbackID";
 
     static groupAdminsBaseRoute = "/group-admins";
     static addGroupAdminRoute = ApiRoutes.groupAdminsBaseRoute + "/add";
@@ -48,7 +52,7 @@ export class ApiRoutes {
 
     static investorSelfCertificationBaseRoute = "/investor-self-certifications";
     static retrieveInvestorSelfCertificationRoute = ApiRoutes.investorSelfCertificationBaseRoute + "/retrieve";
-    static updateInvestorSelfCertificationRoute = ApiRoutes.investorSelfCertificationBaseRoute + "/update";
+    static createInvestorSelfCertificationRoute = ApiRoutes.investorSelfCertificationBaseRoute + "/create";
 
     static fileBaseRoute = "/file";
     static uploadSingleFileRoute = ApiRoutes.fileBaseRoute + "/upload-single";

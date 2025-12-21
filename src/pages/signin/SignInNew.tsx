@@ -128,8 +128,7 @@ class SignInNew extends Component<SignInProps & Readonly<RouteComponentProps<Rou
                                     ? null
                                     : <Box marginBottom="35px" padding="15px" color="white" bgcolor="error.main" >
                                         <Typography variant="body1" align="left">
-                                       {/** {AuthenticationState.error?.detail} */}
-                                       Error: Username or password not recognised
+                                            {AuthenticationState.error?.detail || "Error: Username or password not recognised"}
                                         </Typography>
                                     </Box>
                             }

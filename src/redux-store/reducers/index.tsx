@@ -50,6 +50,7 @@ import contactPitchOwnerDialogReducer, {ContactPitchOwnerDialogState} from "../.
 import profileReducer, {ProfileState} from "../../shared-components/profile/ProfileReducer";
 import signUpReducer, {SignUpState} from "../../pages/signup/SignUpReducer";
 import manageSectorsReducer, {ManageSectorsState} from "../../pages/admin/components/manage-sectors/ManageSectorsReducer";
+import projectFeedbackReducer, {ProjectFeedbackState} from "../../pages/project-details/components/project-feedback/ProjectFeedbackReducer";
 
 export interface AppState {
     MediaQueryState: MediaQueryState;
@@ -70,6 +71,7 @@ export interface AppState {
     FeedbackSnackbarLocalState: FeedbackSnackbarState;
     DocumentsDownloadLocalState: DocumentsDownloadState;
     ContactPitchOwnerDialogLocalState: ContactPitchOwnerDialogState;
+    ProjectFeedbackLocalState: ProjectFeedbackState;
 
     ManageSectorsLocalState: ManageSectorsState;
 
@@ -98,6 +100,7 @@ const rootReducer = combineReducers<AppState>({
     FeedbackSnackbarLocalState: feedbackSnackbarReducerNew,
     DocumentsDownloadLocalState: documentsDownloadReducer,
     ContactPitchOwnerDialogLocalState: contactPitchOwnerDialogReducer,
+    ProjectFeedbackLocalState: projectFeedbackReducer,
 
     ManageSectorsLocalState: manageSectorsReducer,
 

@@ -1,8 +1,6 @@
-import firebase from '../../firebase/firebaseApp';
-import * as DB_CONST from '../../firebase/databaseConsts';
 import * as utils from '../../utils/utils';
-import * as realtimeDBUtils from '../../firebase/realtimeDBUtils';
 import * as feedbackSnackbarActions from './feedbackSnackbarActions';
+import InvestorSelfCertificationRepository from '../../api/repositories/InvestorSelfCertificationRepository';
 
 export const isCertificationExpired = (timestamp, expirationMinutes = 24 * 60) => {
     const now = new Date().getTime();
@@ -29,46 +27,34 @@ export const setUser = (uid) => {
 export const LOADING_INVESTOR_SELF_CERTIFICATION_AGREEMENT = 'LOADING_INVESTOR_SELF_CERTIFICATION_AGREEMENT';
 export const FINISHED_LOADING_INVESTOR_SELF_CERTIFICATION_AGREEMENT = 'FINISHED_LOADING_INVESTOR_SELF_CERTIFICATION_AGREEMENT';
 export const loadInvestorSelfCertificationAgreement = () => {
-    return (dispatch, getState) => {
+    return async (dispatch, getState) => {
       const {
         userID
       } = getState().manageInvestorSelfCertificationAgreement;
-  
+
       dispatch({
         type: LOADING_INVESTOR_SELF_CERTIFICATION_AGREEMENT
       });
-  
-      firebase
-      .database()
-      .ref(DB_CONST.INVESTOR_SELF_CERTIFICATION_AGREEMENTS_CHILD)
-      .orderByChild('userID')
-      .equalTo(userID)
-      .once('value', snapshots => {
-        if (!snapshots || !snapshots.exists()) {
-          dispatch({
-            type: FINISHED_LOADING_INVESTOR_SELF_CERTIFICATION_AGREEMENT,
-            result: null
-          });
-          return;
-        }
 
-        let agreementData = null;
-        snapshots.forEach(snapshot => {
-          agreementData = snapshot.val();
-          // We only need the first match, so we can break the loop
-          return true;
-        });
+      try {
+        const response = await new InvestorSelfCertificationRepository().getInvestorSelfCertification(userID);
+        const agreementData = response.data;
 
         if (agreementData && isCertificationExpired(agreementData.selfCertificationTimestamp)) {
           console.log("Certification has expired");
-          // You can dispatch an action here to update the UI or show a notification
         }
 
         dispatch({
           type: FINISHED_LOADING_INVESTOR_SELF_CERTIFICATION_AGREEMENT,
           result: agreementData
         });
-      });
+      } catch (error) {
+        console.error("Error loading investor self-certification:", error);
+        dispatch({
+          type: FINISHED_LOADING_INVESTOR_SELF_CERTIFICATION_AGREEMENT,
+          result: null
+        });
+      }
   }
 };
   
@@ -83,72 +69,53 @@ export const handleTickBoxChanged = event => {
 
 export const UPDATE_INVESTOR_SELF_CERTIFICATION_AGREEMENT = 'UPDATE_INVESTOR_SELF_CERTIFICATION_AGREEMENT';
 export const setInvestorSelfCertificationAgreement = () => {
-    return (dispatch, getState) => {
+    return async (dispatch, getState) => {
       const {
         userID,
         statementType
       } = getState().manageInvestorSelfCertificationAgreement;
-  
-      const id = firebase
-        .database()
-        .ref(DB_CONST.INVESTOR_SELF_CERTIFICATION_AGREEMENTS_CHILD)
-        .push()
-        .key;
-  
-      const timestamp = new Date().getTime(); // Add this line to get the current timestamp
-  
-      const agreementObject = {
-        id,
-        userID: userID,
-        agreedDate: utils.getCurrentDate(),
-        selfCertificationTimestamp: timestamp, // Add this line to store the timestamp
-        type: statementType
-      };
 
-        firebase
-            .database()
-            .ref(DB_CONST.INVESTOR_SELF_CERTIFICATION_AGREEMENTS_CHILD)
-            .child(id)
-            .set(agreementObject)
-            .then(() => {
-                // track investor's activity
-                realtimeDBUtils
-                    .trackActivity({
-                        userID: userID,
-                        activityType: DB_CONST.ACTIVITY_TYPE_POST,
-                        interactedObjectLocation: DB_CONST.INVESTOR_SELF_CERTIFICATION_AGREEMENTS_CHILD,
-                        interactedObjectID: id,
-                        activitySummary: realtimeDBUtils.ACTIVITY_SUMMARY_TEMPLATE_COMPLETED_SELF_CERTIFICATION
-                    });
+      const timestamp = new Date().getTime();
 
-                // update states
-                dispatch({
-                    type: UPDATE_INVESTOR_SELF_CERTIFICATION_AGREEMENT,
-                    agreement: agreementObject
-                });
+      try {
+        const response = await new InvestorSelfCertificationRepository().createInvestorSelfCertification({
+          userID: userID,
+          agreedDate: utils.getCurrentDate(),
+          type: statementType,
+          selfCertificationTimestamp: timestamp
+        });
 
-                // display snackbar to let the user know
-                dispatch({
-                    type: feedbackSnackbarActions.SET_FEEDBACK_SNACKBAR_CONTENT,
-                    message: "You have now self certified.",
-                    color: "primary",
-                    position: "bottom"
-                });
-            })
-            .catch(error => {
-                dispatch({
-                    type: UPDATE_INVESTOR_SELF_CERTIFICATION_AGREEMENT,
-                    agreement: null
-                });
+        const agreementObject = response.data;
 
-                // display snackbar to let the user know
-                dispatch({
-                    type: feedbackSnackbarActions.SET_FEEDBACK_SNACKBAR_CONTENT,
-                    message: "Error happened. We couldn't upload your self-certification statement.",
-                    color: "error",
-                    position: "bottom"
-                });
-            });
+        // update states
+        dispatch({
+          type: UPDATE_INVESTOR_SELF_CERTIFICATION_AGREEMENT,
+          agreement: agreementObject
+        });
+
+        // display snackbar to let the user know
+        dispatch({
+          type: feedbackSnackbarActions.SET_FEEDBACK_SNACKBAR_CONTENT,
+          message: "You have now self certified.",
+          color: "primary",
+          position: "bottom"
+        });
+      } catch (error) {
+        console.error("Error creating investor self-certification:", error);
+
+        dispatch({
+          type: UPDATE_INVESTOR_SELF_CERTIFICATION_AGREEMENT,
+          agreement: null
+        });
+
+        // display snackbar to let the user know
+        dispatch({
+          type: feedbackSnackbarActions.SET_FEEDBACK_SNACKBAR_CONTENT,
+          message: "Error happened. We couldn't upload your self-certification statement.",
+          color: "error",
+          position: "bottom"
+        });
+      }
     }
 };
 

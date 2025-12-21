@@ -22,6 +22,7 @@ import {getGroupLogo} from "../../models/group_properties";
 import Routes from "../../router/routes";
 import {css} from "aphrodite";
 import sharedStyles from "../../shared-js-css-styles/SharedStyles";
+import defaultLogo from "../../img/logo.png";
 
 interface HeaderProps extends HeaderLocalProps {
     MediaQueryState: MediaQueryState;
@@ -118,14 +119,14 @@ class Header extends Component<HeaderProps, {}> {
                                         alt="logo"
                                         src={
                                             Routes.isErrorRoute(routePath) || Routes.isSystemPublicRoute(routePath)
-                                                ? require("../../img/logo.png").default
+                                                ? defaultLogo
                                                 : isValidatingGroupUrl(ManageGroupUrlState)
-                                                ? null
+                                                ? undefined
                                                 : !routeContainsGroupName(ManageGroupUrlState)
-                                                    ? require("../../img/logo.png").default
+                                                    ? defaultLogo
                                                     : successfullyValidatedGroupUrl(ManageGroupUrlState)
-                                                        ? getGroupLogo(ManageGroupUrlState.group)
-                                                        : null
+                                                        ? getGroupLogo(ManageGroupUrlState.group) ?? defaultLogo
+                                                        : undefined
                                         }
                                         style={{ width: "auto", height: 36, objectFit: "contain" }}
                                     />

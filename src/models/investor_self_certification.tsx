@@ -6,4 +6,5 @@ export default interface InvestorSelfCertification {
     userID: string;
     agreedDate: number;
     type: number;
+    selfCertificationTimestamp?: number;
 }

@@ -76,6 +76,7 @@ export default class Routes {
             && route !== Routes.groupFront
             && route !== Routes.nonGroupSignIn
             && route !== Routes.groupSignIn
+            && route !== Routes.superAdminSignIn
             && route !== Routes.nonGroupSignUp
             && route !== Routes.groupSignUp
             && route !== Routes.nonGroupContactUs
