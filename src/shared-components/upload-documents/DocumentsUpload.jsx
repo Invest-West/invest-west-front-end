@@ -8,6 +8,7 @@ import {
     Typography
 } from '@material-ui/core';
 import CloseIcon from '@material-ui/icons/Close';
+import DocumentIcon from '../document-icon/DocumentIcon';
 import {
     OverlayTrigger,
     Tooltip
@@ -48,7 +49,7 @@ export default class LegalDocuments extends Component {
                         documents.map((document, index) => (
                             <FlexView key={index} vAlignContent="center">
                                 <ListItem button style={{ padding: 7 }} >
-                                    <img alt="Document" className={css(styles.preview_icon)} src={require("../../img/document_icon.png").default} />
+                                    <DocumentIcon fileName={document.file.name} />
                                     <FlexView column hAlignContent="left" >
                                         <Typography variant="body2" className={css(styles.black_text)} align="left" >{document.file.name}</Typography>
                                         <Typography variant="body2" color="textSecondary" align="left">{document.file.sizeReadable}</Typography>

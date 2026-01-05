@@ -1,4 +1,3 @@
-/* eslint-disable jsx-a11y/img-redundant-alt */
 import React, {Component} from "react";
 import {connect} from "react-redux";
 import {AppState} from "../../redux-store/reducers";
@@ -16,6 +15,7 @@ import {
     ListItem,
     Typography
 } from "@material-ui/core";
+import DocumentIcon from "../document-icon/DocumentIcon";
 import {DocumentsDownloadState} from "./DocumentsDownloadReducer";
 import {onAcceptRiskWarningClick, onCancelRiskWarningClick, onDocumentClick} from "./DocumentsDownloadActions";
 import {css} from "aphrodite";
@@ -96,12 +96,7 @@ class DocumentsDownload extends Component<DocumentsDownloadProps, any> {
                                 button
                                 onClick={() => onDocumentClick(document, shouldShowRiskWarningOnDownload ?? false)}
                             >
-                                <img
-                                    alt="Document image"
-                                    src={require("../../img/document_icon.png").default}
-                                    width={48}
-                                    height={48}
-                                />
+                                <DocumentIcon fileName={document.fileName} />
                                 <Box display="flex" flexDirection="row" >
                                     <Typography variant="body2" align="left">{document.fileName}</Typography>
                                     <Typography variant="body2" color="textSecondary" align="left">{document.readableSize}</Typography>

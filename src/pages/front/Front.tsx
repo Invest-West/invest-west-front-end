@@ -150,18 +150,6 @@ class Front extends Component<FrontProps & Readonly<RouteComponentProps<RoutePar
                                     </Box>
                             }
                         </Box>
-
-                        <Box display="flex" flexDirection="column" justifyContent="flex-end" flexGrow={1}>
-                            <Image alt="front_footer" src={require("../../img/front_page_cover_image.png").default} style={{objectFit: "fill"}}/>
-                            <Box height="90px"
-                                bgcolor={
-                                    toRGBWithOpacity(
-                                        getGroupRouteTheme(ManageGroupUrlState).palette.primary.main,
-                                        0.75
-                                    )
-                                }
-                            />
-                        </Box>
                     </Box>
                 </Col>
             </Row>
