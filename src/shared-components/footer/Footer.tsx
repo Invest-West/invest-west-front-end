@@ -5,8 +5,8 @@ import {Box, Divider, Typography} from "@material-ui/core";
 import Routes from "../../router/routes";
 import * as appColors from "../../values/colors";
 import CustomLink from "../../shared-js-css-styles/CustomLink";
-import {Image} from "react-bootstrap";
 import {MediaQueryState} from "../../redux-store/reducers/mediaQueryReducer";
+import investWestLogo from "../../img/logo.png";
 
 interface FooterProps {
     position?: "relative" | "fixed",
@@ -75,13 +75,13 @@ class Footer extends Component<FooterProps, any> {
             </Box>
 
             <Box display="flex" flexDirection="row" alignItems="center" justifyContent="center" >
-                <Image
+                <img
                     alt="Invest West logo"
-                    src={require("../../img/logo.png").default}
+                    src={investWestLogo}
                     style={{ width: "auto", height: 34, objectFit: "contain" }}
                 />
                 <Box width="20px" />
-                <Typography align="left" variant="body1">Powered by Invest West. <br/> Copyright © 2021 Invest West Ltd - All Rights Reserved.</Typography>
+                <Typography align="left" variant="body1">Powered by Invest West. <br/> Copyright © {new Date().getFullYear()} Invest West Ltd - All Rights Reserved.</Typography>
             </Box>
         </Box>;
     }

@@ -55,7 +55,6 @@ class FeedbackSnackbar extends Component {
                 }}
                 autoHideDuration={2500}
                 onClose={closeFeedbackSnackbar}
-                onExited={resetStatesWhenSnackbarClosed}
                 TransitionComponent={
                     position === "bottom"
                         ?
@@ -67,6 +66,9 @@ class FeedbackSnackbar extends Component {
                             :
                             null
                 }
+                TransitionProps={{
+                    onExited: resetStatesWhenSnackbarClosed
+                }}
                 transitionDuration={{
                     enter: 130,
                     exit: 130

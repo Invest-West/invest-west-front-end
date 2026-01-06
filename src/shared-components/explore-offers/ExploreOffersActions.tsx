@@ -64,7 +64,7 @@ export const fetchOffers: ActionCreator<any> = () => {
         const fetchOffersOptions: FetchProjectsOptions = {
             search: searchFilter.trim().length === 0 ? undefined : searchFilter,
             visibility: visibilityFilter,
-            group: groupFilter === "all" ? undefined : groupFilter,
+            groupName: groupFilter === "all" ? undefined : groupFilter,
             sector: sectorFilter === "all" ? undefined : sectorFilter,
             phase: phaseFilter,
             orderBy,

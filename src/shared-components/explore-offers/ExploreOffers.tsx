@@ -4,8 +4,6 @@ import {AppState} from "../../redux-store/reducers";
 import {ThunkDispatch} from "redux-thunk";
 import {AnyAction} from "redux";
 import {Col, Row} from "react-bootstrap";
-import GroupRepository from "../../api/repositories/GroupRepository";
-import GroupProperties from "../../models/group_properties";
 import {
     Box,
     Button, colors,
@@ -80,33 +78,12 @@ const mapDispatchToProps = (dispatch: ThunkDispatch<any, any, AnyAction>) => {
     }
 }
 
-interface ExploreOffersComponentState {
-    groups: GroupProperties[];
-  }
-
-  class ExploreOffers extends Component<ExploreOffersProps, ExploreOffersComponentState> {
-    constructor(props: ExploreOffersProps) {
-      super(props);
-      this.state = {
-        groups: [],
-      };
-    }
-  
+class ExploreOffers extends Component<ExploreOffersProps, any> {
     componentDidMount() {
         if (hasNotFetchedOffers(this.props.ExploreOffersLocalState)) {
           this.props.fetchOffers(FetchProjectsOrderByOptions.Phase);
         }
-        this.fetchGroups();
       }
-  
-      fetchGroups = async () => {
-        try {
-          const response = await new GroupRepository().fetchGroups();
-          this.setState({ groups: response.data });
-        } catch (error) {
-          console.error("Error fetching groups:", error);
-        }
-      };
   
     render() {
         const {
@@ -143,16 +120,16 @@ interface ExploreOffersComponentState {
                         value={ExploreOffersLocalState.groupFilter}
                         onChange={filterChanged}
                         input={<OutlinedInput />}
-                        /* disabled={!successfullyFetchedOffers(ExploreOffersLocalState)}  */
                         >
                         <MenuItem key="all" value="all">
                             All
                         </MenuItem>
-                        {this.state.groups.map((group) => (
-                            <MenuItem key={group.anid} value={group.anid}>
-                            {group.displayName}
-                            </MenuItem>
-                        ))}
+                        <MenuItem key="invest-west" value="Invest West">
+                            Invest West
+                        </MenuItem>
+                        <MenuItem key="fintech-west" value="Fintech West">
+                            Fintech West
+                        </MenuItem>
                         </Select>
                     </Paper>
                     </Box>

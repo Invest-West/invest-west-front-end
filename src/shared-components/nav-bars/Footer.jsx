@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Col, Container, Image, Row} from 'react-bootstrap';
+import {Col, Container, Row} from 'react-bootstrap';
 import {Divider, Typography} from '@material-ui/core';
 import FlexView from 'react-flexview';
 import {css} from 'aphrodite';
@@ -8,6 +8,7 @@ import {connect} from 'react-redux';
 
 import * as ROUTES from '../../router/routes';
 import sharedStyles from '../../shared-js-css-styles/SharedStyles';
+import investWestLogo from '../../img/logo.png';
 
 const mapStateToProps = state => {
     return {
@@ -34,13 +35,13 @@ class Footer extends Component {
                             <Col xs={12} sm={12} md={3} lg={2} >
                                 <a href={ROUTES.ORIGINAL_WEB_URL} className={css(sharedStyles.nav_link_hover_without_changing_text_color)} >
                                     <FlexView width="100%" hAlignContent={MediaQueryState.isMobile ? "center" : "left"} >
-                                        <Image src={require('../../img/logo.png').default} style={{ width: "auto", height: 45, margin: 8 }} />
+                                        <img src={investWestLogo} alt="Invest West logo" style={{ width: "auto", height: 45, margin: 8 }} />
                                     </FlexView>
                                 </a>
                             </Col>
                             <Col xs={12} sm={12} md={9} lg={10} >
                                 <FlexView width="100%" height="100%" vAlignContent="center" >
-                                    <Typography variant="body1" align={MediaQueryState.isMobile ? "center" : "left"} >Copyright © 2020 Invest West Ltd - All Rights Reserved.</Typography>
+                                    <Typography variant="body1" align={MediaQueryState.isMobile ? "center" : "left"} >Copyright © {new Date().getFullYear()} Invest West Ltd - All Rights Reserved.</Typography>
                                 </FlexView>
                             </Col>
                         </Row>
