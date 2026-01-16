@@ -51,6 +51,7 @@ import profileReducer, {ProfileState} from "../../shared-components/profile/Prof
 import signUpReducer, {SignUpState} from "../../pages/signup/SignUpReducer";
 import manageSectorsReducer, {ManageSectorsState} from "../../pages/admin/components/manage-sectors/ManageSectorsReducer";
 import projectFeedbackReducer, {ProjectFeedbackState} from "../../pages/project-details/components/project-feedback/ProjectFeedbackReducer";
+import emailTemplateReducer from './emailTemplateReducer';
 
 export interface AppState {
     MediaQueryState: MediaQueryState;
@@ -139,6 +140,7 @@ const rootReducer = combineReducers<AppState>({
     manageSystemGroups: manageSystemGroupsReducer,
     manageMarketingPreferences: manageMarketingPreferencesReducer,
     manageCreateProject: createProjectReducer,
+    emailTemplates: emailTemplateReducer,
 });
 
 export default rootReducer;

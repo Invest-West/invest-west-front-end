@@ -127,8 +127,8 @@ class ExploreOffers extends Component<ExploreOffersProps, any> {
                         <MenuItem key="invest-west" value="Invest West">
                             Invest West
                         </MenuItem>
-                        <MenuItem key="fintech-west" value="Fintech West">
-                            Fintech West
+                        <MenuItem key="fintech-west" value="FinTech West">
+                            FinTech West
                         </MenuItem>
                         </Select>
                     </Paper>

@@ -15,7 +15,6 @@
 # misc
 .DS_Store
 .env
-.env
 .env.demo
 .env.development
 .env.production

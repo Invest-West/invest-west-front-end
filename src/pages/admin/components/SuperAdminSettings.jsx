@@ -33,6 +33,8 @@ import {connect} from 'react-redux';
 import * as superAdminSettingsActions from '../../../redux-store/actions/superAdminSettingsActions';
 import ManageSectors from "./manage-sectors/ManageSectors";
 import FeedbackSnackbarNew from "../../../shared-components/feedback-snackbar/FeedbackSnackbarNew";
+import EmailTemplateManager from "./email-templates/EmailTemplateManager";
+import SMTPSettings from "./email-templates/SMTPSettings";
 
 const mapStateToProps = state => {
     return {
@@ -405,6 +407,27 @@ class SuperAdminSettings extends Component {
                             <FlexView marginTop={15} width="100%" hAlignContent="right">
                                 <Button variant="contained" color="primary" onClick={() => saveEditedQuill('marketingPreferences')} style={{marginLeft: 12}}>Save</Button>
                             </FlexView>
+                        </FlexView>
+                    </Col>
+
+                    {/** Divider */}
+                    <Col xs={12} sm={12} md={12} lg={12}>
+                        <Divider style={{ marginTop: 40, marginBottom: 40, height: 3, backgroundColor: colors.primaryColor}}/>
+                    </Col>
+
+                    {/** Email Settings Section */}
+                    <Col xs={12} sm={12} md={12} lg={12}>
+                        <FlexView column>
+                            <Typography variant="h6" color="primary">Email Settings</Typography>
+                            <Typography variant="body2" color="textSecondary" style={{marginTop: 8, marginBottom: 20}}>
+                                Configure SMTP server settings and manage email templates for system notifications.
+                            </Typography>
+
+                            <SMTPSettings />
+
+                            <div style={{marginTop: 30}}>
+                                <EmailTemplateManager />
+                            </div>
                         </FlexView>
                     </Col>
                 </Row>

@@ -19,6 +19,15 @@ export class ApiRoutes {
     static emailBaseRoute = "/email";
     static sendEmailRoute = ApiRoutes.emailBaseRoute + "/send";
 
+    // Email template management routes
+    static emailTemplatesRoute = ApiRoutes.emailBaseRoute + "/templates";
+    static emailTemplateByIdRoute = ApiRoutes.emailBaseRoute + "/templates/:id";
+    static emailSettingsRoute = ApiRoutes.emailBaseRoute + "/settings";
+    static emailTestConnectionRoute = ApiRoutes.emailBaseRoute + "/test-connection";
+    static emailSendTestRoute = ApiRoutes.emailBaseRoute + "/send-test";
+    static emailSeedTemplatesRoute = ApiRoutes.emailBaseRoute + "/seed-templates";
+    static emailTemplateInfoRoute = ApiRoutes.emailBaseRoute + "/template-info";
+
     static usersBaseRoute = "/users";
     static createUser = ApiRoutes.usersBaseRoute + "/create";
     static retrieveUser = ApiRoutes.usersBaseRoute + "/:uid/retrieve";
