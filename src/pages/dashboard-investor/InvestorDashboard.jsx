@@ -223,11 +223,11 @@ class InvestorDashboard extends Component {
         /**
          * RESOURCES TAB
          */
-        if (params.tab === RESOURCES_TAB) {
-            return (
-                <Resources/>
-            );
-        }
+        // if (params.tab === RESOURCES_TAB) {
+        //     return (
+        //         <Resources/>
+        //     );
+        // }
     };
 
     render() {

@@ -71,6 +71,7 @@ import {
     isProjectWaitingToGoLive
 } from "../../models/project";
 import DocumentsDownload from "../../shared-components/documents-download/DocumentsDownload";
+import InlineDocViewer, { isInlineViewable } from "../../shared-components/pdf-viewer/InlineDocViewer";
 import RiskWarning from "../../shared-components/risk-warning/RiskWarning";
 import {toggleContactPitchOwnerDialog} from "./components/contact-pitch-owner-dialog/ContactPitchOwnerDialogActions";
 import ContactPitchOwnerDialog from "./components/contact-pitch-owner-dialog/ContactPitchOwnerDialog";
@@ -3554,7 +3555,20 @@ class ProjectDetails extends Component {
                                             :
                                             <FlexView column marginTop={30}>
                                                 <Typography variant="h5">Pitch deck</Typography>
-                                                <DocumentsDownload documents={project.Pitch.presentationDocument} shouldShowRiskWarningOnDownload={true}/>
+                                                {(() => {
+                                                    const viewableDocs = project.Pitch.presentationDocument.filter(doc => !doc.removed && isInlineViewable(doc.fileName));
+                                                    const downloadOnlyDocs = project.Pitch.presentationDocument.filter(doc => !doc.removed && !isInlineViewable(doc.fileName));
+                                                    return (
+                                                        <>
+                                                            {viewableDocs.map((doc, i) => (
+                                                                <InlineDocViewer key={`deck-${i}`} url={doc.downloadURL} fileName={doc.fileName} />
+                                                            ))}
+                                                            {downloadOnlyDocs.length > 0 && (
+                                                                <DocumentsDownload documents={downloadOnlyDocs} shouldShowRiskWarningOnDownload={true}/>
+                                                            )}
+                                                        </>
+                                                    );
+                                                })()}
                                                 <Divider style={{marginTop: 10}}/>
                                             </FlexView>
                                     }
@@ -4034,7 +4048,21 @@ class ProjectDetails extends Component {
                                     {
                                         project.Pitch.supportingDocuments && project.Pitch.supportingDocuments.findIndex(document => !document.hasOwnProperty('removed')) !== -1
                                             ?
-                                            <DocumentsDownload documents={project.Pitch.supportingDocuments} shouldShowRiskWarningOnDownload={true}/>
+                                            (() => {
+                                                const activeDocs = project.Pitch.supportingDocuments.filter(doc => !doc.removed);
+                                                const viewableDocs = activeDocs.filter(doc => isInlineViewable(doc.fileName));
+                                                const downloadOnlyDocs = activeDocs.filter(doc => !isInlineViewable(doc.fileName));
+                                                return (
+                                                    <>
+                                                        {viewableDocs.map((doc, i) => (
+                                                            <InlineDocViewer key={`support-${i}`} url={doc.downloadURL} fileName={doc.fileName} />
+                                                        ))}
+                                                        {downloadOnlyDocs.length > 0 && (
+                                                            <DocumentsDownload documents={downloadOnlyDocs} shouldShowRiskWarningOnDownload={true}/>
+                                                        )}
+                                                    </>
+                                                );
+                                            })()
                                             :
                                             <Typography variant="body1" color="textSecondary" style={{marginTop: 35}}>No supporting documents uploaded.</Typography>
                                     }

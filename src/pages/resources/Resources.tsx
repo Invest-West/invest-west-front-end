@@ -5,15 +5,11 @@ import {ThunkDispatch} from "redux-thunk";
 import {AnyAction} from "redux";
 import {RouteComponentProps} from "react-router-dom";
 import {RouteParams} from "../../router/router";
-import Keltie from "./pages/keltie/Keltie";
 import {Box, Card, Typography} from "@material-ui/core";
 import {Col, Row} from "react-bootstrap";
 import {getGroupRouteTheme, ManageGroupUrlState} from "../../redux-store/reducers/manageGroupUrlReducer";
 import {MediaQueryState} from "../../redux-store/reducers/mediaQueryReducer";
 import ResourceItem from "./ResourceItem";
-import FounderCatalyst from "./pages/founder-catalyst/FounderCatalyst";
-import GrantFunding from "./pages/grant-funding/GrantFunding";
-import MerixStudio from "./pages/merix-studio/merixStudio";
 
 
 interface ResourcesProps {
@@ -38,28 +34,7 @@ export interface Resource {
     page: React.ReactNode;
 }
 
-export const resources: Resource[] = [
-    {
-        name: "Intellectual Property",
-        logo: `${process.env.PUBLIC_URL}/resources/keltie/logo.jpg`,
-        page: <Keltie/>
-    },
-    {
-        name: "Fundraising Legals",
-        logo: `${process.env.PUBLIC_URL}/resources/founder-catalyst/logo.svg`,
-        page: <FounderCatalyst/>
-    },
-    {
-        name: "Grant Funding",
-        logo: `${process.env.PUBLIC_URL}/resources/grant-funding/logo.png`,
-        page: <GrantFunding/>
-    },
-    {
-        name: "Product Development",
-        logo: `${process.env.PUBLIC_URL}/resources/merix-studio/merix-logo.png`,
-        page: <MerixStudio/>
-    }
-];
+export const resources: Resource[] = [];
 
 class Resources extends Component<ResourcesProps & Readonly<RouteComponentProps<RouteParams>>, any> {
     render() {
@@ -110,20 +85,42 @@ class Resources extends Component<ResourcesProps & Readonly<RouteComponentProps<
 
             {/** Resources area */}
             <Box marginTop="30px">
-                <Row noGutters>
-                    <Col xs={12} sm={12} md={12} lg={12}>
-                        <Row>
-                            {
-                                resources
-                                    .map(resource =>
-                                        <Col key={resource.name} xs={12} sm={12} md={3}>
-                                            <ResourceItem resource={resource}/>
-                                        </Col>
-                                    )
-                            }
-                        </Row>
-                    </Col>
-                </Row>
+                {resources.length === 0 ? (
+                    <Row noGutters>
+                        <Col xs={12}>
+                            <Box
+                                display="flex"
+                                flexDirection="column"
+                                alignItems="center"
+                                justifyContent="center"
+                                paddingY="60px"
+                            >
+                                <Typography variant="h6" color="textSecondary" align="center">
+                                    No resources are currently available.
+                                </Typography>
+                                <Typography variant="body2" color="textSecondary" align="center"
+                                    style={{ marginTop: 8 }}>
+                                    Please check back later.
+                                </Typography>
+                            </Box>
+                        </Col>
+                    </Row>
+                ) : (
+                    <Row noGutters>
+                        <Col xs={12} sm={12} md={12} lg={12}>
+                            <Row>
+                                {
+                                    resources
+                                        .map(resource =>
+                                            <Col key={resource.name} xs={12} sm={12} md={3}>
+                                                <ResourceItem resource={resource}/>
+                                            </Col>
+                                        )
+                                }
+                            </Row>
+                        </Col>
+                    </Row>
+                )}
             </Box>
 
             {/** Pagination */}

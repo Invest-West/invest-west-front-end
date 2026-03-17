@@ -1374,9 +1374,10 @@ class CreatePitchPageMain extends Component {
                                                 DB_CONST.PROJECT_STATUS_DRAFT
                                                 :
                                                 // not in save progress mode --> publish mode
-                                                // check if the edited project is a draft one --> if so, change its status to being checked
+                                                // check if the edited project is a draft or rejected one --> if so, change its status to being checked
                                                 // otherwise, keep the previous project status
-                                                projectEdited.status === DB_CONST.PROJECT_STATUS_DRAFT
+                                                (projectEdited.status === DB_CONST.PROJECT_STATUS_DRAFT
+                                                    || projectEdited.status === DB_CONST.PROJECT_STATUS_REJECTED)
                                                     ?
                                                     DB_CONST.PROJECT_STATUS_BEING_CHECKED
                                                     :

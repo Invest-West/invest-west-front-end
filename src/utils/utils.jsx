@@ -419,6 +419,7 @@ export const shouldAProjectBeEdited = (user, project) => {
 
     if (project.status === DB_CONST.PROJECT_STATUS_DRAFT
         || project.status === DB_CONST.PROJECT_STATUS_BEING_CHECKED
+        || project.status === DB_CONST.PROJECT_STATUS_REJECTED
     ) {
         return true;
     }

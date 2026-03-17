@@ -235,7 +235,7 @@ class SidebarContent extends Component {
                         </NavLink>
 
                         {/** Resources */}
-                        <NavLink
+                        {/* <NavLink
                             to={{
                                 pathname: dashboardProps.match.pathname,
                                 search: `?tab=${RESOURCES_TAB}`
@@ -248,7 +248,7 @@ class SidebarContent extends Component {
                                 </ListItemIcon>
                                 <ListItemText className={css(sharedStyles.black_text)}>{RESOURCES_TAB}</ListItemText>
                             </ListItem>
-                        </NavLink>
+                        </NavLink> */}
                     </List>
                 </FlexView>
 
