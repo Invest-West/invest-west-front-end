@@ -110,45 +110,55 @@ class Front extends Component<FrontProps & Readonly<RouteComponentProps<RoutePar
                     >
                         {/* Front page link to website */}
                         <Box display="flex" flexDirection="column" alignItems="center" justifyContent="center" flexGrow={3} paddingY="50px">
-                        <Link href={ManageGroupUrlState.group?.website ?? ""} target="_blank">
+                            <Box
+                                bgcolor="white"
+                                borderRadius="12px"
+                                padding={MediaQueryState.isMobile ? "24px 20px" : "32px 40px"}
+                                display="flex"
+                                flexDirection="column"
+                                alignItems="center"
+                                boxShadow={3}
+                                style={{ maxWidth: 480, width: "90%" }}
+                            >
+                                <Link href={ManageGroupUrlState.group?.website ?? ""} target="_blank">
+                                    {
+                                        isValidatingGroupUrl(ManageGroupUrlState)
+                                            ? null
+                                            : <Image
+                                                alt="logo"
+                                                src={
+                                                    !routeContainsGroupName(ManageGroupUrlState)
+                                                        ? defaultLogo
+                                                        : getGroupLogo(ManageGroupUrlState.group) ?? defaultLogo
+                                                }
+                                                style={{
+                                                    width: "auto",
+                                                    height: MediaQueryState.isMobile ? logoHeightMobile : logoHeight
+                                                }}
+                                            />
+                                    }
+                                </Link>
 
-                            {
-                                isValidatingGroupUrl(ManageGroupUrlState)
-                                    ? null
-                                    : <Image
-                                        alt="logo"
-                                        src={
-                                            !routeContainsGroupName(ManageGroupUrlState)
-                                                ? defaultLogo
-                                                : getGroupLogo(ManageGroupUrlState.group) ?? defaultLogo
-                                        }
-                                        style={{
-                                            width: "auto",
-                                            height: MediaQueryState.isMobile ? logoHeightMobile : logoHeight
-                                        }}
-                                    />
-                            }
-                            </Link>
+                                <Box height="20px"/>
 
-                            <Box height="20px"/>
+                                <Typography color="primary" variant="h2" align="center">
+                                    {
+                                        isValidatingGroupUrl(ManageGroupUrlState)
+                                            ? ""
+                                            : !routeContainsGroupName(ManageGroupUrlState)
+                                            ? "Invest West"
+                                            : ManageGroupUrlState.group?.displayName
+                                    }
+                                </Typography>
 
-                            <Typography color="primary" variant="h2" align="center">
                                 {
-                                    isValidatingGroupUrl(ManageGroupUrlState)
-                                        ? ""
-                                        : !routeContainsGroupName(ManageGroupUrlState)
-                                        ? "Invest West"
-                                        : ManageGroupUrlState.group?.displayName
+                                    routeContainsGroupName(ManageGroupUrlState)
+                                        ? null
+                                        : <Box color={colors.blueGrey["500"]} marginTop="20px">
+                                            <Typography variant="h4" align="center">Connecting businesses and investors</Typography>
+                                        </Box>
                                 }
-                            </Typography>
-
-                            {
-                                routeContainsGroupName(ManageGroupUrlState)
-                                    ? null
-                                    : <Box color={colors.blueGrey["500"]} marginTop="20px">
-                                        <Typography variant="h4" align="center">Connecting businesses and investors</Typography>
-                                    </Box>
-                            }
+                            </Box>
                         </Box>
                     </Box>
                 </Col>

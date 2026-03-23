@@ -44,10 +44,18 @@ describe('PdfViewer', () => {
         );
     });
 
+    it('renders all pages after load (scroll-based)', async () => {
+        render(<PdfViewer url={url} fileName={fileName} />);
+        await waitFor(() => {
+            const pages = screen.getAllByTestId('mock-pdf-page');
+            expect(pages).toHaveLength(3);
+        });
+    });
+
     it('shows page count after load', async () => {
         render(<PdfViewer url={url} fileName={fileName} />);
         await waitFor(() =>
-            expect(screen.getByText('1 / 3')).toBeInTheDocument()
+            expect(screen.getByText('3 pages')).toBeInTheDocument()
         );
     });
 
@@ -59,11 +67,13 @@ describe('PdfViewer', () => {
         });
     });
 
-    it('previous page button is disabled on first page', async () => {
+    it('does NOT render pagination buttons', async () => {
         render(<PdfViewer url={url} fileName={fileName} />);
-        await waitFor(() => {
-            expect(screen.getByLabelText('Previous page')).toBeDisabled();
-        });
+        await waitFor(() =>
+            expect(screen.getByTestId('mock-pdf-document')).toBeInTheDocument()
+        );
+        expect(screen.queryByLabelText('Previous page')).toBeNull();
+        expect(screen.queryByLabelText('Next page')).toBeNull();
     });
 });
 

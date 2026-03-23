@@ -203,7 +203,14 @@ class ContactUs extends Component {
             })
             .then(() => {
                 this.setState({
-                    ...initState
+                    email: user ? user.email : "",
+                    name: user ? `${user.firstName} ${user.lastName}` : "",
+                    phone: "",
+                    subject: "-",
+                    description: "",
+                    sending: false,
+                    submitClick: false,
+                    hasSetData: !!user,
                 });
 
                 setFeedbackSnackbarContent(
@@ -239,11 +246,13 @@ class ContactUs extends Component {
                         // handle error
                     });
             })
-            .catch(error => {
-                this.setState({
-                    error: true,
-                    sending: false
-                });
+            .catch(() => {
+                this.setState({ sending: false });
+                setFeedbackSnackbarContent(
+                    "Failed to send your message. Please try again.",
+                    "error",
+                    "bottom"
+                );
             });
     };
 
@@ -305,11 +314,11 @@ class ContactUs extends Component {
                 >
                     <HashLoader
                         color={
-                            !groupProperties
+                            groupProperties && groupProperties.settings
                                 ?
-                                colors.primaryColor
-                                :
                                 groupProperties.settings.primaryColor
+                                :
+                                colors.primaryColor
                         }
                     />
                 </FlexView>

@@ -52,14 +52,11 @@ export const fetchOffers: ActionCreator<any> = () => {
             groupFilter,
         } = getState().ExploreOffersLocalState;
 
-        // Determine orderBy based on phaseFilter and potentially other conditions
-        let orderBy;
-        if (groupFilter === "all") {
-            orderBy = phaseFilter === FetchProjectsPhaseOptions.ExpiredPitch ? FetchProjectsOrderByOptions.Group : FetchProjectsOrderByOptions.Phase;
-        } else {
-            // If not 'all' groups, maintain existing logic
-            orderBy = phaseFilter === FetchProjectsPhaseOptions.ExpiredPitch ? FetchProjectsOrderByOptions.Group : FetchProjectsOrderByOptions.Phase;
-        }
+        // Determine orderBy: use Phase ordering by default, which lets the
+        // backend narrow the Firebase query by status.  The groupName filter
+        // is applied server-side in post-processing so it does not need its
+        // own orderByChild.
+        const orderBy = FetchProjectsOrderByOptions.Phase;
 
         const fetchOffersOptions: FetchProjectsOptions = {
             search: searchFilter.trim().length === 0 ? undefined : searchFilter,

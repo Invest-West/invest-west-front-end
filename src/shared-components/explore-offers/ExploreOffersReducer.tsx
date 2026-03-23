@@ -29,7 +29,7 @@ export interface ExploreOffersState {
     error?: Error;
 }
 
-const initialState: ExploreOffersState = {
+export const initialState: ExploreOffersState = {
     offerInstances: [],
     fetchingOffers: false,
     offersFetched: false,

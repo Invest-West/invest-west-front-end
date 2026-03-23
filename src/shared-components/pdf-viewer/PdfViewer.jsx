@@ -5,15 +5,13 @@ import 'react-pdf/dist/esm/Page/TextLayer.css';
 import {
     Box, IconButton, Typography, CircularProgress
 } from '@material-ui/core';
-import NavigateBeforeIcon from '@material-ui/icons/NavigateBefore';
-import NavigateNextIcon from '@material-ui/icons/NavigateNext';
 import GetAppIcon from '@material-ui/icons/GetApp';
 
 pdfjs.GlobalWorkerOptions.workerSrc =
     `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.min.js`;
 
 /**
- * Inline PDF viewer with page navigation and download button.
+ * Inline PDF viewer with scrollable pages and download button.
  *
  * Props:
  *   url      {string} — public URL of the PDF (e.g. Firebase Storage)
@@ -21,7 +19,6 @@ pdfjs.GlobalWorkerOptions.workerSrc =
  */
 const PdfViewer = ({ url, fileName = 'document.pdf' }) => {
     const [numPages, setNumPages] = useState(null);
-    const [pageNumber, setPageNumber] = useState(1);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(false);
 
@@ -59,19 +56,9 @@ const PdfViewer = ({ url, fileName = 'document.pdf' }) => {
                     {fileName}
                 </Typography>
                 <Box display="flex" alignItems="center">
-                    <IconButton size="small" disabled={pageNumber <= 1}
-                        onClick={() => setPageNumber(p => p - 1)}
-                        aria-label="Previous page">
-                        <NavigateBeforeIcon />
-                    </IconButton>
-                    <Typography variant="body2" style={{ minWidth: 60, textAlign: 'center' }}>
-                        {loading ? '...' : `${pageNumber} / ${numPages}`}
+                    <Typography variant="body2" style={{ marginRight: 8 }}>
+                        {loading ? '...' : `${numPages} page${numPages !== 1 ? 's' : ''}`}
                     </Typography>
-                    <IconButton size="small" disabled={pageNumber >= numPages}
-                        onClick={() => setPageNumber(p => p + 1)}
-                        aria-label="Next page">
-                        <NavigateNextIcon />
-                    </IconButton>
                     <IconButton size="small" component="a" href={url}
                         download={fileName} target="_blank" rel="noopener noreferrer"
                         aria-label="Download PDF">
@@ -80,11 +67,12 @@ const PdfViewer = ({ url, fileName = 'document.pdf' }) => {
                 </Box>
             </Box>
 
-            {/* PDF render area */}
-            <Box display="flex" justifyContent="center" bgcolor="#525659"
-                minHeight={400} padding={2}>
+            {/* Scrollable PDF render area */}
+            <Box bgcolor="#525659" padding={2}
+                style={{ overflowY: 'auto', maxHeight: '80vh' }}>
                 {loading && (
-                    <Box display="flex" alignItems="center">
+                    <Box display="flex" justifyContent="center" alignItems="center"
+                        minHeight={400}>
                         <CircularProgress style={{ color: 'white' }} />
                     </Box>
                 )}
@@ -94,12 +82,17 @@ const PdfViewer = ({ url, fileName = 'document.pdf' }) => {
                     onLoadError={onDocumentLoadError}
                     loading={null}
                 >
-                    <Page
-                        pageNumber={pageNumber}
-                        width={Math.min(window.innerWidth - 80, 800)}
-                        renderTextLayer
-                        renderAnnotationLayer
-                    />
+                    {numPages && Array.from({ length: numPages }, (_, i) => (
+                        <Box key={i + 1} display="flex" justifyContent="center"
+                            marginBottom={2}>
+                            <Page
+                                pageNumber={i + 1}
+                                width={Math.min(window.innerWidth - 80, 800)}
+                                renderTextLayer
+                                renderAnnotationLayer
+                            />
+                        </Box>
+                    ))}
                 </Document>
             </Box>
         </Box>

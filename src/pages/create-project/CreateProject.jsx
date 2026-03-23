@@ -71,6 +71,8 @@ import {getHomeGroup} from "../../models/group_of_membership";
 import {isDraftProjectNotSubmitted} from "../../models/project";
 import Api, {ApiRoutes} from "../../api/Api";
 import CustomLink from "../../shared-js-css-styles/CustomLink";
+import {isValidVideoUrl, acceptedPlatformsText} from "../../utils/videoUrlValidator";
+import {isGoogleDriveUrl, getGoogleDriveEmbedUrl} from "../../utils/googleDriveUtils";
 
 const PITCH_COVER_FILES_CHANGED = 1;
 const PITCH_SUPPORTING_DOCUMENTS_FILES_CHANGED = 2;
@@ -163,6 +165,7 @@ const initState = {
         pitchCover: [],
         // pitch cover - video URL
         pitchCoverVideoURL: '',
+        pitchCoverVideoURLError: false,
         // select between uploading an image or a video ULR -----
         pitchCoverTypeSelected: null,
         // ------------------------------------------------------
@@ -771,6 +774,18 @@ class CreatePitchPageMain extends Component {
                         return;
                     }
                 }
+                // validate video URL is from an accepted platform
+                if (pitchCoverTypeSelected === PITCH_COVER_VIDEO_URL_TYPE_SELECTED && !isValidVideoUrl(pitchCoverVideoURL)) {
+                    this.setState({
+                        createProject: {
+                            ...this.state.createProject,
+                            pitchCoverVideoURLError: true,
+                            pitchPublishCheck: PITCH_PUBLISH_FALSE_MISSING_PITCH_COVER,
+                            pitchPublishErrorMessageShowed: true
+                        }
+                    });
+                    return;
+                }
                 this.setState({
                     createProject: {
                         ...this.state.createProject,
@@ -1149,10 +1164,14 @@ class CreatePitchPageMain extends Component {
                 return;
             }
 
+            const updates = {[name]: value};
+            if (name === "pitchCoverVideoURL") {
+                updates.pitchCoverVideoURLError = value.trim().length > 0 && !isValidVideoUrl(value);
+            }
             this.setState({
                 createProject: {
                     ...this.state.createProject,
-                    [name]: value
+                    ...updates
                 }
             });
         }
@@ -3872,7 +3891,7 @@ class CreateProject extends Component {
                                                                 </FlexView>
                                                                 :
                                                                 <FlexView column>
-                                                                    <TextField name="pitchCoverVideoURL" value={createProjectState.pitchCoverVideoURL} placeholder="Enter your video URL here" variant="outlined" margin="dense" onChange={this.onInputChanged}/>
+                                                                    <TextField name="pitchCoverVideoURL" value={createProjectState.pitchCoverVideoURL} placeholder="Enter your video URL here" variant="outlined" margin="dense" onChange={this.onInputChanged} error={createProjectState.pitchCoverVideoURLError} helperText={createProjectState.pitchCoverVideoURLError ? "Please enter a valid video URL from " + acceptedPlatformsText() : "Accepted platforms: " + acceptedPlatformsText() + ". For Google Drive, share the file and paste the link here."}/>
                                                                 </FlexView>
                                                     }
 
@@ -3909,9 +3928,13 @@ class CreateProject extends Component {
                                                     {
                                                         createProjectState.pitchCoverTypeSelected === PITCH_COVER_VIDEO_URL_TYPE_SELECTED
                                                         && createProjectState.pitchCoverVideoURL.trim().length > 0
+                                                        && !createProjectState.pitchCoverVideoURLError
                                                             ?
                                                             <FlexView column marginTop={35} height={280}>
-                                                                <ReactPlayer url={createProjectState.pitchCoverVideoURL} playsInline width="100%" height="100%" playing={false} controls={true}/>
+                                                                {isGoogleDriveUrl(createProjectState.pitchCoverVideoURL)
+                                                                    ? <iframe src={getGoogleDriveEmbedUrl(createProjectState.pitchCoverVideoURL)} width="100%" height="280" allow="autoplay" style={{border: 0}} title="Google Drive video preview"/>
+                                                                    : <ReactPlayer url={createProjectState.pitchCoverVideoURL} playsInline width="100%" height="100%" playing={false} controls={true}/>
+                                                                }
                                                             </FlexView>
                                                             :
                                                             null
