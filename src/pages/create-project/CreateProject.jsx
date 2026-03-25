@@ -144,6 +144,7 @@ const initState = {
 
         // pitch sector
         pitchSector: '-',
+        pitchSectorOther: '',
         // pitch project name
         pitchProjectName: '',
         pitchProjectDescription: '',
@@ -444,9 +445,23 @@ class CreatePitchPageMain extends Component {
                             pitchSector:
                                 project.hasOwnProperty('sector')
                                     ?
-                                    project.sector
+                                    (this.props.ManageSystemAttributesState.systemAttributes
+                                        && this.props.ManageSystemAttributesState.systemAttributes.Sectors
+                                        && !this.props.ManageSystemAttributesState.systemAttributes.Sectors.includes(project.sector)
+                                        && project.sector !== '-'
+                                        ? 'Other'
+                                        : project.sector)
                                     :
                                     '-'
+                            ,
+                            pitchSectorOther:
+                                project.hasOwnProperty('sector')
+                                && this.props.ManageSystemAttributesState.systemAttributes
+                                && this.props.ManageSystemAttributesState.systemAttributes.Sectors
+                                && !this.props.ManageSystemAttributesState.systemAttributes.Sectors.includes(project.sector)
+                                && project.sector !== '-'
+                                    ? project.sector
+                                    : ''
                             ,
                             // pitch project name
                             pitchProjectName:
@@ -654,7 +669,9 @@ class CreatePitchPageMain extends Component {
             hasEIS,
 
             // this field is only available for QIB
-            qibSpecialNews
+            qibSpecialNews,
+
+            pitchSectorOther
         } = this.state.createProject;
 
         // progress is being saved,
@@ -668,6 +685,7 @@ class CreatePitchPageMain extends Component {
             case STEP_PITCH_GENERAL_INFORMATION:
                 // if one of the fields in the General information part is missing, ask the user to fill them
                 if (pitchSector === "-"
+                    || (pitchSector === 'Other' && !pitchSectorOther?.trim())
                     || pitchProjectName.trim().length === 0
                     || pitchProjectDescription.trim().length === 0
                     || pitchExpiryDate === null
@@ -1256,7 +1274,9 @@ class CreatePitchPageMain extends Component {
             agreedToReceiveLocalInvestmentInfo,
 
             // this field is only available for QIB
-            qibSpecialNews
+            qibSpecialNews,
+
+            pitchSectorOther
         } = this.state.createProject;
 
 
@@ -1357,17 +1377,14 @@ class CreatePitchPageMain extends Component {
                                                 :
                                                 pitchProjectName
                                         ,
-                                        sector:
-                                            saveProgress
-                                                ?
-                                                pitchSector === "-"
-                                                    ?
-                                                    null
-                                                    :
-                                                    pitchSector
-                                                :
-                                                pitchSector
-                                        ,
+                                        sector: (() => {
+                                            const raw = saveProgress ? (pitchSector === '-' ? null : pitchSector) : pitchSector;
+                                            if (raw === 'Other') {
+                                                const custom = pitchSectorOther?.trim();
+                                                return saveProgress ? (custom || null) : (custom || 'Other');
+                                            }
+                                            return raw;
+                                        })(),
                                         description:
                                             saveProgress
                                                 ?
@@ -1980,7 +1997,14 @@ class CreatePitchPageMain extends Component {
                                                     null
                                         ,
                                         projectName: saveProgress ? (pitchProjectName.trim().length === 0 ? null : pitchProjectName) : pitchProjectName,
-                                        sector: saveProgress ? (pitchSector === "-" ? null : pitchSector) : pitchSector,
+                                        sector: (() => {
+                                            const raw = saveProgress ? (pitchSector === '-' ? null : pitchSector) : pitchSector;
+                                            if (raw === 'Other') {
+                                                const custom = pitchSectorOther?.trim();
+                                                return saveProgress ? (custom || null) : (custom || 'Other');
+                                            }
+                                            return raw;
+                                        })(),
                                         description: saveProgress ? (pitchProjectDescription.trim().length === 0 ? null : pitchProjectDescription) : pitchProjectDescription,
                                         status:
                                             saveProgress
@@ -3280,7 +3304,8 @@ class CreateProject extends Component {
                                             required
                                             error={
                                                 createProjectState.pitchPublishCheck === PITCH_PUBLISH_FALSE_MISSING_FIELDS_IN_GENERAL_INFORMATION
-                                                && createProjectState.pitchSector === "-"
+                                                && (createProjectState.pitchSector === "-"
+                                                    || (createProjectState.pitchSector === 'Other' && !createProjectState.pitchSectorOther?.trim()))
                                             }
                                         >
                                             <FormLabel>Choose sector</FormLabel>
@@ -3297,7 +3322,31 @@ class CreateProject extends Component {
                                                             <MenuItem key={index} value={sector}>{sector}</MenuItem>
                                                         ))
                                                 }
+                                                <MenuItem key="other" value="Other">Other</MenuItem>
                                             </Select>
+                                            {createProjectState.pitchSector === 'Other' && (
+                                                <TextField
+                                                    fullWidth
+                                                    required
+                                                    margin="dense"
+                                                    variant="outlined"
+                                                    name="pitchSectorOther"
+                                                    label="Please specify your sector"
+                                                    value={createProjectState.pitchSectorOther || ''}
+                                                    onChange={this.onInputChanged}
+                                                    error={
+                                                        createProjectState.pitchPublishCheck === PITCH_PUBLISH_FALSE_MISSING_FIELDS_IN_GENERAL_INFORMATION
+                                                        && !createProjectState.pitchSectorOther?.trim()
+                                                    }
+                                                    helperText={
+                                                        createProjectState.pitchPublishCheck === PITCH_PUBLISH_FALSE_MISSING_FIELDS_IN_GENERAL_INFORMATION
+                                                        && !createProjectState.pitchSectorOther?.trim()
+                                                            ? 'Please specify your sector'
+                                                            : ''
+                                                    }
+                                                    style={{marginTop: 12}}
+                                                />
+                                            )}
                                         </FormControl>
                                     </FlexView>
 

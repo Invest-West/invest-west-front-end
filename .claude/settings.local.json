@@ -21,7 +21,22 @@
       "Bash(git rm:*)",
       "Bash(cd:*)",
       "mcp__context7__resolve-library-id",
-      "mcp__context7__query-docs"
+      "mcp__context7__query-docs",
+      "Bash(npx react-scripts:*)",
+      "Bash(npx jest:*)",
+      "Bash(npx tsc:*)",
+      "Bash(grep -r \"InlineDocViewer\\\\|PdfViewer\\\\|OfficeViewer\" /c/Users/jserp/github/invest-west-front-end/src --include=*.jsx --include=*.js --include=*.tsx --include=*.ts)",
+      "Bash(npx react-app-rewired:*)",
+      "Bash(xargs grep:*)",
+      "Bash(npx --yes mammoth \"c:\\\\Users\\\\jserp\\\\Downloads\\\\InvestWest_Privacy_Policy_March2026.docx\" --output-dir /tmp/)",
+      "Bash(npx --yes mammoth \"c:\\\\Users\\\\jserp\\\\Downloads\\\\InvestWest_Terms_of_Use_March2026.docx\" --output-dir /tmp/)",
+      "Read(//c/tmp/**)",
+      "Bash(npm list:*)",
+      "Bash(DRY_RUN=true node scripts/convert-docs-to-quill.js)",
+      "Read(//c/Users/jserp/github/invest-west-front-end/$TEMP/**)",
+      "Read(//c//**)",
+      "Bash(cygpath -w /tmp/InvestWest_Privacy_Policy_March2026.html)",
+      "Bash(PRIVACY_HTML=\"C:\\\\Users\\\\jserp\\\\AppData\\\\Local\\\\Temp\\\\InvestWest_Privacy_Policy_March2026.html\" TERMS_HTML=\"C:\\\\Users\\\\jserp\\\\AppData\\\\Local\\\\Temp\\\\InvestWest_Terms_of_Use_March2026.html\" DRY_RUN=true node scripts/convert-docs-to-quill.js)"
     ],
     "deny": [],
     "ask": []

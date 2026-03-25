@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Document, Page, pdfjs } from 'react-pdf';
 import 'react-pdf/dist/esm/Page/AnnotationLayer.css';
 import 'react-pdf/dist/esm/Page/TextLayer.css';
 import {
-    Box, IconButton, Typography, CircularProgress
+    Box, Button, IconButton, Typography, CircularProgress
 } from '@material-ui/core';
 import GetAppIcon from '@material-ui/icons/GetApp';
 
@@ -17,10 +17,22 @@ pdfjs.GlobalWorkerOptions.workerSrc =
  *   url      {string} — public URL of the PDF (e.g. Firebase Storage)
  *   fileName {string} — display name shown in toolbar and used for download
  */
+const PDF_LOAD_TIMEOUT_MS = 15000;
+
 const PdfViewer = ({ url, fileName = 'document.pdf' }) => {
     const [numPages, setNumPages] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(false);
+
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            if (loading) {
+                setError(true);
+                setLoading(false);
+            }
+        }, PDF_LOAD_TIMEOUT_MS);
+        return () => clearTimeout(timer);
+    }, [url]); // eslint-disable-line react-hooks/exhaustive-deps
 
     const onDocumentLoadSuccess = ({ numPages }) => {
         setNumPages(numPages);
@@ -35,12 +47,13 @@ const PdfViewer = ({ url, fileName = 'document.pdf' }) => {
     if (error) {
         return (
             <Box display="flex" flexDirection="column" alignItems="center" padding={2}>
-                <Typography variant="body2" color="error">
-                    Unable to display PDF inline.{' '}
-                    <a href={url} target="_blank" rel="noopener noreferrer" download={fileName}>
-                        Download instead
-                    </a>
+                <Typography variant="body2" color="textSecondary">
+                    Unable to preview this PDF.
                 </Typography>
+                <Button component="a" href={url} target="_blank" rel="noopener noreferrer"
+                    download={fileName} variant="outlined" size="small" style={{ marginTop: 8 }}>
+                    Download {fileName}
+                </Button>
             </Box>
         );
     }

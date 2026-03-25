@@ -77,6 +77,7 @@ describe('PdfViewer', () => {
     });
 });
 
+
 describe('isInlineViewable', () => {
     it('returns true for .pdf files', () => {
         expect(isInlineViewable('pitch-deck.pdf')).toBe(true);

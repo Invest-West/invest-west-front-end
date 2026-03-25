@@ -11,6 +11,7 @@ import './SystemPublicPagesSharedCSS.scss';
 import * as realtimeDBUtils from '../../firebase/realtimeDBUtils';
 import * as utils from '../../utils/utils';
 import * as colors from '../../values/colors';
+import Routes from '../../router/routes';
 
 const mapStateToProps = state => {
     return {}
@@ -20,6 +21,8 @@ class PrivacyPolicyPage extends Component {
 
     constructor(props) {
         super(props);
+
+        this.contentRef = React.createRef();
 
         this.state = {
             clubAttributes: null,
@@ -34,8 +37,25 @@ class PrivacyPolicyPage extends Component {
                 this.setState({
                     clubAttributes: clubAttributes,
                     clubAttributesLoaded: true
-                });
+                }, () => this.fixContactLinks());
             });
+    }
+
+    fixContactLinks() {
+        if (!this.contentRef.current) return;
+        const links = this.contentRef.current.querySelectorAll('a');
+        links.forEach(link => {
+            const text = (link.textContent || '').toLowerCase().trim();
+            const href = (link.getAttribute('href') || '').toLowerCase().trim();
+            if (text.includes('contact us')
+                || text.includes('contact')
+                || href.startsWith('mailto:')
+                || href === '#'
+                || href === '') {
+                link.setAttribute('href', Routes.nonGroupContactUs);
+                link.removeAttribute('target');
+            }
+        });
     }
 
     render() {
@@ -129,11 +149,13 @@ class PrivacyPolicyPage extends Component {
                                                 ?
                                                 null
                                                 :
-                                                <FlexView
-                                                    column
-                                                    dangerouslySetInnerHTML={{__html: utils.convertQuillDeltaToHTML(clubAttributes.privacyPolicy.ops)}}
-                                                    marginTop={35}
-                                                />
+                                                <div ref={this.contentRef}>
+                                                    <FlexView
+                                                        column
+                                                        dangerouslySetInnerHTML={{__html: utils.convertQuillDeltaToHTML(clubAttributes.privacyPolicy.ops)}}
+                                                        marginTop={35}
+                                                    />
+                                                </div>
                                         }
                                     </Col>
                                 </Row>
