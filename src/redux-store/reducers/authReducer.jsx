@@ -27,13 +27,15 @@ const authReducer = (state = initState, action) => {
         case authActions.LOG_OUT:
             return {
                 ...initState,
-                authenticating: state.authenticating,
+                userLoaded: true,
+                authenticating: false,
                 authStatus: state.authStatus
             };
         case authActions.INITIALIZE_AUTH_STATE:
             return {
                 ...initState,
-                authenticating: state.authenticating,
+                userLoaded: true,
+                authenticating: false,
                 authStatus: state.authStatus
             };
         case authActions.TOGGLE_PREVENT_VALIDATING_USER_WHEN_SIGNING_UP:

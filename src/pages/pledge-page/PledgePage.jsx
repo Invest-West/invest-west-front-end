@@ -850,7 +850,7 @@ class PledgePage extends Component {
                                     project.issuer.hasOwnProperty('linkedin') && project.issuer.linkedin.trim().length > 0
                                         ?
                                         <a href={project.issuer.linkedin} target="_blank" rel="noopener noreferrer">
-                                            <img alt="linkedin_logo" src={require("../../img/linkedin_logo.png").default} style={{width: 64, height: 64}}/>
+                                            <img alt="linkedin_logo" src={require("../../img/linkedin_logo.png")} style={{width: 64, height: 64}}/>
                                         </a>
                                         :
                                         null

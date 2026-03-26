@@ -36,7 +36,17 @@
       "Read(//c/Users/jserp/github/invest-west-front-end/$TEMP/**)",
       "Read(//c//**)",
       "Bash(cygpath -w /tmp/InvestWest_Privacy_Policy_March2026.html)",
-      "Bash(PRIVACY_HTML=\"C:\\\\Users\\\\jserp\\\\AppData\\\\Local\\\\Temp\\\\InvestWest_Privacy_Policy_March2026.html\" TERMS_HTML=\"C:\\\\Users\\\\jserp\\\\AppData\\\\Local\\\\Temp\\\\InvestWest_Terms_of_Use_March2026.html\" DRY_RUN=true node scripts/convert-docs-to-quill.js)"
+      "Bash(PRIVACY_HTML=\"C:\\\\Users\\\\jserp\\\\AppData\\\\Local\\\\Temp\\\\InvestWest_Privacy_Policy_March2026.html\" TERMS_HTML=\"C:\\\\Users\\\\jserp\\\\AppData\\\\Local\\\\Temp\\\\InvestWest_Terms_of_Use_March2026.html\" DRY_RUN=true node scripts/convert-docs-to-quill.js)",
+      "Bash(grep -r \"anonymizing_investors_details\\\\|changing_faqs\\\\|closing_a_pitch\\\\|creating_a_new_forum\\\\|creating_a_thread\\\\|help_forums\\\\|manage_group_members_01\\\\|manage_group_members_02\\\\|moving_pitch\\\\|replying_to_a_thread\\\\|viewing_a_forum\\\\|viewing_a_thread\\\\|editing_pledges\\\\|offer_detail\\\\|pitch_phase_01\\\\|pledge_phase_01\\\\|pledge_phase_02\\\\|reply_to_a_thread\\\\|viewing_pledges\" /c/Users/jserp/github/invest-west-front-end/src --include=*.jsx --include=*.tsx --include=*.js --include=*.ts)",
+      "Bash(xxd)",
+      "Bash(npx -y acorn-jsx --ecma2020 src/pages/system-public-pages/HelpPage.jsx)",
+      "Bash(npx -y @babel/parser src/pages/system-public-pages/HelpPage.jsx)",
+      "mcp__chrome-devtools__list_pages",
+      "mcp__chrome-devtools__navigate_page",
+      "mcp__chrome-devtools__take_screenshot",
+      "mcp__chrome-devtools__evaluate_script",
+      "Bash(grep -r \"pdf\\\\|PDF\\\\|iframe\\\\|embed\\\\|react-pdf\" /c/Users/jserp/github/invest-west-front-end/src --include=*.tsx --include=*.ts --include=*.jsx --include=*.js --include=*.html)",
+      "Bash(grep -r \"InlineDocViewer\\\\|PdfViewer\\\\|OfficeViewer\" /c/Users/jserp/github/invest-west-front-end/src --include=*.tsx --include=*.ts --include=*.jsx --include=*.js)"
     ],
     "deny": [],
     "ask": []

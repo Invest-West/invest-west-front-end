@@ -1,14 +1,13 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Document, Page, pdfjs } from 'react-pdf';
 import 'react-pdf/dist/esm/Page/AnnotationLayer.css';
-import 'react-pdf/dist/esm/Page/TextLayer.css';
 import {
     Box, Button, IconButton, Typography, CircularProgress
 } from '@material-ui/core';
 import GetAppIcon from '@material-ui/icons/GetApp';
 
 pdfjs.GlobalWorkerOptions.workerSrc =
-    `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.min.js`;
+    `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.min.js`;
 
 /**
  * Inline PDF viewer with scrollable pages and download button.
@@ -19,30 +18,60 @@ pdfjs.GlobalWorkerOptions.workerSrc =
  */
 const PDF_LOAD_TIMEOUT_MS = 15000;
 
-const PdfViewer = ({ url, fileName = 'document.pdf' }) => {
+const PdfViewer = React.memo(({ url, fileName = 'document.pdf' }) => {
     const [numPages, setNumPages] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(false);
+    const [containerWidth, setContainerWidth] = useState(null);
+    const timeoutRef = useRef(null);
+    const containerRef = useRef(null);
 
     useEffect(() => {
-        const timer = setTimeout(() => {
-            if (loading) {
-                setError(true);
-                setLoading(false);
-            }
+        setLoading(true);
+        setError(false);
+        setNumPages(null);
+        timeoutRef.current = setTimeout(() => {
+            setError(true);
+            setLoading(false);
         }, PDF_LOAD_TIMEOUT_MS);
-        return () => clearTimeout(timer);
-    }, [url]); // eslint-disable-line react-hooks/exhaustive-deps
+        return () => clearTimeout(timeoutRef.current);
+    }, [url]);
+
+    useEffect(() => {
+        const el = containerRef.current;
+        if (!el) return;
+        let debounceTimer = null;
+        const measure = () => {
+            const width = el.clientWidth;
+            if (width > 0) setContainerWidth(width);
+        };
+        const handleResize = () => {
+            clearTimeout(debounceTimer);
+            debounceTimer = setTimeout(measure, 200);
+        };
+        measure();
+        window.addEventListener('resize', handleResize);
+        return () => {
+            clearTimeout(debounceTimer);
+            window.removeEventListener('resize', handleResize);
+        };
+    }, []);
 
     const onDocumentLoadSuccess = ({ numPages }) => {
+        clearTimeout(timeoutRef.current);
         setNumPages(numPages);
         setLoading(false);
     };
 
     const onDocumentLoadError = () => {
+        clearTimeout(timeoutRef.current);
         setError(true);
         setLoading(false);
     };
+
+    const pageWidth = containerWidth
+        ? Math.min(containerWidth - 32, 800)
+        : Math.min(window.innerWidth - 80, 800);
 
     if (error) {
         return (
@@ -81,35 +110,37 @@ const PdfViewer = ({ url, fileName = 'document.pdf' }) => {
             </Box>
 
             {/* Scrollable PDF render area */}
-            <Box bgcolor="#525659" padding={2}
-                style={{ overflowY: 'auto', maxHeight: '80vh' }}>
+            <Box ref={containerRef} bgcolor="#525659" padding={2}
+                style={{ overflowY: 'auto', maxHeight: '80vh', width: '100%', boxSizing: 'border-box' }}>
                 {loading && (
                     <Box display="flex" justifyContent="center" alignItems="center"
                         minHeight={400}>
                         <CircularProgress style={{ color: 'white' }} />
                     </Box>
                 )}
-                <Document
-                    file={url}
-                    onLoadSuccess={onDocumentLoadSuccess}
-                    onLoadError={onDocumentLoadError}
-                    loading={null}
-                >
-                    {numPages && Array.from({ length: numPages }, (_, i) => (
-                        <Box key={i + 1} display="flex" justifyContent="center"
-                            marginBottom={2}>
-                            <Page
-                                pageNumber={i + 1}
-                                width={Math.min(window.innerWidth - 80, 800)}
-                                renderTextLayer
-                                renderAnnotationLayer
-                            />
-                        </Box>
-                    ))}
-                </Document>
+                {containerWidth && (
+                    <Document
+                        file={url}
+                        onLoadSuccess={onDocumentLoadSuccess}
+                        onLoadError={onDocumentLoadError}
+                        loading={null}
+                    >
+                        {numPages && Array.from({ length: numPages }, (_, i) => (
+                            <Box key={i + 1} display="flex" justifyContent="center"
+                                marginBottom={2}>
+                                <Page
+                                    pageNumber={i + 1}
+                                    width={pageWidth}
+                                    renderTextLayer={false}
+                                    renderAnnotationLayer
+                                />
+                            </Box>
+                        ))}
+                    </Document>
+                )}
             </Box>
         </Box>
     );
-};
+});
 
 export default PdfViewer;

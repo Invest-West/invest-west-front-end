@@ -17,27 +17,27 @@ import * as colors from '../../values/colors';
 const teamMembers = [
     {
         name: "Taye Thompson",
-        img: require("../../img/tt.jpg").default,
+        img: require("../../img/tt.jpg"),
         desc: "An MSc. Information Technology student at University of the West England. He is the main UI designer of this project."
     },
     {
         name: "Omarii Sims",
-        img: require("../../img/oj.png").default,
+        img: require("../../img/oj.png"),
         desc: "An MSc. Information Technology student at University of the West England. He is the main tester and researcher of this project."
     },
     {
         name: "Khoa Phung",
-        img: require("../../img/kp.jpg").default,
+        img: require("../../img/kp.jpg"),
         desc: "An MSc. Information Technology student at University of the West England. He is the project manager and lead developer of this project."
     },
     {
         name: "Steven Rosalie",
-        img: require("../../img/sr.jpg").default,
+        img: require("../../img/sr.jpg"),
         desc: "An MSc. Information Technology student at University of the West England. He is a developer and is responsible for security issues of the system."
     },
     {
         name: "Thomas Campbell",
-        img: require("../../img/tc.jpg").default,
+        img: require("../../img/tc.jpg"),
         desc: "An MSc. Information Technology student at University of the West England. He is the main content creator and business researcher of this project."
     },
 ];
@@ -100,7 +100,7 @@ export default  class AboutUs extends Component {
                         <Row>
                             <Col xs={12} md={{span: 2, offset: 2}}>
                                 <FlexView column hAlignContent="center">
-                                    <Image src={require('../../img/investors.jpg').default} width="215" height="215"/>
+                                    <Image src={require('../../img/investors.jpg')} width="215" height="215"/>
                                     <Typography variant="h6"style={{marginTop: 10, marginBottom: 10}}>
                                         <i>Investors</i>
                                     </Typography>
@@ -122,7 +122,7 @@ export default  class AboutUs extends Component {
                             </Col>
                             <Col xs={12} md={{span: 2, offset: 1}}>
                                 <FlexView column hAlignContent="center">
-                                    <Image src={require('../../img/businesses.jpg').default} width="215" height="215"/>
+                                    <Image src={require('../../img/businesses.jpg')} width="215" height="215"/>
                                     <Typography variant="h6" style={{marginTop: 10, marginBottom: 10}}>
                                         <i>Businesses</i>
                                     </Typography>
@@ -144,7 +144,7 @@ export default  class AboutUs extends Component {
                             </Col>
                             <Col xs={12} md={{span: 2, offset: 1}}>
                                 <FlexView column hAlignContent="center">
-                                    <Image src={require('../../img/local.jpg').default} width="215" height="215"/>
+                                    <Image src={require('../../img/local.jpg')} width="215" height="215"/>
                                     <Typography variant="h6" style={{ marginTop: 10, marginBottom: 10}}>
                                         <i>Local</i>
                                     </Typography>

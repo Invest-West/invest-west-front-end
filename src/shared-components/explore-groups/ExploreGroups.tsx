@@ -211,7 +211,7 @@ class ExploreGroups extends Component<ExploreGroupsProps, any> {
                                         ExploreGroupsLocalState.groupsFiltered
                                             .slice(paginationIndices.startIndex, paginationIndices.endIndex + 1)
                                             .map(group =>
-                                                <Col key={group.anid} xs={12} sm={12} md={4} lg={3} xl={2} >
+                                                <Col key={group.anid} xs={12} sm={6} md={4} lg={3} xl={3} >
                                                     <GroupItem group={group} />
                                                 </Col>
                                             )

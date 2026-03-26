@@ -29,7 +29,7 @@ export const isInlineViewable = (fileName = '') => {
  *   url      {string} — public URL of the document
  *   fileName {string} — display name (used to detect file type and for download)
  */
-const InlineDocViewer = ({ url, fileName = 'document' }) => {
+const InlineDocViewer = React.memo(({ url, fileName = 'document' }) => {
     const ext = getExtension(fileName);
 
     if (PDF_EXTENSIONS.includes(ext)) {
@@ -42,6 +42,6 @@ const InlineDocViewer = ({ url, fileName = 'document' }) => {
 
     // Unsupported type — should not reach here if isInlineViewable is used
     return null;
-};
+});
 
 export default InlineDocViewer;

@@ -120,7 +120,7 @@ class SidebarContent extends Component {
                             src={
                                 !groupProperties
                                     ?
-                                    require('../../img/logo.png').default
+                                    require('../../img/logo.png')
                                     :
                                     utils.getLogoFromGroup(utils.GET_PLAIN_LOGO, groupProperties)
                             }

@@ -94,7 +94,7 @@ class IndividualThread extends Component {
                                                     width={AVATAR_MAX_HEIGHT}
                                                     height={AVATAR_MAX_HEIGHT}
                                                 >
-                                                    <Image roundedCircle thumbnail src={require('../../img/admin_logo.png').default} style={{ width: "100%", maxHeight: AVATAR_MAX_HEIGHT, objectFit: "contain" }} />
+                                                    <Image roundedCircle thumbnail src={require('../../img/admin_logo.png')} style={{ width: "100%", maxHeight: AVATAR_MAX_HEIGHT, objectFit: "contain" }} />
                                                 </FlexView>
                                                 :
                                                 // group admins
@@ -277,7 +277,7 @@ class IndividualThread extends Component {
                                             <Image
                                                 roundedCircle
                                                 thumbnail
-                                                src={require('../../img/admin_logo.png').default}
+                                                src={require('../../img/admin_logo.png')}
                                                 style={{ width: "100%", maxHeight: AVATAR_MAX_HEIGHT, objectFit: "contain" }}
                                             />
                                         </FlexView>

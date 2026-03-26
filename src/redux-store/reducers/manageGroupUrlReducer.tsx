@@ -39,8 +39,7 @@ const initialState: ManageGroupUrlState = {
 };
 
 export const isValidatingGroupUrl = (state: ManageGroupUrlState) => {
-    return (!state.group && !state.groupLoaded && state.loadingGroup)
-        || (!state.group && !state.groupLoaded && !state.loadingGroup);
+    return !state.group && !state.groupLoaded && state.loadingGroup;
 }
 
 export const routeContainsGroupName = (state: ManageGroupUrlState) => {

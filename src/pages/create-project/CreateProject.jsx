@@ -3318,7 +3318,9 @@ class CreateProject extends Component {
                                                         ?
                                                         null
                                                         :
-                                                        clubAttributes.Sectors.map((sector, index) => (
+                                                        clubAttributes.Sectors
+                                                            .filter(sector => sector.toLowerCase() !== 'other')
+                                                            .map((sector, index) => (
                                                             <MenuItem key={index} value={sector}>{sector}</MenuItem>
                                                         ))
                                                 }
