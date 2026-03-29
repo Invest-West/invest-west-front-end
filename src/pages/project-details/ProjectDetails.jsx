@@ -28,7 +28,7 @@ import CheckCircleIcon from "@material-ui/icons/CheckCircle";
 import {Col, Container, Image, Row} from "react-bootstrap";
 import HashLoader from "react-spinners/HashLoader";
 import {NavLink} from "react-router-dom";
-import ReactPlayer from "react-player";
+import VideoPlayer from "../../shared-components/video-player/VideoPlayer";
 import * as colors from "../../values/colors";
 import * as utils from "../../utils/utils";
 import PageNotFound from "../../shared-components/page-not-found/PageNotFound";
@@ -2619,7 +2619,7 @@ class ProjectDetails extends Component {
                                         (
                                             coverItem.fileType === DB_CONST.FILE_TYPE_VIDEO
                                                 ?
-                                                <ReactPlayer
+                                                <VideoPlayer
                                                     key={index}
                                                     url={coverItem.url}
                                                     playsInline

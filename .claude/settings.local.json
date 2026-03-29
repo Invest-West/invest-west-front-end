@@ -46,7 +46,9 @@
       "mcp__chrome-devtools__take_screenshot",
       "mcp__chrome-devtools__evaluate_script",
       "Bash(grep -r \"pdf\\\\|PDF\\\\|iframe\\\\|embed\\\\|react-pdf\" /c/Users/jserp/github/invest-west-front-end/src --include=*.tsx --include=*.ts --include=*.jsx --include=*.js --include=*.html)",
-      "Bash(grep -r \"InlineDocViewer\\\\|PdfViewer\\\\|OfficeViewer\" /c/Users/jserp/github/invest-west-front-end/src --include=*.tsx --include=*.ts --include=*.jsx --include=*.js)"
+      "Bash(grep -r \"InlineDocViewer\\\\|PdfViewer\\\\|OfficeViewer\" /c/Users/jserp/github/invest-west-front-end/src --include=*.tsx --include=*.ts --include=*.jsx --include=*.js)",
+      "Bash(grep -r \"google\\\\|drive\\\\|video\\\\|iframe\\\\|embed\" /c/Users/jserp/github/invest-west-front-end/src/models --include=*.tsx --include=*.ts --include=*.jsx --include=*.js)",
+      "Bash(grep -r \"ProfileVideo\\\\|\\\\.video\\\\|videoUrl\\\\|videoPreview\" /c/Users/jserp/github/invest-west-front-end/src --include=*.tsx --include=*.ts --include=*.jsx --include=*.js -l)"
     ],
     "deny": [],
     "ask": []

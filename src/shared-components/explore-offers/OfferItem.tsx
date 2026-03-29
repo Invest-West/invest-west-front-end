@@ -21,7 +21,7 @@ import Routes from "../../router/routes";
 import {Box, colors, Divider, Typography} from "@material-ui/core";
 import {Col, Container, Image, OverlayTrigger, Row, Tooltip} from "react-bootstrap";
 import {getGroupLogo} from "../../models/group_properties";
-import ReactPlayer from "react-player";
+import VideoPlayer from "../video-player/VideoPlayer";
 import * as appColors from "../../values/colors";
 import User from "../../models/user";
 import * as utils from "../../utils/utils";
@@ -87,7 +87,7 @@ class OfferItem extends Component<OfferItemProps, any> {
                                             ? null
                                             : isImagePitchCover(pitchCover)
                                                 ? <Image src={pitchCover.url} width="100%" height={CoverMaxHeight} style={{ objectFit: "contain" }} />
-                                                : <ReactPlayer url={pitchCover.url} light={false} width="100%" height={CoverMaxHeight} playing={false} controls={false} />
+                                                : <VideoPlayer url={pitchCover.url} light={false} width="100%" height={CoverMaxHeight} playing={false} controls={false} />
                                     }
 
                                     {/** Group logo to be displayed at the top-right corner */}

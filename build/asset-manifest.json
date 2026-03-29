@@ -1,7 +1,7 @@
 {
   "files": {
     "main.css": "https://platform.investwest.online/static/css/main.8a22b884.css",
-    "main.js": "https://platform.investwest.online/static/js/main.1fb567fa.js",
+    "main.js": "https://platform.investwest.online/static/js/main.b8c882ed.js",
     "reactPlayerYouTube.js": "https://platform.investwest.online/static/js/reactPlayerYouTube.e8ba1dde.chunk.js",
     "reactPlayerSoundCloud.js": "https://platform.investwest.online/static/js/reactPlayerSoundCloud.391bea06.chunk.js",
     "reactPlayerVimeo.js": "https://platform.investwest.online/static/js/reactPlayerVimeo.392b5f37.chunk.js",
@@ -119,7 +119,7 @@
     "static/media/admin_logo.png": "https://platform.investwest.online/static/media/admin_logo.ba46fba41160c4fa6f39.png",
     "index.html": "https://platform.investwest.online/index.html",
     "main.8a22b884.css.map": "https://platform.investwest.online/static/css/main.8a22b884.css.map",
-    "main.1fb567fa.js.map": "https://platform.investwest.online/static/js/main.1fb567fa.js.map",
+    "main.b8c882ed.js.map": "https://platform.investwest.online/static/js/main.b8c882ed.js.map",
     "reactPlayerYouTube.e8ba1dde.chunk.js.map": "https://platform.investwest.online/static/js/reactPlayerYouTube.e8ba1dde.chunk.js.map",
     "reactPlayerSoundCloud.391bea06.chunk.js.map": "https://platform.investwest.online/static/js/reactPlayerSoundCloud.391bea06.chunk.js.map",
     "reactPlayerVimeo.392b5f37.chunk.js.map": "https://platform.investwest.online/static/js/reactPlayerVimeo.392b5f37.chunk.js.map",
@@ -137,6 +137,6 @@
   },
   "entrypoints": [
     "static/css/main.8a22b884.css",
-    "static/js/main.1fb567fa.js"
+    "static/js/main.b8c882ed.js"
   ]
 }

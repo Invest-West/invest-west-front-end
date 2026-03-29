@@ -30,6 +30,7 @@ import PublicIcon from '@material-ui/icons/Public';
 import {Col, Container, Image, OverlayTrigger, Row, Tooltip} from 'react-bootstrap';
 import {NavLink} from 'react-router-dom';
 import ReactPlayer from 'react-player';
+import VideoPlayer from '../video-player/VideoPlayer';
 
 import LetterAvatar from './LetterAvatar';
 import ActivitiesTable from '../activities-components/ActivitiesTable';
@@ -1442,7 +1443,7 @@ class Profile extends Component {
                                                 }
                                             </Typography>
                                             :
-                                            <ReactPlayer
+                                            <VideoPlayer
                                                 url={
                                                     originalUser.BusinessProfile.video[
                                                         originalUser.BusinessProfile.video.findIndex(videoItem => !videoItem.hasOwnProperty('removed'))

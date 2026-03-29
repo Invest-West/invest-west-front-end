@@ -4,7 +4,7 @@ import HashLoader from 'react-spinners/HashLoader';
 import {Col, Container, Image, Row} from 'react-bootstrap';
 import FlexView from 'react-flexview';
 import {Divider, Paper, Typography} from '@material-ui/core';
-import ReactPlayer from 'react-player';
+import VideoPlayer from '../../shared-components/video-player/VideoPlayer';
 
 import {AUTH_SUCCESS} from '../signin/Signin';
 import PageNotFoundWhole from '../../shared-components/page-not-found/PageNotFoundWhole';
@@ -490,11 +490,11 @@ class ProfilePageViewOnly extends Component {
                                                             ?
                                                             <Typography align="center" variant="subtitle1" color="textSecondary">No introduction video available.</Typography>
                                                             :
-                                                            <ReactPlayer
+                                                            <VideoPlayer
                                                                 url={
                                                                     userToBeViewed.BusinessProfile.video[userToBeViewed.BusinessProfile.video.findIndex(video => !video.hasOwnProperty('removed'))].url
                                                                 }
-                                                                playsinline
+                                                                playsInline
                                                                 width="100%"
                                                                 height={userToBeViewed.BusinessProfile.video[userToBeViewed.BusinessProfile.video.findIndex(video => !video.hasOwnProperty('removed'))].storageID === "" ? 360 : "auto"}
                                                                 playing={false}

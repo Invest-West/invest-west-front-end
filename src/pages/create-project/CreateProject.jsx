@@ -37,6 +37,7 @@ import Files from "react-files";
 import {NavLink, Redirect} from "react-router-dom";
 import {Col, Container, Image, Overlay, OverlayTrigger, Popover, ProgressBar, Row, Tooltip} from "react-bootstrap";
 import ReactPlayer from "react-player";
+import VideoPlayer from "../../shared-components/video-player/VideoPlayer";
 import {BeatLoader, HashLoader} from "react-spinners";
 
 import queryString from "query-string";
@@ -3813,7 +3814,7 @@ class CreateProject extends Component {
                                                                         :
                                                                         coverItem.fileType === DB_CONST.FILE_TYPE_VIDEO
                                                                             ?
-                                                                            <ReactPlayer key={index} playsInline url={coverItem.url} width="100%" height={coverItem.storageID === "" ? 280 : "auto"} playing={false} controls={true}/>
+                                                                            <VideoPlayer key={index} playsInline url={coverItem.url} width="100%" height={coverItem.storageID === "" ? 280 : "auto"} playing={false} controls={true}/>
                                                                             :
                                                                             <Image key={index} fluid src={coverItem.url}/>
                                                                 ))
